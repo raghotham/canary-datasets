@@ -503,7 +503,7 @@ def assistant_chat_conversation(client, model, executor, user_messages, sample_i
             elif 'tool_calls' in msg_dict and msg_dict.get('tool_calls'):
                 tool_calls = [fn.get('function', {}) for fn in msg_dict.get('tool_calls', [])]
                 tool_calls_str = ",".join([f"{tc.get('name', 'unknown')}({tc.get('arguments', {})})" for tc in tool_calls])
-                print(f"  {i}: {role} - {tool_calls_str}")
+                print(f"  {i}: {role} - git {tool_calls_str}")
             else:
                 print(f"  {i}: {role} - no content")
 
