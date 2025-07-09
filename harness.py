@@ -431,8 +431,13 @@ def load_conversations_from_yaml(filename):
         data = yaml.safe_load(f)
     return data['conversations']
 
-from tools_samples import get_weather, convert_currency, convert_units
-executor = ToolExecutor(get_weather, convert_currency, convert_units)
+import inspect
+from tools_samples import *
+
+# Get all functions from tools_samples module
+tools = [obj for name, obj in inspect.getmembers(sys.modules['tools_samples']) 
+         if inspect.isfunction(obj)]
+executor = ToolExecutor(*tools)
 
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Run conversation evaluations with different API modes')
