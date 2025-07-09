@@ -14,6 +14,6 @@ BASE_URL=https://api.llama.com/compat/v1 \
 
 # Run score.py with the two output files
 echo "Running score.py with the generated files..."
-./score.py "$GPT4O_OUTPUT" "$LLAMA_OUTPUT"
+./score.py golden.jsonl maverick.jsonl
 
 echo "All tasks completed!"
