@@ -498,10 +498,12 @@ def assistant_chat_conversation(client, model, executor, user_messages, sample_i
             else:
                 msg_dict = msg
             role = msg_dict.get('role', 'unknown')
-            if 'content' in msg_dict:
+            if 'content' in msg_dict and msg_dict.get('content'):
                 print(f"  {i}: {role} - {str(msg_dict.get('content', 'no content'))[:50]}...")
-            elif 'tool_calls' in msg_dict:
-                print(f"  {i}: {role} - tool calls: {str(msg_dict['tool_calls'])[:50]}...")
+            elif 'tool_calls' in msg_dict and msg_dict.get('tool_calls'):
+                tool_calls = [fn.get('function', {}) for fn in msg_dict.get('tool_calls', [])]
+                tool_calls_str = ",".join([f"{tc.get('name', 'unknown')}({tc.get('arguments', {})})" for tc in tool_calls])
+                print(f"  {i}: {role} - {tool_calls_str}")
             else:
                 print(f"  {i}: {role} - no content")
 
@@ -549,6 +551,7 @@ parser.add_argument('conversations_file', help='YAML file containing conversatio
 parser.add_argument('model', help='Model name to use for evaluation')
 parser.add_argument('--mode', choices=['responses', 'chat_tools', 'system_prompt'],
                    default='chat_tools', help='API mode to use (default: chat_tools)')
+parser.add_argument('--samples', help='Comma-separated list of sample IDs to run (e.g., "1,3,5,6,10"). If not specified, runs all samples.')
 
 if len(sys.argv) == 1:
     parser.print_help()
@@ -570,13 +573,31 @@ use_system_prompt = args.mode == 'system_prompt'
 print(f"Loading conversations from {conversations_file}")
 conversations = load_conversations_from_yaml(conversations_file)
 
+# Parse samples argument if provided
+selected_samples = set()
+if args.samples:
+    try:
+        selected_samples = {int(x.strip()) for x in args.samples.split(',')}
+        print(f"Running only samples: {sorted(selected_samples)}")
+    except ValueError as e:
+        print(f"Error parsing samples argument: {e}")
+        print("Samples should be comma-separated integers (e.g., '1,3,5,6,10')")
+        sys.exit(1)
+
 # Write directly to conversation log file with model name
 timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
 
 sample_id = 0
+conversations_run = 0
 for conversation in conversations:
     sample_id += 1
+    
+    # Skip if samples are specified and this sample is not in the list
+    if selected_samples and sample_id not in selected_samples:
+        continue
+    
+    conversations_run += 1
     print(f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n")
 
     # Get tools for this conversation, default to all tools if not specified
@@ -595,4 +616,4 @@ for conversation in conversations:
     else:
         assistant_chat_conversation(client, model, conversation_executor, conversation['messages'], sample_id, use_system_prompt, log_filename)
 
-print(f"Logged {sample_id} conversations to {log_filename}")
+print(f"Logged {conversations_run} conversations to {log_filename}")
