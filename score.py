@@ -271,6 +271,10 @@ def main():
     parser.add_argument('file1', help='First conversation log file')
     parser.add_argument('file2', help='Second conversation log file')
 
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
     args = parser.parse_args()
 
     # Load both files
