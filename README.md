@@ -6,6 +6,11 @@
 chmod +x generate.py
 ```
 
+Usage:
+```
+./generate.py [-h] [--mode {responses,chat_tools,system_prompt}] conversations_file model
+```
+
 ```
 OPENAI_API_KEY=`cat ~/.openai/key` \
 ./generate.py conversation_samples.yaml gpt-4o
@@ -23,10 +28,9 @@ BASE_URL=https://api.llama.com/compat/v1 \
 chmod +x score.py
 ```
 
+Usage:
 ```
-./score.py 
-usage: score.py [-h] file1 file2
-score.py: error: the following arguments are required: file1, file2
+./score.py [-h] file1 file2
 ```
 
 Run it to compare two runs 
