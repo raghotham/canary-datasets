@@ -10,7 +10,7 @@ OPENAI_API_KEY=$(cat ~/.openai/key) \
 echo "Running generate.py with Llama-4-Maverick model..."
 OPENAI_API_KEY=$(cat ~/.llama/api/key) \
 BASE_URL=https://api.llama.com/compat/v1 \
-./generate.py conversation_samples.yaml Llama-4-Maverick-17B-128E-Instruct-FP8
+./generate.py conversation_samples.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output maverick.jsonl
 
 # Store the output filename for Llama-4-Maverick
 LLAMA_OUTPUT=$(ls -t conversation_logs_Llama-4-Maverick-17B-128E-Instruct-FP8_*.jsonl | head -n 1)
