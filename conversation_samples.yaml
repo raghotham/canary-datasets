@@ -95,3 +95,166 @@ conversations:
       - get_fruit_info
     messages:
       - "What is the weather in Boston, and what color is a banana?"
+  - name: "Single turn travel cost query"
+    tools:
+      - calculate_travel_cost
+    messages:
+      - "How much would it cost to travel from Seattle to San Francisco?"
+  - name: "Multi-turn travel cost with follow-up"
+    tools:
+      - calculate_travel_cost
+    messages:
+      - "What's the travel cost from New York to Chicago?"
+      - "Can you also tell me the cost if I start from Boston instead?"
+  - name: "Multi-tool travel cost and weather check"
+    tools:
+      - calculate_travel_cost
+      - get_weather
+    messages:
+      - "What's the travel cost from Denver to Las Vegas and what's the weather like in Las Vegas?"
+  - name: "Travel cost and weight conversion in one turn"
+    tools:
+      - calculate_travel_cost
+      - convert_weight_units
+    messages:
+      - "How much would it cost to travel from Seattle to San Francisco? Also, convert 500 grams to ounces for me."
+  - name: "Single turn meeting scheduling"
+    tools:
+      - schedule_meeting
+    messages:
+      - "Schedule a meeting on 2025-07-15 at 14:00 for 30 minutes with Alice."
+  - name: "Multi-turn meeting scheduling"
+    tools:
+      - schedule_meeting
+    messages:
+      - "I want to schedule a meeting with Bob."
+      - "Make it on 2025-07-20 at 10:30 for 45 minutes."
+  - name: "Multi-tool with 4-arg and 2-arg tools"
+    tools:
+      - schedule_meeting
+      - calculate_travel_cost
+    messages:
+      - "Schedule a meeting on 2025-07-18 at 09:00 for 60 minutes with Carol. Also, how much would it cost to travel from Seattle to San Francisco?"
+  - name: "Multi-tool with 4-arg and 1-arg tools"
+    tools:
+      - schedule_meeting
+      - get_weather
+    messages:
+      - "Schedule a meeting on 2025-07-22 at 15:00 for 30 minutes with Dave. What's the weather like in San Francisco that day?"
+  - name: "Single tool: get_population"
+    tools:
+      - get_population
+    messages:
+      - "What is the population of Tokyo?"
+
+  - name: "Single tool: lookup_employee"
+    tools:
+      - lookup_employee
+    messages:
+      - "Can you find info about the employee with username 'arybak'?"
+
+  - name: "Single tool: get_stock_price"
+    tools:
+      - get_stock_price
+    messages:
+      - "What is the current stock price of AAPL?"
+
+  - name: "Single tool: get_book_info"
+    tools:
+      - get_book_info
+    messages:
+      - "Give me details about the book with ISBN 9780143127741."
+
+  - name: "Single tool: calculate_travel_cost (2 args)"
+    tools:
+      - calculate_travel_cost
+    messages:
+      - "How much would it cost to travel from Seattle to San Francisco?"
+
+  - name: "Single tool: schedule_meeting (4 args)"
+    tools:
+      - schedule_meeting
+    messages:
+      - "Schedule a meeting on 2025-07-15 at 14:00 for 30 minutes with Alice."
+
+  - name: "Multi-tool: get_population + get_stock_price"
+    tools:
+      - get_population
+      - get_stock_price
+    messages:
+      - "What is the population of Paris? Also, what is the stock price of GOOG?"
+
+  - name: "Multi-tool: lookup_employee + get_book_info"
+    tools:
+      - lookup_employee
+      - get_book_info
+    messages:
+      - "Find info about employee 'jdoe' and details about the book with ISBN 9780062316097."
+
+  - name: "Multi-tool: calculate_travel_cost + schedule_meeting"
+    tools:
+      - calculate_travel_cost
+      - schedule_meeting
+    messages:
+      - "How much to travel from Miami to Orlando? Also, schedule a meeting on 2025-07-18 at 09:00 for 60 minutes with Carol."
+
+  - name: "Multi-tool: get_population + convert_weight_units"
+    tools:
+      - get_population
+      - convert_weight_units
+    messages:
+      - "Tell me the population of Tokyo. Also, convert 100 kilograms to pounds."
+
+  - name: "Multi-tool: schedule_meeting + get_weather"
+    tools:
+      - schedule_meeting
+      - get_weather
+    messages:
+      - "Schedule a meeting on 2025-07-22 at 15:00 for 30 minutes with Dave. What's the weather like in San Francisco that day?"
+
+  - name: "Multi-tool: get_stock_price + convert_units"
+    tools:
+      - get_stock_price
+      - convert_units
+    messages:
+      - "What is the stock price of TSLA? Also, convert 70 kilograms to pounds."
+
+  - name: "Multi-tool: get_book_info + lookup_employee"
+    tools:
+      - get_book_info
+      - lookup_employee
+    messages:
+      - "Give me info about the book 'The Road' (ISBN 9780307271037) and lookup employee 'csmith'."
+
+  - name: "Multi-tool: calculate_travel_cost + get_population + convert_weight_units"
+    tools:
+      - calculate_travel_cost
+      - get_population
+      - convert_weight_units
+    messages:
+      - "Calculate travel cost from Denver to Las Vegas, tell me the population of Las Vegas, and convert 50 kilograms to pounds."
+
+  - name: "Multi-tool: schedule_meeting + get_stock_price + get_book_info"
+    tools:
+      - schedule_meeting
+      - get_stock_price
+      - get_book_info
+    messages:
+      - "Schedule a meeting on 2025-07-25 at 10:00 for 45 minutes with Emily. Also, what's the stock price of META? And give me details about the book 'Sapiens' (ISBN 9780143127741)."
+
+  - name: "Multi-tool: get_weather + get_population + lookup_employee"
+    tools:
+      - get_weather
+      - get_population
+      - lookup_employee
+    messages:
+      - "What's the weather in Boston? Also, what's the population there? And can you find info about employee 'arybak'?"
+
+  - name: "Multi-tool: schedule_meeting + calculate_travel_cost + convert_units + get_population"
+    tools:
+      - schedule_meeting
+      - calculate_travel_cost
+      - convert_units
+      - get_population
+    messages:
+      - "Schedule a meeting on 2025-07-30 at 13:00 for 60 minutes with Frank. How much to travel from New York to Chicago? Convert 120 pounds to kilograms. Also, tell me the population of Chicago."
