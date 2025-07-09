@@ -15,6 +15,7 @@ import json
 import os
 import sys
 import yaml
+import argparse
 from rich.pretty import pprint
 from typing import Any, Dict, List, Literal, Type, Union, get_args, get_type_hints
 import openai
@@ -433,17 +434,25 @@ def load_conversations_from_yaml(filename):
 from tools_samples import get_weather, convert_currency, convert_units
 executor = ToolExecutor(get_weather, convert_currency, convert_units)
 
+# Set up argument parser
+parser = argparse.ArgumentParser(description='Run conversation evaluations with different API modes')
+parser.add_argument('conversations_file', help='YAML file containing conversation samples')
+parser.add_argument('model', help='Model name to use for evaluation')
+parser.add_argument('--mode', choices=['responses', 'chat_tools', 'system_prompt'], 
+                   default='chat_tools', help='API mode to use (default: chat_tools)')
+
+args = parser.parse_args()
+
 api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    print("Error: The OPENAI_API_KEY environment variable is not set. Please set it to your OpenAI (or any other endpoint's API key) as shown in the README.")
+    sys.exit(1)
 base_url = os.getenv("BASE_URL", "https://api.openai.com/v1")
 client = openai.OpenAI(api_key=api_key, base_url=base_url)
 
-if len(sys.argv) < 3 or len(sys.argv) > 4:
-    print("Usage: python responses-tools.py <conversations.yaml> <model_name> [--use-system-prompt]")
-    sys.exit(1)
-
-conversations_file = sys.argv[1]
-model = sys.argv[2]
-use_system_prompt = "--use-system-prompt" in sys.argv
+conversations_file = args.conversations_file
+model = args.model
+use_system_prompt = args.mode == 'system_prompt'
 
 print(f"Loading conversations from {conversations_file}")
 conversations = load_conversations_from_yaml(conversations_file)
@@ -452,14 +461,11 @@ conversations = load_conversations_from_yaml(conversations_file)
 timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
 
-# sample_id = 0
-# for conversation in conversations:
-#     sample_id += 1
-#     print(f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n")
-#     assistant_conversation(client, model, executor, conversation['messages'], sample_id)
-
 sample_id = 0
 for conversation in conversations:
     sample_id += 1
     print(f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n")
-    assistant_chat_conversation(client, model, executor, conversation['messages'], sample_id, use_system_prompt, log_filename)
+    if args.mode == 'responses':
+        assistant_conversation(client, model, executor, conversation['messages'], sample_id, log_filename)
+    else:
+        assistant_chat_conversation(client, model, executor, conversation['messages'], sample_id, use_system_prompt, log_filename)
