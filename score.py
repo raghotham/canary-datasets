@@ -11,9 +11,79 @@
 import json
 import sys
 import argparse
-from typing import Dict, List, Any, Tuple
+import importlib
+import inspect
+from typing import Dict, List, Any, Tuple, Union, Literal
 from rich.console import Console
 from rich.table import Table
+
+def get_available_tools() -> Dict[str, callable]:
+    """Dynamically import and inspect all tools from tools_samples module."""
+    try:
+        # Import the tools_samples module
+        tools_module = importlib.import_module('tools_samples')
+
+        # Get all functions from the module
+        available_tools = {}
+        for name, obj in inspect.getmembers(tools_module):
+            if inspect.isfunction(obj) and not name.startswith('_'):
+                available_tools[name] = obj
+
+        return available_tools
+    except ImportError as e:
+        print(f"Warning: Could not import tools_samples module: {e}")
+        return {}
+
+# Get all available tools
+AVAILABLE_TOOLS = get_available_tools()
+
+def get_function_type_hints(func_name: str) -> Dict[str, type]:
+    """Get type hints for a function from tools_samples."""
+    if func_name not in AVAILABLE_TOOLS:
+        return {}
+
+    func = AVAILABLE_TOOLS[func_name]
+    return inspect.signature(func).parameters
+
+def coerce_argument_value(value: Any, param_name: str, func_name: str) -> Any:
+    """Coerce a value to the expected type for a function parameter."""
+    type_hints = get_function_type_hints(func_name)
+
+    if param_name not in type_hints:
+        return value
+
+    param = type_hints[param_name]
+    param_type = param.annotation
+
+    # Handle Literal types
+    if hasattr(param_type, "__origin__") and param_type.__origin__ is Literal:
+        # For Literal types, we just return the value as-is since it should be one of the allowed values
+        return value
+
+    # Handle basic type conversions
+    if param_type == str:
+        return str(value)
+    elif param_type == int:
+        return int(float(value))  # Handle cases where value might be a float string
+    elif param_type == float:
+        return float(value)
+    elif param_type == bool:
+        if isinstance(value, str):
+            return value.lower() in ('true', '1', 'yes', 'on')
+        return bool(value)
+
+    return value
+
+def coerce_arguments(arguments: Dict[str, Any], func_name: str) -> Dict[str, Any]:
+    """Coerce all arguments in a tool call to their expected types."""
+    if not isinstance(arguments, dict):
+        return arguments
+
+    coerced = {}
+    for param_name, value in arguments.items():
+        coerced[param_name] = coerce_argument_value(value, param_name, func_name)
+
+    return coerced
 
 def load_conversation_logs(filename: str) -> Dict[Tuple[int, int], List[Dict[str, Any]]]:
     """
@@ -67,7 +137,46 @@ def normalize_tool_calls(tool_calls: List[Dict[str, Any]]) -> List[Dict[str, Any
         normalized.append(normalized_call)
 
     # Sort by name and arguments for consistent comparison
-    return sorted(normalized, key=lambda x: (x['name'], x['arguments']))
+    # Convert arguments to string for sorting to handle dict vs dict comparison
+    return sorted(normalized, key=lambda x: (x['name'], json.dumps(x['arguments'], sort_keys=True)))
+
+def normalize_tool_calls_with_coercion(tool_calls: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Normalize tool calls for comparison with type coercion.
+
+    Args:
+        tool_calls: List of tool call dictionaries
+
+    Returns:
+        Normalized list of tool calls with coerced arguments
+    """
+    normalized = []
+
+    for tool_call in tool_calls:
+        func_name = tool_call.get('name')
+        arguments = tool_call.get('arguments')
+
+        # Coerce arguments if we have a valid function name
+        if func_name and arguments:
+            if isinstance(arguments, str):
+                try:
+                    arguments = json.loads(arguments)
+                except json.JSONDecodeError:
+                    pass
+
+            if isinstance(arguments, dict):
+                arguments = coerce_arguments(arguments, func_name)
+
+        # Create a copy without call_id for comparison
+        normalized_call = {
+            'name': func_name,
+            'arguments': arguments
+        }
+        normalized.append(normalized_call)
+
+    # Sort by name and arguments for consistent comparison
+    # Convert arguments to string for sorting to handle dict vs dict comparison
+    return sorted(normalized, key=lambda x: (x['name'], json.dumps(x['arguments'], sort_keys=True)))
 
 def compare_tool_calls(file1_logs: Dict[Tuple[int, int], List[Dict[str, Any]]],
                       file2_logs: Dict[Tuple[int, int], List[Dict[str, Any]]]) -> Dict[str, Any]:
@@ -87,6 +196,7 @@ def compare_tool_calls(file1_logs: Dict[Tuple[int, int], List[Dict[str, Any]]],
         'total_comparisons': 0,
         'matching': 0,
         'different': 0,
+        'typediff': 0,
         'missing_in_file1': 0,
         'missing_in_file2': 0,
         'file1_has_tools_file2_empty': 0,
@@ -161,16 +271,34 @@ def compare_tool_calls(file1_logs: Dict[Tuple[int, int], List[Dict[str, Any]]],
                         'file2_tool_calls': tool_calls2
                     })
                 else:
-                    results['different'] += 1
-                    results['differences'].append({
-                        'sample_id': sample_id,
-                        'turn_id': turn_id,
-                        'status': 'diff',
-                        'file1_tool_calls': tool_calls1,
-                        'file2_tool_calls': tool_calls2,
-                        'normalized1': normalized1,
-                        'normalized2': normalized2
-                    })
+                    # Check if they match after type coercion
+                    coerced1 = normalize_tool_calls_with_coercion(tool_calls1)
+                    coerced2 = normalize_tool_calls_with_coercion(tool_calls2)
+
+                    if coerced1 == coerced2:
+                        results['typediff'] += 1
+                        results['differences'].append({
+                            'sample_id': sample_id,
+                            'turn_id': turn_id,
+                            'status': 'typediff',
+                            'file1_tool_calls': tool_calls1,
+                            'file2_tool_calls': tool_calls2,
+                            'normalized1': normalized1,
+                            'normalized2': normalized2,
+                            'coerced1': coerced1,
+                            'coerced2': coerced2
+                        })
+                    else:
+                        results['different'] += 1
+                        results['differences'].append({
+                            'sample_id': sample_id,
+                            'turn_id': turn_id,
+                            'status': 'diff',
+                            'file1_tool_calls': tool_calls1,
+                            'file2_tool_calls': tool_calls2,
+                            'normalized1': normalized1,
+                            'normalized2': normalized2
+                        })
 
     return results
 
@@ -190,6 +318,7 @@ def print_comparison_results(results: Dict[str, Any], file1_name: str, file2_nam
     print(f"Total comparisons: {results['total_comparisons']}")
     print(f"Matching tool calls: {results['matching']}")
     print(f"Different tool calls: {results['different']}")
+    print(f"Type mismatches: {results['typediff']}")
     print(f"Missing in {file1_name}: {results['missing_in_file1']}")
     print(f"Missing in {file2_name}: {results['missing_in_file2']}")
     print(f"{file1_name} has tools, {file2_name} empty: {results['file1_has_tools_file2_empty']}")
@@ -224,6 +353,7 @@ def print_comparison_results(results: Dict[str, Any], file1_name: str, file2_nam
         print(f"  missing2: Entry only exists in {file1_name}")
         print(f"  file1_only: {file1_name} has tool calls, {file2_name} is empty")
         print(f"  file2_only: {file2_name} has tool calls, {file1_name} is empty")
+        print(f"  typediff: Tool calls are the same, but argument types differ")
 
 def format_tool_calls(tool_calls: List[Dict[str, Any]]) -> str:
     """

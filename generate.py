@@ -38,6 +38,24 @@ class ToolExecutor:
         """
         self._registered_tools[name] = func
 
+    def create_filtered_executor(self, tool_names: List[str]) -> 'ToolExecutor':
+        """Create a new executor with only the specified tools.
+
+        Args:
+            tool_names: List of tool names to include
+
+        Returns:
+            New ToolExecutor instance with only the specified tools
+        """
+        filtered_tools = []
+        for name in tool_names:
+            if name in self._registered_tools:
+                filtered_tools.append(self._registered_tools[name])
+            else:
+                raise ValueError(f"Tool '{name}' not found")
+
+        return ToolExecutor(*filtered_tools)
+
     def execute(self, tool_calls: List) -> List[Dict]:
         """Execute a list of tool calls and return their responses.
 
@@ -560,9 +578,21 @@ sample_id = 0
 for conversation in conversations:
     sample_id += 1
     print(f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n")
-    if args.mode == 'responses':
-        assistant_response_conversation(client, model, executor, conversation['messages'], sample_id, log_filename)
+
+    # Get tools for this conversation, default to all tools if not specified
+    conversation_tools = conversation.get('tools', [])
+    if conversation_tools:
+        # Create a filtered executor with only the specified tools
+        conversation_executor = executor.create_filtered_executor(conversation_tools)
+        print(f"Using tools: {conversation_tools}")
     else:
-        assistant_chat_conversation(client, model, executor, conversation['messages'], sample_id, use_system_prompt, log_filename)
+        # Use all available tools
+        conversation_executor = executor
+        print("Using all available tools")
+
+    if args.mode == 'responses':
+        assistant_response_conversation(client, model, conversation_executor, conversation['messages'], sample_id, log_filename)
+    else:
+        assistant_chat_conversation(client, model, conversation_executor, conversation['messages'], sample_id, use_system_prompt, log_filename)
 
 print(f"Logged {sample_id} conversations to {log_filename}")
