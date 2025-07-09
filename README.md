@@ -1,6 +1,6 @@
 # Scratch Evals
 
-# Generate
+## Generate
 
 ```
 chmod +x generate.py
@@ -17,7 +17,7 @@ BASE_URL=https://api.llama.com/compat/v1 \
 ./generate.py conversation_samples.yaml Llama-4-Maverick-17B-128E-Instruct-FP8
 ```
 
-# Score
+## Score
 
 ```
 chmod +x score.py
@@ -35,7 +35,7 @@ Run it to compare two runs
 ```
 
 
-# Make changes
+## Make changes
 
 1. Add more functions to [tools_samples.py](tools_samples.py)
 2. Add more conversations to [conversation_samples.yaml](conversation_samples.yaml)
