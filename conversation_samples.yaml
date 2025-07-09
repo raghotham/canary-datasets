@@ -61,4 +61,37 @@ conversations:
       - "Tell me about the weather in Paris"
       - "Now tell me about Tokyo's weather"
       - "Which city is warmer right now?"
-      - "Convert the warmer city's temperature to Celsius" 
+      - "Convert the warmer city's temperature to Celsius"
+
+  - name: "Fruit info single turn"
+    tools:
+      - get_fruit_info
+    messages:
+      - "What is the typical color and average weight of an apple?"
+  - name: "Fruit info multi-turn with follow-up"
+    tools:
+      - get_fruit_info
+      - convert_weight_units
+    messages:
+      - "Tell me about the color and weight of a banana."
+      - "Can you convert that weight to ounces for me?"
+  - name: "Fruit info comparison multi-turn"
+    tools:
+      - get_fruit_info
+      - convert_weight_units
+    messages:
+      - "Give me the color and average weight of a mango."
+      - "How does that compare to an apple in ounces?"
+      - "Which fruit is heavier in ounces?"
+  - name: "Fruit info with unsupported fruit"
+    tools:
+      - get_fruit_info
+    messages:
+      - "What is the color and weight of a dragonfruit?" # Not in our sample data
+      - "Can you tell me about a mango instead?"
+  - name: "Fruits and weather"
+    tools:
+      - get_weather
+      - get_fruit_info
+    messages:
+      - "What is the weather in Boston, and what color is a banana?"
