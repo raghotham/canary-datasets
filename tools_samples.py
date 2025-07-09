@@ -4,10 +4,10 @@ def get_weather(
     location: str
 ) -> Dict[str, Union[str, float, list]]:
     """Get the current weather conditions for a location.
-    
+
     Args:
         location: The city name to get weather for (e.g. 'London', 'New York')
-        
+
     Returns:
         Dict containing:
             - location: City name
@@ -22,7 +22,7 @@ def get_weather(
     }
     if location not in sample:
         raise ValueError(f"Location not supported: {location}")
-    
+
     return {
         "location": location,
         "temperature": sample.get(location),
@@ -35,12 +35,12 @@ def convert_units(
     to_unit: Literal["celsius", "fahrenheit"]
 ) -> Dict[str, Union[float, str]]:
     """Convert a temperature value between Celsius and Fahrenheit.
-    
+
     Args:
         value: The temperature value to convert
         from_unit: The unit to convert from ('celsius' or 'fahrenheit')
         to_unit: The unit to convert to ('celsius' or 'fahrenheit')
-        
+
     Returns:
         Dict containing:
             - value: Converted temperature value
@@ -56,7 +56,7 @@ def convert_units(
 
 def convert_currency(amount: float, from_currency: str, to_currency: str) -> Dict[str, Union[float, str]]:
     """Convert an amount from one currency to another.
-    
+
     Args:
         amount: The amount of money to convert
         from_currency: The currency code to convert from (e.g., USD, EUR, GBP)
@@ -74,17 +74,17 @@ def convert_currency(amount: float, from_currency: str, to_currency: str) -> Dic
     # Normalize currency codes to uppercase
     from_currency = from_currency.upper()
     to_currency = to_currency.upper()
-  
+
     # Check if currencies are supported
     if from_currency not in exchange_rates:
         raise ValueError(f"Currency not supported: {from_currency}")
     if to_currency not in exchange_rates:
         raise ValueError(f"Currency not supported: {to_currency}")
-  
+
     # Convert to USD first, then to target currency
     amount_in_usd = amount / exchange_rates[from_currency]
     converted_amount = amount_in_usd * exchange_rates[to_currency]
-  
+
     return {
        "original_amount": amount,
        "from_currency": from_currency,

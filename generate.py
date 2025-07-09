@@ -19,10 +19,11 @@ import argparse
 from rich.pretty import pprint
 from typing import Any, Dict, List, Literal, Type, Union, get_args, get_type_hints
 import openai
+import copy
 
 class ToolExecutor:
     """Executes tool calls by mapping function names to registered functions."""
-    
+
     def __init__(self, *functions):
         self._registered_tools = {}
         for func in functions:
@@ -30,24 +31,24 @@ class ToolExecutor:
 
     def register(self, name: str, func: callable):
         """Register a function with a name.
-        
+
         Args:
             name: Name to register the function under
             func: The function to register
         """
         self._registered_tools[name] = func
-    
+
     def execute(self, tool_calls: List) -> List[Dict]:
         """Execute a list of tool calls and return their responses.
-        
+
         Args:
             tool_calls: List of tool call objects from responses API or chat completions API
-            
+
         Returns:
             List of tool response dictionaries with results
         """
         tool_responses = []
-        
+
         for tool_call in tool_calls:
             # Support both dict and Pydantic object for chat completions
             function_name = getattr(tool_call, 'name', None)
@@ -83,7 +84,7 @@ class ToolExecutor:
                     "call_id": getattr(tool_call, 'call_id', getattr(tool_call, 'id', None)),
                     "output": json.dumps(f"Unknown function: {function_name}")
                 })
-                
+
         return tool_responses
 
     def get_tool_schemas(self) -> List[Dict[str, Any]]:
@@ -116,7 +117,7 @@ class ToolExecutor:
         hints = get_type_hints(func)
         sig = inspect.signature(func)
         doc = inspect.getdoc(func)
-        
+
         # Parse docstring to get parameter descriptions
         param_desc = {}
         if doc:
@@ -129,10 +130,10 @@ class ToolExecutor:
         # Build parameters object
         properties = {}
         required = []
-        
+
         for param_name, param in sig.parameters.items():
             param_type = hints[param_name]
-            
+
             # Handle Literal types
             if hasattr(param_type, "__origin__") and param_type.__origin__ is Literal:
                 properties[param_name] = {
@@ -147,7 +148,7 @@ class ToolExecutor:
                     "type": type_map.get(param_type, "string"),
                     "description": param_desc.get(param_name, "")
                 }
-            
+
             # Check if parameter is required
             if param.default == inspect.Parameter.empty:
                 required.append(param_name)
@@ -179,13 +180,13 @@ class ToolExecutor:
                 }
             }
 
-    
+
     def _convert_arguments(self, function_name: str, arguments: Dict) -> Dict:
         """Convert arguments to the expected types based on function type hints."""
         func = self._registered_tools[function_name]
         type_hints = get_type_hints(func)
         converted_args = {}
-        
+
         for param_name, value in arguments.items():
             if param_name in type_hints:
                 expected_type = type_hints[param_name]
@@ -196,15 +197,15 @@ class ToolExecutor:
             else:
                 # If no type hint, use the value as-is
                 converted_args[param_name] = value
-        
+
         return converted_args
-    
+
     def _convert_value(self, value: Any, target_type: Type) -> Any:
         """Convert a value to the target type."""
         # Handle None values
         if value is None:
             return None
-        
+
         # Handle Union types (e.g., Union[str, int])
         if hasattr(target_type, "__origin__") and target_type.__origin__ is Union:
             # Try each type in the union
@@ -216,14 +217,14 @@ class ToolExecutor:
                 except (ValueError, TypeError):
                     continue
             raise ValueError(f"Cannot convert '{value}' to any type in {target_type}")
-        
+
         # Handle Literal types
         if hasattr(target_type, "__origin__") and target_type.__origin__ is Literal:
             if value in get_args(target_type):
                 return value
             else:
                 raise ValueError(f"Value '{value}' not in allowed values {get_args(target_type)}")
-        
+
         # Handle basic types
         if target_type == str:
             return str(value)
@@ -251,7 +252,7 @@ class ToolExecutor:
                 except json.JSONDecodeError:
                     raise ValueError(f"Cannot convert string '{value}' to dict")
             return dict(value)
-        
+
         # For other types, try to construct them directly
         try:
             return target_type(value)
@@ -263,19 +264,36 @@ def log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, assista
     # Convert messages to serializable format
     serializable_messages = []
     for msg in messages:
-        if hasattr(msg, 'model_dump'):  # Pydantic model
-            serializable_messages.append(msg.model_dump())
-        elif isinstance(msg, dict):
-            serializable_messages.append(msg)
+        message_dict = {}
+        # Handle both dicts and objects
+        if isinstance(msg, dict):
+            role = msg.get('role')
+            if role is not None:
+                message_dict['role'] = role
+            content = msg.get('content')
+            if content is not None:
+                message_dict['content'] = content
+            tool_calls_val = msg.get('tool_calls')
+            if tool_calls_val:
+                message_dict['tool_calls'] = [tc.model_dump() if hasattr(tc, 'model_dump') else tc for tc in tool_calls_val]
+            tool_call_id = msg.get('tool_call_id')
+            if tool_call_id is not None:
+                message_dict['tool_call_id'] = tool_call_id
         else:
-            # Convert to dict manually
-            serializable_messages.append({
-                'role': getattr(msg, 'role', None),
-                'content': getattr(msg, 'content', None),
-                'tool_calls': [tc.model_dump() if hasattr(tc, 'model_dump') else tc for tc in getattr(msg, 'tool_calls', [])] if getattr(msg, 'tool_calls', None) else None,
-                'tool_call_id': getattr(msg, 'tool_call_id', None)
-            })
-    
+            role = getattr(msg, 'role', None)
+            if role is not None:
+                message_dict['role'] = role
+            content = getattr(msg, 'content', None)
+            if content is not None:
+                message_dict['content'] = content
+            tool_calls_val = getattr(msg, 'tool_calls', None)
+            if tool_calls_val:
+                message_dict['tool_calls'] = [tc.model_dump() if hasattr(tc, 'model_dump') else tc for tc in tool_calls_val]
+            tool_call_id = getattr(msg, 'tool_call_id', None)
+            if tool_call_id is not None:
+                message_dict['tool_call_id'] = tool_call_id
+        if message_dict:  # Only append if we have any non-null fields
+            serializable_messages.append(message_dict)
     # Create turn entry
     turn_entry = {
         "sample_id": sample_id,
@@ -286,22 +304,20 @@ def log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, assista
         "tool_outputs": tool_outputs,
         "assistant_message": assistant_message
     }
-
-    pprint(turn_entry)
-
+    # pprint(turn_entry)
     with open(log_filename, 'a') as f:
         f.write(json.dumps(turn_entry) + '\n')
 
-def execute_turn(client, model, executor, previous_id, user_message, sample_id, turn_id):
+def execute_response_turn(client, model, executor, previous_id, user_message, sample_id, turn_id):
     inputs = [{
         "type": "message",
-        "role": "user", 
+        "role": "user",
         "content": [{"type": "input_text", "text": user_message}]
     }]
-    
+
     all_tool_calls = []
     all_tool_outputs = []
-    
+
     while True:
         # Only include previous_response_id if it's not None
         request_params = {
@@ -312,7 +328,7 @@ def execute_turn(client, model, executor, previous_id, user_message, sample_id, 
         }
         if previous_id is not None:
             request_params["previous_response_id"] = previous_id
-            
+
         resp = client.responses.create(**request_params)
         #pprint(resp)
 
@@ -328,12 +344,12 @@ def execute_turn(client, model, executor, previous_id, user_message, sample_id, 
                     return item.text, resp.id, all_tool_calls, all_tool_outputs
                 elif hasattr(item, 'output_text'):  # Direct text output
                     return item.output_text, resp.id, all_tool_calls, all_tool_outputs
-            
+
             # Fallback: try to get any text from the response
             for item in resp.output:
                 if hasattr(item, 'text'):
                     return item.text, resp.id, all_tool_calls, all_tool_outputs
-            
+
             return "No text response found", resp.id, all_tool_calls, all_tool_outputs
 
         # Otherwise run tools, feed outputs back
@@ -350,22 +366,51 @@ def execute_turn(client, model, executor, previous_id, user_message, sample_id, 
                 "call_id": tool_output['call_id'],
                 "output": tool_output['output']
             })
+            # Add tool output as a message to inputs
+            inputs.append({
+                "type": "message",
+                "role": "tool",
+                "tool_call_id": tool_output['call_id'],
+                "content": [{"type": "output_text", "text": str(tool_output['output'])}]
+            })
         previous_id = resp.id
-        inputs = inputs + tool_outputs
 
-def assistant_conversation(client, model, executor, user_messages, sample_id, log_filename):
+def assistant_response_conversation(client, model, executor, user_messages, sample_id, log_filename):
     previous_id = None
+    messages = []  # Track full conversation history
     for turn_id, user_message in enumerate(user_messages, 1):
-        response, previous_id, tool_calls, tool_outputs = execute_turn(client, model, executor, previous_id, user_message, sample_id, turn_id)
-        log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, response, [], model, log_filename)
+        response, previous_id, tool_calls, tool_outputs = execute_response_turn(client, model, executor, previous_id, user_message, sample_id, turn_id)
+
+        # Add user message
+        messages.append({"role": "user", "content": user_message})
+
+        if tool_calls:
+            # Add assistant message with tool calls
+            messages.append({
+                "role": "assistant",
+                "content": None,
+                "tool_calls": tool_calls
+            })
+            # Add tool response messages
+            for tool_output in tool_outputs:
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tool_output['call_id'],
+                    "content": str(tool_output['output'])
+                })
+
+        # Add final assistant response
+        messages.append({"role": "assistant", "content": response})
+
+        log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, response, messages, model, log_filename)
 
 def execute_chat_turn(client, model, executor, messages, user_message, use_system_prompt):
     # Add new user message to conversation
     messages.append({"role": "user", "content": user_message})
-    
+
     all_tool_calls = []
     all_tool_outputs = []
-    
+
     while True:
         # Prepare request parameters
         request_params = {
@@ -373,18 +418,18 @@ def execute_chat_turn(client, model, executor, messages, user_message, use_syste
             "messages": messages,
             "stream": False
         }
-        
+
         if use_system_prompt:
             # Add system prompt with tool schemas instead of tools parameter
             system_prompt = executor.get_system_prompt()
-            
+
             # Add system message at the beginning if not already present
             if not messages or messages[0]["role"] != "system":
                 messages.insert(0, {"role": "system", "content": system_prompt})
         else:
             # Use tools parameter as before
             request_params["tools"] = executor.get_chat_tool_schemas()
-        
+
         # Make chat completion request
         #pprint(request_params)
         resp = client.chat.completions.create(**request_params)
@@ -404,7 +449,7 @@ def execute_chat_turn(client, model, executor, messages, user_message, use_syste
                 "name": tool_call.function.name,
                 "arguments": tool_call.function.arguments
             })
-            
+
         tool_outputs = executor.execute(tool_calls)
         for tool_output in tool_outputs:
             all_tool_outputs.append({
@@ -420,10 +465,45 @@ def execute_chat_turn(client, model, executor, messages, user_message, use_syste
 def assistant_chat_conversation(client, model, executor, user_messages, sample_id, use_system_prompt, log_filename):
     messages = []  # Track full conversation history
     for turn_id, user_message in enumerate(user_messages, 1):
-        response, messages, tool_calls, tool_outputs = execute_chat_turn(
+        response, updated_messages, tool_calls, tool_outputs = execute_chat_turn(
             client, model, executor, messages, user_message, use_system_prompt
-        )   
-        log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, response, messages, model, log_filename)
+        )
+
+        # Update our messages list with the returned messages
+        messages = updated_messages
+
+        # Debug: print the messages to see what we have
+        print(f"DEBUG: Turn {turn_id} has {len(messages)} messages")
+        for i, msg in enumerate(messages):
+            if hasattr(msg, 'model_dump'):
+                msg_dict = msg.model_dump()
+            else:
+                msg_dict = msg
+            print(f"  {i}: {msg_dict.get('role', 'unknown')} - {str(msg_dict.get('content', 'no content'))[:50]}...")
+
+        # Convert all messages to dicts for logging (handle Pydantic objects)
+        messages_for_log = []
+        for msg in messages:
+            if hasattr(msg, 'model_dump'):
+                messages_for_log.append(msg.model_dump())
+            else:
+                messages_for_log.append(copy.deepcopy(msg))
+
+        # Ensure tool responses are in the messages array for logging
+        if tool_outputs:
+            tool_response_ids = set()
+            for msg in messages_for_log:
+                if msg.get('role') == 'tool':
+                    tool_response_ids.add(msg.get('tool_call_id'))
+            for tool_output in tool_outputs:
+                if tool_output['call_id'] not in tool_response_ids:
+                    messages_for_log.append({
+                        "role": "tool",
+                        "tool_call_id": tool_output['call_id'],
+                        "content": str(tool_output['output'])
+                    })
+
+        log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, response, messages_for_log, model, log_filename)
 
 def load_conversations_from_yaml(filename):
     """Load conversation samples from YAML file."""
@@ -435,7 +515,7 @@ import inspect
 from tools_samples import *
 
 # Get all functions from tools_samples module
-tools = [obj for name, obj in inspect.getmembers(sys.modules['tools_samples']) 
+tools = [obj for name, obj in inspect.getmembers(sys.modules['tools_samples'])
          if inspect.isfunction(obj)]
 executor = ToolExecutor(*tools)
 
@@ -443,8 +523,12 @@ executor = ToolExecutor(*tools)
 parser = argparse.ArgumentParser(description='Run conversation evaluations with different API modes')
 parser.add_argument('conversations_file', help='YAML file containing conversation samples')
 parser.add_argument('model', help='Model name to use for evaluation')
-parser.add_argument('--mode', choices=['responses', 'chat_tools', 'system_prompt'], 
+parser.add_argument('--mode', choices=['responses', 'chat_tools', 'system_prompt'],
                    default='chat_tools', help='API mode to use (default: chat_tools)')
+
+if len(sys.argv) == 1:
+    parser.print_help()
+    sys.exit(1)
 
 args = parser.parse_args()
 
@@ -471,6 +555,8 @@ for conversation in conversations:
     sample_id += 1
     print(f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n")
     if args.mode == 'responses':
-        assistant_conversation(client, model, executor, conversation['messages'], sample_id, log_filename)
+        assistant_response_conversation(client, model, executor, conversation['messages'], sample_id, log_filename)
     else:
         assistant_chat_conversation(client, model, executor, conversation['messages'], sample_id, use_system_prompt, log_filename)
+
+print(f"Logged {sample_id} conversations to {log_filename}")
