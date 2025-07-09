@@ -552,6 +552,7 @@ parser.add_argument('model', help='Model name to use for evaluation')
 parser.add_argument('--mode', choices=['responses', 'chat_tools', 'system_prompt'],
                    default='chat_tools', help='API mode to use (default: chat_tools)')
 parser.add_argument('--samples', help='Comma-separated list of sample IDs to run (e.g., "1,3,5,6,10"). If not specified, runs all samples.')
+parser.add_argument('--output', help='Output log file name. If not specified, auto-generates with timestamp.')
 
 if len(sys.argv) == 1:
     parser.print_help()
@@ -584,9 +585,15 @@ if args.samples:
         print("Samples should be comma-separated integers (e.g., '1,3,5,6,10')")
         sys.exit(1)
 
-# Write directly to conversation log file with model name
-timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
+# Determine output filename
+if args.output:
+    log_filename = args.output
+    if not log_filename.endswith('.jsonl'):
+        log_filename += '.jsonl'
+else:
+    # Auto-generate filename with timestamp
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
 
 sample_id = 0
 conversations_run = 0
