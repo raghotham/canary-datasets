@@ -70,7 +70,7 @@ class ToolExecutor:
                     tool_responses.append({
                         "type": "function_call_output",
                         "call_id": getattr(tool_call, 'call_id', getattr(tool_call, 'id', None)),
-                        "output": json.dumps(result)
+                        "output": json.dumps(result),
                     })
                 except Exception as e:
                     tool_responses.append({
@@ -473,13 +473,19 @@ def assistant_chat_conversation(client, model, executor, user_messages, sample_i
         messages = updated_messages
 
         # Debug: print the messages to see what we have
-        print(f"DEBUG: Turn {turn_id} has {len(messages)} messages")
+        print(f"\nDEBUG: Turn {turn_id} has {len(messages)} messages")
         for i, msg in enumerate(messages):
             if hasattr(msg, 'model_dump'):
                 msg_dict = msg.model_dump()
             else:
                 msg_dict = msg
-            print(f"  {i}: {msg_dict.get('role', 'unknown')} - {str(msg_dict.get('content', 'no content'))[:50]}...")
+            role = msg_dict.get('role', 'unknown')
+            if 'content' in msg_dict:
+                print(f"  {i}: {role} - {str(msg_dict.get('content', 'no content'))[:50]}...")
+            elif 'tool_calls' in msg_dict:
+                print(f"  {i}: {role} - tool calls: {str(msg_dict['tool_calls'])[:50]}...")
+            else:
+                print(f"  {i}: {role} - no content")
 
         # Convert all messages to dicts for logging (handle Pydantic objects)
         messages_for_log = []
