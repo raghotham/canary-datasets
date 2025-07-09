@@ -1,0 +1,41 @@
+conversations:
+  - name: "Currency conversion example"
+    messages:
+      - "How much is 50 British pounds in Australian dollars?"
+      - "And what if I wanted to convert 200 Canadian dollars instead?"
+
+  - name: "Weather queries with unit conversion"
+    messages:
+      - "What's the weather in Boston?"
+      - "Convert that temperature to Celsius for me"
+      - "How does that compare to Tokyo's weather?"
+
+  - name: "Multi-turn reasoning"
+    messages:
+      - "I'm planning a trip. What's the weather like in Paris?"
+      - "If I have 1000 USD, how much is that when I'm there?"
+
+  - name: "Complex multi-tool scenarios"
+    messages:
+      - "I'm going to Tokyo. What's the weather like?"
+      - "If its less than 20 degrees Celsius, I'll need a jacket which costs 100 USD, but I'll buy it there. How much local currency do I need to bring?"
+
+  - name: "Edge cases and error handling"
+    messages:
+      - "What's the weather in London?"  # Not in our sample data
+      - "Convert 1000 JPY to CAD"
+
+  - name: "Unsupported unit"
+    messages:
+      - "What's the temperature in Boston in Kelvin?"  # Unsupported unit
+
+  - name: "Multiple tools in one turn"
+    messages:
+      - "What is the average temperature between Paris and Tokyo?"
+
+  - name: "Reason across multiple turns with tool call outputs"
+    messages:
+      - "Tell me about the weather in Paris"
+      - "Now tell me about Tokyo's weather"
+      - "Which city is warmer right now?"
+      - "Convert the warmer city's temperature to Celsius" 
