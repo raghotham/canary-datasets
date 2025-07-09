@@ -14,3 +14,6 @@ BASE_URL=https://api.llama.com/compat/v1 \
 OPENAI_API_KEY=`cat ~/.openai/key` \
 ./harness.py conversation_samples.yaml gpt-4o
 ```
+
+Add more functions to tools_samples.py
+Add more conversations to conversations_sample.yaml
