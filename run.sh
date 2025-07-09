@@ -12,10 +12,6 @@ OPENAI_API_KEY=$(cat ~/.llama/api/key) \
 BASE_URL=https://api.llama.com/compat/v1 \
 ./generate.py conversation_samples.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output maverick.jsonl
 
-# Store the output filename for Llama-4-Maverick
-LLAMA_OUTPUT=$(ls -t conversation_logs_Llama-4-Maverick-17B-128E-Instruct-FP8_*.jsonl | head -n 1)
-echo "Llama-4-Maverick output: $LLAMA_OUTPUT"
-
 # Run score.py with the two output files
 echo "Running score.py with the generated files..."
 ./score.py "$GPT4O_OUTPUT" "$LLAMA_OUTPUT"
