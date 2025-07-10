@@ -262,7 +262,7 @@ def lookup_employee(username: str) -> Dict[str, str]:
     """
     sample_employees = {
         "arybak": {
-            "name": "Alexey Rybak",
+            "name": "Philip K. Dick",
             "role": "Junior Vibe Coder",
             "team": "AI Platform",
             "location": "Seattle",
@@ -342,3 +342,52 @@ def get_book_info(isbn: str) -> Dict[str, str]:
     if isbn not in sample_books:
         raise ValueError(f"ISBN not found: {isbn}")
     return {"isbn": isbn, **sample_books[isbn]}
+
+
+def quadratic_roots(a: int, b: int, c: int) -> Dict[str, Union[float, str]]:
+    """
+    Find the roots of a quadratic equation ax^2 + bx + c = 0.
+    Args:
+        a: Coefficient of x^2.
+        b: Coefficient of x.
+        c: Constant term.
+    Returns:
+        Dict containing:
+            - root1: First root (float or complex)
+            - root2: Second root (float or complex)
+    """
+    import cmath
+
+    discriminant = b**2 - 4 * a * c
+    sqrt_disc = cmath.sqrt(discriminant)
+    root1 = (-b + sqrt_disc) / (2 * a)
+    root2 = (-b - sqrt_disc) / (2 * a)
+    return {
+        "root1": root1,
+        "root2": root2,
+    }
+
+
+def calculate_area(
+    base: int, height: int, unit: str = "cm"
+) -> Dict[str, Union[int, str, float]]:
+    """
+    Calculate the area of a right-angled triangle given the lengths of its base and height.
+    Args:
+        base: The length of the base of the right-angled triangle.
+        height: The height of the right-angled triangle.
+        unit: The unit of measure used. Defaults to 'cm'.
+    Returns:
+        Dict containing:
+            - base: The base length
+            - height: The height length
+            - unit: The unit of measure
+            - area: The calculated area of the triangle
+    """
+    area = 0.5 * base * height
+    return {
+        "base": base,
+        "height": height,
+        "unit": unit,
+        "area": area,
+    }
