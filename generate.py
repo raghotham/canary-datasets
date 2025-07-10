@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run --script
 #
 # /// script
-# requires-python = ">=3.8"
+# requires-python = ">=3.12"
 # dependencies = [
 #   "openai>=1.0.0",
 #   "rich",
@@ -323,6 +323,11 @@ def log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, assista
         "assistant_message": assistant_message
     }
     # pprint(turn_entry)
+    
+    # Create directory if it doesn't exist
+    import os
+    os.makedirs(os.path.dirname(log_filename), exist_ok=True)
+    
     with open(log_filename, 'a') as f:
         f.write(json.dumps(turn_entry) + '\n')
 
@@ -538,10 +543,10 @@ def load_conversations_from_yaml(filename):
     return data['conversations']
 
 import inspect
-from tools_samples import *
+from sample_tools import *
 
-# Get all functions from tools_samples module
-tools = [obj for name, obj in inspect.getmembers(sys.modules['tools_samples'])
+# Get all functions from sample_tools module
+tools = [obj for name, obj in inspect.getmembers(sys.modules['sample_tools'])
          if inspect.isfunction(obj)]
 executor = ToolExecutor(*tools)
 

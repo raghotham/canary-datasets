@@ -17,23 +17,23 @@ Generate conversation logs by running models on conversation samples.
 ```bash
 # Run all conversations with default settings
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py conversation_samples.yaml gpt-4o
+./generate.py sample_conversations.yaml gpt-4o
 
 # Run with specific mode
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py conversation_samples.yaml gpt-4o --mode chat_tools
+./generate.py sample_conversations.yaml gpt-4o --mode chat_tools
 
 # Run with custom output file
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py conversation_samples.yaml gpt-4o --output my_results.jsonl
+./generate.py sample_conversations.yaml gpt-4o --output my_results.jsonl
 
 # Run specific samples only
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py conversation_samples.yaml gpt-4o --samples 1,3,5
+./generate.py sample_conversations.yaml gpt-4o --samples 1,3,5
 
 # Combine multiple options
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py conversation_samples.yaml gpt-4o --mode chat_tools --samples 1,3,5 --output test_results.jsonl
+./generate.py sample_conversations.yaml gpt-4o --mode chat_tools --samples 1,3,5 --output test_results.jsonl
 ```
 
 ### API Modes
@@ -47,12 +47,12 @@ OPENAI_API_KEY=`cat ~/.openai/key` \
 ```bash
 # OpenAI
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py conversation_samples.yaml gpt-4o --output gpt4o.jsonl
+./generate.py sample_conversations.yaml gpt-4o --output gpt4o.jsonl
 
 # Llama
 OPENAI_API_KEY=`cat ~/.llama/api/key` \
 BASE_URL=https://api.llama.com/compat/v1 \
-./generate.py conversation_samples.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output maverick.jsonl
+./generate.py sample_conversations.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output maverick.jsonl
 
 # Llama Stack
 
@@ -62,7 +62,7 @@ uv run --with llama-stack llama stack build --template ollama --run # terminal 2
 # terminal 3
 OPENAI_API_KEY=`cat ~/.llama/stack/key` \
 BASE_URL=http://localhost:8321/v1/openai/v1 \
-./generate.py conversation_samples.yaml llama3.2 --output llama32.jsonl
+./generate.py sample_conversations.yaml llama3.2 --output llama32.jsonl
 ```
 
 ### Arguments
@@ -108,7 +108,7 @@ The script provides:
 
 ## Conversation Samples
 
-Conversations are defined in `conversation_samples.yaml` with:
+Conversations are defined in `sample_conversations.yaml` with:
 
 - `name`: Human-readable description
 - `tools`: List of available tools for this conversation
@@ -129,7 +129,7 @@ conversations:
 
 ## Tools
 
-Tools are defined in `tools_samples.py`. The system automatically:
+Tools are defined in `sample_tools.py`. The system automatically:
 
 - Discovers all functions in the module
 - Extracts type hints for argument validation
@@ -138,8 +138,8 @@ Tools are defined in `tools_samples.py`. The system automatically:
 
 ## Workflow
 
-1. **Add tools**: Define new functions in `tools_samples.py`
-2. **Add conversations**: Create new conversation samples in `conversation_samples.yaml`
+1. **Add tools**: Define new functions in `sample_tools.py`
+2. **Add conversations**: Create new conversation samples in `sample_conversations.yaml`
 3. **Generate golden dataset**: Run on a reference model (e.g., GPT-4)
 4. **Test other models**: Run on models you want to evaluate
 5. **Compare results**: Use `score.py` to compare against the golden dataset
@@ -149,12 +149,12 @@ Tools are defined in `tools_samples.py`. The system automatically:
 ```bash
 # Generate golden dataset
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py conversation_samples.yaml gpt-4o --output golden_dataset.jsonl
+./generate.py sample_conversations.yaml gpt-4o --output golden_dataset.jsonl
 
 # Test a new model
 OPENAI_API_KEY=`cat ~/.llama/api/key` \
 BASE_URL=https://api.llama.com/compat/v1 \
-./generate.py conversation_samples.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output llama_results.jsonl
+./generate.py sample_conversations.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output llama_results.jsonl
 
 # Compare results
 ./score.py golden_dataset.jsonl llama_results.jsonl
