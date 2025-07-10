@@ -258,3 +258,19 @@ conversations:
       - get_population
     messages:
       - "Schedule a meeting on 2025-07-30 at 13:00 for 60 minutes with Frank. How much to travel from New York to Chicago? Convert 120 pounds to kilograms. Also, tell me the population of Chicago."
+
+  - name: "Find roots of quadratic equation"
+    tools:
+      - quadratic_roots
+    messages:
+      - "Find the roots of a quadratic equation with coefficients a=1, b=-3, c=2."
+  - name: "Calculate area of right-angled triangle"
+    tools:
+      - calculate_area
+    messages:
+      - "Calculate the area of a right-angled triangle given the lengths of its base and height as 6cm and 10cm."
+  - name: "Calculate area with different unit"
+    tools:
+      - calculate_area
+    messages:
+      - "Calculate the area of a right-angled triangle with a base of 8 inches and a height of 12 inches."
