@@ -1,6 +1,6 @@
 # Canary Datasets
 
-A tool to create canary datasets with simple yaml-based conversations. Use 'generate' to full conversation logs by writing dialogs and functions to be used in a simple yaml file. The conversation logs capture all tool calls and tool outputs in addition to assistant and user messages. Can compare tool calls made by different models by running 'score'.
+A tool to create canary datasets with simple yaml-based conversations. Use 'generate' to use OpenAI APIs (responses and chat completions) to generate full conversation logs by writing dialogs and tools in a simple yaml file. The conversation logs capture all tool calls and tool outputs in addition to assistant and user messages. Can compare tool calls made by different models by running 'score'.
 
 ## Setup
 
