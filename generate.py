@@ -570,10 +570,26 @@ if not api_key:
     print("Error: The OPENAI_API_KEY environment variable is not set. Please set it to your OpenAI (or any other endpoint's API key) as shown in the README.")
     sys.exit(1)
 base_url = os.getenv("BASE_URL", "https://api.openai.com/v1")
-client = openai.OpenAI(api_key=api_key, base_url=base_url)
+try:
+    client = openai.OpenAI(api_key=api_key, base_url=base_url)
+except Exception as e:
+    print(f"Error initializing OpenAI client: {e}")
+    sys.exit(1)
 
 conversations_file = args.conversations_file
+
 model = args.model
+# Check if the specified model is available
+try:
+    available_models = [model.id for model in client.models.list()]
+    if model not in available_models:
+        print(f"Error: Model '{model}' is not available. Available models are:")
+        print("\n".join(available_models))
+        sys.exit(1)
+except Exception as e:
+    print(f"Error: Could not verify model availability: {e}")
+    sys.exit(1)
+
 use_system_prompt = args.mode == 'system_prompt'
 
 print(f"Loading conversations from {conversations_file}")
