@@ -31,9 +31,13 @@ OPENAI_API_KEY=`cat ~/.openai/key` \
 OPENAI_API_KEY=`cat ~/.openai/key` \
 ./generate.py sample_conversations.yaml gpt-4o --samples 1,3,5
 
+# Run with debug mode (shows API requests/responses)
+OPENAI_API_KEY=`cat ~/.openai/key` \
+./generate.py sample_conversations.yaml gpt-4o --debug
+
 # Combine multiple options
 OPENAI_API_KEY=`cat ~/.openai/key` \
-./generate.py sample_conversations.yaml gpt-4o --mode chat_tools --samples 1,3,5 --output test_results.jsonl
+./generate.py sample_conversations.yaml gpt-4o --mode chat_tools --samples 1,3,5 --output test_results.jsonl --debug
 ```
 
 ### API Modes
@@ -54,8 +58,7 @@ OPENAI_API_KEY=`cat ~/.llama/api/key` \
 BASE_URL=https://api.llama.com/compat/v1 \
 ./generate.py sample_conversations.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output maverick.jsonl
 
-# Llama Stack
-
+# Local Llama Stack
 ollama run llama3.2 --keepalive 60m # terminal 1
 uv run --with llama-stack llama stack build --template ollama --run # terminal 2
 
@@ -63,7 +66,6 @@ uv run --with llama-stack llama stack build --template ollama --run # terminal 2
 OPENAI_API_KEY=`cat ~/.llama/stack/key` \
 BASE_URL=http://localhost:8321/v1/openai/v1 \
 ./generate.py sample_conversations.yaml llama3.2 --output llama32.jsonl
-```
 
 ### Arguments
 
@@ -72,6 +74,7 @@ BASE_URL=http://localhost:8321/v1/openai/v1 \
 - `--mode`: API mode to use (default: chat_tools)
 - `--samples`: Comma-separated list of sample IDs to run (e.g., "1,3,5,6,10")
 - `--output`: Output log file name (auto-adds .jsonl if needed)
+- `--debug`: Enable debug mode to print API requests and responses
 
 ## Score
 
@@ -85,6 +88,9 @@ Compare tool calls between two conversation log files.
 
 # Compare with custom output files
 ./score.py gpt4o.jsonl llama32.jsonl
+
+# Compare files in different directories
+./score.py generate_samples/gpt4o.jsonl generate_samples/llama32.jsonl
 ```
 
 ### Comparison Types
@@ -151,11 +157,44 @@ Tools are defined in `sample_tools.py`. The system automatically:
 OPENAI_API_KEY=`cat ~/.openai/key` \
 ./generate.py sample_conversations.yaml gpt-4o --output golden_dataset.jsonl
 
-# Test a new model
+# Test a new model with debug mode
 OPENAI_API_KEY=`cat ~/.llama/api/key` \
 BASE_URL=https://api.llama.com/compat/v1 \
-./generate.py sample_conversations.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output llama_results.jsonl
+./generate.py sample_conversations.yaml Llama-4-Maverick-17B-128E-Instruct-FP8 --output llama_results.jsonl --debug
 
 # Compare results
 ./score.py golden_dataset.jsonl llama_results.jsonl
+
+# Run specific samples for quick testing
+OPENAI_API_KEY=`cat ~/.openai/key` \
+./generate.py sample_conversations.yaml gpt-4o --samples 1,3 --output quick_test.jsonl
+
+# Debug API issues
+OPENAI_API_KEY=`cat ~/.llama/stack/key` \
+BASE_URL=http://localhost:8321/v1/openai/v1 \
+./generate.py sample_conversations.yaml llama3.2:3b --samples 1 --debug
+```
+
+## Debug Mode
+
+Use `--debug` to troubleshoot API issues:
+
+- **Shows API requests**: See exactly what's being sent to the model
+- **Shows API responses**: See the complete response from the model
+- **No turn entry clutter**: Clean output focused on API communication
+- **Useful for**: Debugging API format issues, understanding model behavior, troubleshooting tool call problems
+
+## File Structure
+
+```
+.
+├── generate.py              # Main generation script
+├── score.py                 # Comparison script
+├── sample_conversations.yaml # Conversation definitions
+├── sample_tools.py          # Tool function definitions
+├── README.md               # This file
+└── generate_samples/       # Output directory (auto-created)
+    ├── gpt4o.jsonl
+    ├── llama32.jsonl
+    └── ...
 ```

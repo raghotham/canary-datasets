@@ -121,14 +121,49 @@ class ToolExecutor:
 
     def get_system_prompt(self) -> str:
         """Generate system prompt with tool definitions in JSON format."""
-        tool_schemas = self.get_chat_tool_schemas()
-        system_prompt = "You have access to the following tools:\n\n"
-        for tool in tool_schemas:
-            system_prompt += f"Tool: {tool['function']['name']}\n"
-            system_prompt += f"Description: {tool['function']['description']}\n"
-            system_prompt += f"Parameters: {json.dumps(tool['function']['parameters'], indent=2)}\n\n"
-        system_prompt += "Use these tools when needed to answer user questions. Do not use tools if you don't have to. When using tools, make sure to specify them as json with the format: {\"name\": \"tool_name\", \"arguments\": {\"arg_name\": \"arg_value\"}}"
+        system_prompt = """You are a helpful assistant and an expert in function composition. You can answer general questions using your internal knowledge OR invoke functions when necessary. Follow these strict guidelines:
+
+1. FUNCTION CALLS:
+- ONLY use functions that are EXPLICITLY listed in the function list below
+- If NO functions are listed (empty function list []), respond ONLY with internal knowledge or "I don't have access to [Unavailable service] information"
+- If a function is not in the list, respond ONLY with internal knowledge or "I don't have access to [Unavailable service] information"
+- If ALL required parameters are present AND the query EXACTLY matches a listed function's purpose: output ONLY the function call(s)
+- Use exact format: [{"name":"func_name1","arguments":{"param1":"value1","param2":"value2"}}, {"name":"func_name2","arguments":{...}}]
+Examples:
+CORRECT: [{"name":"get_weather","arguments":{"location":"Vancouver"}}, {"name":"calculate_route","arguments":{"start":"Boston","end":"New York"}}] <- Only if get_weather and calculate_route are in function list
+INCORRECT: {"name":"get_weather","arguments":{"location":"New York"}}
+INCORRECT: Let me check the weather: [{"name":"get_weather","arguments":{"location":"New York"}}]
+INCORRECT: [{"name":"get_events","arguments":{"location":"Singapore"}}] <- If function not in list
+
+2. RESPONSE RULES:
+- For pure function requests matching a listed function: ONLY output the function call(s)
+- For knowledge questions: ONLY output text
+- For missing parameters: ONLY request the specific missing parameters
+- For unavailable services (not in function list): output ONLY with internal knowledge or "I don't have access to [Unavailable service] information". Do NOT execute a function call.
+- If the query asks for information beyond what a listed function provides: output ONLY with internal knowledge about your limitations
+- NEVER combine text and function calls in the same response
+- NEVER suggest alternative functions when the requested service is unavailable
+- NEVER create or invent new functions not listed below
+
+3. STRICT BOUNDARIES:
+- ONLY use functions from the list below - no exceptions
+- NEVER use a function as an alternative to unavailable information
+- NEVER call functions not present in the function list
+- NEVER add explanatory text to function calls
+- NEVER respond with empty brackets
+- Use proper JSON syntax for function calls
+- Check the function list carefully before responding
+
+4. TOOL RESPONSE HANDLING:
+- When receiving tool responses: provide concise, natural language responses
+- Don't repeat tool response verbatim
+- Don't add supplementary information
+
+Here is a list of functions in JSON format that you can invoke:\n\n"""
+
+        system_prompt += json.dumps(self.get_tool_schemas(), indent=2)
         return system_prompt
+
 
     def _generate_tool_schema(self, func, chat_format=False) -> Dict[str, Any]:
         """Generate OpenAI tool schema from a Python function's type hints and docstring."""
@@ -322,14 +357,13 @@ def log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, assista
         "tool_outputs": tool_outputs,
         "assistant_message": assistant_message
     }
-    # pprint(turn_entry)
-    
-    # Create directory if it doesn't exist
-    import os
-    os.makedirs(os.path.dirname(log_filename), exist_ok=True)
-    
-    with open(log_filename, 'a') as f:
-        f.write(json.dumps(turn_entry) + '\n')
+
+    try:
+        with open(log_filename, 'a') as f:
+            f.write(json.dumps(turn_entry) + '\n')
+    except Exception as e:
+        print(f"Error writing to log file {log_filename}: {e}")
+        sys.exit(1)
 
 def execute_response_turn(client, model, executor, previous_id, user_message, sample_id, turn_id):
     inputs = [{
@@ -427,7 +461,7 @@ def assistant_response_conversation(client, model, executor, user_messages, samp
 
         log_turn(sample_id, turn_id, user_message, tool_calls, tool_outputs, response, messages, model, log_filename)
 
-def execute_chat_turn(client, model, executor, messages, user_message, use_system_prompt):
+def execute_chat_turn(client, model, executor, messages, user_message, use_system_prompt, debug=False):
     # Add new user message to conversation
     messages.append({"role": "user", "content": user_message})
 
@@ -454,9 +488,11 @@ def execute_chat_turn(client, model, executor, messages, user_message, use_syste
             request_params["tools"] = executor.get_chat_tool_schemas()
 
         # Make chat completion request
-        #pprint(request_params)
+        if debug:
+            pprint(request_params)
         resp = client.chat.completions.create(**request_params)
-        #pprint(resp)
+        if debug:
+            pprint(resp)
         assistant_message = resp.choices[0].message
         messages.append(assistant_message)
 
@@ -467,11 +503,21 @@ def execute_chat_turn(client, model, executor, messages, user_message, use_syste
         # Handle tool calls
         tool_calls = assistant_message.tool_calls
         for tool_call in tool_calls:
-            all_tool_calls.append({
-                "call_id": tool_call.id,
-                "name": tool_call.function.name,
-                "arguments": tool_call.function.arguments
-            })
+            # Check if we need to use the older format for local APIs
+            if hasattr(tool_call, 'call_id'):
+                # Older format
+                all_tool_calls.append({
+                    "call_id": tool_call.call_id,
+                    "name": tool_call.tool_name,
+                    "arguments": tool_call.arguments
+                })
+            else:
+                # Standard OpenAI format
+                all_tool_calls.append({
+                    "call_id": tool_call.id,
+                    "name": tool_call.function.name,
+                    "arguments": tool_call.function.arguments
+                })
 
         tool_outputs = executor.execute(tool_calls)
         for tool_output in tool_outputs:
@@ -485,11 +531,11 @@ def execute_chat_turn(client, model, executor, messages, user_message, use_syste
                 "content": str(tool_output['output'])
             })
 
-def assistant_chat_conversation(client, model, executor, user_messages, sample_id, use_system_prompt, log_filename):
+def assistant_chat_conversation(client, model, executor, user_messages, sample_id, use_system_prompt, log_filename, debug=False):
     messages = []  # Track full conversation history
     for turn_id, user_message in enumerate(user_messages, 1):
         response, updated_messages, tool_calls, tool_outputs = execute_chat_turn(
-            client, model, executor, messages, user_message, use_system_prompt
+            client, model, executor, messages, user_message, use_system_prompt, debug
         )
 
         # Update our messages list with the returned messages
@@ -558,6 +604,7 @@ parser.add_argument('--mode', choices=['responses', 'chat_tools', 'system_prompt
                    default='chat_tools', help='API mode to use (default: chat_tools)')
 parser.add_argument('--samples', help='Comma-separated list of sample IDs to run (e.g., "1,3,5,6,10"). If not specified, runs all samples.')
 parser.add_argument('--output', help='Output log file name. If not specified, auto-generates with timestamp.')
+parser.add_argument('--debug', action='store_true', help='Enable debug mode to print requests and responses')
 
 if len(sys.argv) == 1:
     parser.print_help()
@@ -591,6 +638,7 @@ except Exception as e:
     sys.exit(1)
 
 use_system_prompt = args.mode == 'system_prompt'
+debug = args.debug
 
 print(f"Loading conversations from {conversations_file}")
 conversations = load_conversations_from_yaml(conversations_file)
@@ -642,6 +690,6 @@ for conversation in conversations:
     if args.mode == 'responses':
         assistant_response_conversation(client, model, conversation_executor, conversation['messages'], sample_id, log_filename)
     else:
-        assistant_chat_conversation(client, model, conversation_executor, conversation['messages'], sample_id, use_system_prompt, log_filename)
+        assistant_chat_conversation(client, model, conversation_executor, conversation['messages'], sample_id, use_system_prompt, log_filename, debug)
 
 print(f"Logged {conversations_run} conversations to {log_filename}")
