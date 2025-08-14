@@ -453,6 +453,17 @@ def get_trains(from_city: str, to_city: str) -> Dict[str, Union[str, list]]:
             {"departure": "09:25", "arrival": "16:28", "train": "EuroCity"},
             {"departure": "17:25", "arrival": "00:28", "train": "EuroCity"},
         ],
+        ("Athens", "Thessaloniki"): [
+            {"departure": "06:22", "arrival": "10:37", "train": "InterCity"},
+            {"departure": "08:22", "arrival": "12:37", "train": "InterCity"},
+            {"departure": "14:22", "arrival": "18:37", "train": "InterCity"},
+            {"departure": "20:22", "arrival": "00:37", "train": "InterCity Express"},
+        ],
+        ("Athens", "Patras"): [
+            {"departure": "07:00", "arrival": "10:30", "train": "Proastiakos"},
+            {"departure": "12:00", "arrival": "15:30", "train": "Proastiakos"},
+            {"departure": "17:00", "arrival": "20:30", "train": "Proastiakos"},
+        ],
     }
 
     # Normalize city names to title case
@@ -741,6 +752,66 @@ def get_flights(from_city: str, to_city: str) -> Dict[str, Union[str, list]]:
                 "flight": "TN102",
             },
         ],
+        ("Athens", "Rome"): [
+            {
+                "departure": "07:45",
+                "arrival": "09:00",
+                "airline": "Aegean Airlines",
+                "flight": "A3650",
+            },
+            {
+                "departure": "13:30",
+                "arrival": "14:45",
+                "airline": "ITA Airways",
+                "flight": "AZ717",
+            },
+            {
+                "departure": "19:15",
+                "arrival": "20:30",
+                "airline": "Aegean Airlines",
+                "flight": "A3654",
+            },
+        ],
+        ("Athens", "Istanbul"): [
+            {
+                "departure": "06:00",
+                "arrival": "09:30",
+                "airline": "Turkish Airlines",
+                "flight": "TK1842",
+            },
+            {
+                "departure": "11:45",
+                "arrival": "15:15",
+                "airline": "Aegean Airlines",
+                "flight": "A3992",
+            },
+            {
+                "departure": "18:30",
+                "arrival": "22:00",
+                "airline": "Turkish Airlines",
+                "flight": "TK1846",
+            },
+        ],
+        ("Athens", "London"): [
+            {
+                "departure": "06:00",
+                "arrival": "08:05",
+                "airline": "British Airways",
+                "flight": "BA632",
+            },
+            {
+                "departure": "11:15",
+                "arrival": "13:20",
+                "airline": "Aegean Airlines",
+                "flight": "A3600",
+            },
+            {
+                "departure": "15:40",
+                "arrival": "17:45",
+                "airline": "EasyJet",
+                "flight": "U28082",
+            },
+        ],
     }
 
     # Normalize city names to title case
@@ -980,6 +1051,38 @@ def get_refreshments(city: str) -> Dict[str, Union[str, list]]:
                 "type": "Refreshment Hut",
                 "address": "Otemanu Trail",
                 "specialties": ["water", "energy drinks", "fruit"],
+            },
+        ],
+        "Athens": [
+            {
+                "name": "Acropolis Cafe",
+                "type": "Cafe",
+                "address": "Acropolis Museum",
+                "specialties": ["coffee", "frappe", "water", "Greek pastries"],
+            },
+            {
+                "name": "Plaka Refreshments",
+                "type": "Traditional Kiosk",
+                "address": "Plaka District",
+                "specialties": ["water", "soda", "fresh orange juice", "loukoumades"],
+            },
+            {
+                "name": "Syntagma Square Drinks",
+                "type": "Stand",
+                "address": "Syntagma Square",
+                "specialties": ["water", "iced coffee", "lemonade"],
+            },
+            {
+                "name": "National Garden Cafe",
+                "type": "Garden Cafe",
+                "address": "National Garden",
+                "specialties": ["water", "juice", "Greek coffee", "ice cream"],
+            },
+            {
+                "name": "Monastiraki Market Bar",
+                "type": "Market Stall",
+                "address": "Monastiraki Flea Market",
+                "specialties": ["water", "ouzo", "beer", "mezze"],
             },
         ],
     }
