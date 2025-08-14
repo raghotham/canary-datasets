@@ -1,4 +1,11 @@
 conversations:
+  - name: complex single turn
+    tools:
+      - get_trains
+      - get_flights
+      - get_refreshments
+    messages:
+      - Whew I have been on an inter-rail journey for 3 weeks already! I started from Budapest and made my way to Poland and then to the German capital via Athensl! I could really go for a cold sprite before heading to Bora Bora though, where can I get some?
   - name: "Currency conversion example"
     tools:
       - convert_currency

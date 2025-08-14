@@ -19,7 +19,6 @@ import argparse
 from rich.pretty import pprint
 from typing import (
     Any,
-    Boolean,
     Dict,
     List,
     Literal,
@@ -147,7 +146,7 @@ class ToolExecutor:
             tool_schemas.append(self._generate_tool_schema(func, chat_format=True))
         return tool_schemas
 
-    def get_system_prompt(self, py: Boolean = False) -> str:
+    def get_system_prompt(self, py: bool = False) -> str:
         """Generate system prompt with tool definitions in JSON format."""
         system_prompt = """You are a helpful assistant and an expert in function composition. You can answer general questions using your internal knowledge OR invoke functions when necessary. Follow these strict guidelines:
 
@@ -701,7 +700,7 @@ def assistant_chat_conversation(
                         for tc in tool_calls
                     ]
                 )
-                print(f"  {i}: {role} - git {tool_calls_str}")
+                print(f"  {i}: {role} - tool_calls: {tool_calls_str}")
             else:
                 print(f"  {i}: {role} - no content")
 
