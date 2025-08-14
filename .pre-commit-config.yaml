@@ -1,0 +1,156 @@
+exclude: 'build/'
+
+default_language_version:
+    python: python3.12
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0  # Latest stable version
+    hooks:
+    -   id: check-merge-conflict
+        args: ['--assume-in-merge']
+    -   id: trailing-whitespace
+        exclude: '\.py$'  # Exclude Python files as Ruff already handles them
+    -   id: check-added-large-files
+        args: ['--maxkb=1000']
+    -   id: end-of-file-fixer
+        exclude: '^(.*\.svg|.*\.md)$'
+    -   id: no-commit-to-branch
+    -   id: check-yaml
+        args: ["--unsafe"]
+    -   id: detect-private-key
+    -   id: mixed-line-ending
+        args: [--fix=lf] # Forces to replace line ending by LF (line feed)
+    -   id: check-executables-have-shebangs
+    -   id: check-json
+    -   id: check-shebang-scripts-are-executable
+    -   id: check-symlinks
+    -   id: check-toml
+
+-   repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+    -   id: insert-license
+        files: \.py$|\.sh$
+        args:
+          - --license-filepath
+          - docs/license_header.txt
+
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.2
+    hooks:
+    -   id: ruff
+        args: [ --fix ]
+        exclude: ^llama_stack/strong_typing/.*$
+    -   id: ruff-format
+
+-   repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.19.1
+    hooks:
+    -   id: blacken-docs
+        additional_dependencies:
+        - black==24.3.0
+
+-   repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.20
+    hooks:
+    -   id: uv-lock
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.16.1
+    hooks:
+    -   id: mypy
+        additional_dependencies:
+          - uv==0.6.2
+          - mypy
+          - pytest
+          - rich
+          - types-requests
+          - pydantic
+        pass_filenames: false
+
+# - repo: https://github.com/tcort/markdown-link-check
+#   rev: v3.11.2
+#   hooks:
+#     - id: markdown-link-check
+#       args: ['--quiet']
+
+-   repo: local
+    hooks:
+      - id: distro-codegen
+        name: Distribution Template Codegen
+        additional_dependencies:
+          - uv==0.7.8
+        entry: uv run --group codegen ./scripts/distro_codegen.py
+        language: python
+        pass_filenames: false
+        require_serial: true
+        files: ^llama_stack/templates/.*$|^llama_stack/providers/.*/inference/.*/models\.py$
+      - id: provider-codegen
+        name: Provider Codegen
+        additional_dependencies:
+          - uv==0.7.8
+        entry: uv run --group codegen ./scripts/provider_codegen.py
+        language: python
+        pass_filenames: false
+        require_serial: true
+        files: ^llama_stack/providers/.*$
+      - id: openapi-codegen
+        name: API Spec Codegen
+        additional_dependencies:
+          - uv==0.7.8
+        entry: sh -c 'uv run ./docs/openapi_generator/run_openapi_generator.sh > /dev/null'
+        language: python
+        pass_filenames: false
+        require_serial: true
+        files: ^llama_stack/apis/|^docs/openapi_generator/
+      - id: check-workflows-use-hashes
+        name: Check GitHub Actions use SHA-pinned actions
+        entry: ./scripts/check-workflows-use-hashes.sh
+        language: system
+        pass_filenames: false
+        require_serial: true
+        always_run: true
+        files: ^\.github/workflows/.*\.ya?ml$
+      - id: check-init-py
+        name: Check for missing __init__.py files
+        entry: ./scripts/check-init-py.sh
+        language: system
+        pass_filenames: false
+        require_serial: true
+        always_run: true
+        files: ^llama_stack/.*$
+      - id: forbid-pytest-asyncio
+        name: Block @pytest.mark.asyncio and @pytest_asyncio.fixture
+        entry: bash
+        language: system
+        types: [python]
+        pass_filenames: true
+        args:
+          - -c
+          - |
+            grep -EnH '^[^#]*@pytest\.mark\.asyncio|@pytest_asyncio\.fixture' "$@" && {
+              echo;
+              echo "❌ Do not use @pytest.mark.asyncio or @pytest_asyncio.fixture."
+              echo "   pytest is already configured with async-mode=auto."
+              echo;
+              exit 1;
+            } || true
+      - id: generate-ci-docs
+        name: Generate CI documentation
+        additional_dependencies:
+          - uv==0.7.8
+        entry: uv run ./scripts/gen-ci-docs.py
+        language: python
+        pass_filenames: false
+        require_serial: true
+        files: ^.github/workflows/.*$
+
+ci:
+    autofix_commit_msg: 🎨 [pre-commit.ci] Auto format from pre-commit.com hooks
+    autoupdate_commit_msg: ⬆ [pre-commit.ci] pre-commit autoupdate
+    autofix_prs: true
+    autoupdate_branch: ''
+    autoupdate_schedule: weekly
+    skip: []
+    submodules: false

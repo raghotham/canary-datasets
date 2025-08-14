@@ -391,3 +391,621 @@ def calculate_area(
         "unit": unit,
         "area": area,
     }
+
+
+def get_trains(from_city: str, to_city: str) -> Dict[str, Union[str, list]]:
+    """
+    Returns train routes for a given day from one city to another.
+
+    Args:
+        from_city: The city to depart from
+        to_city: The destination city
+
+    Returns:
+        Dict containing:
+            - from_city: Departure city
+            - to_city: Destination city
+            - routes: List of available train routes with times and train types
+    """
+    # Sample train routes data
+    train_routes = {
+        ("New York", "Boston"): [
+            {"departure": "06:00", "arrival": "10:15", "train": "Acela Express"},
+            {"departure": "09:30", "arrival": "13:45", "train": "Northeast Regional"},
+            {"departure": "14:00", "arrival": "18:20", "train": "Northeast Regional"},
+            {"departure": "18:00", "arrival": "22:15", "train": "Acela Express"},
+        ],
+        ("Chicago", "Milwaukee"): [
+            {"departure": "07:15", "arrival": "08:45", "train": "Hiawatha"},
+            {"departure": "12:00", "arrival": "13:30", "train": "Hiawatha"},
+            {"departure": "17:30", "arrival": "19:00", "train": "Hiawatha"},
+        ],
+        ("San Francisco", "Los Angeles"): [
+            {"departure": "08:00", "arrival": "20:30", "train": "Coast Starlight"},
+        ],
+        ("Seattle", "Portland"): [
+            {"departure": "07:30", "arrival": "11:00", "train": "Cascades"},
+            {"departure": "13:15", "arrival": "16:45", "train": "Cascades"},
+            {"departure": "18:00", "arrival": "21:30", "train": "Cascades"},
+        ],
+        ("Paris", "London"): [
+            {"departure": "07:13", "arrival": "08:39", "train": "Eurostar"},
+            {"departure": "11:13", "arrival": "12:39", "train": "Eurostar"},
+            {"departure": "17:13", "arrival": "18:39", "train": "Eurostar"},
+        ],
+        ("Berlin", "Munich"): [
+            {"departure": "06:00", "arrival": "10:00", "train": "ICE"},
+            {"departure": "10:00", "arrival": "14:00", "train": "ICE"},
+            {"departure": "14:00", "arrival": "18:00", "train": "ICE"},
+            {"departure": "18:00", "arrival": "22:00", "train": "ICE"},
+        ],
+        ("Berlin", "Prague"): [
+            {"departure": "08:30", "arrival": "13:00", "train": "EuroCity"},
+            {"departure": "14:30", "arrival": "19:00", "train": "EuroCity"},
+        ],
+        ("Budapest", "Vienna"): [
+            {"departure": "07:40", "arrival": "10:18", "train": "Railjet"},
+            {"departure": "11:40", "arrival": "14:18", "train": "Railjet"},
+            {"departure": "15:40", "arrival": "18:18", "train": "Railjet"},
+            {"departure": "19:40", "arrival": "22:18", "train": "Railjet"},
+        ],
+        ("Budapest", "Prague"): [
+            {"departure": "09:25", "arrival": "16:28", "train": "EuroCity"},
+            {"departure": "17:25", "arrival": "00:28", "train": "EuroCity"},
+        ],
+    }
+
+    # Normalize city names to title case
+    from_normalized = from_city.title()
+    to_normalized = to_city.title()
+
+    # Try both directions (from->to and to->from)
+    routes = train_routes.get((from_normalized, to_normalized))
+    if routes is None:
+        # Try reverse direction
+        routes = train_routes.get((to_normalized, from_normalized))
+        if routes:
+            # Swap arrival and departure times for reverse routes
+            routes = [
+                {
+                    "departure": r["arrival"],
+                    "arrival": r["departure"],
+                    "train": r["train"],
+                }
+                for r in routes
+            ]
+
+    if routes is None:
+        raise ValueError(
+            f"No train routes found from {from_normalized} to {to_normalized}"
+        )
+
+    return {
+        "from_city": from_normalized,
+        "to_city": to_normalized,
+        "routes": routes,
+    }
+
+
+def get_flights(from_city: str, to_city: str) -> Dict[str, Union[str, list]]:
+    """
+    Returns flight routes for a given day from one city to another.
+
+    Args:
+        from_city: The city to depart from
+        to_city: The destination city
+
+    Returns:
+        Dict containing:
+            - from_city: Departure city
+            - to_city: Destination city
+            - flights: List of available flights with times and airlines
+    """
+    # Sample flight routes data
+    flight_routes = {
+        ("New York", "Los Angeles"): [
+            {
+                "departure": "06:00",
+                "arrival": "09:15",
+                "airline": "American Airlines",
+                "flight": "AA100",
+            },
+            {
+                "departure": "09:30",
+                "arrival": "12:45",
+                "airline": "United",
+                "flight": "UA250",
+            },
+            {
+                "departure": "14:00",
+                "arrival": "17:15",
+                "airline": "JetBlue",
+                "flight": "B6523",
+            },
+            {
+                "departure": "19:00",
+                "arrival": "22:15",
+                "airline": "Delta",
+                "flight": "DL410",
+            },
+        ],
+        ("Chicago", "Miami"): [
+            {
+                "departure": "07:00",
+                "arrival": "11:30",
+                "airline": "United",
+                "flight": "UA1234",
+            },
+            {
+                "departure": "13:00",
+                "arrival": "17:30",
+                "airline": "American Airlines",
+                "flight": "AA567",
+            },
+            {
+                "departure": "18:30",
+                "arrival": "23:00",
+                "airline": "Southwest",
+                "flight": "WN890",
+            },
+        ],
+        ("San Francisco", "Seattle"): [
+            {
+                "departure": "07:00",
+                "arrival": "09:15",
+                "airline": "Alaska",
+                "flight": "AS301",
+            },
+            {
+                "departure": "11:30",
+                "arrival": "13:45",
+                "airline": "United",
+                "flight": "UA788",
+            },
+            {
+                "departure": "16:00",
+                "arrival": "18:15",
+                "airline": "Alaska",
+                "flight": "AS455",
+            },
+            {
+                "departure": "20:00",
+                "arrival": "22:15",
+                "airline": "Southwest",
+                "flight": "WN999",
+            },
+        ],
+        ("London", "Paris"): [
+            {
+                "departure": "06:30",
+                "arrival": "08:45",
+                "airline": "British Airways",
+                "flight": "BA304",
+            },
+            {
+                "departure": "10:00",
+                "arrival": "12:15",
+                "airline": "Air France",
+                "flight": "AF1081",
+            },
+            {
+                "departure": "15:30",
+                "arrival": "17:45",
+                "airline": "EasyJet",
+                "flight": "U28323",
+            },
+            {
+                "departure": "19:00",
+                "arrival": "21:15",
+                "airline": "British Airways",
+                "flight": "BA318",
+            },
+        ],
+        ("Tokyo", "Seoul"): [
+            {
+                "departure": "08:00",
+                "arrival": "10:30",
+                "airline": "ANA",
+                "flight": "NH861",
+            },
+            {
+                "departure": "13:00",
+                "arrival": "15:30",
+                "airline": "Korean Air",
+                "flight": "KE704",
+            },
+            {
+                "departure": "18:00",
+                "arrival": "20:30",
+                "airline": "Asiana",
+                "flight": "OZ105",
+            },
+        ],
+        ("Berlin", "Frankfurt"): [
+            {
+                "departure": "07:00",
+                "arrival": "08:15",
+                "airline": "Lufthansa",
+                "flight": "LH172",
+            },
+            {
+                "departure": "10:00",
+                "arrival": "11:15",
+                "airline": "Lufthansa",
+                "flight": "LH176",
+            },
+            {
+                "departure": "14:00",
+                "arrival": "15:15",
+                "airline": "Lufthansa",
+                "flight": "LH180",
+            },
+            {
+                "departure": "18:00",
+                "arrival": "19:15",
+                "airline": "Lufthansa",
+                "flight": "LH184",
+            },
+        ],
+        ("Berlin", "Amsterdam"): [
+            {
+                "departure": "06:45",
+                "arrival": "08:10",
+                "airline": "KLM",
+                "flight": "KL1822",
+            },
+            {
+                "departure": "11:30",
+                "arrival": "12:55",
+                "airline": "EasyJet",
+                "flight": "U25673",
+            },
+            {
+                "departure": "17:00",
+                "arrival": "18:25",
+                "airline": "KLM",
+                "flight": "KL1826",
+            },
+        ],
+        ("Budapest", "Rome"): [
+            {
+                "departure": "06:00",
+                "arrival": "07:45",
+                "airline": "Ryanair",
+                "flight": "FR8412",
+            },
+            {
+                "departure": "11:30",
+                "arrival": "13:15",
+                "airline": "Wizz Air",
+                "flight": "W62311",
+            },
+            {
+                "departure": "18:45",
+                "arrival": "20:30",
+                "airline": "Alitalia",
+                "flight": "AZ481",
+            },
+        ],
+        ("Budapest", "Berlin"): [
+            {
+                "departure": "07:20",
+                "arrival": "08:50",
+                "airline": "EasyJet",
+                "flight": "U24892",
+            },
+            {
+                "departure": "13:15",
+                "arrival": "14:45",
+                "airline": "Ryanair",
+                "flight": "FR2516",
+            },
+            {
+                "departure": "19:00",
+                "arrival": "20:30",
+                "airline": "Wizz Air",
+                "flight": "W62468",
+            },
+        ],
+        ("Tahiti", "Bora Bora"): [
+            {
+                "departure": "07:00",
+                "arrival": "07:50",
+                "airline": "Air Tahiti",
+                "flight": "VT272",
+            },
+            {
+                "departure": "10:30",
+                "arrival": "11:20",
+                "airline": "Air Tahiti",
+                "flight": "VT274",
+            },
+            {
+                "departure": "15:00",
+                "arrival": "15:50",
+                "airline": "Air Tahiti",
+                "flight": "VT276",
+            },
+            {
+                "departure": "17:30",
+                "arrival": "18:20",
+                "airline": "Air Tahiti",
+                "flight": "VT278",
+            },
+        ],
+        ("Los Angeles", "Bora Bora"): [
+            {
+                "departure": "23:00",
+                "arrival": "06:45+1",
+                "airline": "Air Tahiti Nui",
+                "flight": "TN102",
+            },
+        ],
+    }
+
+    # Normalize city names to title case
+    from_normalized = from_city.title()
+    to_normalized = to_city.title()
+
+    # Try to find flights
+    flights = flight_routes.get((from_normalized, to_normalized))
+    if flights is None:
+        # Try reverse direction (some routes might be bidirectional)
+        flights = flight_routes.get((to_normalized, from_normalized))
+        if flights:
+            # For reverse routes, swap times and adjust flight numbers
+            flights = [
+                {
+                    "departure": f["arrival"],
+                    "arrival": f["departure"],
+                    "airline": f["airline"],
+                    "flight": f["flight"] + "R",  # Add R for return flight
+                }
+                for f in flights
+            ]
+
+    if flights is None:
+        raise ValueError(f"No flights found from {from_normalized} to {to_normalized}")
+
+    return {
+        "from_city": from_normalized,
+        "to_city": to_normalized,
+        "flights": flights,
+    }
+
+
+def get_refreshments(city: str) -> Dict[str, Union[str, list]]:
+    """
+    Returns a list of venues in a given city that offer refreshments such as water or soda.
+
+    Args:
+        city: The city to search
+
+    Returns:
+        Dict containing:
+            - city: The city searched
+            - venues: List of venues offering refreshments with details
+    """
+    # Sample refreshment venues data
+    refreshment_venues = {
+        "New York": [
+            {
+                "name": "Central Park Cafe",
+                "type": "Cafe",
+                "address": "Central Park West",
+                "specialties": ["coffee", "water", "soda", "sandwiches"],
+            },
+            {
+                "name": "Times Square Refreshments",
+                "type": "Kiosk",
+                "address": "Times Square",
+                "specialties": ["water", "soda", "snacks"],
+            },
+            {
+                "name": "Brooklyn Bridge Beverages",
+                "type": "Food Truck",
+                "address": "Brooklyn Bridge Park",
+                "specialties": ["water", "juice", "soda", "ice cream"],
+            },
+            {
+                "name": "Grand Central Market",
+                "type": "Market",
+                "address": "Grand Central Terminal",
+                "specialties": ["water", "soda", "coffee", "fresh juice"],
+            },
+        ],
+        "San Francisco": [
+            {
+                "name": "Golden Gate Refreshments",
+                "type": "Stand",
+                "address": "Golden Gate Park",
+                "specialties": ["water", "soda", "coffee"],
+            },
+            {
+                "name": "Fisherman's Wharf Drinks",
+                "type": "Kiosk",
+                "address": "Fisherman's Wharf",
+                "specialties": ["water", "soda", "local beverages"],
+            },
+            {
+                "name": "Union Square Cafe",
+                "type": "Cafe",
+                "address": "Union Square",
+                "specialties": ["coffee", "tea", "water", "pastries"],
+            },
+        ],
+        "Chicago": [
+            {
+                "name": "Millennium Park Refreshments",
+                "type": "Stand",
+                "address": "Millennium Park",
+                "specialties": ["water", "soda", "ice tea"],
+            },
+            {
+                "name": "Navy Pier Beverages",
+                "type": "Kiosk",
+                "address": "Navy Pier",
+                "specialties": ["water", "soda", "lemonade"],
+            },
+            {
+                "name": "Loop Cafe",
+                "type": "Cafe",
+                "address": "The Loop",
+                "specialties": ["coffee", "water", "juice", "sandwiches"],
+            },
+        ],
+        "London": [
+            {
+                "name": "Hyde Park Corner Cafe",
+                "type": "Cafe",
+                "address": "Hyde Park",
+                "specialties": ["tea", "water", "soda", "scones"],
+            },
+            {
+                "name": "Covent Garden Refreshments",
+                "type": "Stand",
+                "address": "Covent Garden",
+                "specialties": ["water", "soda", "fresh juice"],
+            },
+            {
+                "name": "Thames Riverside Kiosk",
+                "type": "Kiosk",
+                "address": "Thames Path",
+                "specialties": ["water", "soda", "ice cream"],
+            },
+        ],
+        "Tokyo": [
+            {
+                "name": "Shibuya Station Drinks",
+                "type": "Vending Area",
+                "address": "Shibuya Station",
+                "specialties": ["water", "tea", "soda", "coffee"],
+            },
+            {
+                "name": "Ueno Park Refreshments",
+                "type": "Stand",
+                "address": "Ueno Park",
+                "specialties": ["water", "green tea", "ramune"],
+            },
+            {
+                "name": "Ginza Cafe",
+                "type": "Cafe",
+                "address": "Ginza District",
+                "specialties": ["coffee", "tea", "water", "pastries"],
+            },
+        ],
+        "Berlin": [
+            {
+                "name": "Brandenburg Gate Cafe",
+                "type": "Cafe",
+                "address": "Pariser Platz",
+                "specialties": ["coffee", "water", "beer", "pretzels"],
+            },
+            {
+                "name": "Tiergarten Refreshments",
+                "type": "Stand",
+                "address": "Tiergarten Park",
+                "specialties": ["water", "soda", "ice cream"],
+            },
+            {
+                "name": "Alexanderplatz Drinks",
+                "type": "Kiosk",
+                "address": "Alexanderplatz",
+                "specialties": ["water", "soda", "coffee", "currywurst"],
+            },
+            {
+                "name": "Checkpoint Charlie Cafe",
+                "type": "Cafe",
+                "address": "Friedrichstraße",
+                "specialties": ["coffee", "tea", "water", "cake"],
+            },
+        ],
+        "Budapest": [
+            {
+                "name": "Chain Bridge Refreshments",
+                "type": "Stand",
+                "address": "Chain Bridge",
+                "specialties": ["water", "soda", "lemonade"],
+            },
+            {
+                "name": "Central Market Hall Drinks",
+                "type": "Market Stall",
+                "address": "Central Market Hall",
+                "specialties": ["water", "fruit juice", "local wines", "soft drinks"],
+            },
+            {
+                "name": "Fisherman's Bastion Cafe",
+                "type": "Cafe",
+                "address": "Fisherman's Bastion",
+                "specialties": ["coffee", "water", "wine", "pastries"],
+            },
+            {
+                "name": "Thermal Bath Refreshments",
+                "type": "Pool Bar",
+                "address": "Széchenyi Thermal Bath",
+                "specialties": ["water", "juice", "beer", "smoothies"],
+            },
+        ],
+        "Bora Bora": [
+            {
+                "name": "Matira Beach Bar",
+                "type": "Beach Bar",
+                "address": "Matira Beach",
+                "specialties": [
+                    "water",
+                    "coconut water",
+                    "tropical juice",
+                    "cocktails",
+                ],
+            },
+            {
+                "name": "Vaitape Village Refreshments",
+                "type": "Stand",
+                "address": "Vaitape",
+                "specialties": ["water", "soda", "fresh fruit juice"],
+            },
+            {
+                "name": "Lagoon Cafe",
+                "type": "Waterfront Cafe",
+                "address": "Bora Bora Lagoon",
+                "specialties": [
+                    "water",
+                    "tropical smoothies",
+                    "coffee",
+                    "fresh coconut",
+                ],
+            },
+            {
+                "name": "Mount Otemanu Lookout",
+                "type": "Refreshment Hut",
+                "address": "Otemanu Trail",
+                "specialties": ["water", "energy drinks", "fruit"],
+            },
+        ],
+    }
+
+    # Normalize city name to title case
+    city_normalized = city.title()
+
+    # Get venues for the city
+    venues = refreshment_venues.get(city_normalized)
+
+    if venues is None:
+        # Try some common variations
+        city_variations = {
+            "Nyc": "New York",
+            "Sf": "San Francisco",
+            "La": "Los Angeles",
+        }
+        alternative = city_variations.get(city_normalized)
+        if alternative:
+            venues = refreshment_venues.get(alternative)
+            city_normalized = alternative
+
+    if venues is None:
+        raise ValueError(f"No refreshment venues found for city: {city_normalized}")
+
+    return {
+        "city": city_normalized,
+        "venues": venues,
+    }
