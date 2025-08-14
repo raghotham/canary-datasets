@@ -17,9 +17,22 @@ import sys
 import yaml
 import argparse
 from rich.pretty import pprint
-from typing import Any, Dict, List, Literal, Type, Union, get_args, get_type_hints
+from typing import (
+    Any,
+    Boolean,
+    Dict,
+    List,
+    Literal,
+    Type,
+    Union,
+    get_args,
+    get_type_hints,
+)
 import openai
 import copy
+
+# Import sample tools and create executor
+import sample_tools
 
 
 class ToolExecutor:
@@ -134,9 +147,9 @@ class ToolExecutor:
             tool_schemas.append(self._generate_tool_schema(func, chat_format=True))
         return tool_schemas
 
-    def get_system_prompt(self) -> str:
+    def get_system_prompt(self, py: Boolean = False) -> str:
         """Generate system prompt with tool definitions in JSON format."""
-        system_prompt1 = """You are a helpful assistant and an expert in function composition. You can answer general questions using your internal knowledge OR invoke functions when necessary. Follow these strict guidelines:
+        system_prompt = """You are a helpful assistant and an expert in function composition. You can answer general questions using your internal knowledge OR invoke functions when necessary. Follow these strict guidelines:
 
 1. FUNCTION CALLS:
 - ONLY use functions that are EXPLICITLY listed in the function list below
@@ -176,7 +189,8 @@ INCORRECT: [{"name":"get_events","arguments":{"location":"Singapore"}}] <- If fu
 
 Here is a list of functions in JSON format that you can invoke:\n\n"""
 
-        system_prompt = """You are a helpful assistant and an expert in function composition. You can answer general questions using your internal knowledge OR invoke functions when necessary. Follow these strict guidelines:
+        if py:
+            system_prompt = """You are a helpful assistant and an expert in function composition. You can answer general questions using your internal knowledge OR invoke functions when necessary. Follow these strict guidelines:
 
 1. FUNCTION CALLS:
 - ONLY use functions that are EXPLICITLY listed in the function list below
@@ -343,17 +357,17 @@ Here is a list of functions in JSON format that you can invoke:\n\n"""
                 )
 
         # Handle basic types
-        if target_type == str:
+        if target_type is str:
             return str(value)
-        elif target_type == int:
+        elif target_type is int:
             return int(value)
-        elif target_type == float:
+        elif target_type is float:
             return float(value)
-        elif target_type == bool:
+        elif target_type is bool:
             if isinstance(value, str):
                 return value.lower() in ("true", "1", "yes", "on")
             return bool(value)
-        elif target_type == list:
+        elif target_type is list:
             if isinstance(value, str):
                 # Try to parse as JSON if it's a string
                 try:
@@ -362,7 +376,7 @@ Here is a list of functions in JSON format that you can invoke:\n\n"""
                     # If not JSON, split by comma
                     return [item.strip() for item in value.split(",")]
             return list(value)
-        elif target_type == dict:
+        elif target_type is dict:
             if isinstance(value, str):
                 try:
                     return json.loads(value)
@@ -735,13 +749,9 @@ def load_conversations_from_yaml(filename):
     return data["conversations"]
 
 
-from sample_tools import *
-
 # Get all functions from sample_tools module
 tools = [
-    obj
-    for name, obj in inspect.getmembers(sys.modules["sample_tools"])
-    if inspect.isfunction(obj)
+    obj for name, obj in inspect.getmembers(sample_tools) if inspect.isfunction(obj)
 ]
 executor = ToolExecutor(*tools)
 

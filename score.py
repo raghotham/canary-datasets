@@ -65,13 +65,13 @@ def coerce_argument_value(value: Any, param_name: str, func_name: str) -> Any:
         return value
 
     # Handle basic type conversions
-    if param_type == str:
+    if param_type is str:
         return str(value)
-    elif param_type == int:
+    elif param_type is int:
         return int(float(value))  # Handle cases where value might be a float string
-    elif param_type == float:
+    elif param_type is float:
         return float(value)
-    elif param_type == bool:
+    elif param_type is bool:
         if isinstance(value, str):
             return value.lower() in ("true", "1", "yes", "on")
         return bool(value)
@@ -438,7 +438,7 @@ def format_tool_calls(tool_calls: List[Dict[str, Any]]) -> str:
                     args_display = f"({args})"
             else:
                 args_display = f"({args})"
-        except:
+        except Exception:
             args_display = f"({args})"
 
         formatted.append(f"{name}{args_display}")
