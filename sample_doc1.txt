@@ -1,0 +1,20 @@
+Project Documentation - Part 1
+
+This document contains information about the Canary Datasets project.
+
+The project uses Python and OpenAI APIs to generate conversation logs for evaluating language models. It includes tools for running conversations with various LLM providers and comparing their tool-calling capabilities.
+
+Key features:
+- Support for OpenAI-compatible APIs
+- Multiple conversation modes (chat_tools, responses, system_prompt)
+- Dynamic tool discovery and execution
+- Type coercion for function arguments
+- Structured JSONL output for analysis
+
+The main scripts are:
+- generate.py: Runs conversations and logs results
+- score.py: Compares tool calls between different model outputs
+- sample_tools.py: Contains all the available tools/functions
+- sample_conversations.yaml: Defines conversation scenarios
+
+This project is particularly useful for evaluating how well different language models can handle function calling and tool usage in conversational settings.

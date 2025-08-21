@@ -32,6 +32,7 @@ import copy
 
 # Import sample tools and create executor
 import sample_tools
+from file_search_tool import create_file_search_function, cleanup_file_search_function
 
 
 class ToolExecutor:
@@ -400,6 +401,7 @@ def log_turn(
     messages=[],
     model_name=None,
     log_filename=None,
+    available_tools=None,
 ):
     """Log a complete turn with all its data."""
     # Convert messages to serializable format
@@ -450,6 +452,7 @@ def log_turn(
         "tool_calls": tool_calls,
         "tool_outputs": tool_outputs,
         "assistant_message": assistant_message,
+        "available_tools": available_tools if available_tools else [],
     }
 
     try:
@@ -582,6 +585,7 @@ def assistant_response_conversation(
             messages,
             model,
             log_filename,
+            executor.get_tool_schemas(),
         )
 
 
@@ -738,6 +742,7 @@ def assistant_chat_conversation(
             messages_for_log,
             model,
             log_filename,
+            executor.get_chat_tool_schemas(),
         )
 
 
@@ -858,34 +863,81 @@ for conversation in conversations:
 
     # Get tools for this conversation, default to all tools if not specified
     conversation_tools = conversation.get("tools", [])
+    file_paths = conversation.get("file_paths", [])
+
+    # Handle file_search tool specially if present
+    dynamic_file_search_func = None
+    if "file_search" in conversation_tools and file_paths:
+        print(f"Creating file search function with files: {file_paths}")
+        try:
+            dynamic_file_search_func = create_file_search_function(client, file_paths)
+            print("File search function created successfully")
+        except Exception as e:
+            print(
+                f"\nERROR: Failed to create file search function for conversation '{conversation['name']}'"
+            )
+            print(f"Cause: {e}")
+            print(
+                "\nThis conversation requires file search functionality, but the API endpoint"
+            )
+            print(f"at {base_url} does not support OpenAI vector stores.")
+            print("\nTo fix this:")
+            print(
+                "1. Use the real OpenAI API (https://api.openai.com/v1) with vector stores support"
+            )
+            print(
+                "2. Remove the 'file_search' tool and 'file_paths' from this conversation"
+            )
+            print(
+                f"3. Skip this conversation using --samples to exclude sample {sample_id}"
+            )
+            print(
+                f"\nExample: ./generate.py sample_conversations.yaml {model} --samples 1,2,5-10"
+            )
+            sys.exit(1)
+
     if conversation_tools:
         # Create a filtered executor with only the specified tools
         conversation_executor = executor.create_filtered_executor(conversation_tools)
+
+        # Replace the placeholder file_search function with the dynamic one if created
+        if dynamic_file_search_func and "file_search" in conversation_tools:
+            conversation_executor.register("file_search", dynamic_file_search_func)
+
         print(f"Using tools: {conversation_tools}")
     else:
         # Use all available tools
         conversation_executor = executor
         print("Using all available tools")
 
-    if args.mode == "responses":
-        assistant_response_conversation(
-            client,
-            model,
-            conversation_executor,
-            conversation["messages"],
-            sample_id,
-            log_filename,
-        )
-    else:
-        assistant_chat_conversation(
-            client,
-            model,
-            conversation_executor,
-            conversation["messages"],
-            sample_id,
-            use_system_prompt,
-            log_filename,
-            debug,
-        )
+    try:
+        if args.mode == "responses":
+            assistant_response_conversation(
+                client,
+                model,
+                conversation_executor,
+                conversation["messages"],
+                sample_id,
+                log_filename,
+            )
+        else:
+            assistant_chat_conversation(
+                client,
+                model,
+                conversation_executor,
+                conversation["messages"],
+                sample_id,
+                use_system_prompt,
+                log_filename,
+                debug,
+            )
+    finally:
+        # Clean up the file search function's vector store if it was created
+        if dynamic_file_search_func:
+            print("Cleaning up file search resources...")
+            try:
+                cleanup_file_search_function(dynamic_file_search_func)
+            except Exception as e:
+                print(f"Warning: Failed to cleanup file search resources: {e}")
 
 print(f"Logged {conversations_run} conversations to {log_filename}")

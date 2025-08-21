@@ -281,3 +281,24 @@ conversations:
       - calculate_area
     messages:
       - "Calculate the area of a right-angled triangle with a base of 8 inches and a height of 12 inches."
+
+  - name: "File search for project information"
+    tools:
+      - file_search
+    file_paths:
+      - "sample_doc1.txt"
+      - "sample_doc2.txt"
+    messages:
+      - "What is the main purpose of the Canary Datasets project? Use the file_search function if needed to search through available files."
+      - "How does the file search feature work technically? Use file_search function to find relevant information."
+
+  - name: "File search with follow-up questions"
+    tools:
+      - file_search
+    file_paths:
+      - "sample_doc1.txt"
+      - "sample_doc2.txt"
+    messages:
+      - "What are the different API modes supported? Use file_search to find this information."
+      - "Tell me about the ToolExecutor class and how it works. Search the files using file_search."
+      - "What's the typical development workflow for this project? Please use file_search function."

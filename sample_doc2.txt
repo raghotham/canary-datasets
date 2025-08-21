@@ -1,0 +1,28 @@
+Technical Implementation Details
+
+The Canary Datasets project uses several key technical components:
+
+Architecture:
+- ToolExecutor class manages function registration and execution
+- Dynamic tool filtering based on conversation requirements
+- OpenAI client integration for multiple API modes
+- Vector stores for file search capabilities (new feature)
+
+File Search Implementation:
+- Uses OpenAI's vector stores and assistants API
+- Creates temporary assistants for search operations
+- Supports multiple file formats for knowledge base creation
+- Automatic cleanup of resources after conversation completion
+
+API Modes:
+1. chat_tools: Uses OpenAI chat completions with tools parameter
+2. responses: Uses OpenAI responses API for tool calling
+3. system_prompt: Legacy mode with tools defined in system prompt
+
+The project supports various providers through OpenAI-compatible endpoints by setting the BASE_URL environment variable. This allows testing with providers like Meta Llama, Groq, Cerebras, and others.
+
+Development workflow typically involves:
+1. Define new tools in sample_tools.py
+2. Create conversation scenarios in sample_conversations.yaml
+3. Generate golden dataset with a reference model
+4. Test other models and compare results using score.py

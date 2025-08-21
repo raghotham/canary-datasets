@@ -1,4 +1,4 @@
-from typing import Dict, Literal, Union
+from typing import Dict, Literal, Union, List
 
 
 def get_weather(location: str) -> Dict[str, Union[str, float, list]]:
@@ -1111,4 +1111,29 @@ def get_refreshments(city: str) -> Dict[str, Union[str, list]]:
     return {
         "city": city_normalized,
         "venues": venues,
+    }
+
+
+def file_search(query: str) -> Dict[str, Union[str, List[str]]]:
+    """Search through uploaded files using vector search.
+
+    Note: This is a placeholder function. The actual implementation
+    will be dynamically created by create_file_search_function()
+    and will replace this function in the ToolExecutor.
+
+    Args:
+        query: The search query to find relevant content in the files
+
+    Returns:
+        Dict containing:
+            - query: The original search query
+            - results: List of relevant text snippets from the files
+            - sources: List of source file names where results were found
+    """
+    return {
+        "query": query,
+        "results": [
+            "This function should be dynamically replaced by create_file_search_function"
+        ],
+        "sources": [],
     }
