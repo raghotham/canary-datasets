@@ -1,6 +1,6 @@
-from typing import Dict, List, Union, Optional, Literal
-from datetime import datetime, timedelta
 import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, List, Literal, Optional, Union
 
 
 def update_patient_records(
@@ -37,7 +37,9 @@ def update_patient_records(
     }
 
 
-def get_runs(username: str) -> Dict[str, Union[str, List[Dict[str, Union[str, float, int]]]]]:
+def get_runs(
+    username: str,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float, int]]]]]:
     """Get a list of user running sessions.
 
     Args:
@@ -54,30 +56,66 @@ def get_runs(username: str) -> Dict[str, Union[str, List[Dict[str, Union[str, fl
     # Sample running sessions data
     sample_sessions = {
         "Joey": [
-            {"session_id": "joey_001", "date": "2025-01-15", "distance_km": 5.2, "time_minutes": 24, "pace_min_per_km": 4.6},
-            {"session_id": "joey_002", "date": "2025-01-18", "distance_km": 8.1, "time_minutes": 38, "pace_min_per_km": 4.7},
-            {"session_id": "joey_003", "date": "2025-01-20", "distance_km": 3.5, "time_minutes": 16, "pace_min_per_km": 4.6},
+            {
+                "session_id": "joey_001",
+                "date": "2025-01-15",
+                "distance_km": 5.2,
+                "time_minutes": 24,
+                "pace_min_per_km": 4.6,
+            },
+            {
+                "session_id": "joey_002",
+                "date": "2025-01-18",
+                "distance_km": 8.1,
+                "time_minutes": 38,
+                "pace_min_per_km": 4.7,
+            },
+            {
+                "session_id": "joey_003",
+                "date": "2025-01-20",
+                "distance_km": 3.5,
+                "time_minutes": 16,
+                "pace_min_per_km": 4.6,
+            },
         ],
         "Sarah": [
-            {"session_id": "sarah_001", "date": "2025-01-16", "distance_km": 4.8, "time_minutes": 28, "pace_min_per_km": 5.8},
-            {"session_id": "sarah_002", "date": "2025-01-19", "distance_km": 6.2, "time_minutes": 35, "pace_min_per_km": 5.6},
+            {
+                "session_id": "sarah_001",
+                "date": "2025-01-16",
+                "distance_km": 4.8,
+                "time_minutes": 28,
+                "pace_min_per_km": 5.8,
+            },
+            {
+                "session_id": "sarah_002",
+                "date": "2025-01-19",
+                "distance_km": 6.2,
+                "time_minutes": 35,
+                "pace_min_per_km": 5.6,
+            },
         ],
         "Mike": [
-            {"session_id": "mike_001", "date": "2025-01-14", "distance_km": 10.5, "time_minutes": 48, "pace_min_per_km": 4.6},
-            {"session_id": "mike_002", "date": "2025-01-17", "distance_km": 7.8, "time_minutes": 36, "pace_min_per_km": 4.6},
+            {
+                "session_id": "mike_001",
+                "date": "2025-01-14",
+                "distance_km": 10.5,
+                "time_minutes": 48,
+                "pace_min_per_km": 4.6,
+            },
+            {
+                "session_id": "mike_002",
+                "date": "2025-01-17",
+                "distance_km": 7.8,
+                "time_minutes": 36,
+                "pace_min_per_km": 4.6,
+            },
         ],
     }
 
     if username not in sample_sessions:
-        return {
-            "username": username,
-            "running_sessions": []
-        }
+        return {"username": username, "running_sessions": []}
 
-    return {
-        "username": username,
-        "running_sessions": sample_sessions[username]
-    }
+    return {"username": username, "running_sessions": sample_sessions[username]}
 
 
 def get_time(running_session_id: str) -> Dict[str, Union[str, float, int]]:
@@ -101,37 +139,37 @@ def get_time(running_session_id: str) -> Dict[str, Union[str, float, int]]:
         "joey_001": {
             "total_time_minutes": 24.2,
             "average_pace_min_per_km": 4.65,
-            "split_times": [4.5, 4.7, 4.6, 4.8, 4.6]
+            "split_times": [4.5, 4.7, 4.6, 4.8, 4.6],
         },
         "joey_002": {
             "total_time_minutes": 38.1,
             "average_pace_min_per_km": 4.70,
-            "split_times": [4.6, 4.7, 4.8, 4.7, 4.6, 4.8, 4.7, 4.6]
+            "split_times": [4.6, 4.7, 4.8, 4.7, 4.6, 4.8, 4.7, 4.6],
         },
         "joey_003": {
             "total_time_minutes": 16.1,
             "average_pace_min_per_km": 4.60,
-            "split_times": [4.5, 4.7, 4.6]
+            "split_times": [4.5, 4.7, 4.6],
         },
         "sarah_001": {
             "total_time_minutes": 27.8,
             "average_pace_min_per_km": 5.79,
-            "split_times": [5.8, 5.9, 5.7, 5.8]
+            "split_times": [5.8, 5.9, 5.7, 5.8],
         },
         "sarah_002": {
             "total_time_minutes": 34.7,
             "average_pace_min_per_km": 5.60,
-            "split_times": [5.5, 5.6, 5.7, 5.6, 5.5, 5.8]
+            "split_times": [5.5, 5.6, 5.7, 5.6, 5.5, 5.8],
         },
         "mike_001": {
             "total_time_minutes": 48.3,
             "average_pace_min_per_km": 4.60,
-            "split_times": [4.5, 4.6, 4.7, 4.6, 4.5, 4.6, 4.7, 4.5, 4.6, 4.7]
+            "split_times": [4.5, 4.6, 4.7, 4.6, 4.5, 4.6, 4.7, 4.5, 4.6, 4.7],
         },
         "mike_002": {
             "total_time_minutes": 35.9,
             "average_pace_min_per_km": 4.60,
-            "split_times": [4.5, 4.6, 4.7, 4.6, 4.5, 4.6, 4.8, 4.6]
+            "split_times": [4.5, 4.6, 4.7, 4.6, 4.5, 4.6, 4.8, 4.6],
         },
     }
 
@@ -143,9 +181,8 @@ def get_time(running_session_id: str) -> Dict[str, Union[str, float, int]]:
         "running_session_id": running_session_id,
         "total_time_minutes": session_data["total_time_minutes"],
         "average_pace_min_per_km": session_data["average_pace_min_per_km"],
-        "split_times": session_data["split_times"]
+        "split_times": session_data["split_times"],
     }
-
 
 
 def call_doctor(schedule_appointment: bool = False) -> Dict[str, str]:
@@ -179,10 +216,13 @@ def call_doctor(schedule_appointment: bool = False) -> Dict[str, str]:
         "appointment": appointment_details,
     }
 
+
 from typing import Dict, List, Union
 
 
-def compare_energy_drinks(drinks: List[Dict[str, str]]) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def compare_energy_drinks(
+    drinks: List[Dict[str, str]]
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Compare energy drinks based on nutrition, caffeine content, and price.
 
     Args:
@@ -209,26 +249,24 @@ def compare_energy_drinks(drinks: List[Dict[str, str]]) -> Dict[str, Union[str, 
             raise ValueError(f"Drink not supported: {key}")
 
         drink_data = sample_data[key]
-        comparison_results.append({
-            "brand": drink.get("brand"),
-            "flavor": drink.get("flavor"),
-            "calories": drink_data["calories"],
-            "caffeine_mg": drink_data["caffeine_mg"],
-            "price_usd": drink_data["price_usd"],
-        })
+        comparison_results.append(
+            {
+                "brand": drink.get("brand"),
+                "flavor": drink.get("flavor"),
+                "calories": drink_data["calories"],
+                "caffeine_mg": drink_data["caffeine_mg"],
+                "price_usd": drink_data["price_usd"],
+            }
+        )
 
-    return {
-        "comparison": comparison_results
-    }
+    return {"comparison": comparison_results}
+
 
 from typing import Dict
 
 
 def confirm_prescription(
-    patient_name: str,
-    medical_number: str,
-    drug_name: str,
-    confirmation: bool
+    patient_name: str, medical_number: str, drug_name: str, confirmation: bool
 ) -> Dict[str, str]:
     """Confirm the prescription details before administering drugs to a patient.
 
@@ -255,8 +293,9 @@ def confirm_prescription(
         "status": f"Prescription {confirmation_status} for administration.",
         "patient_name": patient_name,
         "medical_number": medical_number,
-        "drug_name": drug_name
+        "drug_name": drug_name,
     }
+
 
 from typing import Dict, Union
 
@@ -295,6 +334,7 @@ def get_caffeine_warning(
         "exceeds_limit": exceeds_limit,
         "warning_message": warning_message,
     }
+
 
 from typing import Dict, Union
 
@@ -338,10 +378,13 @@ def get_calories_burned(
         "calories_burned": round(calories_burned, 2),
     }
 
+
 from typing import Dict, List, Optional
 
 
-def get_drug_side_effects(drug_name: str, dosage: Optional[str] = None) -> Dict[str, Union[str, List[str]]]:
+def get_drug_side_effects(
+    drug_name: str, dosage: Optional[str] = None
+) -> Dict[str, Union[str, List[str]]]:
     """Retrieve side effects for a specified drug, optionally considering the dosage.
 
     Args:
@@ -360,13 +403,13 @@ def get_drug_side_effects(drug_name: str, dosage: Optional[str] = None) -> Dict[
         "Aspirin": {
             None: ["nausea", "vomiting", "stomach pain"],
             "100mg": ["mild headache", "dizziness"],
-            "500mg": ["severe headache", "ringing in ears"]
+            "500mg": ["severe headache", "ringing in ears"],
         },
         "Ibuprofen": {
             None: ["upset stomach", "mild heartburn"],
             "200mg": ["drowsiness", "blurred vision"],
-            "400mg": ["high blood pressure", "rash"]
-        }
+            "400mg": ["high blood pressure", "rash"],
+        },
     }
 
     if drug_name not in side_effects_data:
@@ -376,11 +419,8 @@ def get_drug_side_effects(drug_name: str, dosage: Optional[str] = None) -> Dict[
     drug_side_effects = side_effects_data[drug_name]
     side_effects = drug_side_effects.get(dosage, drug_side_effects[None])
 
-    return {
-        "drug_name": drug_name,
-        "dosage": dosage,
-        "side_effects": side_effects
-    }
+    return {"drug_name": drug_name, "dosage": dosage, "side_effects": side_effects}
+
 
 from typing import Dict, List, Union
 
@@ -446,10 +486,13 @@ def get_exercises(
 
     return filtered_exercises
 
+
 from typing import Dict, Union
 
 
-def get_patient_details(name: str, medical_number: str) -> Dict[str, Union[str, int, list]]:
+def get_patient_details(
+    name: str, medical_number: str
+) -> Dict[str, Union[str, int, list]]:
     """Retrieve patient details based on their name and medical number.
 
     Args:
@@ -468,13 +511,9 @@ def get_patient_details(name: str, medical_number: str) -> Dict[str, Union[str, 
         "John Doe": {
             "medical_number": "123456",
             "age": 45,
-            "conditions": ["hypertension", "diabetes"]
+            "conditions": ["hypertension", "diabetes"],
         },
-        "Jane Smith": {
-            "medical_number": "654321",
-            "age": 37,
-            "conditions": ["asthma"]
-        },
+        "Jane Smith": {"medical_number": "654321", "age": 37, "conditions": ["asthma"]},
     }
 
     # Check if the patient exists in the database
@@ -489,10 +528,13 @@ def get_patient_details(name: str, medical_number: str) -> Dict[str, Union[str, 
         "conditions": patient["conditions"],
     }
 
+
 from typing import Dict, List
 
 
-def get_pet_medication_schedule(pet_name: str, medication_name: str) -> Dict[str, Union[str, List[str]]]:
+def get_pet_medication_schedule(
+    pet_name: str, medication_name: str
+) -> Dict[str, Union[str, List[str]]]:
     """Retrieve the medication schedule for a pet.
 
     Args:
@@ -514,7 +556,9 @@ def get_pet_medication_schedule(pet_name: str, medication_name: str) -> Dict[str
 
     key = (pet_name, medication_name)
     if key not in sample_data:
-        raise ValueError(f"Medication schedule not found for pet: {pet_name} with medication: {medication_name}")
+        raise ValueError(
+            f"Medication schedule not found for pet: {pet_name} with medication: {medication_name}"
+        )
 
     return {
         "pet_name": pet_name,
@@ -522,8 +566,9 @@ def get_pet_medication_schedule(pet_name: str, medication_name: str) -> Dict[str
         "schedule": sample_data[key],
     }
 
-from typing import Dict, List, Union
+
 from datetime import datetime, timedelta
+from typing import Dict, List, Union
 
 
 def get_pet_vaccination_schedule(
@@ -574,16 +619,19 @@ def get_pet_vaccination_schedule(
     for vaccine_info in vaccination_schedules[species]:
         vaccine_date = birth_date_obj + timedelta(weeks=vaccine_info["age_weeks"])
         if vaccine_date > today:
-            upcoming_vaccinations.append({
-                "vaccine": vaccine_info["vaccine"],
-                "scheduled_date": vaccine_date,
-            })
+            upcoming_vaccinations.append(
+                {
+                    "vaccine": vaccine_info["vaccine"],
+                    "scheduled_date": vaccine_date,
+                }
+            )
 
     return {
         "pet_name": pet_name,
         "species": species,
         "upcoming_vaccinations": upcoming_vaccinations,
     }
+
 
 from typing import Dict, Union
 
@@ -592,7 +640,7 @@ def track_energy_drink_consumption(
     brand_name: str,
     caffeine_mg: float,
     flavor: Union[str, None] = None,
-    sugar_g: Union[float, None] = None
+    sugar_g: Union[float, None] = None,
 ) -> Dict[str, Union[str, float, None]]:
     """Logs and tracks the user's daily energy drink intake.
 
@@ -626,6 +674,7 @@ def track_energy_drink_consumption(
         "daily_total_caffeine": daily_total_caffeine,
         "daily_total_sugar": daily_total_sugar,
     }
+
 
 from typing import Dict, Optional
 
@@ -674,9 +723,10 @@ def book_appointment(
         "insurance_provider": insurance_provider or "Not provided",
     }
 
-from typing import Dict, Union
-from datetime import datetime
+
 import hashlib
+from datetime import datetime
+from typing import Dict, Union
 
 
 def book_doctor_appointment(
@@ -685,7 +735,7 @@ def book_doctor_appointment(
     patient_name: str,
     patient_birthday: str,
     doctor_name: Union[str, None] = None,
-    specialty: str = "General practice"
+    specialty: str = "General practice",
 ) -> Dict[str, Union[str, int]]:
     """Books an appointment with a doctor at a specified hospital.
 
@@ -714,10 +764,22 @@ def book_doctor_appointment(
 
     # Simulate doctor selection
     if not doctor_name:
-        doctor_name = "Dr. Smith" if specialty == "General practice" else f"Dr. {specialty} Specialist"
+        doctor_name = (
+            "Dr. Smith"
+            if specialty == "General practice"
+            else f"Dr. {specialty} Specialist"
+        )
 
     # Generate a unique appointment_id using a hash
-    appointment_id = int(hashlib.sha256(f"{hospital_id}{date_time}{patient_name}".encode()).hexdigest(), 16) % 10**8
+    appointment_id = (
+        int(
+            hashlib.sha256(
+                f"{hospital_id}{date_time}{patient_name}".encode()
+            ).hexdigest(),
+            16,
+        )
+        % 10**8
+    )
 
     return {
         "appointment_id": appointment_id,
@@ -728,12 +790,12 @@ def book_doctor_appointment(
         "patient_name": patient_name,
     }
 
+
 from typing import Dict
 
 
 def call_veterinarian(
-    schedule_appointment: bool = False,
-    is_medical_emergency: bool = False
+    schedule_appointment: bool = False, is_medical_emergency: bool = False
 ) -> Dict[str, str]:
     """Call the veterinarian for help.
 
@@ -750,29 +812,30 @@ def call_veterinarian(
     if is_medical_emergency:
         return {
             "action": "emergency_response",
-            "message": "An emergency team is dispatched to your location immediately."
+            "message": "An emergency team is dispatched to your location immediately.",
         }
 
     if schedule_appointment:
         return {
             "action": "appointment_scheduled",
-            "message": "An appointment has been scheduled for the next available slot."
+            "message": "An appointment has been scheduled for the next available slot.",
         }
 
     return {
         "action": "general_inquiry",
-        "message": "Please call during business hours for non-emergency inquiries."
+        "message": "Please call during business hours for non-emergency inquiries.",
     }
 
-from typing import Dict, List, Literal, Union
-from datetime import datetime, timedelta
+
 import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, List, Literal, Union
 
 
 def check_provider_availability(
     provider_name: str,
     date_range: Literal["this_week", "next_week", "next_month"] = "next_week",
-    appointment_duration: int = 30
+    appointment_duration: int = 30,
 ) -> Dict[str, Union[str, List[str]]]:
     """Check available time slots for a healthcare provider.
 
@@ -815,6 +878,7 @@ def check_provider_availability(
         "provider_name": provider_name,
         "available_slots": available_slots,
     }
+
 
 from typing import Dict, Union
 
@@ -880,8 +944,9 @@ def create_food_item(
         "salt": salt,
     }
 
-from typing import Dict, Literal, Union
+
 import hashlib
+from typing import Dict, Literal, Union
 
 
 def create_membership(
@@ -890,7 +955,7 @@ def create_membership(
     email: str,
     phone_number: str,
     membership_type: Literal["Off-peak", "Standard", "Gold", "Diamond"],
-    flavoured_water_add_on: bool = False
+    flavoured_water_add_on: bool = False,
 ) -> Dict[str, Union[str, bool]]:
     """Create or register a new gym member.
 
@@ -910,7 +975,13 @@ def create_membership(
             - flavoured_water_add_on: Whether the flavoured water package is included
             - registration_status: Status of the registration process
     """
-    if not new_member_name or not date_of_birth or not email or not phone_number or not membership_type:
+    if (
+        not new_member_name
+        or not date_of_birth
+        or not email
+        or not phone_number
+        or not membership_type
+    ):
         raise ValueError("All required fields must be provided")
 
     # Generate a unique member ID using a hash of the email
@@ -927,6 +998,7 @@ def create_membership(
         "registration_status": registration_status,
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -934,7 +1006,7 @@ def find_nearby_specialists(
     specialty: str,
     location: str,
     insurance_accepted: Union[str, None] = None,
-    max_distance: int = 25
+    max_distance: int = 25,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Find specialist doctors near a location.
 
@@ -971,18 +1043,19 @@ def find_nearby_specialists(
 
     # Filter specialists based on max_distance and insurance_accepted
     specialists = [
-        specialist for specialist in sample_specialists[specialty]
-        if specialist["distance"] <= max_distance and
-        (insurance_accepted is None or specialist["insurance"] == insurance_accepted)
+        specialist
+        for specialist in sample_specialists[specialty]
+        if specialist["distance"] <= max_distance
+        and (
+            insurance_accepted is None or specialist["insurance"] == insurance_accepted
+        )
     ]
 
-    return {
-        "location": location,
-        "specialists": specialists
-    }
+    return {"location": location, "specialists": specialists}
 
-from typing import Dict, Union, Optional
+
 import hashlib
+from typing import Dict, Optional, Union
 
 
 def find_nearest_hospital(
@@ -1006,11 +1079,23 @@ def find_nearest_hospital(
     # Simulated hospital data
     hospitals = {
         "40.7128,-74.0060": [
-            {"name": "New York General Hospital", "distance": 5.2, "specialty": "cardiology"},
-            {"name": "Downtown Health Center", "distance": 3.8, "specialty": "psychiatry"},
+            {
+                "name": "New York General Hospital",
+                "distance": 5.2,
+                "specialty": "cardiology",
+            },
+            {
+                "name": "Downtown Health Center",
+                "distance": 3.8,
+                "specialty": "psychiatry",
+            },
         ],
         "34.0522,-118.2437": [
-            {"name": "Los Angeles Medical Center", "distance": 10.1, "specialty": "cardiology"},
+            {
+                "name": "Los Angeles Medical Center",
+                "distance": 10.1,
+                "specialty": "cardiology",
+            },
             {"name": "Westside Hospital", "distance": 7.5, "specialty": "orthopedics"},
         ],
     }
@@ -1020,7 +1105,8 @@ def find_nearest_hospital(
 
     # Filter hospitals by specialty if provided
     filtered_hospitals = [
-        hospital for hospital in hospitals[location]
+        hospital
+        for hospital in hospitals[location]
         if specialty is None or hospital["specialty"] == specialty
     ]
 
@@ -1031,7 +1117,7 @@ def find_nearest_hospital(
     nearest_hospital = min(
         (hospital for hospital in filtered_hospitals if hospital["distance"] <= radius),
         key=lambda h: h["distance"],
-        default=None
+        default=None,
     )
 
     if nearest_hospital is None:
@@ -1048,6 +1134,7 @@ def find_nearest_hospital(
         "distance": nearest_hospital["distance"],
         "specialty": nearest_hospital["specialty"],
     }
+
 
 from typing import Dict, Union
 
@@ -1076,8 +1163,9 @@ def getAutoclaveStatus() -> Dict[str, Union[float, int, bool, str]]:
         "is_running": is_running,
     }
 
-from typing import Dict, List, Literal, Optional, Union
+
 from datetime import datetime
+from typing import Dict, List, Literal, Optional, Union
 
 
 def get_activity(
@@ -1105,18 +1193,45 @@ def get_activity(
 
     # Sample data for demonstration purposes
     sample_activities = [
-        {"id": 1, "activity_type": "RUN", "start_date_time": "2025-08-12T09:00:00+01:00", "end_date_time": "2025-08-12T10:00:00+01:00"},
-        {"id": 2, "activity_type": "CYCLE", "start_date_time": "2025-08-13T11:00:00+01:00", "end_date_time": "2025-08-13T12:30:00+01:00"},
-        {"id": 3, "activity_type": "SWIM", "start_date_time": "2025-08-14T14:00:00+01:00", "end_date_time": "2025-08-14T15:00:00+01:00"},
+        {
+            "id": 1,
+            "activity_type": "RUN",
+            "start_date_time": "2025-08-12T09:00:00+01:00",
+            "end_date_time": "2025-08-12T10:00:00+01:00",
+        },
+        {
+            "id": 2,
+            "activity_type": "CYCLE",
+            "start_date_time": "2025-08-13T11:00:00+01:00",
+            "end_date_time": "2025-08-13T12:30:00+01:00",
+        },
+        {
+            "id": 3,
+            "activity_type": "SWIM",
+            "start_date_time": "2025-08-14T14:00:00+01:00",
+            "end_date_time": "2025-08-14T15:00:00+01:00",
+        },
     ]
 
     # Filter activities based on provided parameters
     filtered_activities = [
-        activity for activity in sample_activities
-        if (id == 0 or activity["id"] == id) and
-           (activity_type is None or activity["activity_type"] in activity_type.split("|")) and
-           (start_date_time is None or datetime.fromisoformat(activity["start_date_time"]) >= datetime.fromisoformat(start_date_time)) and
-           (end_date_time is None or datetime.fromisoformat(activity["end_date_time"]) <= datetime.fromisoformat(end_date_time))
+        activity
+        for activity in sample_activities
+        if (id == 0 or activity["id"] == id)
+        and (
+            activity_type is None
+            or activity["activity_type"] in activity_type.split("|")
+        )
+        and (
+            start_date_time is None
+            or datetime.fromisoformat(activity["start_date_time"])
+            >= datetime.fromisoformat(start_date_time)
+        )
+        and (
+            end_date_time is None
+            or datetime.fromisoformat(activity["end_date_time"])
+            <= datetime.fromisoformat(end_date_time)
+        )
     ]
 
     if not filtered_activities:
@@ -1129,6 +1244,7 @@ def get_activity(
         "end_date_time": end_date_time or "N/A",
         "details": filtered_activities,
     }
+
 
 from typing import Dict
 
@@ -1152,9 +1268,8 @@ def get_current_steps() -> Dict[str, int]:
     # Convert the hash to an integer and scale it to a realistic step count
     step_count = int(hash_digest[:8], 16) % 20000  # Simulate up to 20,000 steps
 
-    return {
-        "steps": step_count
-    }
+    return {"steps": step_count}
+
 
 from typing import Dict, Literal
 
@@ -1179,11 +1294,13 @@ def get_gene_sequence(
         "BRCA1": "ATGCGTACCTGACTGACCTG",
         "TP53": "ATGTTCCGAGGAGCCGCAGT",
         "EGFR": "ATGCGACCCTCCGGGACGGA",
+        "HBA1": "ATGGTGCTGTCTCCTGCCGACAAGACCAACGTCAAGGCCGCCTGGGGTAAGGTCGGCGCGCACGCTGGCGAGTATGGTGCGGAGGCCCTGGAGAGG",
     }
     protein_sequences = {
         "BRCA1": "MRTDMT",
         "TP53": "MFRGSG",
         "EGFR": "MRPPRG",
+        "HBA1": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
     }
 
     if sequence_type == "dna":
@@ -1202,11 +1319,14 @@ def get_gene_sequence(
         "sequence": sequence,
     }
 
+
 from typing import Dict, Literal
 
 
 def get_skin_exposure_risk(
-    uv_index: int, skin_type: Literal["I", "II", "III", "IV", "V", "VI"], duration_minutes: int
+    uv_index: int,
+    skin_type: Literal["I", "II", "III", "IV", "V", "VI"],
+    duration_minutes: int,
 ) -> Dict[str, Union[str, int]]:
     """Estimate skin exposure risk based on UV index, skin type, and duration.
 
@@ -1259,6 +1379,7 @@ def get_skin_exposure_risk(
         "recommended_protection": recommended_protection,
     }
 
+
 from typing import Dict, Literal, Union
 
 
@@ -1281,10 +1402,19 @@ def get_species_toxicity(
 
     # Mock data for toxicity information
     toxicity_data = {
-        ("Lilium", "cats"): {"is_toxic": True, "symptoms": ["vomiting", "lethargy", "kidney failure"]},
+        ("Lilium", "cats"): {
+            "is_toxic": True,
+            "symptoms": ["vomiting", "lethargy", "kidney failure"],
+        },
         ("Lilium", "dogs"): {"is_toxic": False, "symptoms": []},
-        ("Ricinus communis", "humans"): {"is_toxic": True, "symptoms": ["abdominal pain", "vomiting", "diarrhea"]},
-        ("Ricinus communis", "livestock"): {"is_toxic": True, "symptoms": ["weakness", "tremors", "difficulty breathing"]},
+        ("Ricinus communis", "humans"): {
+            "is_toxic": True,
+            "symptoms": ["abdominal pain", "vomiting", "diarrhea"],
+        },
+        ("Ricinus communis", "livestock"): {
+            "is_toxic": True,
+            "symptoms": ["weakness", "tremors", "difficulty breathing"],
+        },
         ("Aloe vera", "cats"): {"is_toxic": True, "symptoms": ["vomiting", "diarrhea"]},
         ("Aloe vera", "dogs"): {"is_toxic": True, "symptoms": ["vomiting", "diarrhea"]},
         ("Aloe vera", "humans"): {"is_toxic": False, "symptoms": []},
@@ -1293,7 +1423,9 @@ def get_species_toxicity(
 
     key = (species_name, target)
     if key not in toxicity_data:
-        raise ValueError(f"Toxicity information not available for species '{species_name}' and target '{target}'")
+        raise ValueError(
+            f"Toxicity information not available for species '{species_name}' and target '{target}'"
+        )
 
     toxicity_info = toxicity_data[key]
     return {
@@ -1302,6 +1434,7 @@ def get_species_toxicity(
         "is_toxic": toxicity_info["is_toxic"],
         "symptoms": toxicity_info["symptoms"],
     }
+
 
 from typing import Dict
 
@@ -1331,17 +1464,26 @@ def get_step_count(date: str) -> Dict[str, int]:
         "steps": steps,
     }
 
-from typing import Dict, Literal, Union
+
 from datetime import datetime
+from typing import Dict, Literal, Union
 
 
 def log_activity(
     activity_type: Literal[
-        "RUN", "TRAIL_RUN", "VIRTUAL_RUN", "WALK", "HIKE", "CYCLE", "SWIM", "YOGA", "WEIGHT_TRAINING"
+        "RUN",
+        "TRAIL_RUN",
+        "VIRTUAL_RUN",
+        "WALK",
+        "HIKE",
+        "CYCLE",
+        "SWIM",
+        "YOGA",
+        "WEIGHT_TRAINING",
     ],
     duration: int = 0,
     distance: float = 0.0,
-    date_time: str = None
+    date_time: str = None,
 ) -> Dict[str, Union[str, int, float]]:
     """Record the details of a fitness activity.
 
@@ -1365,7 +1507,9 @@ def log_activity(
     try:
         datetime.fromisoformat(date_time)
     except ValueError:
-        raise ValueError("Invalid date_time format. Expected format: YYYY-MM-DDTHH:MM:SS+HH:MM")
+        raise ValueError(
+            "Invalid date_time format. Expected format: YYYY-MM-DDTHH:MM:SS+HH:MM"
+        )
 
     if activity_type in ["YOGA", "WEIGHT_TRAINING"] and distance != 0.0:
         raise ValueError(f"Distance should be 0 for {activity_type} activities")
@@ -1393,14 +1537,12 @@ def log_activity(
         "calories_burned": round(calories_burned, 2),
     }
 
+
 from typing import Dict, Union
 
 
 def log_exercise(
-    exercise_name: str,
-    workout_id: str,
-    weight: float,
-    sets: int
+    exercise_name: str, workout_id: str, weight: float, sets: int
 ) -> Dict[str, Union[str, float, int]]:
     """Saves a specific exercise to a workout log.
 
@@ -1431,13 +1573,14 @@ def log_exercise(
         "exercise_name": exercise_name,
         "workout_id": workout_id,
         "weight": weight,
-        "sets": sets
+        "sets": sets,
     }
 
     return log_entry
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
 def log_workout(
@@ -1461,9 +1604,8 @@ def log_workout(
     workout_data = f"{date}-{time}-{workout_name}-{user_rating}"
     workout_id = int(hashlib.sha256(workout_data.encode()).hexdigest(), 16) % (10**8)
 
-    return {
-        "workout_id": workout_id
-    }
+    return {"workout_id": workout_id}
+
 
 from typing import Dict, Union
 
@@ -1493,14 +1635,14 @@ def recommend_sun_protection(
         recommendations = [
             "Stay in shade near midday",
             "Wear sunglasses",
-            "Use SPF 30+ sunscreen"
+            "Use SPF 30+ sunscreen",
         ]
     elif 6 <= uv_index <= 7:
         risk_level = "High"
         recommendations = [
             "Reduce time in the sun between 10 a.m. and 4 p.m.",
             "Cover up with clothing and a wide-brimmed hat",
-            "Use SPF 30+ sunscreen"
+            "Use SPF 30+ sunscreen",
         ]
     elif 8 <= uv_index <= 10:
         risk_level = "Very High"
@@ -1508,7 +1650,7 @@ def recommend_sun_protection(
             "Minimize sun exposure between 10 a.m. and 4 p.m.",
             "Seek shade",
             "Wear protective clothing, a wide-brimmed hat, and sunglasses",
-            "Use SPF 30+ sunscreen"
+            "Use SPF 30+ sunscreen",
         ]
     else:
         risk_level = "Extreme"
@@ -1516,22 +1658,23 @@ def recommend_sun_protection(
             "Avoid sun exposure between 10 a.m. and 4 p.m.",
             "Seek shade",
             "Wear protective clothing, a wide-brimmed hat, and sunglasses",
-            "Use SPF 50+ sunscreen"
+            "Use SPF 50+ sunscreen",
         ]
 
     if duration_minutes > 60:
         recommendations.append("Reapply sunscreen every 2 hours")
 
-    return {
-        "risk_level": risk_level,
-        "recommendations": recommendations
-    }
+    return {"risk_level": risk_level, "recommendations": recommendations}
+
 
 from typing import Dict, Union
 
 
 def record_food(
-    name: str, weight: int = 0, count: Union[int, None] = None, portions: Union[int, None] = None
+    name: str,
+    weight: int = 0,
+    count: Union[int, None] = None,
+    portions: Union[int, None] = None,
 ) -> Dict[str, Union[str, int]]:
     """Records an item of food consumed in the daily nutrition tracker.
 
@@ -1562,7 +1705,9 @@ def record_food(
 
     # Simulate a realistic calculation of total weight based on count and portions
     standard_weight_per_item = 100  # Assume each item weighs 100 grams if not specified
-    standard_weight_per_portion = 50  # Assume each portion weighs 50 grams if not specified
+    standard_weight_per_portion = (
+        50  # Assume each portion weighs 50 grams if not specified
+    )
 
     total_weight = weight
     if count is not None:
@@ -1576,6 +1721,7 @@ def record_food(
         "count": count if count is not None else 0,
         "portions": portions if portions is not None else 0,
     }
+
 
 def reset_autoclave() -> Dict[str, Union[str, bool]]:
     """Reset the autoclave to its default state and clear configuration.
@@ -1596,13 +1742,14 @@ def reset_autoclave() -> Dict[str, Union[str, bool]]:
         "success": reset_successful,
     }
 
+
 from typing import Dict, Union
 
 
 def setAutoclaveConfig(
     goalTemperature: float,
     timerMinutes: Union[float, None] = None,
-    useVacuum: bool = True
+    useVacuum: bool = True,
 ) -> Dict[str, Union[float, bool, str]]:
     """Set the configuration for an autoclave cycle.
 
@@ -1630,6 +1777,7 @@ def setAutoclaveConfig(
         "timerMinutes": timerMinutes if timerMinutes is not None else 60,
         "useVacuum": useVacuum,
     }
+
 
 def startAutoclave() -> Dict[str, Union[str, int, bool]]:
     """Initiate autoclave cycle with current configuration.
@@ -1661,6 +1809,7 @@ def startAutoclave() -> Dict[str, Union[str, int, bool]]:
         "success": success,
     }
 
+
 def stopAutoclave() -> Dict[str, Union[str, bool]]:
     """Stop the autoclave process immediately.
 
@@ -1680,6 +1829,7 @@ def stopAutoclave() -> Dict[str, Union[str, bool]]:
         return {"status": "Autoclave stopped successfully", "stopped": True}
     else:
         return {"status": "Failed to stop the autoclave", "stopped": False}
+
 
 from typing import Dict
 

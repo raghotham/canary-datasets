@@ -2134,7 +2134,7 @@ conversations:
       request is a simple currency conversion which it has a specific tool for.
 - name: Entry 93
   tools:
-  - Chinese_restaurant
+  - chinese_restaurant
   - reserve_seat
   - get_res_dishes
   messages:

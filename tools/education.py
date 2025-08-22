@@ -737,6 +737,7 @@ def find_homologs(
         ("TP53", "Mus musculus"): ["ENSMUSG00000059552"],
         ("BRCA1", "Homo sapiens"): ["ENSG00000012048"],
         ("HBA1", "Homo sapiens"): ["ENSG00000206172"],
+        ("HBA1", "Mus musculus"): ["ENSMUSG00000069919"],
     }
 
     key = (gene_symbol, target_organism)

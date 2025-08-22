@@ -1610,16 +1610,18 @@ from typing import Dict, List
 
 
 def get_cart_contents(
-    user_id: str,
+    user_id: str, order_id: str = None
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int, float]]]]]:
     """Retrieves all items currently in the user's shopping cart.
 
     Args:
         user_id: The unique identifier for the user.
+        order_id: Optional order identifier for specific cart retrieval.
 
     Returns:
         Dict containing:
             - user_id: The unique identifier for the user
+            - order_id: The order identifier (if provided)
             - items: List of items in the cart, each with:
                 - item_id: Unique identifier for the item
                 - name: Name of the item
@@ -1644,10 +1646,15 @@ def get_cart_contents(
     # Determine which sample to use based on user_id hash
     user_hash = hash(user_id) % len(sample_items)
 
-    return {
+    result = {
         "user_id": user_id,
         "items": sample_items[user_hash],
     }
+
+    if order_id is not None:
+        result["order_id"] = order_id
+
+    return result
 
 
 from typing import Dict, List

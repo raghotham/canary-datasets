@@ -474,8 +474,6 @@ def check_phone_number(phone_number: str) -> Dict[str, Union[str, bool, list]]:
             - is_leaked: Boolean indicating if a leak is associated
             - leaked_passwords: List of leaked passwords associated with the phone number
     """
-    if not phone_number or not phone_number.isdigit():
-        raise ValueError("Invalid phone number format")
 
     # Simulated hash-based data generation for consistent results
     sample_leaks = {
@@ -1019,8 +1017,8 @@ def team_schedule(
 
 def convert_units(
     value: float,
-    from_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
-    to_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
+    from_unit: Literal["celsius", "fahrenheit", "kelvin", "pounds", "kilograms"],
+    to_unit: Literal["celsius", "fahrenheit", "kelvin", "pounds", "kilograms"],
 ) -> Dict[str, Union[float, str]]:
     """Convert values between different units (temperature and weight).
 
@@ -1042,6 +1040,14 @@ def convert_units(
         return {"value": (value - 32) * 5 / 9, "unit": "celsius"}
     if (from_unit, to_unit) == ("celsius", "fahrenheit"):
         return {"value": value * 9 / 5 + 32, "unit": "fahrenheit"}
+    if (from_unit, to_unit) == ("celsius", "kelvin"):
+        return {"value": value + 273.15, "unit": "kelvin"}
+    if (from_unit, to_unit) == ("kelvin", "celsius"):
+        return {"value": value - 273.15, "unit": "celsius"}
+    if (from_unit, to_unit) == ("fahrenheit", "kelvin"):
+        return {"value": (value - 32) * 5 / 9 + 273.15, "unit": "kelvin"}
+    if (from_unit, to_unit) == ("kelvin", "fahrenheit"):
+        return {"value": (value - 273.15) * 9 / 5 + 32, "unit": "fahrenheit"}
 
     # Weight conversions
     if (from_unit, to_unit) == ("pounds", "kilograms"):

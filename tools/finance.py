@@ -790,12 +790,12 @@ from typing import Dict, List, Union
 
 
 def compare_stocks(
-    tickers: List[str], days: int = 30
+    tickers: Union[List[str], str], days: int = 30
 ) -> Dict[str, Union[Dict[str, float], str]]:
     """Compare stock performance over a specified number of days.
 
     Args:
-        tickers: List of stock ticker symbols to compare.
+        tickers: List of stock ticker symbols to compare, or comma-separated string.
         days: Number of calendar days to look back (must be non-negative).
 
     Returns:
@@ -806,6 +806,12 @@ def compare_stocks(
     if days < 0:
         raise ValueError("Number of days must be non-negative")
 
+    # Handle both list and comma-separated string input
+    if isinstance(tickers, str):
+        ticker_list = [ticker.strip() for ticker in tickers.split(",")]
+    else:
+        ticker_list = tickers
+
     def generate_percentage_change(ticker: str, days: int) -> float:
         """Generate a mock percentage change for a given ticker and days."""
         hash_input = f"{ticker}{days}".encode()
@@ -813,7 +819,7 @@ def compare_stocks(
         return (int(hash_value, 16) % 2000 - 1000) / 10.0  # Range: -100.0% to +100.0%
 
     percentage_changes = {
-        ticker: generate_percentage_change(ticker, days) for ticker in tickers
+        ticker: generate_percentage_change(ticker, days) for ticker in ticker_list
     }
     top_performer = max(percentage_changes, key=percentage_changes.get)
 
@@ -1957,6 +1963,23 @@ def symbols_headlines(
         "NYSE:IBM": [
             {"title": "IBM Reports Strong Quarterly Earnings", "date": "2023-10-02"},
             {"title": "IBM Expands Cloud Services", "date": "2023-09-20"},
+        ],
+        "NASDAQ:AAPL": [
+            {
+                "title": "Apple Unveils New iPhone with Advanced Features",
+                "date": "2023-09-12",
+            },
+            {"title": "Apple Reports Strong Q3 Earnings", "date": "2023-07-25"},
+        ],
+        "NASDAQ:GOOGL": [
+            {
+                "title": "Alphabet Expands AI Capabilities with New Partnerships",
+                "date": "2023-10-05",
+            },
+            {
+                "title": "Google Announces Updates to Android and Wear OS",
+                "date": "2023-08-15",
+            },
         ],
     }
 
