@@ -1017,8 +1017,8 @@ def team_schedule(
 
 def convert_units(
     value: float,
-    from_unit: Literal["celsius", "fahrenheit", "kelvin", "pounds", "kilograms"],
-    to_unit: Literal["celsius", "fahrenheit", "kelvin", "pounds", "kilograms"],
+    from_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
+    to_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
 ) -> Dict[str, Union[float, str]]:
     """Convert values between different units (temperature and weight).
 
@@ -1040,14 +1040,6 @@ def convert_units(
         return {"value": (value - 32) * 5 / 9, "unit": "celsius"}
     if (from_unit, to_unit) == ("celsius", "fahrenheit"):
         return {"value": value * 9 / 5 + 32, "unit": "fahrenheit"}
-    if (from_unit, to_unit) == ("celsius", "kelvin"):
-        return {"value": value + 273.15, "unit": "kelvin"}
-    if (from_unit, to_unit) == ("kelvin", "celsius"):
-        return {"value": value - 273.15, "unit": "celsius"}
-    if (from_unit, to_unit) == ("fahrenheit", "kelvin"):
-        return {"value": (value - 32) * 5 / 9 + 273.15, "unit": "kelvin"}
-    if (from_unit, to_unit) == ("kelvin", "fahrenheit"):
-        return {"value": (value - 273.15) * 9 / 5 + 32, "unit": "fahrenheit"}
 
     # Weight conversions
     if (from_unit, to_unit) == ("pounds", "kilograms"):
@@ -1115,7 +1107,6 @@ def get_fruit_info(fruit: str) -> Dict[str, Union[str, float, Dict[str, float]]]
         "apple": {"color": "red or green", "average_weight_grams": 182.0},
         "banana": {"color": "yellow", "average_weight_grams": 118.0},
         "mango": {"color": "orange or green", "average_weight_grams": 200.0},
-        "dragonfruit": {"color": "pink or white", "average_weight_grams": 600.0},
     }
     if fruit.lower() not in sample_data:
         raise ValueError(f"Fruit not supported: {fruit}")
