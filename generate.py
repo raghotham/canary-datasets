@@ -145,6 +145,24 @@ def thread_safe_log_turn(
     # Convert messages to serializable format
     serializable_messages = []
     for msg in messages:
+        # Skip system messages with metadata guidance to keep them out of logs
+        is_metadata_system_msg = False
+        if isinstance(msg, dict):
+            if msg.get("role") == "system" and isinstance(msg.get("content"), str):
+                content = msg.get("content")
+                if "--- METADATA AND GUIDANCE ---" in content or "consider the following important guidance" in content:
+                    is_metadata_system_msg = True
+        else:
+            # Handle Pydantic objects or other types
+            role = getattr(msg, "role", None)
+            content = getattr(msg, "content", None)
+            if role == "system" and isinstance(content, str):
+                if "--- METADATA AND GUIDANCE ---" in content or "consider the following important guidance" in content:
+                    is_metadata_system_msg = True
+        
+        if is_metadata_system_msg:
+            continue
+        
         message_dict = {}
         # Handle both dicts and objects
         if isinstance(msg, dict):
@@ -817,7 +835,6 @@ def execute_chat_turn(
             # Append metadata to system prompt if available
             if metadata_str:
                 system_prompt += metadata_str
-                print(f"Applied metadata to system_prompt mode")
 
             # Add system message at the beginning if not already present
             if not messages or messages[0]["role"] != "system":
@@ -827,6 +844,7 @@ def execute_chat_turn(
             request_params["tools"] = executor.get_chat_tool_schemas()
 
             # In chat_tools mode, add a separate system message with metadata guidance
+            # This will guide the model but we'll filter it out of the logs later
             if metadata_str:
                 # Get any existing system message
                 system_msg_index = -1
@@ -1133,6 +1151,172 @@ def load_conversations_from_yaml(filename):
     return conversations, metadata_lookup
 
 
+# Function to extract sample IDs that had errors
+def extract_error_sample_ids(jsonl_file):
+    """Extract sample IDs from conversations that had tool errors.
+    
+    Args:
+        jsonl_file: Path to the JSONL log file
+        
+    Returns:
+        Set of sample IDs that had errors
+    """
+    error_samples = set()
+    
+    try:
+        with open(jsonl_file, "r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    data = json.loads(line.strip())
+                    # Check if this line has a sample_id and messages array
+                    if "sample_id" in data and "messages" in data and isinstance(data["messages"], list):
+                        sample_id = data["sample_id"]
+                        
+                        # Look through each message in the messages array
+                        for message in data["messages"]:
+                            # Check if this is a tool response with an error
+                            if (message.get("role") == "tool" and 
+                                "content" in message and 
+                                isinstance(message["content"], str) and 
+                                "Error executing" in message["content"]):
+                                
+                                error_samples.add(sample_id)
+                                break  # Found an error in this sample, move to next line
+                                
+                except json.JSONDecodeError:
+                    continue  # Skip invalid lines
+                except Exception as e:
+                    print(f"Error processing line: {e}")
+                    continue
+    except Exception as e:
+        print(f"Error reading file {jsonl_file}: {e}")
+    
+    return error_samples
+
+
+# Function to extract error messages
+def extract_error_messages(jsonl_file):
+    """Extract error messages from a JSONL log file.
+    
+    Args:
+        jsonl_file: Path to the JSONL log file
+        
+    Returns:
+        List of error message dictionaries with role, content, tool_call_id fields
+    """
+    error_messages = []
+    
+    try:
+        with open(jsonl_file, "r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    data = json.loads(line.strip())
+                    
+                    # Check if this line has messages array
+                    if "messages" in data and isinstance(data["messages"], list):
+                        sample_id = data.get("sample_id", "unknown")
+                        
+                        # Look through each message in the messages array
+                        for message in data["messages"]:
+                            # Check if this is a tool response with an error
+                            if (message.get("role") == "tool" and 
+                                "content" in message and 
+                                isinstance(message["content"], str) and 
+                                "Error executing" in message["content"]):
+                                
+                                # Extract only the required fields
+                                error_entry = {
+                                    "sample_id": sample_id
+                                }
+                                
+                                if "role" in message:
+                                    error_entry["role"] = message["role"]
+                                if "content" in message:
+                                    error_entry["content"] = message["content"]
+                                if "tool_call_id" in message:
+                                    error_entry["tool_call_id"] = message["tool_call_id"]
+                                
+                                error_messages.append(error_entry)
+                                
+                except json.JSONDecodeError:
+                    continue  # Skip invalid lines
+                except Exception as e:
+                    print(f"Error processing line: {e}")
+                    continue
+    except Exception as e:
+        print(f"Error reading file {jsonl_file}: {e}")
+    
+    return error_messages
+
+
+# Function to merge new results into existing JSONL file
+def merge_results(source_file, target_file):
+    """Merge results from source_file into target_file, replacing entries with the same sample_id.
+    
+    Args:
+        source_file: Path to the source JSONL file (new runs)
+        target_file: Path to the target JSONL file (master file)
+        
+    Returns:
+        Number of entries merged
+    """
+    # Read all entries from target file
+    target_entries = {}
+    try:
+        if os.path.exists(target_file):
+            with open(target_file, "r", encoding="utf-8") as f:
+                for line in f:
+                    try:
+                        data = json.loads(line.strip())
+                        if "sample_id" in data and "turn_id" in data:
+                            # Use sample_id and turn_id as key
+                            key = (data["sample_id"], data["turn_id"])
+                            target_entries[key] = line.strip()
+                    except json.JSONDecodeError:
+                        continue
+    except Exception as e:
+        print(f"Error reading target file {target_file}: {e}")
+        return 0
+    
+    # Read new entries from source file
+    source_entries = {}
+    try:
+        with open(source_file, "r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    data = json.loads(line.strip())
+                    if "sample_id" in data and "turn_id" in data:
+                        key = (data["sample_id"], data["turn_id"])
+                        source_entries[key] = line.strip()
+                except json.JSONDecodeError:
+                    continue
+    except Exception as e:
+        print(f"Error reading source file {source_file}: {e}")
+        return 0
+    
+    # Update target entries with source entries
+    merged_count = 0
+    for key, entry in source_entries.items():
+        if key in target_entries:
+            target_entries[key] = entry
+            merged_count += 1
+        else:
+            target_entries[key] = entry
+            merged_count += 1
+    
+    # Write back to target file
+    try:
+        with open(target_file, "w", encoding="utf-8") as f:
+            # Sort by sample_id and turn_id
+            for key in sorted(target_entries.keys()):
+                f.write(target_entries[key] + "\n")
+    except Exception as e:
+        print(f"Error writing to target file {target_file}: {e}")
+        return 0
+    
+    return merged_count
+
+
 # Import all tools from the tools directory
 tools = import_tools_from_directory()
 
@@ -1172,6 +1356,20 @@ parser.add_argument(
     type=int,
     default=1,
     help="Number of parallel workers for processing conversations (default: 1, sequential)",
+)
+parser.add_argument(
+    "--extract-errors",
+    action="store_true",
+    help="After generation, extract sample IDs that had errors and save to a file"
+)
+parser.add_argument(
+    "--merge-results",
+    action="store_true",
+    help="Merge results from current run into an existing JSONL file (for re-running error samples)"
+)
+parser.add_argument(
+    "--merge-target",
+    help="Target JSONL file to merge results into when using --merge-results. If not specified, uses the base filename."
 )
 
 if len(sys.argv) == 1:
@@ -1213,8 +1411,10 @@ debug = args.debug
 print(f"Loading conversations from {conversations_file}")
 conversations, metadata_lookup = load_conversations_from_yaml(conversations_file)
 
-# Parse samples argument if provided
+# Parse samples argument if provided, or auto-detect from error samples file
 selected_samples = set()
+auto_detected_samples = False
+
 if args.samples:
     try:
         selected_samples = {int(x.strip()) for x in args.samples.split(",")}
@@ -1223,6 +1423,42 @@ if args.samples:
         print(f"Error parsing samples argument: {e}")
         print("Samples should be comma-separated integers (e.g., '1,3,5,6,10')")
         sys.exit(1)
+else:
+    # Auto-detect error samples file and use those samples
+    error_samples_file = f"conversation_logs_{model}_golden_set_error_samples.txt"
+    golden_set_file = f"conversation_logs_{model}_golden_set.jsonl"
+    
+    if os.path.exists(error_samples_file):
+        try:
+            with open(error_samples_file, 'r') as f:
+                error_samples_str = f.read().strip()
+                if error_samples_str:
+                    selected_samples = {int(x.strip()) for x in error_samples_str.split(",")}
+                    auto_detected_samples = True
+                    print(f"Auto-detected {len(selected_samples)} error samples from {error_samples_file}: {sorted(selected_samples)}")
+                    
+                    # Auto-enable merge and error extraction for error fixing workflow
+                    if not args.merge_results:
+                        args.merge_results = True
+                        print("Auto-enabling --merge-results for error fixing workflow")
+                    
+                    if not args.extract_errors:
+                        args.extract_errors = True
+                        print("Auto-enabling --extract-errors for error fixing workflow")
+                else:
+                    print(f"Error samples file {error_samples_file} is empty - no errors to fix!")
+                    sys.exit(0)
+        except Exception as e:
+            print(f"Error reading error samples file {error_samples_file}: {e}")
+            print("Running all samples instead...")
+            selected_samples = set()
+    else:
+        # No error samples file exists - check if this is a first run
+        if not selected_samples and not os.path.exists(golden_set_file):
+            # First run, auto-enable error extraction to create golden set
+            if not args.extract_errors:
+                args.extract_errors = True
+                print("First run detected: auto-enabling --extract-errors to create golden set")
 
 # Determine output filename
 if args.output:
@@ -1230,9 +1466,18 @@ if args.output:
     if not log_filename.endswith(".jsonl"):
         log_filename += ".jsonl"
 else:
-    # Auto-generate filename with timestamp
+    # Auto-generate filename based on the run type
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
+    
+    if args.extract_errors and not selected_samples:
+        # Initial full run with error extraction - use golden set naming
+        log_filename = f"conversation_logs_{model}_golden_set.jsonl"
+    elif selected_samples:
+        # Partial run (error fixing) - use timestamped partial filename
+        log_filename = f"conversation_logs_{model}_partial_{timestamp}.jsonl"
+    else:
+        # Regular run without error extraction - use timestamp
+        log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
 
 # Create separate console log filename
 console_log_filename = log_filename.replace(".jsonl", "_console.log")
@@ -1293,3 +1538,77 @@ else:
             print(result)
 
 print(f"Logged {conversations_run} conversations to {log_filename}")
+
+# If merging is requested, merge results into master file  
+if args.merge_results:
+    # Use explicitly provided merge target if specified
+    if args.merge_target:
+        master_filename = args.merge_target
+        if not master_filename.endswith('.jsonl'):
+            master_filename += '.jsonl'
+    else:
+        # For partial runs, automatically target the golden set file
+        if '_partial_' in log_filename:
+            master_filename = f"conversation_logs_{model}_golden_set.jsonl"
+        else:
+            # Fallback to removing timestamp or _retry suffixes
+            master_filename = log_filename
+            if '_retry_' in log_filename:
+                base_name = log_filename.split('_retry_')[0]
+                if not base_name.endswith('.jsonl'):
+                    base_name += '.jsonl'
+                master_filename = base_name
+    
+    if os.path.exists(master_filename) and master_filename != log_filename:
+        merged_count = merge_results(log_filename, master_filename)
+        print(f"\nMerged {merged_count} entries from {log_filename} into {master_filename}")
+        
+        # After successful merge, remove the temporary file
+        os.remove(log_filename)
+        print(f"Removed temporary file: {log_filename}")
+        
+        # Update log_filename for error extraction
+        log_filename = master_filename
+    else:
+        print(f"\nMaster file {master_filename} not found or same as current file, skipping merge")
+
+# If error extraction is requested, extract errors and create a list of sample IDs that had errors
+if args.extract_errors:
+    # Always extract from the golden set file if merging was done
+    if args.merge_results and os.path.exists(f"conversation_logs_{model}_golden_set.jsonl"):
+        error_extraction_file = f"conversation_logs_{model}_golden_set.jsonl" 
+    else:
+        error_extraction_file = log_filename
+        
+    error_samples = extract_error_sample_ids(error_extraction_file)
+    error_messages = extract_error_messages(error_extraction_file)
+    
+    if error_samples:
+        # Use consistent naming for error files based on the golden set
+        if '_partial_' in error_extraction_file:
+            base_name = f"conversation_logs_{model}_golden_set"
+        else:
+            base_name = error_extraction_file.replace('.jsonl', '')
+            
+        # Save error sample IDs
+        error_samples_file = f"{base_name}_error_samples.txt"
+        with open(error_samples_file, 'w') as f:
+            f.write(','.join(map(str, sorted(error_samples))))
+        
+        # Save actual error messages  
+        error_messages_file = f"{base_name}_errors.jsonl"
+        with open(error_messages_file, 'w') as f:
+            for error_msg in error_messages:
+                json.dump(error_msg, f, ensure_ascii=False)
+                f.write('\n')
+        
+        print(f"\nFound {len(error_samples)} samples with {len(error_messages)} total errors.")
+        print(f"Sample IDs saved to: {error_samples_file}")
+        print(f"Error messages saved to: {error_messages_file}")
+        print(f"To re-run only the error samples after fixing the tools, use: --samples {','.join(map(str, sorted(error_samples)))}")
+        
+        # Add extra helpful information
+        if not args.merge_results:
+            print(f"Add --merge-results to automatically merge partial runs into the golden set")
+    else:
+        print(f"\nNo errors found! All samples completed successfully.")
