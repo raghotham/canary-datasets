@@ -229,6 +229,7 @@ def convert_time_zone(datetime_str: str, from_tz: str, to_tz: str) -> Dict[str, 
         "Europe/London": 0,
         "Asia/Tokyo": 9,
         "America/Los_Angeles": -8,
+        "America/Vancouver": -8,
     }
 
     if from_tz not in timezone_offsets or to_tz not in timezone_offsets:
@@ -1620,6 +1621,11 @@ def get_regional_holidays(regions: List[str], date: str) -> Dict[str, List[str]]
         "NZ": {
             "2023-02-06": ["Waitangi Day"],
             "2023-12-25": ["Christmas Day"],
+        },
+        "JP-26": {
+            "2023-12-25": ["Christmas Day"],
+            "2023-05-03": ["Constitution Memorial Day"],
+            "2023-11-03": ["Culture Day"],
         },
     }
 
