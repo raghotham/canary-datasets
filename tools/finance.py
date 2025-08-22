@@ -2085,3 +2085,149 @@ def get_stock_price(ticker: str) -> Dict[str, Union[str, float]]:
     if symbol not in sample_prices:
         raise ValueError(f"Ticker not found: {symbol}")
     return {"ticker": symbol, "price_usd": sample_prices[symbol]}
+
+
+def deposit(account: str, amount: float) -> Dict[str, Union[str, float, bool]]:
+    """Deposits funds into a bank account.
+
+    Args:
+        account: Bank account name
+        amount: Amount of funds to deposit
+
+    Returns:
+        Dict containing:
+            - account: Bank account name
+            - amount: Amount deposited
+            - success: Boolean indicating if deposit was successful
+            - new_balance: New account balance after deposit
+    """
+    if amount <= 0:
+        raise ValueError("Deposit amount must be greater than zero")
+
+    # Mock account balances
+    account_balances = {
+        "savings": 500.00,
+        "checking": 1200.00,
+        "emergency": 2500.00,
+    }
+
+    if account not in account_balances:
+        raise ValueError(f"Account not found: {account}")
+
+    # Simulate deposit
+    new_balance = account_balances[account] + amount
+
+    return {
+        "account": account,
+        "amount": amount,
+        "success": True,
+        "new_balance": new_balance,
+    }
+
+
+def get_accounts() -> Dict[str, List[Dict[str, Union[str, float]]]]:
+    """List all bank accounts with their current balances.
+
+    Returns:
+        Dict containing:
+            - accounts: List of accounts with name and balance
+    """
+    accounts = [
+        {"name": "savings", "balance": 500.00, "type": "savings"},
+        {"name": "checking", "balance": 1200.00, "type": "checking"},
+        {"name": "emergency", "balance": 2500.00, "type": "savings"},
+    ]
+
+    return {"accounts": accounts}
+
+
+def transfer_funds(
+    from_account: str, to_account: str, amount: float
+) -> Dict[str, Union[str, float, bool]]:
+    """Transfer funds between bank accounts.
+
+    Args:
+        from_account: Source bank account name
+        to_account: Destination bank account name
+        amount: Amount of funds to transfer
+
+    Returns:
+        Dict containing:
+            - from_account: Source account name
+            - to_account: Destination account name
+            - amount: Amount transferred
+            - success: Boolean indicating if transfer was successful
+    """
+    if amount <= 0:
+        raise ValueError("Transfer amount must be greater than zero")
+
+    if from_account == to_account:
+        raise ValueError("Cannot transfer to the same account")
+
+    # Mock account balances
+    account_balances = {
+        "savings": 500.00,
+        "checking": 1200.00,
+        "emergency": 2500.00,
+    }
+
+    if from_account not in account_balances:
+        raise ValueError(f"Source account not found: {from_account}")
+
+    if to_account not in account_balances:
+        raise ValueError(f"Destination account not found: {to_account}")
+
+    if account_balances[from_account] < amount:
+        raise ValueError("Insufficient funds in source account")
+
+    # Simulate transfer
+    return {
+        "from_account": from_account,
+        "to_account": to_account,
+        "amount": amount,
+        "success": True,
+    }
+
+
+def get_last_transaction(account: str) -> Dict[str, Union[str, float]]:
+    """Get the last transaction for a specific bank account.
+
+    Args:
+        account: Bank account name
+
+    Returns:
+        Dict containing:
+            - account: Bank account name
+            - amount: Amount of the last transaction
+            - date: Date of the last transaction
+            - description: Description of the transaction
+    """
+    # Mock last transactions for different accounts
+    last_transactions = {
+        "savings": {
+            "amount": 75.50,
+            "date": "2023-10-20",
+            "description": "ATM Deposit",
+        },
+        "checking": {
+            "amount": 150.00,
+            "date": "2023-10-21",
+            "description": "Direct Deposit",
+        },
+        "emergency": {
+            "amount": 500.00,
+            "date": "2023-10-15",
+            "description": "Transfer In",
+        },
+    }
+
+    if account not in last_transactions:
+        raise ValueError(f"Account not found: {account}")
+
+    transaction = last_transactions[account]
+    return {
+        "account": account,
+        "amount": transaction["amount"],
+        "date": transaction["date"],
+        "description": transaction["description"],
+    }
