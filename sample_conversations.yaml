@@ -4305,6 +4305,8 @@ conversations:
   - I live in Minnesota and my car is starting to show some rust I think. A new car would be nice, how much would I have to
     save up to get a brand new S90?
   metadata:
+    notes:
+    - Location is expected not to be in sample data (not a city.)
     failure_modes:
     - Used tool call when it was not supposed to
     - Wrong tool called
