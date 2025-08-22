@@ -1434,6 +1434,23 @@ def find_nearby_restaurants(
                 "address": "Piazza San Marco 57, 30124 Venezia VE, Italy",
             },
         ],
+        "Milan": [
+            {
+                "name": "Trattoria Milanese",
+                "address": "Via Santa Sofia 16, 20122 Milano MI, Italy",
+            },
+            {
+                "name": "Pizzeria Da Vinci",
+                "address": "Via Marco Polo 2, 20124 Milano MI, Italy",
+            },
+        ],
+        "Split": [
+            {"name": "Konoba Sv. Petar", "address": "Domina 6, 21000 Split, Croatia"},
+            {
+                "name": "Restaurant Grot",
+                "address": "Put Sv. Dujma 1, 21000 Split, Croatia",
+            },
+        ],
     }
 
     if location not in sample_data:
@@ -1739,6 +1756,11 @@ def get_calories(meal_name: str, servings: float = 1) -> Dict[str, Union[str, fl
         "Caesar Salad": 150,
         "Grilled Chicken": 220,
         "Vegetable Stir Fry": 180,
+        "Porridge": 200,
+        "2 eggs": 150,
+        "2 slices sourdough with butter": 350,
+        "Big Mac": 550,
+        "Fries": 350,
     }
 
     if meal_name not in sample_calories:
@@ -1824,6 +1846,11 @@ def get_carbs(meal_name: str, servings: float = 1) -> Dict[str, Union[str, float
         "burger": 40,
         "pizza": 80,
         "sushi": 30,
+        "porridge": 35,
+        "2 eggs": 1,
+        "sourdough with butter": 45,
+        "Big Mac": 46,
+        "Fries": 45,
     }
 
     if meal_name not in sample_carbs:
@@ -2386,6 +2413,11 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
         "vegetable stir fry": 15.0,
         "tofu curry": 20.0,
         "pasta primavera": 12.0,
+        "porridge": 8,
+        "2 eggs": 13,
+        "sourdough with butter": 9,
+        "Big Mac": 25,
+        "Fries": 4,
     }
 
     if meal_name not in protein_data:

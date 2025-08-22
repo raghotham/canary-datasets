@@ -90,6 +90,7 @@ def close_position(
         "AAPL": {"long": 50, "short": 20},
         "GOOGL": {"long": 30, "short": 10},
         "TSLA": {"long": 40, "short": 15},
+        "MSFT": {"long": 42, "short": 12},
     }
 
     if stock_name not in positions:

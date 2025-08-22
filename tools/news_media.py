@@ -62,6 +62,8 @@ def get_local_business_headline(location: str) -> Dict[str, str]:
         "London, UK": "Brexit impacts on local businesses continue to unfold",
         "Berlin, Germany": "Berlin startups attract record venture capital",
         "Sydney, Australia": "Australian dollar strengthens as exports rise",
+        "Surrey, UK": "Surrey businesses benefit from Brexit deal",
+        "Kent, UK": "Kent businesses face challenges from Brexit",
     }
 
     if location not in sample_headlines:

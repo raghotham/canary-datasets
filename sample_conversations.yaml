@@ -3154,11 +3154,11 @@ conversations:
       didn't understand or didn't consider what the user meant by "make the place look like someone's home".
 - name: Entry 144
   tools:
-  - SearchProduct
-  - AddToCart
-  - Checkout
-  - TrackOrder
-  - SearchWebsites
+  - search_product
+  - add_to_cart
+  - checkout
+  - track_order
+  - search_websites
   messages:
   - I have a previous order with an id of 18489. Can you add a 2 pairs of black socks to my cart?
   metadata:

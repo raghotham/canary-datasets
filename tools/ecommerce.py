@@ -795,6 +795,18 @@ def woolworths_product_search(
             {"name": "Red Apple", "price": 0.50, "category": "Fruit"},
             {"name": "Green Apple", "price": 0.60, "category": "Fruit"},
         ],
+"pasta": [
+{"name": "Spaghetti", "price": 1.20, "category": "Pasta"},
+{"name": "Fettuccine", "price": 1.50, "category": "Pasta"},
+],
+"Italian frozen meals": [
+{"name": "Woolworths Italian Frozen Meal - Lasagna", "price": 4.50, "category": "Frozen Meals"},
+{"name": "Woolworths Italian Frozen Meal - Cannelloni", "price": 4.20, "category": "Frozen Meals"},
+],
+"frozen pasta": [
+{"name": "Woolworths Frozen Pasta Bolognese", "price": 3.80, "category": "Frozen Meals"},
+{"name": "Woolworths Frozen Pasta Carbonara", "price": 4.00, "category": "Frozen Meals"},
+],
     }
 
     if keyword not in sample_products:
