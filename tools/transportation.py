@@ -531,17 +531,22 @@ def find_dealers(
 
     # Convert required_vehicles parameter if provided as string
     if isinstance(required_vehicles, str):
-        if required_vehicles.startswith('[') and required_vehicles.endswith(']'):
+        if required_vehicles.startswith("[") and required_vehicles.endswith("]"):
             # Handle string representation of list like "['GMC Truck']"
             try:
                 import ast
+
                 parsed_vehicles = ast.literal_eval(required_vehicles)
                 if isinstance(parsed_vehicles, list):
                     required_vehicles = parsed_vehicles
                 else:
-                    raise ValueError("Invalid required_vehicles format. Expected a list.")
+                    raise ValueError(
+                        "Invalid required_vehicles format. Expected a list."
+                    )
             except (ValueError, SyntaxError):
-                raise ValueError("Invalid required_vehicles format. Expected a valid list representation.")
+                raise ValueError(
+                    "Invalid required_vehicles format. Expected a valid list representation."
+                )
         else:
             # Handle single vehicle string like "GMC Truck"
             required_vehicles = [required_vehicles]
@@ -736,21 +741,24 @@ def find_similar_cars(
     """
     # Convert price parameter if provided as string
     if isinstance(price, str):
-        if price.startswith('[') and price.endswith(']'):
+        if price.startswith("[") and price.endswith("]"):
             # Handle string representation of list like "[0, 80000]"
             try:
                 import ast
+
                 parsed_price = ast.literal_eval(price)
                 if isinstance(parsed_price, list):
                     price = parsed_price
                 else:
                     raise ValueError("Invalid price format. Expected a list.")
             except (ValueError, SyntaxError):
-                raise ValueError("Invalid price format. Expected a valid list representation.")
-        elif ',' in price:
+                raise ValueError(
+                    "Invalid price format. Expected a valid list representation."
+                )
+        elif "," in price:
             # Handle comma-separated string like "0,80000"
             try:
-                parts = price.split(',')
+                parts = price.split(",")
                 if len(parts) == 2:
                     price = [int(parts[0].strip()), int(parts[1].strip())]
                 else:
@@ -764,7 +772,7 @@ def find_similar_cars(
                 price = [0, max_price]  # Assume minimum is 0
             except ValueError:
                 raise ValueError("Invalid price format. Could not convert to integer.")
-                
+
     # Sample data for demonstration purposes
     sample_vehicles = [
         {"make": "Toyota", "model": "Camry", "type": "sedan", "price": 24000},
@@ -1152,6 +1160,7 @@ def get_fuel_price_by_city(
         "Rome",
         "Amsterdam",
         "Nuremburg",
+        "Nuremberg",
         "Munich",
     ]
     if city not in supported_cities:
@@ -1843,29 +1852,30 @@ def ride_share_look_up(
         """Helper function to convert string location to expected dictionary format"""
         if isinstance(location, str):
             # Handle string representation of dictionary
-            if location.startswith('{') and location.endswith('}'):
+            if location.startswith("{") and location.endswith("}"):
                 try:
                     import ast
+
                     parsed_location = ast.literal_eval(location)
                     if isinstance(parsed_location, dict):
                         # Ensure we have coordinates even if not provided
                         if "coordinates" not in parsed_location:
-                            parsed_location["coordinates"] = {"latitude": 0.0, "longitude": 0.0}
+                            parsed_location["coordinates"] = {
+                                "latitude": 0.0,
+                                "longitude": 0.0,
+                            }
                         return parsed_location
                 except (ValueError, SyntaxError):
                     pass
-            
+
             # Handle plain string like "Mesa" or "Denver, Colorado"
             city = location.strip()
             # Generate mock coordinates based on hash for consistency
             coord_hash = hash(city) % 3600  # Generate values between 0-3600
             lat = (coord_hash % 180) - 90  # Latitude between -90 and 90
             lon = ((coord_hash * 2) % 360) - 180  # Longitude between -180 and 180
-            
-            return {
-                "city": city,
-                "coordinates": {"latitude": lat, "longitude": lon}
-            }
+
+            return {"city": city, "coordinates": {"latitude": lat, "longitude": lon}}
         return location
 
     # Convert location parameters if they are strings

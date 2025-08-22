@@ -55,7 +55,7 @@ from typing import Dict, List, Literal, Optional, Union
 def find_contractors(
     service_type: str,
     location: Union[Dict[str, str], str],
-    date_window: Optional[Dict[str, str]] = None,
+    date_window: Optional[Union[Dict[str, str], str]] = None,
     certifications: Optional[List[str]] = None,
     budget_max: Optional[float] = None,
     emergency: bool = False,
@@ -68,7 +68,9 @@ def find_contractors(
     Args:
         service_type: Type of service, e.g., 'plumbing', 'electrical', 'HVAC', 'appliance_repair'.
         location: Service location details including city and optional address and postal code.
-        date_window: Desired service date window with 'start_date' and 'end_date'.
+        date_window: Desired service date window with 'start_date' and 'end_date'. 
+                   Can be a dictionary or a string in format 'start_date/end_date' or 
+                   a string representation of a dictionary.
         certifications: Required certifications/tags, e.g., ['licensed','bonded','EPA_608'].
         budget_max: Maximum estimated cost in local currency.
         emergency: Prioritize emergency-ready providers.
@@ -91,6 +93,32 @@ def find_contractors(
         else:
             # Single value treated as city
             location = {'city': location.strip()}
+
+    # Convert date_window parameter if provided as string
+    if isinstance(date_window, str):
+        if date_window.startswith('{') and date_window.endswith('}'):
+            # Handle string representation of dictionary like "{'start_date': '2023-10-12', 'end_date': '2023-10-15'}"
+            try:
+                import ast
+                parsed_dict = ast.literal_eval(date_window)
+                if isinstance(parsed_dict, dict):
+                    date_window = parsed_dict
+                else:
+                    raise ValueError("Invalid date_window format. Expected a dictionary.")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid date_window format. Expected a valid dictionary representation.")
+        elif '/' in date_window:
+            # Handle date range format like "2023-10-12/2023-10-15"
+            try:
+                start_date, end_date = date_window.split('/', 1)
+                date_window = {
+                    'start_date': start_date.strip(),
+                    'end_date': end_date.strip()
+                }
+            except ValueError:
+                raise ValueError("Invalid date_window format. Expected 'start_date/end_date' format.")
+        else:
+            raise ValueError("Invalid date_window format. Expected either a dictionary or 'start_date/end_date' format.")
 
     # Mock data generation
     def generate_contractor_data(name_seed: str) -> Dict[str, Union[str, float, bool]]:

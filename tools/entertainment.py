@@ -675,6 +675,13 @@ def find_festival(
                 "start_date": "2023-06-10",
             },
         ],
+        "Berlin": [
+            {
+                "festival_name": "Lovebox",
+                "artist_name": "The Killers",
+                "start_date": "2023-07-15",
+            }
+        ],
     }
 
     if city not in sample_festivals:
@@ -2746,6 +2753,7 @@ def search_events(
             ]
         ],
         Literal["music", "food", "sports", "arts", "technology", "theatre", "family"],
+        str,
     ],
     date_range: Dict[str, str] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
@@ -2762,6 +2770,41 @@ def search_events(
             - city: City name
             - events: List of events with details such as name, category, and date
     """
+    # Convert type parameter to handle alternative forms
+    type_mappings = {
+        "sport": "sports",
+        "tech": "technology",
+        "theater": "theatre",
+        "art": "arts",
+    }
+
+    if isinstance(type, str):
+        # Check if it's an alternative form and convert
+        if type in type_mappings:
+            type = type_mappings[type]
+        # Check if it's already a valid literal
+        valid_types = {
+            "music",
+            "food",
+            "sports",
+            "arts",
+            "technology",
+            "theatre",
+            "family",
+        }
+        if type not in valid_types:
+            raise ValueError(
+                f"Invalid event type: {type}. Must be one of {valid_types}"
+            )
+    elif isinstance(type, list):
+        # Convert list elements if needed
+        converted_types = []
+        for t in type:
+            if t in type_mappings:
+                converted_types.append(type_mappings[t])
+            else:
+                converted_types.append(t)
+        type = converted_types
     sample_events = {
         ("USA", "New York"): [
             {

@@ -1552,6 +1552,14 @@ def find_recipe(
                 "Add dressing and toss before serving.",
             ],
         },
+        "chicken:": {
+            "ingredients": ["chicken breast", "seasoning", "vegetable oil"],
+            "instructions": [
+                "Cut chicken breast into strips.",
+                "Mix seasoning and coat chicken strips.",
+                "Heat oil in a pan and fry chicken strips until golden brown.",
+            ],
+        },
     }
 
     # Filter recipes based on dietary preference
@@ -1888,6 +1896,7 @@ def get_carbs(meal_name: str, servings: float = 1) -> Dict[str, Union[str, float
         "butter": 100,
         "sourdough bread": 45,
         "egg": 1,
+        "eggs": 2,
         "porridge": 35,
     }
 
@@ -2461,6 +2470,7 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
         "egg": 6,
         "sourdough bread": 9,
         "butter": 7,
+        "eggs": 6,
     }
 
     if meal_name not in protein_data:
@@ -3494,6 +3504,7 @@ def restaurant_rating(restaurant_name: str) -> Dict[str, Union[str, float]]:
         "Sushi World": 4.2,
         "Burger Haven": 4.0,
         "Pasta Paradise": 3.9,
+        "Bossa Nova": 4.3,
     }
 
     if restaurant_name not in sample_ratings:

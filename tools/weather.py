@@ -257,6 +257,17 @@ def get_hiking_trail_weather(hiking_trail: str) -> Dict[str, Union[str, float, l
         },
         "Pacific Crest Trail": {"temperature": 75, "conditions": ["sunny", "dry"]},
         "John Muir Trail": {"temperature": 62, "conditions": ["overcast", "cool"]},
+        "Grunewald Forest": {
+            "temperature": 65,
+            "conditions": ["partly cloudy", "mild"],
+        },
+        "Pfaueninsel": {"temperature": 70, "conditions": ["sunny", "pleasant"]},
+        "Müggelsee": {"temperature": 72, "conditions": ["partly cloudy", "windy"]},
+        "Teufelsberg": {"temperature": 67, "conditions": ["overcast", "cool"]},
+        "Potsdam's Sanssouci Park": {
+            "temperature": 73,
+            "conditions": ["sunny", "warm"],
+        },
     }
 
     if hiking_trail not in trail_weather_data:
@@ -462,6 +473,7 @@ def ski_resort_current_condition(resort: str) -> Dict[str, Union[str, int, float
         "Aspen": {"snow_depth": 24, "temperature": 30, "conditions": "powder"},
         "Whistler": {"snow_depth": 36, "temperature": 28, "conditions": "packed"},
         "Vail": {"snow_depth": 20, "temperature": 32, "conditions": "icy"},
+        "treble cone": {"snow_depth": 12, "temperature": 34, "conditions": "wet"},
     }
 
     if resort not in sample_conditions:
@@ -511,6 +523,11 @@ def ski_resort_forecast(
             {"day": "Monday", "snowfall": 3.0},
             {"day": "Tuesday", "snowfall": 6.0},
             {"day": "Wednesday", "snowfall": 2.0},
+        ],
+        "treble cone": [
+            {"day": "Monday", "snowfall": 1.0},
+            {"day": "Tuesday", "snowfall": 2.0},
+            {"day": "Wednesday", "snowfall": 3.0},
         ],
     }
 
@@ -596,9 +613,10 @@ def tornado_lookup(
     # Convert location parameter if it's a string
     if location is not None and isinstance(location, str):
         # Handle string representation of dictionary
-        if location.startswith('{') and location.endswith('}'):
+        if location.startswith("{") and location.endswith("}"):
             try:
                 import ast
+
                 parsed_location = ast.literal_eval(location)
                 if isinstance(parsed_location, dict):
                     # Ensure expected fields are present
@@ -609,23 +627,32 @@ def tornado_lookup(
                     if "city" not in parsed_location:
                         parsed_location["city"] = parsed_location.get("city", "Unknown")
                     if "coordinates" not in parsed_location:
-                        parsed_location["coordinates"] = {"latitude": 0.0, "longitude": 0.0}
+                        parsed_location["coordinates"] = {
+                            "latitude": 0.0,
+                            "longitude": 0.0,
+                        }
                     location = parsed_location
             except (ValueError, SyntaxError):
                 pass
-        
+
         # If still a string (couldn't parse as dict or wasn't dict format)
         if isinstance(location, str):
             # Handle plain string like "Denver, CO" or "Denver"
             city_string = location.strip()
-            city = city_string.split(',')[0].strip() if ',' in city_string else city_string
-            state = city_string.split(',')[1].strip() if ',' in city_string and len(city_string.split(',')) > 1 else "Unknown"
-            
+            city = (
+                city_string.split(",")[0].strip() if "," in city_string else city_string
+            )
+            state = (
+                city_string.split(",")[1].strip()
+                if "," in city_string and len(city_string.split(",")) > 1
+                else "Unknown"
+            )
+
             location = {
                 "country": "USA",
                 "state": state,
                 "city": city,
-                "coordinates": {"latitude": 0.0, "longitude": 0.0}
+                "coordinates": {"latitude": 0.0, "longitude": 0.0},
             }
 
     sample_data = {

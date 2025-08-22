@@ -577,6 +577,8 @@ def business_netincome(city: str, income: int, expenses: int) -> Dict[str, int]:
         "Chicago": 0.07,
         "Houston": 0.06,
         "Phoenix": 0.05,
+        "Manhattan": 0.1,
+        "Newark": 0.08,
     }
 
     if city not in tax_rates:
@@ -1370,6 +1372,7 @@ def get_latest_rates(base: str = "USD") -> Dict[str, Union[str, Dict[str, float]
         "EUR": {"USD": 1.18, "JPY": 129.53, "GBP": 0.88},
         "JPY": {"USD": 0.0091, "EUR": 0.0077, "GBP": 0.0068},
         "GBP": {"USD": 1.33, "EUR": 1.14, "JPY": 147.0},
+        "AUD": {"USD": 0.71, "EUR": 0.61, "JPY": 78.0},
     }
 
     if base not in sample_rates:
@@ -1398,8 +1401,17 @@ def get_registration_number(company_name: str) -> Dict[str, str]:
     if not company_name:
         raise ValueError("Company name must be provided")
 
-    # Simulate a hash-based registration number generation
-    registration_number = f"REG-{abs(hash(company_name)) % 1000000:06}"
+    # Specific mappings for known companies
+    company_mappings = {
+        "Bigtime Holdings Ltd": "REG-962933",
+        "Small Corp": "REG-386660",
+    }
+
+    # Check if the company name has a specific mapping
+    if company_name in company_mappings:
+        registration_number = company_mappings[company_name]
+    else:
+        raise ValueError(f"Company not found: {company_name}")
 
     return {
         "company_name": company_name,
@@ -2068,7 +2080,7 @@ def withdraw_funds(
     Args:
         amount: The amount of money to withdraw in US dollars. Must be at least $10.
         withdrawalMethod: The method to use for withdrawal ('paypal' or 'cryptocurrency').
-        paypalDetails: The player's PayPal details, required if withdrawalMethod is 'paypal'. 
+        paypalDetails: The player's PayPal details, required if withdrawalMethod is 'paypal'.
                       Can be provided as a dictionary or an email address string.
         cryptoDetails: The player's cryptocurrency wallet details, required if withdrawalMethod is 'cryptocurrency'.
 
@@ -2089,24 +2101,39 @@ def withdraw_funds(
                 # Handle plain email string
                 paypalDetails = {
                     "paypalEmail": paypalDetails,
-                    "paypalAccountName": paypalDetails.split("@")[0]
+                    "paypalAccountName": paypalDetails.split("@")[0],
                 }
             else:
                 # Handle string representation of dictionary
                 try:
                     import ast
+
                     parsed_details = ast.literal_eval(paypalDetails)
                     if isinstance(parsed_details, dict):
                         # Map common keys to expected format
                         paypalDetails = {
-                            "paypalEmail": parsed_details.get("email", parsed_details.get("paypalEmail", "")),
-                            "paypalAccountName": parsed_details.get("name", parsed_details.get("paypalAccountName", parsed_details.get("email", "").split("@")[0] if "@" in parsed_details.get("email", "") else ""))
+                            "paypalEmail": parsed_details.get(
+                                "email", parsed_details.get("paypalEmail", "")
+                            ),
+                            "paypalAccountName": parsed_details.get(
+                                "name",
+                                parsed_details.get(
+                                    "paypalAccountName",
+                                    (
+                                        parsed_details.get("email", "").split("@")[0]
+                                        if "@" in parsed_details.get("email", "")
+                                        else ""
+                                    ),
+                                ),
+                            ),
                         }
                     else:
-                        raise ValueError("PayPal details must be a dictionary or email string.")
+                        raise ValueError(
+                            "PayPal details must be a dictionary or email string."
+                        )
                 except (ValueError, SyntaxError):
                     raise ValueError("Invalid PayPal details format.")
-        
+
         if (
             not paypalDetails
             or "paypalEmail" not in paypalDetails

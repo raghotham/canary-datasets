@@ -198,20 +198,23 @@ def search_websites(
     """
     if not product_id:
         raise ValueError("Product ID is required")
-        
+
     # Convert specific_sites parameter if provided as string
     if isinstance(specific_sites, str):
-        if specific_sites.startswith('[') and specific_sites.endswith(']'):
+        if specific_sites.startswith("[") and specific_sites.endswith("]"):
             # Handle string representation of list like "['target.com']"
             try:
                 import ast
+
                 parsed_sites = ast.literal_eval(specific_sites)
                 if isinstance(parsed_sites, list):
                     specific_sites = parsed_sites
                 else:
                     raise ValueError("Invalid specific_sites format. Expected a list.")
             except (ValueError, SyntaxError):
-                raise ValueError("Invalid specific_sites format. Expected a valid list representation.")
+                raise ValueError(
+                    "Invalid specific_sites format. Expected a valid list representation."
+                )
         else:
             # Handle single site string like "target.com"
             specific_sites = [specific_sites]
@@ -326,7 +329,7 @@ def handle_fallback_delivery(
     """
     if not package_id:
         raise ValueError("Package ID must be provided.")
-        
+
     # Convert string details to dictionary if needed
     if isinstance(details, str):
         if ":" in details:  # Handle key:value format
@@ -621,6 +624,7 @@ def search_products(
         {"id": 103, "name": "Running Shoes", "category": "Footwear"},
         {"id": 104, "name": "Coffee Maker", "category": "Appliances"},
         {"id": 105, "name": "Water Bottle", "category": "Outdoors"},
+        {"id": 106, "name": "Brandon Sanderson", "category": "Books"},
     ]
 
     # Filter products based on query and category
@@ -845,6 +849,42 @@ def woolworths_product_search(
                 "category": "Frozen Meals",
             },
         ],
+        "Italian frozen meal": [
+            {
+                "name": "Woolworths Italian Frozen Meal - Lasagna",
+                "price": 4.50,
+                "category": "Frozen Meals",
+            },
+            {
+                "name": "Woolworths Italian Frozen Meal - Cannelloni",
+                "price": 4.20,
+                "category": "Frozen Meals",
+            },
+        ],
+        "Italian frozen": [
+            {
+                "name": "Woolworths Italian Frozen Meal - Lasagna",
+                "price": 4.50,
+                "category": "Frozen Meals",
+            },
+            {
+                "name": "Woolworths Italian Frozen Meal - Cannelloni",
+                "category": "Frozen Meals",
+                "price": 4.20,
+            },
+        ],
+        "frozen Italian": [
+            {
+                "name": "Woolworths Italian Frozen Meal - Lasagna",
+                "price": 4.50,
+                "category": "Frozen Meals",
+            },
+            {
+                "name": "Woolworths Italian Frozen Meal - Cannelloni",
+                "price": 4.20,
+                "category": "Frozen Meals",
+            },
+        ],
         "frozen pasta": [
             {
                 "name": "Woolworths Frozen Pasta Bolognese",
@@ -1013,6 +1053,7 @@ def check_price(item: str, store: str) -> Dict[str, Union[str, float]]:
             "apple": 0.5,
             "milk": 3.0,
             "bread": 2.0,
+            "banana": 0.4,
         },
         "Whole Foods": {
             "apple": 0.7,
@@ -2548,7 +2589,7 @@ def search_listings(
     query: str,
     category: Literal["cpu", "gpu", "ram", "ssd", "psu", "case", "motherboard"],
     condition: Literal["new", "used", "refurbished", "open-box"] = "new",
-    marketplaces: List[str] = None,
+    marketplaces: Union[List[str], str] = None,
     max_price: float = None,
     region: str = "US",
 ) -> Dict[str, Union[str, float, list]]:
@@ -2559,6 +2600,7 @@ def search_listings(
         category: Component category
         condition: Desired item condition
         marketplaces: Marketplaces to include, e.g., ['Amazon','Newegg','eBay','Facebook Marketplace']
+                     or a comma-separated string like 'Amazon,Newegg,eBay'
         max_price: Maximum acceptable price in USD
         region: Buyer region for filtering
 
@@ -2568,6 +2610,26 @@ def search_listings(
             - category: The category of the product
             - results: List of dictionaries with product details
     """
+    # Convert marketplaces parameter if provided as comma-separated string
+    if isinstance(marketplaces, str):
+        if marketplaces.startswith("[") and marketplaces.endswith("]"):
+            # Handle string representation of list like "['Amazon', 'Newegg']"
+            try:
+                import ast
+
+                parsed_marketplaces = ast.literal_eval(marketplaces)
+                if isinstance(parsed_marketplaces, list):
+                    marketplaces = parsed_marketplaces
+                else:
+                    raise ValueError("Invalid marketplaces format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    "Invalid marketplaces format. Expected a valid list representation."
+                )
+        else:
+            # Handle comma-separated string like "Amazon,Newegg,eBay"
+            marketplaces = [market.strip() for market in marketplaces.split(",")]
+
     if marketplaces is None:
         marketplaces = ["Amazon", "Newegg", "eBay", "Facebook Marketplace"]
 

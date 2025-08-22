@@ -136,6 +136,8 @@ def get_coords(city: str) -> Dict[str, float]:
         "Tokyo": (35.6895, 139.6917),
         "Paris": (48.8566, 2.3522),
         "Sydney": (-33.8688, 151.2093),
+        "San Francisco": (37.7749, -122.4194),
+        "Salt Lake City": (40.7608, -111.8910),
     }
     if city not in sample_coords:
         raise ValueError(f"City not supported: {city}")
@@ -184,6 +186,18 @@ def get_home_team(
             "nfl": "Chicago Bears",
             "nba": "Chicago Bulls",
             "mls": "Chicago Fire",
+        },
+        "Boston": {
+            "mlb": "Boston Red Sox",
+            "nfl": "New England Patriots",
+            "nba": "Boston Celtics",
+            "mls": "New England Revolution",
+        },
+        "Phoenix": {
+            "mlb": "Arizona Diamondbacks",
+            "nfl": "Arizona Cardinals",
+            "nba": "Phoenix Suns",
+            "mls": "Phoenix Rising",
         },
     }
 
@@ -696,6 +710,8 @@ def get_lat_long(
         ("Eiffel Tower", "Paris", "France"): (48.8584, 2.2945),
         ("Statue of Liberty", "New York", "USA"): (40.6892, -74.0445),
         ("Colosseum", "Rome", "Italy"): (41.8902, 12.4922),
+        ("Wollaton Park", "Nottingham", "UK"): (52.9492, -1.1512),
+        ("Nottingham", "None", "UK"): (52.9492, -1.1512),
     }
 
     # Generate a key for lookup

@@ -1270,13 +1270,15 @@ from typing import Dict, List, Optional, Union
 
 
 def get_campaign_travel(
-    candidate_name: str, date_range: Optional[Dict[str, Optional[str]]] = None
+    candidate_name: str,
+    date_range: Optional[Union[Dict[str, Optional[str]], str]] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
     """Retrieve public campaign travel information, including cities visited and dates.
 
     Args:
         candidate_name: Name of the candidate whose travel records are being requested.
-        date_range: Optional date range to filter travel records, with 'start_date' and 'end_date' in YYYY-MM-DD format.
+        date_range: Optional date range to filter travel records. Can be a dictionary with 'start_date' and
+                   'end_date' keys in YYYY-MM-DD format, or a string in format 'YYYY-MM-DD to YYYY-MM-DD'.
 
     Returns:
         Dict containing:
@@ -1304,6 +1306,20 @@ def get_campaign_travel(
     travel_records = sample_data[candidate_name]
 
     if date_range:
+        # Convert string date_range to dictionary if provided as string
+        if isinstance(date_range, str):
+            if " to " in date_range:
+                start_date_str, end_date_str = date_range.split(" to ", 1)
+                date_range = {
+                    "start_date": start_date_str.strip(),
+                    "end_date": end_date_str.strip(),
+                }
+            else:
+                raise ValueError(
+                    "Invalid date_range format. Expected format: 'YYYY-MM-DD to YYYY-MM-DD'"
+                )
+
+        # Now date_range should be a dictionary
         start_date = datetime.strptime(
             date_range.get("start_date", "1900-01-01"), "%Y-%m-%d"
         )
@@ -1541,19 +1557,23 @@ from typing import Dict, List
 
 
 def get_flight_times(
-    departure_airport: str, arrival_airport: str, date: str
+    departure_airport: str, arrival_airport: str, date: Optional[str] = None
 ) -> Dict[str, List[Dict[str, str]]]:
     """Retrieves flight departure and arrival times between two airports for a given date.
 
     Args:
         departure_airport: The airport code where the flight departs from (IATA code).
         arrival_airport: The airport code where the flight arrives (IATA code).
-        date: The date of travel in ISO 8601 format (YYYY-MM-DD).
+        date: The date of travel in ISO 8601 format (YYYY-MM-DD). If not provided, returns flights for a default date.
 
     Returns:
         Dict containing:
             - flights: List of dictionaries with 'departure_time' and 'arrival_time' keys
     """
+    # If no date provided, use a default date
+    if date is None:
+        date = "2023-10-01"
+
     # Sample data based on hash of the input parameters for consistent results
     sample_flights = {
         ("JFK", "LAX", "2023-10-01"): [
@@ -1719,6 +1739,9 @@ def get_hiking_trails(
             {"name": "Lands End Trail", "length": 3.4, "difficulty": "easy"},
             {"name": "Dipsea Trail", "length": 9.5, "difficulty": "hard"},
             {"name": "Muir Woods Trail", "length": 6.0, "difficulty": "moderate"},
+        ],
+        "Berlin": [
+            {"name": "Hohenzollern Chain", "length": 3.0, "difficulty": "easy"},
         ],
     }
 
@@ -2269,6 +2292,10 @@ def search_available_hotels(
             {"name": "Eiffel Stay", "price_per_night": 200, "beds": 2},
             {"name": "Louvre Lodge", "price_per_night": 120, "beds": 1},
         ],
+        "Hong Kong": [
+            {"name": "City View", "price_per_night": 250, "beds": 2},
+            {"name": "Ocean Front", "price_per_night": 180, "beds": 1},
+        ],
     }
 
     if city not in sample_hotels:
@@ -2423,8 +2450,8 @@ def trip_cost_est(
     """
     # Mock distance calculation between start and end location
     distance_sample = {
-        ("New York", "Los Angeles"): 2800,
-        ("San Francisco", "Las Vegas"): 570,
+        ("Calidornia", "Florida"): 2800,
+        ("California", "Colorado"): 570,
         ("Chicago", "Houston"): 1080,
     }
     distance = distance_sample.get((start_location, end_location))

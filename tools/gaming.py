@@ -1481,8 +1481,8 @@ def get_xp_records(
     rsn: str,
     game: Literal["osrs", "rs3"] = "rs3",
     skills: Union[List[str], str] = [],
-    start_time: Union[int, None] = None,
-    end_time: Union[int, None] = None,
+    start_time: Union[int, str, None] = None,
+    end_time: Union[int, str, None] = None,
 ) -> Dict[str, Union[str, Dict[str, int]]]:
     """Retrieve XP totals over a time period for a RuneScape player.
 
@@ -1490,8 +1490,8 @@ def get_xp_records(
         rsn: Runescape player's name
         game: 'osrs' or 'rs3'; defaults to 'rs3'
         skills: Skills to include (list of skill names or single skill name), defaults to all skills
-        start_time: Start time to track XP gains
-        end_time: End time to track XP gains
+        start_time: Start time to track XP gains (timestamp or ISO datetime string)
+        end_time: End time to track XP gains (timestamp or ISO datetime string)
 
     Returns:
         Dict containing:
@@ -1501,6 +1501,25 @@ def get_xp_records(
     """
     if not rsn:
         raise ValueError("Player's name (rsn) is required")
+        
+    # Convert datetime strings to timestamps if needed
+    def convert_time_param(time_param):
+        if isinstance(time_param, str):
+            try:
+                from datetime import datetime
+                # Parse ISO datetime string and convert to timestamp
+                dt = datetime.fromisoformat(time_param.replace('Z', '+00:00'))
+                return int(dt.timestamp())
+            except ValueError:
+                # Try to parse as simple timestamp string
+                try:
+                    return int(time_param)
+                except ValueError:
+                    raise ValueError(f"Invalid time format: {time_param}. Expected ISO datetime or timestamp.")
+        return time_param
+    
+    start_time = convert_time_param(start_time)
+    end_time = convert_time_param(end_time)
 
     # Sample skills data
     all_skills = {

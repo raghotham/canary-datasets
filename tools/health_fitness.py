@@ -234,15 +234,15 @@ def compare_energy_drinks(
     """
     if not drinks:
         raise ValueError("No drinks provided for comparison.")
-        
+
     # Convert string to list of drinks if needed
     if isinstance(drinks, str):
         # Handle string input (comma-separated list of drink names)
-        drink_names = [name.strip() for name in drinks.split(',')]
+        drink_names = [name.strip() for name in drinks.split(",")]
         processed_drinks = []
         for name in drink_names:
             # Try to extract brand and flavor from the name
-            parts = name.split(' ', 1)
+            parts = name.split(" ", 1)
             if len(parts) > 1:
                 processed_drinks.append({"brand": parts[0], "flavor": parts[1]})
             else:
@@ -528,6 +528,16 @@ def get_patient_details(
             "conditions": ["hypertension", "diabetes"],
         },
         "Jane Smith": {"medical_number": "654321", "age": 37, "conditions": ["asthma"]},
+        "Henry Martin": {
+            "medical_number": "111222",
+            "age": 25,
+            "conditions": ["allergies"],
+        },
+        "Mark Martin": {
+            "medical_number": "111223",
+            "age": 52,
+            "conditions": ["allergies"],
+        },
     }
 
     # Check if the patient exists in the database
@@ -1046,7 +1056,7 @@ def find_nearby_specialists(
             {"name": "Dr. Skin", "distance": 5, "insurance": "HealthPlus"},
             {"name": "Dr. Derm", "distance": 20, "insurance": "MediCare"},
         ],
-        "orthopedist": [
+        "orthopedic": [
             {"name": "Dr. Bone", "distance": 8, "insurance": "HealthPlus"},
             {"name": "Dr. Joint", "distance": 18, "insurance": "MediCare"},
         ],

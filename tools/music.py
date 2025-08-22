@@ -48,7 +48,9 @@ from typing import Dict, List, Union
 
 
 def create_playlist(
-    playlist_name: str, songs: Union[List[Dict[str, str]], str] = [], is_public: bool = False
+    playlist_name: str,
+    songs: Union[List[Dict[str, str]], str] = [],
+    is_public: bool = False,
 ) -> Dict[str, Union[str, bool, List[Dict[str, str]]]]:
     """Creates a new music playlist with optional initial songs.
 
@@ -69,26 +71,31 @@ def create_playlist(
     # Convert songs parameter if it's a string
     if isinstance(songs, str):
         # Handle string representation of list like '[{...}, {...}]'
-        if songs.startswith('[') and songs.endswith(']'):
+        if songs.startswith("[") and songs.endswith("]"):
             try:
                 import ast
+
                 parsed_songs = ast.literal_eval(songs)
                 if isinstance(parsed_songs, list):
                     songs = parsed_songs
                 else:
                     raise ValueError("Invalid songs format. Expected a list.")
             except (ValueError, SyntaxError):
-                raise ValueError("Invalid songs format. Expected a valid list representation.")
+                raise ValueError(
+                    "Invalid songs format. Expected a valid list representation."
+                )
         else:
             # Handle comma-separated string like "Love Story by Taylor Swift, Not Today by Twenty One Pilots"
-            song_parts = [song.strip() for song in songs.split(',')]
+            song_parts = [song.strip() for song in songs.split(",")]
             songs = []
             for song_part in song_parts:
-                if ' by ' in song_part:
-                    title, artist = song_part.split(' by ')
+                if " by " in song_part:
+                    title, artist = song_part.split(" by ")
                     songs.append({"title": title.strip(), "artist": artist.strip()})
                 else:
-                    songs.append({"title": song_part.strip(), "artist": "Unknown Artist"})
+                    songs.append(
+                        {"title": song_part.strip(), "artist": "Unknown Artist"}
+                    )
 
     # Simulate a hash-based unique identifier for the playlist
     playlist_id = hash(playlist_name) % 10000
@@ -684,7 +691,7 @@ def search_album(
     # Simulate a database of albums using hash-based generation
     def generate_album_data(query: str) -> Dict[str, Union[str, List[str]]]:
         hash_value = int(hashlib.sha256(query.encode()).hexdigest(), 16)
-        artists = ["Artist A", "Artist B", "Artist C"]
+        artists = ["Artist A", "Artist B", "Queen"]
         songwriters = ["Songwriter X", "Songwriter Y", "Songwriter Z"]
         genres = ["Pop", "Rock", "Jazz"]
         languages = ["English", "Spanish", "French"]

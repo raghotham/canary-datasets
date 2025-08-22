@@ -110,7 +110,7 @@ def filter_species_by_region(
     ],
     hardiness_zone: Optional[str] = None,
     is_native: Optional[bool] = None,
-    habitat: Optional[Literal["coastal", "wetland", "woodland", "urban", "alpine", "desert"]] = None,
+    habitat: Optional[Union[Literal["coastal", "wetland", "woodland", "urban", "alpine", "desert"], str]] = None,
 ) -> List[Dict[str, Union[str, bool]]]:
     """Filter plant species by geographic macro-region and habitat traits.
 
@@ -127,6 +127,35 @@ def filter_species_by_region(
             - habitat: Habitat type of the species
             - hardiness_zone: Hardiness zone of the species
     """
+    # Convert habitat parameter to handle alternative forms
+    if isinstance(habitat, str):
+        habitat_mappings = {
+            "coastal exposure": "coastal",
+            "coastal area": "coastal",
+            "coastal zone": "coastal",
+            "wetland area": "wetland",
+            "marsh": "wetland",
+            "forest": "woodland",
+            "wooded area": "woodland",
+            "urban area": "urban",
+            "city": "urban",
+            "mountain": "alpine",
+            "mountainous": "alpine",
+            "desert area": "desert",
+            "arid": "desert",
+        }
+        
+        # Check if it's an alternative form and convert
+        habitat_lower = habitat.lower()
+        for key, value in habitat_mappings.items():
+            if habitat_lower == key or habitat_lower in key or key in habitat_lower:
+                habitat = value
+                break
+        
+        # Check if it's a valid literal after conversion
+        valid_habitats = {"coastal", "wetland", "woodland", "urban", "alpine", "desert"}
+        if habitat not in valid_habitats:
+            raise ValueError(f"Invalid habitat: {habitat}. Must be one of {valid_habitats}")
     # Sample data for demonstration purposes
     species_data = [
         {"species_name": "Douglas Fir", "is_native": True, "habitat": "woodland", "hardiness_zone": "6a"},
