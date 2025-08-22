@@ -1429,9 +1429,12 @@ def find_nearby_restaurants(
                 "name": "Al Covo",
                 "address": "Campiello de la Pescaria 3968, 30122 Venezia VE, Italy",
             },
+        ],
+        "Venice, Italy": [
             {
                 "name": "Caffè Florian",
                 "address": "Piazza San Marco 57, 30124 Venezia VE, Italy",
+                "tags": ["cafe", "coffee", "vegetarian"],
             },
         ],
         "Milan": [

@@ -3464,10 +3464,10 @@ conversations:
       \ Amir was born (Tehran). "
 - name: Entry 160
   tools:
-  - TurnOnDevice
-  - SetThermostat
-  - LockDoor
-  - ChangeLightColor
+  - turn_on_device
+  - set_thermostat
+  - lock_door
+  - change_light_color
   messages:
   - Would it be easier to fall asleep if i set my thermostat to 60F at night?
   metadata:
@@ -3945,13 +3945,13 @@ conversations:
       a sequential call, and tried to test this but it seems to have broken it.
 - name: Entry 185
   tools:
-  - setAutoclaveConfig
-  - startAutoclave
-  - stopAutoclave
-  - getAutoclaveStatus
-  - getAutoclaveConfig
-  - resetAutoclave
-  - getError
+  - set_autoclave_config
+  - start_autoclave
+  - stop_autoclave
+  - get_autoclave_status
+  - get_autoclave_config
+  - reset_autoclave
+  - get_error
   messages:
   - I'll need to clean the next batch at min, for, like, a half hour or so if the wash is done...
   metadata:
@@ -4759,8 +4759,8 @@ conversations:
       with assserting two locations, and ends with an ambiguous request for driving.'
 - name: Entry 229
   tools:
-  - Card Search
-  - Deck_search
+  - card_search
+  - deck_search
   messages:
   - 'Can you find a list of cards that let you search the deck for resources? '
   metadata:

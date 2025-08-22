@@ -1139,7 +1139,7 @@ def find_nearest_hospital(
 from typing import Dict, Union
 
 
-def getAutoclaveStatus() -> Dict[str, Union[float, int, bool, str]]:
+def get_autoclave_status() -> Dict[str, Union[float, int, bool, str]]:
     """Retrieve current status of the autoclave including internal temperature, runtime, vacuum status, and whether it's running.
 
     Returns:
@@ -1746,7 +1746,7 @@ def reset_autoclave() -> Dict[str, Union[str, bool]]:
 from typing import Dict, Union
 
 
-def setAutoclaveConfig(
+def set_autoclave_config(
     goalTemperature: float,
     timerMinutes: Union[float, None] = None,
     useVacuum: bool = True,
@@ -1779,7 +1779,7 @@ def setAutoclaveConfig(
     }
 
 
-def startAutoclave() -> Dict[str, Union[str, int, bool]]:
+def start_autoclave() -> Dict[str, Union[str, int, bool]]:
     """Initiate autoclave cycle with current configuration.
 
     Returns:
@@ -1810,7 +1810,7 @@ def startAutoclave() -> Dict[str, Union[str, int, bool]]:
     }
 
 
-def stopAutoclave() -> Dict[str, Union[str, bool]]:
+def stop_autoclave() -> Dict[str, Union[str, bool]]:
     """Stop the autoclave process immediately.
 
     Returns:

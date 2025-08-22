@@ -600,7 +600,7 @@ def reserve_instrument(
     """
 
     # Simulate a list of available instruments
-    available_instruments = ["guitar", "piano", "violin", "drums"]
+    available_instruments = ["guitar", "piano", "violin", "drums", "Gene Sequencer"]
 
     if instrument_name not in available_instruments:
         raise ValueError(f"Instrument not available: {instrument_name}")

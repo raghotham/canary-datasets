@@ -78,17 +78,17 @@ def get_preacher_sermons(preacher_id: str) -> Dict[str, Union[str, List[str]]]:
     """
 
     sample_sermons = {
-        "preacher_001": [
+        "preacher_17": [
             "The Path to Enlightenment",
             "Faith and Hope",
             "Love Thy Neighbor",
         ],
-        "preacher_002": [
+        "preacher_29": [
             "The Power of Prayer",
             "Finding Peace",
             "Overcoming Adversity",
         ],
-        "preacher_003": [
+        "preacher_30": [
             "The Journey of Faith",
             "Grace and Mercy",
             "Living with Purpose",
