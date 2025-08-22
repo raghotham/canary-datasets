@@ -613,6 +613,7 @@ def get_coordinates(
         "1600 Amphitheatre Parkway, Mountain View, CA": (37.4221, -122.0841),
         "1 Infinite Loop, Cupertino, CA": (37.3318, -122.0312),
         "350 Fifth Avenue, New York, NY": (40.7484, -73.9857),
+        "790 7th Ave, New York, NY": (40.7790, -73.9827),
     }
 
     if address:
@@ -713,17 +714,60 @@ def get_lat_long(
         ("Wollaton Park", "Nottingham", "UK"): (52.9492, -1.1512),
         ("Wollaton Park", "Nottingham", "United Kingdom"): (52.9492, -1.1512),
         ("Nottingham", "None", "UK"): (52.9492, -1.1512),
+        # Add entries for location-only lookups
+        ("Wollaton Park", None, None): (52.9492, -1.1512),
+        ("Eiffel Tower", None, None): (48.8584, 2.2945),
+        ("Statue of Liberty", None, None): (40.6892, -74.0445),
+        ("Colosseum", None, None): (41.8902, 12.4922),
+        ("Nottingham", None, None): (52.9492, -1.1512),
     }
 
-    # Generate a key for lookup
-    key = (location_name, location_city, location_country)
+    def find_matching_location(
+        location_name, location_city, location_country, available_keys
+    ):
+        """Find matching location with flexible matching logic."""
+        # First try exact match
+        exact_key = (location_name, location_city, location_country)
+        if exact_key in available_keys:
+            return exact_key
 
-    if key not in sample_data:
+        # Try location name only if city/country are None
+        if location_city is None and location_country is None:
+            name_only_key = (location_name, None, None)
+            if name_only_key in available_keys:
+                return name_only_key
+
+        # Try to find any match with the same location name
+        for key in available_keys:
+            if key[0] == location_name:
+                # If we find a match with the same location name, use it
+                return key
+
+        # Try partial matches if city is provided but country is None
+        if location_city is not None and location_country is None:
+            for key in available_keys:
+                if key[0] == location_name and key[1] == location_city:
+                    return key
+
+        # Try partial matches if country is provided but city is None
+        if location_country is not None and location_city is None:
+            for key in available_keys:
+                if key[0] == location_name and key[2] == location_country:
+                    return key
+
+        return None
+
+    # Find matching location using flexible matching
+    matching_key = find_matching_location(
+        location_name, location_city, location_country, sample_data.keys()
+    )
+
+    if matching_key is None:
         raise ValueError(
             f"Location not supported: {location_name}, {location_city}, {location_country}"
         )
 
-    latitude, longitude = sample_data[key]
+    latitude, longitude = sample_data[matching_key]
 
     return [
         {"location_name": location_name, "latitude": latitude, "longitude": longitude}

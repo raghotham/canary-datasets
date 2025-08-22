@@ -236,7 +236,7 @@ def uk_election_statistics(
     """
 
     sample_data = {
-        "Bushey Road, Wimbledon, SW19": [
+        "Bushey Road, Wimbledon SW19": [
             {"year": 2019, "votes": 75000, "turnout_percentage": 71},
             {"year": 2017, "votes": 72000, "turnout_percentage": 73},
             {"year": 2015, "votes": 68000, "turnout_percentage": 69},

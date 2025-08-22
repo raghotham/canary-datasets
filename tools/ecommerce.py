@@ -896,14 +896,139 @@ def woolworths_product_search(
                 "category": "Frozen Meals",
             },
         ],
+        "chicken": [
+            {
+                "name": "Woolworths Chicken Breast",
+                "price": 12.99,
+                "category": "Meat",
+            },
+            {
+                "name": "Woolworths Free Range Chicken",
+                "price": 15.50,
+                "category": "Meat",
+            },
+        ],
+        "pizza": [
+            {
+                "name": "Woolworths Frozen Margherita Pizza",
+                "price": 6.50,
+                "category": "Frozen Meals",
+            },
+            {
+                "name": "Woolworths Frozen Pepperoni Pizza",
+                "price": 7.20,
+                "category": "Frozen Meals",
+            },
+        ],
     }
 
-    if keyword not in sample_products:
+    def find_synonym_matches(search_term: str) -> str:
+        """Map common synonyms to help with search matching."""
+        synonyms = {
+            "dinner": "meal",
+            "lunch": "meal",
+            "food": "meal",
+            "supper": "meal",
+            "dish": "meal",
+            "entree": "meal",
+            "lasagne": "lasagna",
+            "spag": "spaghetti",
+            "chook": "chicken",
+            "chix": "chicken",
+        }
+
+        # Replace synonyms in the search term
+        words = search_term.lower().split()
+        for i, word in enumerate(words):
+            if word in synonyms:
+                words[i] = synonyms[word]
+        return " ".join(words)
+
+    def calculate_match_score(keyword_norm: str, product_key: str) -> float:
+        """Calculate how well a search keyword matches a product key."""
+        keyword_words = set(keyword_norm.lower().split())
+        product_words = set(product_key.lower().split())
+
+        if not keyword_words:
+            return 0.0
+
+        # Exact match gets highest score
+        if keyword_norm.lower() == product_key.lower():
+            return 1.0
+
+        # Calculate intersection ratio
+        intersection = keyword_words.intersection(product_words)
+        union = keyword_words.union(product_words)
+
+        if not intersection:
+            return 0.0
+
+        # Score based on how many search words are found
+        keyword_coverage = len(intersection) / len(keyword_words)
+
+        # Bonus for having all search words present
+        if len(intersection) == len(keyword_words):
+            keyword_coverage += 0.5
+
+        # Small bonus for word order preservation
+        if keyword_norm.lower() in product_key.lower():
+            keyword_coverage += 0.2
+
+        return min(keyword_coverage, 1.0)
+
+    def fuzzy_search_products(search_keyword: str) -> List:
+        """Perform fuzzy search across all product categories."""
+        # Apply synonym mapping
+        normalized_keyword = find_synonym_matches(search_keyword)
+
+        matches = []
+
+        # Calculate match scores for all product categories
+        for product_key, products in sample_products.items():
+            # Try both original and normalized keywords
+            score1 = calculate_match_score(search_keyword, product_key)
+            score2 = calculate_match_score(normalized_keyword, product_key)
+            score = max(score1, score2)
+
+            if score > 0.3:  # Minimum threshold for matches
+                matches.append((score, products))
+
+        if not matches:
+            return []
+
+        # Sort by score (highest first) and return products
+        matches.sort(key=lambda x: x[0], reverse=True)
+
+        # Collect all products from matching categories, avoiding duplicates
+        all_products = []
+        seen_products = set()
+
+        for score, products in matches:
+            for product in products:
+                # Use product name as unique identifier
+                product_id = product["name"]
+                if product_id not in seen_products:
+                    seen_products.add(product_id)
+                    all_products.append(product)
+
+        return all_products
+
+    # First try exact match
+    if keyword in sample_products:
+        return {
+            "keyword": keyword,
+            "products": sample_products[keyword],
+        }
+
+    # If no exact match, try fuzzy search
+    fuzzy_results = fuzzy_search_products(keyword)
+
+    if not fuzzy_results:
         raise ValueError(f"No products found for keyword: {keyword}")
 
     return {
         "keyword": keyword,
-        "products": sample_products[keyword],
+        "products": fuzzy_results,
     }
 
 
@@ -1412,7 +1537,7 @@ def find_used_car_parts(
             {"name": "Truck Parts Depot", "city": "Houston", "price": 900},
             {"name": "Gear Masters", "city": "Chicago", "price": 950},
         ],
-        ("Hilux", "Hilux", "radiator"): [
+        ("Toyota", "Hilux", "radiator"): [
             {"name": "Wellington Auto Parts", "city": "Wellington", "price": 350},
             {"name": "Kiwi Car Components", "city": "Wellington", "price": 375},
             {"name": "NZ Truck Parts", "city": "Auckland", "price": 320},
@@ -1811,11 +1936,13 @@ def get_history(
                 - date: Date of purchase
     """
 
-    def generate_purchase_data(index: int) -> Dict[str, Union[str, float]]:
-        item_name = f"Item-{index}"
-        price = int(hashlib.md5(item_name.encode()).hexdigest()[-3:], 16) % 100 + 1
-        purchase_date = datetime(2025, 1, 1).strftime("%Y-%m-%d")
-        return {"item": item_name, "price": price, "date": purchase_date}
+    # Deterministic items with specific IDs
+    available_items = [
+        {"item": "P004", "price": 29.99, "date": "2025-01-04"},
+        {"item": "P003", "price": 49.99, "date": "2025-01-03"},
+        {"item": "P002", "price": 89.99, "date": "2025-01-02"},
+        {"item": "P001", "price": 29.99, "date": "2025-01-01"},
+    ]
 
     if start_date:
         try:
@@ -1832,7 +1959,7 @@ def get_history(
     if limit is not None and (not isinstance(limit, int) or limit <= 0):
         raise ValueError(f"Limit must be a positive integer, got: {limit}")
 
-    purchases = [generate_purchase_data(i) for i in range(limit)]
+    purchases = available_items[:limit] if limit is not None else available_items
     return {
         "start_date": start_date or "N/A",
         "end_date": end_date or "N/A",
@@ -2034,7 +2161,7 @@ def get_product_details(product_id: str) -> Dict[str, Union[str, float, int]]:
             "stock": 200,
             "description": "A versatile USB-C hub with multiple ports for connectivity.",
         },
-        "Item-0": {
+        "P004": {
             "name": "Mistborn",
             "price": 9.99,
             "stock": 100,

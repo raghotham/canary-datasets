@@ -458,19 +458,21 @@ def renew(JWT: str) -> Dict[str, str]:
     return {"new_jwt": new_jwt}
 
 
+import ast
+import shlex
 import subprocess
 from typing import Dict, List, Union
 
 
 def run_command(
-    name: str, command: str, arguments: List[str] = [], user: str = None
+    name: str, command: str, arguments: Union[List[str], str] = [], user: str = None
 ) -> Dict[str, Union[str, int]]:
     """Run a shell command on a VPS.
 
     Args:
         name: The name of the server to run the command on.
         command: The command to run, not including arguments.
-        arguments: List of command line arguments to send to the command.
+        arguments: List of command line arguments to send to the command, or a string that will be parsed.
         user: The name of the user account to run the command as.
 
     Returns:
@@ -483,7 +485,42 @@ def run_command(
     if not name or not command or not user:
         raise ValueError("Server name, command, and user are required.")
 
-    full_command = ["ssh", f"{user}@{name}", command] + arguments
+    def parse_arguments(args) -> List[str]:
+        """Parse arguments from various input formats into a list of strings."""
+        # Handle None case
+        if args is None:
+            return []
+
+        # If it's already a list, return as-is
+        if isinstance(args, list):
+            return args
+
+        # If it's a string, try to parse it
+        if isinstance(args, str):
+            # Handle empty string
+            if not args.strip():
+                return []
+
+            # Try to parse as a string representation of a list
+            if args.strip().startswith("[") and args.strip().endswith("]"):
+                try:
+                    parsed_list = ast.literal_eval(args)
+                    if isinstance(parsed_list, list):
+                        return [str(item) for item in parsed_list]
+                except (ValueError, SyntaxError):
+                    # If parsing fails, fall through to shell splitting
+                    pass
+
+            # Parse as a shell command string (split by spaces, respecting quotes)
+            return shlex.split(args)
+
+        # For any other type, try to convert to string and split
+        return shlex.split(str(args))
+
+    # Parse arguments using the flexible parser
+    parsed_args = parse_arguments(arguments)
+
+    full_command = ["ssh", f"{user}@{name}", command] + parsed_args
     try:
         result = subprocess.run(
             full_command, capture_output=True, text=True, check=True
@@ -1627,17 +1664,24 @@ def get_regional_holidays(
             - region: List of holiday names for the specified date
     """
 
-    # Convert single string to list if needed
+    # Convert single string to list if needed, handling comma-separated strings
     if isinstance(regions, str):
-        regions_list = [regions]
+        if "," in regions:
+            regions_list = [r.strip() for r in regions.split(",")]
+        else:
+            regions_list = [regions]
     elif isinstance(regions, list):
         regions_list = regions
     else:
         raise ValueError("Regions must be a string or list of strings")
 
-    # Sample holiday data
+    # Sample holiday data - including both country and specific region codes
     holidays_data = {
         "US-NY": {
+            "2023-12-25": ["Christmas Day"],
+            "2023-07-04": ["Independence Day"],
+        },
+        "US": {
             "2023-12-25": ["Christmas Day"],
             "2023-07-04": ["Independence Day"],
         },
@@ -1654,19 +1698,63 @@ def get_regional_holidays(
             "2023-05-03": ["Constitution Memorial Day"],
             "2023-11-03": ["Culture Day"],
         },
+        "JP": {
+            "2023-12-25": ["Christmas Day"],
+            "2023-05-03": ["Constitution Memorial Day"],
+            "2023-11-03": ["Culture Day"],
+        },
         "CA-BC": {
+            "2023-12-25": ["Christmas Day"],
+            "2023-07-01": ["Canada Day"],
+        },
+        "CA": {
             "2023-12-25": ["Christmas Day"],
             "2023-07-01": ["Canada Day"],
         },
     }
 
+    def find_matching_regions(requested_region, available_regions):
+        """Find matching regions, supporting both country codes and specific regions."""
+        matches = []
+
+        # Exact match first
+        if requested_region in available_regions:
+            matches.append(requested_region)
+        else:
+            # If requesting a country code, find all matching sub-regions
+            for available_region in available_regions:
+                if available_region.startswith(requested_region + "-"):
+                    matches.append(available_region)
+
+            # If no sub-regions found and it looks like a country code,
+            # we should still raise an error for unsupported regions
+            if not matches:
+                raise ValueError(f"Region not supported: {requested_region}")
+
+        return matches
+
     result = {}
     for region in regions_list:
-        if region not in holidays_data:
+        matching_regions = find_matching_regions(region, holidays_data.keys())
+
+        if not matching_regions:
             raise ValueError(f"Region not supported: {region}")
 
-        holidays = holidays_data.get(region, {}).get(date, [])
-        result[region] = holidays
+        # For the requested region, collect holidays from all matching regions
+        all_holidays = []
+        for matching_region in matching_regions:
+            holidays = holidays_data.get(matching_region, {}).get(date, [])
+            all_holidays.extend(holidays)
+
+        # Remove duplicates while preserving order
+        unique_holidays = []
+        seen = set()
+        for holiday in all_holidays:
+            if holiday not in seen:
+                unique_holidays.append(holiday)
+                seen.add(holiday)
+
+        result[region] = unique_holidays
 
     return result
 

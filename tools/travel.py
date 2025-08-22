@@ -168,6 +168,22 @@ def find_accommodation(
             {"name": "Campground A", "rating": 4.7, "price_per_night": 35.0},
             {"name": "Mountain Lodge", "rating": 4.2, "price_per_night": 150.0},
         ],
+        "Redwoods": [
+            {"name": "Redwood Motel", "rating": 4.3, "price_per_night": 100.0},
+            {"name": "Forest Inn", "rating": 3.9, "price_per_night": 80.0},
+        ],
+        "Grand Canyon": [
+            {"name": "Canyon View Hotel", "rating": 4.6, "price_per_night": 200.0},
+            {"name": "Canyon Motel", "rating": 3.8, "price_per_night": 120.0},
+        ],
+        "Grand Teton": [
+            {"name": "Teton View Hotel", "rating": 4.7, "price_per_night": 250.0},
+            {"name": "Teton Motel", "rating": 3.9, "price_per_night": 120.0},
+        ],
+        "Yellowstone": [
+            {"name": "Yellowstone Hotel", "rating": 4.8, "price_per_night": 300.0},
+            {"name": "Yellowstone Motel", "rating": 4.0, "price_per_night": 150.0},
+        ],
     }
 
     if location not in sample_data:
@@ -1586,7 +1602,7 @@ def get_flight_times(
             {"departure_time": "13:00", "arrival_time": "15:15"},
             {"departure_time": "17:00", "arrival_time": "19:15"},
         ],
-        ("MAN", "BFS", "2023-10-17"): [
+        ("MAN", "BFS", "2023-10-01"): [
             {"departure_time": "07:30", "arrival_time": "08:45"},
             {"departure_time": "11:20", "arrival_time": "12:35"},
             {"departure_time": "15:45", "arrival_time": "17:00"},
@@ -2008,6 +2024,7 @@ def route_plan(
         ],
         ("San Francisco", "Seattle"): ["Sacramento", "Portland"],
         ("Miami", "Chicago"): ["Atlanta", "Nashville", "Indianapolis"],
+        ("California"): ["FLorida", "Texas", "New York", "Washington", "Illinois"],
     }
 
     # Determine the route based on the start and end locations
@@ -2378,9 +2395,11 @@ from typing import Dict, List, Literal, Union
 def stops_along_route_find(
     start_location: str,
     end_location: str,
-    categories: Union[List[
-        Literal["gas", "food", "electric_charger", "coffee", "bathroom"]
-    ], Literal["gas", "food", "electric_charger", "coffee", "bathroom"], str] = ["gas"],
+    categories: Union[
+        List[Literal["gas", "food", "electric_charger", "coffee", "bathroom"]],
+        Literal["gas", "food", "electric_charger", "coffee", "bathroom"],
+        str,
+    ] = ["gas"],
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Suggest places to take a break from driving along a route.
 
@@ -2413,22 +2432,24 @@ def stops_along_route_find(
 
     if not start_location or not end_location:
         raise ValueError("Both start_location and end_location are required.")
-    
+
     # Convert categories to list if it's a string
     if isinstance(categories, str):
         # Check if it's a comma-separated list
-        if ',' in categories:
-            categories_list = [cat.strip() for cat in categories.split(',')]
+        if "," in categories:
+            categories_list = [cat.strip() for cat in categories.split(",")]
         else:
             # Single category as string
             categories_list = [categories.strip()]
-        
+
         # Validate each category
         valid_categories = ["gas", "food", "electric_charger", "coffee", "bathroom"]
         for cat in categories_list:
             if cat not in valid_categories:
-                raise ValueError(f"Invalid category: {cat}. Must be one of: {', '.join(valid_categories)}")
-        
+                raise ValueError(
+                    f"Invalid category: {cat}. Must be one of: {', '.join(valid_categories)}"
+                )
+
         categories = categories_list
 
     stops = []
@@ -2467,7 +2488,7 @@ def trip_cost_est(
     """
     # Mock distance calculation between start and end location
     distance_sample = {
-        ("Calidornia", "Florida"): 2800,
+        ("California", "Florida"): 2800,
         ("California", "Colorado"): 570,
         ("Chicago", "Houston"): 1080,
     }

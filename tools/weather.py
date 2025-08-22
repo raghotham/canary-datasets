@@ -23,7 +23,6 @@ def get_weather(
     # Sample data for current temperature
     current_weather_sample = {
         "New York": 68.0,
-        "London": 60.0,
         "Sydney": 75.0,
         "Mumbai": 85.0,
         "Tokyo": 70.0,
@@ -31,6 +30,7 @@ def get_weather(
         "Paris": 62.0,
         "Las Vegas": 88.0,
         "San Francisco": 66.0,
+        "Berlin": 70.0,
     }
 
     # Sample data for forecasted weather
@@ -74,6 +74,10 @@ def get_weather(
         "Milan": [
             {"day": "Monday", "temperature": 67.0, "condition": "cloudy"},
             {"day": "Tuesday", "temperature": 69.0, "condition": "sunny"},
+        ],
+        "Berlin": [
+            {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 72.0, "condition": "cloudy"},
         ],
     }
 
@@ -267,6 +271,10 @@ def get_hiking_trail_weather(hiking_trail: str) -> Dict[str, Union[str, float, l
         "Potsdam's Sanssouci Park": {
             "temperature": 73,
             "conditions": ["sunny", "warm"],
+        },
+        "Hohenzollern Chain": {
+            "temperature": 70,
+            "conditions": ["partly cloudy", "mild"],
         },
     }
 

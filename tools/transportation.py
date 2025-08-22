@@ -878,6 +878,7 @@ def get_bus(
             - arr_time: Timestamp of when the bus arrives at each stop
     """
 
+    # Extended sample buses with more locations including Macroom
     sample_buses = [
         {
             "bus_id": "B123",
@@ -903,12 +904,106 @@ def get_bus(
             "stops": ["Broadway", "7th Ave", "8th Ave"],
             "arr_time": ["10:00", "10:15", "10:30"],
         },
+        # Irish locations
+        {
+            "bus_id": "B801",
+            "loc": "Macroom",
+            "full": False,
+            "cost": 3.5,
+            "stops": ["Main Square", "Castle Street", "Barrack Hill"],
+            "arr_time": ["07:30", "07:45", "08:00"],
+        },
+        {
+            "bus_id": "B802",
+            "loc": "Macroom",
+            "full": True,
+            "cost": 2.8,
+            "stops": ["Cork Road", "New Street", "Millstreet Road"],
+            "arr_time": ["09:15", "09:30", "09:45"],
+        },
+        {
+            "bus_id": "B803",
+            "loc": "Macroom",
+            "full": False,
+            "cost": 3.2,
+            "stops": ["Church Street", "Market Square", "Dan Corkery Bridge"],
+            "arr_time": ["11:00", "11:15", "11:30"],
+        },
+        # Additional international locations
+        {
+            "bus_id": "B901",
+            "loc": "Dublin",
+            "full": False,
+            "cost": 2.4,
+            "stops": ["O'Connell St", "Temple Bar", "Trinity College"],
+            "arr_time": ["08:30", "08:45", "09:00"],
+        },
+        {
+            "bus_id": "B902",
+            "loc": "Cork",
+            "full": False,
+            "cost": 2.6,
+            "stops": ["Patrick Street", "Grand Parade", "English Market"],
+            "arr_time": ["10:00", "10:15", "10:30"],
+        },
+        {
+            "bus_id": "B903",
+            "loc": "London",
+            "full": True,
+            "cost": 4.5,
+            "stops": ["Big Ben", "Westminster", "London Bridge"],
+            "arr_time": ["07:00", "07:20", "07:40"],
+        },
     ]
 
+    def generate_fallback_buses(location: str):
+        """Generate sample buses for unknown locations using hash-based generation."""
+        import hashlib
+
+        hash_seed = int(hashlib.sha256(location.encode()).hexdigest(), 16)
+
+        fallback_buses = []
+        for i in range(2):  # Generate 2 buses for unknown locations
+            bus_id = (
+                f"B{(hash_seed + i) % 9000 + 1000}"  # Generate ID between B1000-B9999
+            )
+            is_full = (hash_seed + i) % 2 == 0
+            bus_cost = 2.0 + ((hash_seed + i) % 20) / 10  # Cost between 2.0 and 4.0
+
+            # Generate stops based on location
+            stops = [f"{location} Central", f"{location} Station", f"{location} Mall"]
+
+            # Generate arrival times
+            base_hour = 8 + (i * 2)
+            arr_times = [
+                f"{base_hour:02d}:00",
+                f"{base_hour:02d}:15",
+                f"{base_hour:02d}:30",
+            ]
+
+            fallback_buses.append(
+                {
+                    "bus_id": bus_id,
+                    "loc": location,
+                    "full": is_full,
+                    "cost": round(bus_cost, 1),
+                    "stops": stops,
+                    "arr_time": arr_times,
+                }
+            )
+
+        return fallback_buses
+
+    # Find buses for the requested location
+    location_buses = [bus for bus in sample_buses if bus["loc"] == loc]
+
+    # If no buses found for location, generate fallback buses
+    if not location_buses:
+        location_buses = generate_fallback_buses(loc)
+
+    # Apply filters
     filtered_buses = [
-        bus
-        for bus in sample_buses
-        if bus["loc"] == loc and bus["full"] == full and bus["cost"] <= cost
+        bus for bus in location_buses if bus["full"] == full and bus["cost"] <= cost
     ]
 
     if stops:

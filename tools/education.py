@@ -532,15 +532,15 @@ from typing import Dict, List
 
 def define_research_question(
     research_question: str,
-    inclusion_criteria: List[str],
-    exclusion_criteria: List[str],
-) -> Dict[str, List[str]]:
+    inclusion_criteria: Union[List[str], str],
+    exclusion_criteria: Union[List[str], str],
+) -> Dict[str, Union[str, List[str]]]:
     """Define the research question and inclusion/exclusion criteria according to PRISMA guidelines.
 
     Args:
         research_question: The main research question being addressed.
-        inclusion_criteria: List of criteria for including studies in the review.
-        exclusion_criteria: List of criteria for excluding studies from the review.
+        inclusion_criteria: List of criteria for including studies in the review, or a string that will be parsed.
+        exclusion_criteria: List of criteria for excluding studies from the review, or a string that will be parsed.
 
     Returns:
         Dict containing:
@@ -548,17 +548,60 @@ def define_research_question(
             - inclusion_criteria: List of inclusion criteria
             - exclusion_criteria: List of exclusion criteria
     """
+
+    def parse_criteria(criteria) -> List[str]:
+        """Parse criteria from various input formats into a list of strings."""
+        if criteria is None:
+            return []
+
+        # If it's already a list, return as-is
+        if isinstance(criteria, list):
+            return criteria
+
+        # If it's a string, try to parse it
+        if isinstance(criteria, str):
+            # Handle empty string
+            if not criteria.strip():
+                return []
+
+            # Try to parse as a string representation of a list
+            if criteria.strip().startswith("[") and criteria.strip().endswith("]"):
+                try:
+                    import ast
+
+                    parsed_list = ast.literal_eval(criteria)
+                    if isinstance(parsed_list, list):
+                        return [str(item) for item in parsed_list]
+                except (ValueError, SyntaxError):
+                    # If parsing fails, fall through to other parsing methods
+                    pass
+
+            # Handle comma-separated string
+            if "," in criteria:
+                return [item.strip() for item in criteria.split(",")]
+
+            # Handle single string as single-item list
+            return [criteria.strip()]
+
+        # For any other type, convert to string and return as single-item list
+        return [str(criteria)]
+
     if not research_question:
         raise ValueError("Research question must be provided.")
-    if not inclusion_criteria:
+
+    # Parse the criteria using the flexible parser
+    parsed_inclusion_criteria = parse_criteria(inclusion_criteria)
+    parsed_exclusion_criteria = parse_criteria(exclusion_criteria)
+
+    if not parsed_inclusion_criteria:
         raise ValueError("Inclusion criteria must be provided.")
-    if not exclusion_criteria:
+    if not parsed_exclusion_criteria:
         raise ValueError("Exclusion criteria must be provided.")
 
     return {
         "research_question": research_question,
-        "inclusion_criteria": inclusion_criteria,
-        "exclusion_criteria": exclusion_criteria,
+        "inclusion_criteria": parsed_inclusion_criteria,
+        "exclusion_criteria": parsed_exclusion_criteria,
     }
 
 
