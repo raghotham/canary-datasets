@@ -770,7 +770,14 @@ def assistant_response_conversation(
 
 
 def execute_chat_turn(
-    client, model, executor, messages, user_message, use_system_prompt, debug=False
+    client,
+    model,
+    executor,
+    messages,
+    user_message,
+    use_system_prompt,
+    debug=False,
+    metadata=None,
 ):
     # Add new user message to conversation
     messages.append({"role": "user", "content": user_message})
@@ -782,9 +789,35 @@ def execute_chat_turn(
         # Prepare request parameters
         request_params = {"model": model, "messages": messages, "stream": False}
 
+        # Create metadata guidance string if available
+        metadata_str = ""
+        if metadata:
+            metadata_str = "\n\n--- METADATA AND GUIDANCE ---\n"
+
+            # Add failure modes if available
+            if "failure_modes" in metadata:
+                metadata_str += "\nPotential failure modes to avoid:\n"
+                for failure in metadata["failure_modes"]:
+                    metadata_str += f"- {failure}\n"
+
+            # Add worker explanations if available
+            if "worker_explanation" in metadata:
+                metadata_str += f"\nGuidance: {metadata['worker_explanation']}\n"
+
+            # Add notes if available
+            if "notes" in metadata:
+                metadata_str += "\nNotes:\n"
+                for note in metadata["notes"]:
+                    metadata_str += f"- {note}\n"
+
         if use_system_prompt:
             # Add system prompt with tool schemas instead of tools parameter
             system_prompt = executor.get_system_prompt()
+
+            # Append metadata to system prompt if available
+            if metadata_str:
+                system_prompt += metadata_str
+                print(f"Applied metadata to system_prompt mode")
 
             # Add system message at the beginning if not already present
             if not messages or messages[0]["role"] != "system":
@@ -792,6 +825,27 @@ def execute_chat_turn(
         else:
             # Use tools parameter as before
             request_params["tools"] = executor.get_chat_tool_schemas()
+
+            # In chat_tools mode, add a separate system message with metadata guidance
+            if metadata_str:
+                # Get any existing system message
+                system_msg_index = -1
+                for i, msg in enumerate(messages):
+                    if msg["role"] == "system":
+                        system_msg_index = i
+                        break
+
+                # Create guidance message
+                guidance_content = "When responding to the user request, please consider the following important guidance:"
+                guidance_content += metadata_str
+
+                # Add or update system message
+                if system_msg_index >= 0:
+                    # Update existing system message
+                    messages[system_msg_index]["content"] += "\n\n" + guidance_content
+                else:
+                    # Add new system message at the beginning
+                    messages.insert(0, {"role": "system", "content": guidance_content})
 
         # Make chat completion request
         if debug:
@@ -853,11 +907,19 @@ def assistant_chat_conversation(
     log_filename,
     console_log_filename,
     debug=False,
+    metadata=None,
 ):
     messages = []  # Track full conversation history
     for turn_id, user_message in enumerate(user_messages, 1):
         response, updated_messages, tool_calls, tool_outputs = execute_chat_turn(
-            client, model, executor, messages, user_message, use_system_prompt, debug
+            client,
+            model,
+            executor,
+            messages,
+            user_message,
+            use_system_prompt,
+            debug,
+            metadata,
         )
 
         # Update our messages list with the returned messages
@@ -944,7 +1006,19 @@ def process_single_conversation(conversation_data):
         client,
         executor,
         base_url,
+        metadata_lookup,
     ) = conversation_data
+
+    # Get metadata for this conversation if available
+    conversation_metadata = metadata_lookup.get(sample_id - 1, {})
+
+    # Log if metadata is found
+    if conversation_metadata:
+        log_message(
+            f"Found metadata for conversation {sample_id}: {conversation['name']}",
+            console_log_filename,
+            prefix="METADATA",
+        )
 
     try:
         log_message(
@@ -1022,6 +1096,7 @@ def process_single_conversation(conversation_data):
                     log_filename,
                     console_log_filename,
                     debug,
+                    conversation_metadata,
                 )
             return f"Completed conversation {sample_id}: {conversation['name']}"
         finally:
@@ -1042,10 +1117,20 @@ def process_single_conversation(conversation_data):
 
 
 def load_conversations_from_yaml(filename):
-    """Load conversation samples from YAML file."""
+    """Load conversation samples and metadata from YAML file."""
     with open(filename, "r") as f:
         data = yaml.safe_load(f)
-    return data["conversations"]
+
+    # Extract conversations and build a metadata lookup
+    conversations = data["conversations"]
+    metadata_lookup = {}
+
+    # Build metadata lookup by conversation index
+    for i, conversation in enumerate(conversations):
+        if "metadata" in conversation:
+            metadata_lookup[i] = conversation["metadata"]
+
+    return conversations, metadata_lookup
 
 
 # Import all tools from the tools directory
@@ -1126,7 +1211,7 @@ use_system_prompt = args.mode == "system_prompt"
 debug = args.debug
 
 print(f"Loading conversations from {conversations_file}")
-conversations = load_conversations_from_yaml(conversations_file)
+conversations, metadata_lookup = load_conversations_from_yaml(conversations_file)
 
 # Parse samples argument if provided
 selected_samples = set()
@@ -1179,6 +1264,7 @@ for conversation in conversations:
         client,
         executor,
         base_url,
+        metadata_lookup,
     )
     conversation_data_list.append(conversation_data)
 
