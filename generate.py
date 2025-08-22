@@ -33,6 +33,21 @@ from tqdm import tqdm
 log_file_lock = threading.Lock()
 
 
+def log_message(message, console_log_filename=None, prefix="INFO"):
+    """Log message to separate console log file as plain text."""
+    if console_log_filename:
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_line = f"[{timestamp}] {prefix}: {message}"
+
+        with log_file_lock:
+            try:
+                with open(console_log_filename, "a") as f:
+                    f.write(log_line + "\n")
+            except Exception:
+                # Don't let logging errors interrupt the main flow
+                pass
+
+
 def map_with_progress(
     func, items, num_threads=4, desc="Processing", disable_progress=False
 ):
@@ -793,6 +808,7 @@ def assistant_chat_conversation(
     sample_id,
     use_system_prompt,
     log_filename,
+    console_log_filename,
     debug=False,
 ):
     messages = []  # Track full conversation history
@@ -804,8 +820,9 @@ def assistant_chat_conversation(
         # Update our messages list with the returned messages
         messages = updated_messages
 
-        # Debug: print the messages to see what we have
-        print(f"\nDEBUG: Turn {turn_id} has {len(messages)} messages")
+        # Log the messages to console log file
+        debug_messages = []
+        debug_messages.append(f"Turn {turn_id} has {len(messages)} messages")
         for i, msg in enumerate(messages):
             if hasattr(msg, "model_dump"):
                 msg_dict = msg.model_dump()
@@ -813,7 +830,7 @@ def assistant_chat_conversation(
                 msg_dict = msg
             role = msg_dict.get("role", "unknown")
             if "content" in msg_dict and msg_dict.get("content"):
-                print(
+                debug_messages.append(
                     f"  {i}: {role} - {str(msg_dict.get('content', 'no content'))[:50]}..."
                 )
             elif "tool_calls" in msg_dict and msg_dict.get("tool_calls"):
@@ -826,9 +843,11 @@ def assistant_chat_conversation(
                         for tc in tool_calls
                     ]
                 )
-                print(f"  {i}: {role} - tool_calls: {tool_calls_str}")
+                debug_messages.append(f"  {i}: {role} - tool_calls: {tool_calls_str}")
             else:
-                print(f"  {i}: {role} - no content")
+                debug_messages.append(f"  {i}: {role} - no content")
+
+        log_message("\n".join(debug_messages), console_log_filename, prefix="DEBUG")
 
         # Convert all messages to dicts for logging (handle Pydantic objects)
         messages_for_log = []
@@ -877,6 +896,7 @@ def process_single_conversation(conversation_data):
         model,
         use_system_prompt,
         log_filename,
+        console_log_filename,
         debug,
         client,
         executor,
@@ -884,8 +904,9 @@ def process_single_conversation(conversation_data):
     ) = conversation_data
 
     try:
-        print(
-            f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n"
+        log_message(
+            f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n",
+            console_log_filename,
         )
 
         # Get tools for this conversation, default to all tools if not specified
@@ -895,12 +916,17 @@ def process_single_conversation(conversation_data):
         # Handle file_search tool specially if present
         dynamic_file_search_func = None
         if "file_search" in conversation_tools and file_paths:
-            print(f"Creating file search function with files: {file_paths}")
+            log_message(
+                f"Creating file search function with files: {file_paths}",
+                console_log_filename,
+            )
             try:
                 dynamic_file_search_func = create_file_search_function(
                     client, file_paths
                 )
-                print("File search function created successfully")
+                log_message(
+                    "File search function created successfully", console_log_filename
+                )
             except Exception as e:
                 error_msg = (
                     f"\nERROR: Failed to create file search function for conversation '{conversation['name']}'\n"
@@ -926,11 +952,11 @@ def process_single_conversation(conversation_data):
             if dynamic_file_search_func and "file_search" in conversation_tools:
                 conversation_executor.register("file_search", dynamic_file_search_func)
 
-            print(f"Using tools: {conversation_tools}")
+            log_message(f"Using tools: {conversation_tools}", console_log_filename)
         else:
             # Use all available tools
             conversation_executor = executor
-            print("Using all available tools")
+            log_message("Using all available tools", console_log_filename)
 
         try:
             if mode == "responses":
@@ -951,6 +977,7 @@ def process_single_conversation(conversation_data):
                     sample_id,
                     use_system_prompt,
                     log_filename,
+                    console_log_filename,
                     debug,
                 )
             return f"Completed conversation {sample_id}: {conversation['name']}"
@@ -1078,6 +1105,9 @@ else:
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
 
+# Create separate console log filename
+console_log_filename = log_filename.replace(".jsonl", "_console.log")
+
 # Prepare conversations for parallel processing
 conversation_data_list = []
 sample_id = 0
@@ -1100,6 +1130,7 @@ for conversation in conversations:
         model,
         use_system_prompt,
         log_filename,
+        console_log_filename,
         debug,
         client,
         executor,
@@ -1107,15 +1138,15 @@ for conversation in conversations:
     )
     conversation_data_list.append(conversation_data)
 
-# Process conversations in parallel or sequentially based on --parallel argument
-if args.parallel > 1:
+# Process conversations in parallel or sequentially based on --workers argument
+if args.workers > 1:
     print(
-        f"\nProcessing {len(conversation_data_list)} conversations using {args.parallel} parallel workers"
+        f"\nProcessing {len(conversation_data_list)} conversations using {args.workers} parallel workers"
     )
     results = map_with_progress(
         process_single_conversation,
         conversation_data_list,
-        num_threads=args.parallel,
+        num_threads=args.workers,
         desc="Processing conversations",
     )
 
