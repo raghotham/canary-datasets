@@ -1,7 +1,7 @@
 # Communication Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 
 def create_server(name: str) -> Dict[str, str]:
@@ -481,7 +481,7 @@ def create_profile(
 from typing import Dict, Union
 
 
-def dancers(dancer: int, name: str) -> Dict[str, Union[int, str]]:
+def dancers(dancer: Optional[int] = None, name: Optional[str] = None) -> Union[Dict[str, Union[int, str]], List[Dict[str, Union[int, str]]]]:
     """Set or get dancer contact information.
 
     Args:
@@ -494,17 +494,32 @@ def dancers(dancer: int, name: str) -> Dict[str, Union[int, str]]:
             - name: The name of the dancer
             - contact_info: Mock contact information for the dancer
     """
-    if not isinstance(dancer, int) or dancer <= 0:
+    # If no parameters provided, return a list of all dancers
+    if dancer is None and name is None:
+        # Return a predefined list of dancers
+        return [
+            {"dancer": 1, "name": "John Smith", "contact_info": "john.smith@dancers.com"},
+            {"dancer": 2, "name": "Maria Garcia", "contact_info": "maria.garcia@dancers.com"},
+            {"dancer": 3, "name": "David Johnson", "contact_info": "david.johnson@dancers.com"},
+            {"dancer": 4, "name": "Emma Wilson", "contact_info": "emma.wilson@dancers.com"},
+            {"dancer": 5, "name": "James Brown", "contact_info": "james.brown@dancers.com"}
+        ]
+    
+    # Validate parameters when provided
+    if dancer is not None and (not isinstance(dancer, int) or dancer <= 0):
         raise ValueError("Dancer number must be a positive integer.")
-    if not name or not isinstance(name, str):
+    if name is not None and (not name or not isinstance(name, str)):
         raise ValueError("Name must be a non-empty string.")
 
-    # Mock contact information generation based on dancer number
-    contact_info = f"{name.lower().replace(' ', '.')}@dancers.com"
+    # Create contact information
+    if name is not None:
+        contact_info = f"{name.lower().replace(' ', '.')}@dancers.com"
+    else:
+        contact_info = f"dancer{dancer}@dancers.com" if dancer is not None else "unknown@dancers.com"
 
     return {
-        "dancer": dancer,
-        "name": name,
+        "dancer": dancer if dancer is not None else 0,
+        "name": name if name is not None else "Unknown Dancer",
         "contact_info": contact_info,
     }
 

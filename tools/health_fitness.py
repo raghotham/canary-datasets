@@ -1060,6 +1060,10 @@ def find_nearby_specialists(
             {"name": "Dr. Bone", "distance": 8, "insurance": "HealthPlus"},
             {"name": "Dr. Joint", "distance": 18, "insurance": "MediCare"},
         ],
+        "orthopedist": [
+            {"name": "Dr. Bone", "distance": 8, "insurance": "HealthPlus"},
+            {"name": "Dr. Joint", "distance": 18, "insurance": "MediCare"},
+        ],
     }
 
     if specialty not in sample_specialists:

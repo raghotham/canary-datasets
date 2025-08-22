@@ -722,6 +722,7 @@ def get_league(team: str) -> Dict[str, str]:
         "Patriots": "NFL",
         "Red Sox": "MLB",
         "Warriors": "NBA",
+        "Dodgers": "MLB",
     }
 
     if team not in sample_leagues:

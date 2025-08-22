@@ -3,7 +3,7 @@ import hashlib
 # Entertainment Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Any, Dict, List, Literal, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 
 def crawl_lightnovel(
@@ -591,8 +591,8 @@ from typing import Dict, Literal
 
 
 def dances(
-    name: str, style: Literal[1, 2, 3, 4], participants: Literal[1, 2]
-) -> Dict[str, str]:
+    name: Optional[str] = None, style: Optional[Literal[1, 2, 3, 4]] = None, participants: Optional[Literal[1, 2]] = None
+) -> Union[Dict[str, str], List[Dict[str, str]]]:
     """Set or get a list of ballroom and latin dance styles.
 
     Args:
@@ -607,17 +607,37 @@ def dances(
             - participants: Number of participants as a string
     """
     style_map = {1: "ballroom", 2: "latin", 3: "argentine tango", 4: "flamenco"}
-
-    if style not in style_map:
+    
+    # If no parameters provided, return a list of all dance styles
+    if name is None and style is None and participants is None:
+        # Return a predefined list of common dance styles
+        return [
+            {"name": "Waltz", "style": "ballroom", "participants": "2 participants"},
+            {"name": "Tango", "style": "ballroom", "participants": "2 participants"},
+            {"name": "Foxtrot", "style": "ballroom", "participants": "2 participants"},
+            {"name": "Quickstep", "style": "ballroom", "participants": "2 participants"},
+            {"name": "Viennese Waltz", "style": "ballroom", "participants": "2 participants"},
+            {"name": "Samba", "style": "latin", "participants": "2 participants"},
+            {"name": "Cha-Cha", "style": "latin", "participants": "2 participants"},
+            {"name": "Rumba", "style": "latin", "participants": "2 participants"},
+            {"name": "Paso Doble", "style": "latin", "participants": "2 participants"},
+            {"name": "Jive", "style": "latin", "participants": "2 participants"},
+            {"name": "Argentine Tango", "style": "argentine tango", "participants": "2 participants"},
+            {"name": "Sevillanas", "style": "flamenco", "participants": "1 participant"}
+        ]
+    
+    # Validate parameters when they are provided
+    if style is not None and style not in style_map:
         raise ValueError(f"Unsupported style: {style}")
 
-    if participants not in [1, 2]:
+    if participants is not None and participants not in [1, 2]:
         raise ValueError(f"Invalid number of participants: {participants}")
-
+    
+    # When parameters are provided, return a single dance
     return {
-        "name": name,
-        "style": style_map[style],
-        "participants": f"{participants} participant{'s' if participants > 1 else ''}",
+        "name": name or "Unnamed dance",
+        "style": style_map[style] if style is not None else "unspecified",
+        "participants": f"{participants} participant{'s' if participants and participants > 1 else ''}" if participants is not None else "unspecified",
     }
 
 
@@ -2592,12 +2612,12 @@ from typing import Dict, Optional, Union
 def schedule(
     location: Optional[str] = None,
     floor: Optional[str] = None,
-    time: Optional[datetime] = None,
+    time: Optional[Union[str, datetime]] = None,
     dance: Optional[str] = None,
     dancer: Optional[int] = None,
     lead: Optional[bool] = None,
     follow: Optional[bool] = None,
-) -> Dict[str, Union[str, int, bool, datetime]]:
+) -> Dict[str, Union[str, int, bool]]:
     """Get or set a dancer's event schedule.
 
     Args:
@@ -2624,11 +2644,55 @@ def schedule(
             "Either 'lead' or 'follow' must be specified if 'dancer' is provided."
         )
 
-    # Mock data generation
+    # If no specific parameters provided, return a list of schedule entries
+    if location is None and floor is None and time is None and dance is None and dancer is None and lead is None and follow is None:
+        return {
+            "schedules": [
+                {
+                    "location": "Grand Hall",
+                    "floor": "main ballroom",
+                    "time": "2023-10-15T18:00:00", 
+                    "dance": "waltz",
+                    "dancer": 101,
+                    "lead": True,
+                    "follow": False
+                },
+                {
+                    "location": "Grand Hall",
+                    "floor": "practice room",
+                    "time": "2023-10-15T19:30:00",
+                    "dance": "tango",
+                    "dancer": 102,
+                    "lead": False,
+                    "follow": True
+                },
+                {
+                    "location": "Community Center",
+                    "floor": "main hall",
+                    "time": "2023-10-16T17:00:00",
+                    "dance": "foxtrot",
+                    "dancer": 103,
+                    "lead": True,
+                    "follow": False
+                }
+            ]
+        }
+    
+    # Process the time parameter to ensure it's serializable
+    schedule_time = None
+    if time is not None:
+        if isinstance(time, datetime):
+            schedule_time = time.isoformat()
+        else:
+            schedule_time = time
+    else:
+        schedule_time = "2023-10-15T18:00:00"
+        
+    # Mock data generation for a single schedule entry
     sample_data = {
         "location": location or "Grand Hall",
         "floor": floor or "main ballroom",
-        "time": time or datetime(2023, 10, 15, 18, 0),
+        "time": schedule_time,
         "dance": dance or "waltz",
         "dancer": dancer or 101,
         "lead": lead if lead is not None else True,

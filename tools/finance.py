@@ -1,70 +1,7 @@
 # Finance Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Any, Dict, List, Optional, Union
-
-
-def card_search(
-    card_name: Optional[str] = None,
-    card_text: Optional[str] = None,
-    card_type: Optional[str] = None,
-    card_rulings: Optional[str] = None,
-    card_cost: Optional[str] = None,
-) -> Dict[str, Union[str, None]]:
-    """Search for a card in the database based on various parameters.
-
-    Args:
-        card_name: A unique name given to each card.
-        card_text: Text explaining how this card alters the normal game rules.
-        card_type: Type of the card (e.g., 'Door', 'Monster', 'Treasure').
-        card_rulings: List of rulings involving this card.
-        card_cost: Resources needed to play the card.
-
-    Returns:
-        Dict containing:
-            - card_name: Name of the card
-            - card_text: Description of the card's effect
-            - card_type: Type of the card
-            - card_rulings: Rulings related to the card
-            - card_cost: Cost to play the card
-    """
-    # Sample card database
-    sample_cards = {
-        "Dragon Slayer": {
-            "card_text": "Defeat any dragon instantly.",
-            "card_type": "Monster",
-            "card_rulings": "Can only be used once per game.",
-            "card_cost": "3 Mana",
-        },
-        "Treasure Chest": {
-            "card_text": "Gain 5 gold.",
-            "card_type": "Treasure",
-            "card_rulings": "Cannot be used if you have more than 10 gold.",
-            "card_cost": "1 Mana",
-        },
-    }
-
-    # Search logic
-    for name, details in sample_cards.items():
-        if (
-            (card_name is None or card_name == name)
-            and (card_text is None or card_text in details["card_text"])
-            and (card_type is None or card_type == details["card_type"])
-            and (card_rulings is None or card_rulings in details["card_rulings"])
-            and (card_cost is None or card_cost == details["card_cost"])
-        ):
-            return {
-                "card_name": name,
-                "card_text": details["card_text"],
-                "card_type": details["card_type"],
-                "card_rulings": details["card_rulings"],
-                "card_cost": details["card_cost"],
-            }
-
-    raise ValueError("No matching card found in the database.")
-
-
-from typing import Dict, Literal, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 
 def close_position(

@@ -1637,7 +1637,7 @@ def get_regional_holidays(
 
     # Sample holiday data
     holidays_data = {
-        "US": {
+        "US-NY": {
             "2023-12-25": ["Christmas Day"],
             "2023-07-04": ["Independence Day"],
         },
@@ -1649,10 +1649,14 @@ def get_regional_holidays(
             "2023-02-06": ["Waitangi Day"],
             "2023-12-25": ["Christmas Day"],
         },
-        "JP": {
+        "JP-KY": {
             "2023-12-25": ["Christmas Day"],
             "2023-05-03": ["Constitution Memorial Day"],
             "2023-11-03": ["Culture Day"],
+        },
+        "CA-BC": {
+            "2023-12-25": ["Christmas Day"],
+            "2023-07-01": ["Canada Day"],
         },
     }
 

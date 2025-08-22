@@ -168,7 +168,7 @@ from typing import Dict, List, Optional, Union
 
 
 def search_websites(
-    product_id: str,
+    product_id: Optional[str] = None,
     product_name: Optional[str] = None,
     category: Optional[str] = None,
     min_price: Optional[float] = None,
@@ -179,7 +179,7 @@ def search_websites(
     """Search websites to find a specific product.
 
     Args:
-        product_id: Unique identifier of the product.
+        product_id: Unique identifier of the product (optional).
         product_name: Search term or product name.
         category: Product category to filter results (e.g., electronics, clothing).
         min_price: Minimum price filter.
@@ -196,8 +196,6 @@ def search_websites(
                 - rating: Product rating
                 - availability: Availability status
     """
-    if not product_id:
-        raise ValueError("Product ID is required")
 
     # Convert specific_sites parameter if provided as string
     if isinstance(specific_sites, str):

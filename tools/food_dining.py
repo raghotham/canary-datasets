@@ -3031,6 +3031,14 @@ def near_restaurants(
                 "close_hour": "23:00",
             },
         ],
+        "Berlin": [
+            {
+                "name": "McDonald'1s",
+                "cuisine": "American",
+                "open_hour": "10:00",
+                "close_hour": "22:00",
+            },
+        ],
     }
 
     if city not in sample_data:

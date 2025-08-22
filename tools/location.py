@@ -711,6 +711,7 @@ def get_lat_long(
         ("Statue of Liberty", "New York", "USA"): (40.6892, -74.0445),
         ("Colosseum", "Rome", "Italy"): (41.8902, 12.4922),
         ("Wollaton Park", "Nottingham", "UK"): (52.9492, -1.1512),
+        ("Wollaton Park", "Nottingham", "United Kingdom"): (52.9492, -1.1512),
         ("Nottingham", "None", "UK"): (52.9492, -1.1512),
     }
 
@@ -756,6 +757,7 @@ def get_nearby_activities(
         "Central Park": ["Jogging", "Picnic", "Bird Watching"],
         "Eiffel Tower": ["Photography", "Sightseeing", "Dining"],
         "Sydney Opera House": ["Concert", "Tour", "Dining"],
+        "Wollaton Park": ["Jogging", "Picnic", "Bird Watching"],
     }
 
     if location_name not in sample_activities:

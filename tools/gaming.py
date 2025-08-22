@@ -1501,23 +1501,26 @@ def get_xp_records(
     """
     if not rsn:
         raise ValueError("Player's name (rsn) is required")
-        
+
     # Convert datetime strings to timestamps if needed
     def convert_time_param(time_param):
         if isinstance(time_param, str):
             try:
                 from datetime import datetime
+
                 # Parse ISO datetime string and convert to timestamp
-                dt = datetime.fromisoformat(time_param.replace('Z', '+00:00'))
+                dt = datetime.fromisoformat(time_param.replace("Z", "+00:00"))
                 return int(dt.timestamp())
             except ValueError:
                 # Try to parse as simple timestamp string
                 try:
                     return int(time_param)
                 except ValueError:
-                    raise ValueError(f"Invalid time format: {time_param}. Expected ISO datetime or timestamp.")
+                    raise ValueError(
+                        f"Invalid time format: {time_param}. Expected ISO datetime or timestamp."
+                    )
         return time_param
-    
+
     start_time = convert_time_param(start_time)
     end_time = convert_time_param(end_time)
 
@@ -1530,7 +1533,7 @@ def get_xp_records(
     # Convert string skills to list if needed
     if isinstance(skills, str):
         skills = [skills]
-    
+
     if not skills:
         skills = all_skills[game]
 
@@ -1618,27 +1621,33 @@ def join_texas_cash_game(
     # Convert blinds parameter if it's a string
     if isinstance(blinds, str):
         # Handle dash-separated format like '5-10'
-        if '-' in blinds:
+        if "-" in blinds:
             try:
-                blind_values = [int(val.strip()) for val in blinds.split('-')]
+                blind_values = [int(val.strip()) for val in blinds.split("-")]
                 blinds = blind_values
             except ValueError:
                 raise ValueError("Invalid blinds format. Expected format like '5-10'")
         # Handle string representation of a list like '[5, 10]' or '['5', '10']'
-        elif blinds.startswith('[') and blinds.endswith(']'):
+        elif blinds.startswith("[") and blinds.endswith("]"):
             try:
                 import ast
+
                 blind_values = ast.literal_eval(blinds)
                 if isinstance(blind_values, list):
                     # Convert string numbers to integers if needed
-                    blinds = [int(val) if isinstance(val, str) else val for val in blind_values]
+                    blinds = [
+                        int(val) if isinstance(val, str) else val
+                        for val in blind_values
+                    ]
                 else:
                     raise ValueError("Invalid blinds format. Expected a list.")
             except (ValueError, SyntaxError):
                 raise ValueError("Invalid blinds format. Expected a valid list.")
         else:
-            raise ValueError("Invalid blinds format. Expected format like '5-10' or '[5, 10]'")
-    
+            raise ValueError(
+                "Invalid blinds format. Expected format like '5-10' or '[5, 10]'"
+            )
+
     # Validate that all blinds values are allowed
     allowed_values = [1, 2, 5, 10]
     if not all(val in allowed_values for val in blinds):
@@ -1651,7 +1660,7 @@ def join_texas_cash_game(
         raise ValueError("Insufficient balance for the buy-in amount.")
 
     # Simulate table ID and seat assignment
-    tableID = hash((playerID, blinds, ipAddress)) % 10000
+    tableID = hash((playerID, tuple(blinds), ipAddress)) % 10000
     seatNumber = seatPreference if seatPreference else (hash(ipAddress) % 9) + 1
 
     return {
@@ -2720,3 +2729,75 @@ def wins_to_match(
     ) // points_per_win  # Ceiling division
 
     return {"wins_needed": wins_needed}
+
+
+def card_search(
+    card_name: Optional[str] = None,
+    card_text: Optional[str] = None,
+    card_type: Optional[str] = None,
+    card_rulings: Optional[str] = None,
+    card_cost: Optional[str] = None,
+) -> Dict[str, Union[str, None]]:
+    """Search for a card in the database based on various parameters.
+
+    Args:
+        card_name: A unique name given to each card.
+        card_text: Text explaining how this card alters the normal game rules.
+        card_type: Type of the card (e.g., 'Door', 'Monster', 'Treasure').
+        card_rulings: List of rulings involving this card.
+        card_cost: Resources needed to play the card.
+
+    Returns:
+        Dict containing:
+            - card_name: Name of the card
+            - card_text: Description of the card's effect
+            - card_type: Type of the card
+            - card_rulings: Rulings related to the card
+            - card_cost: Cost to play the card
+    """
+    # Sample card database
+    sample_cards = {
+        "Dragon Slayer": {
+            "card_text": "Defeat any dragon instantly.",
+            "card_type": "Monster",
+            "card_rulings": "Can only be used once per game.",
+            "card_cost": "3 Mana",
+        },
+        "Treasure Chest": {
+            "card_text": "Gain 5 gold.",
+            "card_type": "Treasure",
+            "card_rulings": "Cannot be used if you have more than 10 gold.",
+            "card_cost": "1 Mana",
+        },
+        "Terror Tower": {
+            "card_text": "All players lose 2 health.",
+            "card_type": "Spell",
+            "card_rulings": "Cannot be used if there are less than 3 players.",
+            "card_cost": "2 Mana",
+        },
+        "Recover Beast": {
+            "card_text": "Heal 2 health.",
+            "card_type": "Spell",
+            "card_rulings": "Cannot be used if you have more than 5 health.",
+            "card_cost": "1 Mana",
+        },
+    }
+
+    # Search logic
+    for name, details in sample_cards.items():
+        if (
+            (card_name is None or card_name == name)
+            and (card_text is None or card_text in details["card_text"])
+            and (card_type is None or card_type == details["card_type"])
+            and (card_rulings is None or card_rulings in details["card_rulings"])
+            and (card_cost is None or card_cost == details["card_cost"])
+        ):
+            return {
+                "card_name": name,
+                "card_text": details["card_text"],
+                "card_type": details["card_type"],
+                "card_rulings": details["card_rulings"],
+                "card_cost": details["card_cost"],
+            }
+
+    raise ValueError("No matching card found in the database.")
