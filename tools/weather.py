@@ -71,6 +71,14 @@ def get_weather(
             {"day": "Monday", "temperature": 68.0, "condition": "foggy"},
             {"day": "Tuesday", "temperature": 70.0, "condition": "partly cloudy"},
         ],
+        "Venice": [
+            {"day": "Monday", "temperature": 68.0, "condition": "foggy"},
+            {"day": "Tuesday", "temperature": 70.0, "condition": "partly cloudy"},
+        ],
+        "Milan": [
+            {"day": "Monday", "temperature": 67.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 69.0, "condition": "sunny"},
+        ],
     }
 
     if location not in current_weather_sample:
