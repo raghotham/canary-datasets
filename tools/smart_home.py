@@ -79,6 +79,7 @@ def control_lights(
     current_state = {
         "living room": {"status": "off", "brightness": 0},
         "porch": {"status": "on", "brightness": 75},
+        "bedroom": {"status": "off", "brightness": 0},
     }
 
     if light not in current_state:
@@ -797,24 +798,27 @@ def diagnose_issue(
             - likely_causes: List of possible causes for the issue
             - recommended_steps: List of recommended next steps to resolve the issue
     """
-    
+
     # Convert symptoms parameter if provided as string
     if isinstance(symptoms, str):
-        if symptoms.startswith('[') and symptoms.endswith(']'):
+        if symptoms.startswith("[") and symptoms.endswith("]"):
             # Handle string representation of list like "['symptom1', 'symptom2']"
             try:
                 import ast
+
                 parsed_symptoms = ast.literal_eval(symptoms)
                 if isinstance(parsed_symptoms, list):
                     symptoms = parsed_symptoms
                 else:
                     raise ValueError("Invalid symptoms format. Expected a list.")
             except (ValueError, SyntaxError):
-                raise ValueError("Invalid symptoms format. Expected a valid list representation.")
+                raise ValueError(
+                    "Invalid symptoms format. Expected a valid list representation."
+                )
         else:
             # Handle comma-separated string like "symptom1, symptom2"
-            symptoms = [symptom.strip() for symptom in symptoms.split(',')]
-    
+            symptoms = [symptom.strip() for symptom in symptoms.split(",")]
+
     if not appliance_type or not symptoms:
         raise ValueError("Both 'appliance_type' and 'symptoms' are required.")
 
@@ -877,6 +881,7 @@ def drapes_status(room: List[str]) -> Dict[str, Literal["open", "closed"]]:
     sample_status = {
         "Living Room": "open",
         "Bedroom": "closed",
+        "bedroom": "closed",
         "Kitchen": "open",
         "Bathroom": "closed",
         "Office": "open",

@@ -506,36 +506,189 @@ from typing import Dict, List, Union
 
 
 def get_ingredients(
-    location: str = "Kitchen", on_order: bool = False
+    location: Optional[str] = None,
+    recipe_name: Optional[str] = None,
+    on_order: bool = False,
 ) -> Dict[str, Union[str, List[str]]]:
-    """Retrieve all ingredients paid for in the restaurant.
+    """Retrieve ingredients either from a restaurant location or for a specific recipe.
 
     Args:
-        location: Specific location to retrieve available ingredients from (default is 'Kitchen')
+        location: Specific location to retrieve available ingredients from (e.g., 'Kitchen', 'Pantry', 'Bar')
+        recipe_name: Name of recipe to get ingredients for (e.g., 'Shepherd\'s Pie', 'Pasta Bake')
         on_order: Include ingredients on order from vendor within 3 days (default is False)
 
     Returns:
         Dict containing:
-            - location: The location from which ingredients are retrieved
-            - ingredients: List of ingredients available at the specified location
+            - location or recipe_name: The source of the ingredients
+            - ingredients: List of ingredients available/required
     """
 
-    sample_data = {
-        "Kitchen": ["Tomatoes", "Basil", "Olive Oil", "Garlic"],
-        "Pantry": ["Flour", "Sugar", "Salt", "Baking Powder"],
+    # Recipe ingredients database
+    recipe_ingredients = {
+        "Shepherd's Pie": [
+            "ground beef",
+            "onion",
+            "garlic",
+            "carrots",
+            "peas",
+            "potatoes",
+            "butter",
+            "milk",
+            "worcestershire sauce",
+            "thyme",
+        ],
+        "Pasta Bake": [
+            "penne pasta",
+            "canned tomatoes",
+            "mozzarella cheese",
+            "parmesan cheese",
+            "garlic",
+            "onion",
+            "olive oil",
+            "dried basil",
+        ],
+        "Fried Rice": [
+            "cooked rice",
+            "eggs",
+            "vegetable oil",
+            "onion",
+            "garlic",
+            "mixed vegetables",
+            "soy sauce",
+            "green onions",
+        ],
+        "Chicken Stew": [
+            "chicken thighs",
+            "potatoes",
+            "carrots",
+            "onion",
+            "garlic",
+            "chicken broth",
+            "olive oil",
+            "thyme",
+            "bay leaf",
+        ],
+        "Chilli Con Carne": [
+            "ground beef",
+            "onion",
+            "garlic",
+            "bell pepper",
+            "canned tomatoes",
+            "kidney beans",
+            "tomato paste",
+            "chili powder",
+            "cumin",
+            "paprika",
+        ],
+        "Pumpkin Soup": [
+            "pumpkin",
+            "onion",
+            "garlic",
+            "vegetable broth",
+            "coconut milk",
+            "olive oil",
+            "ground ginger",
+            "nutmeg",
+        ],
+        "Pancakes": [
+            "all-purpose flour",
+            "sugar",
+            "baking powder",
+            "salt",
+            "eggs",
+            "milk",
+            "melted butter",
+        ],
+        "Spaghetti Bolognese": [
+            "spaghetti",
+            "olive oil",
+            "onion",
+            "garlic",
+            "minced beef",
+            "canned tomatoes",
+            "tomato paste",
+            "dried oregano",
+        ],
+    }
+
+    # Restaurant location ingredients database
+    location_data = {
+        "Kitchen": [
+            "Tomatoes",
+            "Basil",
+            "Olive Oil",
+            "Garlic",
+            "Onions",
+            "Salt",
+            "Black Pepper",
+        ],
+        "Pantry": [
+            "Flour",
+            "Sugar",
+            "Salt",
+            "Baking Powder",
+            "Rice",
+            "Pasta",
+            "Canned Tomatoes",
+        ],
         "Bar": ["Lemon", "Mint", "Rum", "Vodka"],
+        "Freezer": [
+            "Frozen Vegetables",
+            "Ground Beef",
+            "Chicken Thighs",
+            "Frozen Peas",
+        ],
+        "Refrigerator": [
+            "Milk",
+            "Butter",
+            "Eggs",
+            "Mozzarella Cheese",
+            "Parmesan Cheese",
+        ],
     }
 
     on_order_data = {
-        "Kitchen": ["Parmesan Cheese", "Pasta"],
-        "Pantry": ["Yeast", "Cocoa Powder"],
+        "Kitchen": ["Parmesan Cheese", "Fresh Herbs"],
+        "Pantry": ["Yeast", "Cocoa Powder", "Kidney Beans"],
         "Bar": ["Gin", "Tonic Water"],
+        "Freezer": ["Pumpkin", "Mixed Vegetables"],
+        "Refrigerator": ["Coconut Milk", "Vegetable Broth"],
     }
 
-    if location not in sample_data:
+    # Handle recipe-based ingredient lookup
+    if recipe_name:
+        # Normalize recipe name for flexible matching
+        normalized_recipes = {key.lower(): key for key in recipe_ingredients.keys()}
+        recipe_key = None
+
+        # Try exact match first
+        if recipe_name.lower() in normalized_recipes:
+            recipe_key = normalized_recipes[recipe_name.lower()]
+        else:
+            # Try partial matching
+            for norm_name, orig_name in normalized_recipes.items():
+                if recipe_name.lower() in norm_name or norm_name in recipe_name.lower():
+                    recipe_key = orig_name
+                    break
+
+        if not recipe_key:
+            raise ValueError(f"Recipe not found: {recipe_name}")
+
+        ingredients = recipe_ingredients[recipe_key].copy()
+
+        return {
+            "recipe_name": recipe_key,
+            "ingredients": ingredients,
+        }
+
+    # Handle location-based ingredient lookup (default to Kitchen if no location specified)
+    if location is None:
+        location = "Kitchen"
+
+    if location not in location_data:
         raise ValueError(f"Location not supported: {location}")
 
-    ingredients = sample_data[location]
+    ingredients = location_data[location].copy()
 
     if on_order:
         ingredients.extend(on_order_data.get(location, []))
@@ -1898,6 +2051,7 @@ def get_carbs(meal_name: str, servings: float = 1) -> Dict[str, Union[str, float
         "egg": 1,
         "eggs": 2,
         "porridge": 35,
+        "beef curry": 30,
     }
 
     if meal_name not in sample_carbs:
@@ -2471,6 +2625,7 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
         "sourdough bread": 9,
         "butter": 7,
         "eggs": 6,
+        "beef curry": 30,
     }
 
     if meal_name not in protein_data:

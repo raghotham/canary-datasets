@@ -328,6 +328,10 @@ def handle_fallback_delivery(
     if not package_id:
         raise ValueError("Package ID must be provided.")
 
+    # Initialize details as empty dict if None
+    if details is None:
+        details = {}
+
     # Convert string details to dictionary if needed
     if isinstance(details, str):
         if ":" in details:  # Handle key:value format

@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # Social Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, List
+from typing import Any, Dict, List, Union
 
 
 def get_matches(location: str) -> Dict[str, Union[str, List[Dict[str, str]]]]:
@@ -16,7 +15,7 @@ def get_matches(location: str) -> Dict[str, Union[str, List[Dict[str, str]]]]:
             - location: The location searched
             - matches: List of matches with their details
     """
-    
+
     sample_data = {
         "New York": [
             {"name": "Alice", "age": "29", "interests": "hiking, reading"},
@@ -39,6 +38,7 @@ def get_matches(location: str) -> Dict[str, Union[str, List[Dict[str, str]]]]:
         "location": location,
         "matches": sample_data[location],
     }
+
 
 from typing import Dict
 
@@ -81,6 +81,7 @@ def delete_scheduled_post(post_id: str, platform: str) -> Dict[str, str]:
         "status": "Canceled",
     }
 
+
 from typing import Dict, Literal
 
 
@@ -107,18 +108,18 @@ def deliver_gallery(
             - gallery_url: URL of the published gallery
             - status: Status of the gallery publication
     """
-    
+
     # Simulate URL generation based on shoot_id and platform
     base_urls = {
         "pixieset": "https://pixieset.com/gallery/",
         "smugmug": "https://smugmug.com/gallery/",
         "dropbox": "https://dropbox.com/gallery/",
-        "google_drive": "https://drive.google.com/gallery/"
+        "google_drive": "https://drive.google.com/gallery/",
     }
-    
+
     # Generate a consistent but varied hash-based gallery URL
     gallery_url = f"{base_urls[platform]}{hash(shoot_id) % 1000000}"
-    
+
     # Simulate status based on watermark and download_pin
     if watermark and download_pin:
         status = "Published with watermark and PIN protection"
@@ -128,11 +129,9 @@ def deliver_gallery(
         status = "Published with PIN protection"
     else:
         status = "Published"
-    
-    return {
-        "gallery_url": gallery_url,
-        "status": status
-    }
+
+    return {"gallery_url": gallery_url, "status": status}
+
 
 from typing import Dict, List, Optional, Union
 
@@ -176,6 +175,7 @@ def find_partner(
         "partners": partners,
     }
 
+
 from typing import Dict, Union
 
 
@@ -192,40 +192,31 @@ def get_from_id(id: str) -> Dict[str, Union[str, Dict[str, Union[str, int]]]]:
                 - If profile: contains 'name', 'age', 'email'
                 - If birthday card: contains 'recipient', 'message', 'age'
     """
-    if len(id) != 8 or not all(c in '0123456789ABCDEF' for c in id.upper()):
+    if len(id) != 8 or not all(c in "0123456789ABCDEF" for c in id.upper()):
         raise ValueError(f"Invalid ID format: {id}")
 
     # Simulate data retrieval based on ID
     if int(id, 16) % 2 == 0:
         # Mock profile data
-        profile_data = {
-            "name": "John Doe",
-            "age": 30,
-            "email": "johndoe@example.com"
-        }
-        return {
-            "id": id,
-            "data": profile_data
-        }
+        profile_data = {"name": "John Doe", "age": 30, "email": "johndoe@example.com"}
+        return {"id": id, "data": profile_data}
     else:
         # Mock birthday card data
         birthday_card_data = {
             "recipient": "Jane Smith",
             "message": "Happy Birthday!",
-            "age": 25
+            "age": 25,
         }
-        return {
-            "id": id,
-            "data": birthday_card_data
-        }
+        return {"id": id, "data": birthday_card_data}
 
-from typing import Dict, Union, Literal
+
+from typing import Dict, Literal, Union
 
 
 def get_post_analytics(
     platform: str,
     post_id: Union[str, None] = None,
-    date_range: Literal["7d", "30d", "90d"] = "30d"
+    date_range: Literal["7d", "30d", "90d"] = "30d",
 ) -> Dict[str, Union[str, int, Dict[str, int]]]:
     """Retrieve analytics data for social media posts.
 
@@ -244,7 +235,7 @@ def get_post_analytics(
                 - shares: Number of shares
                 - comments: Number of comments
     """
-    
+
     if platform not in ["Twitter", "Instagram", "Facebook"]:
         raise ValueError(f"Platform not supported: {platform}")
 
@@ -268,13 +259,12 @@ def get_post_analytics(
         },
     }
 
+
 from typing import Dict, List, Optional
 
 
 def get_trending_hashtags(
-    platform: str, 
-    category: Optional[str] = None, 
-    location: str = "global"
+    platform: str, category: Optional[str] = None, location: str = "global"
 ) -> Dict[str, List[str]]:
     """Find currently trending hashtags for a platform.
 
@@ -289,23 +279,29 @@ def get_trending_hashtags(
             - location: The geographic location for trends
             - hashtags: List of trending hashtags
     """
-    
+
     sample_data = {
         "Twitter": {
             "global": ["#WorldCup", "#ClimateChange", "#AI"],
             "technology": ["#AI", "#BigData", "#CyberSecurity"],
-            "fashion": ["#FashionWeek", "#OOTD", "#SustainableFashion"]
+            "fashion": ["#FashionWeek", "#OOTD", "#SustainableFashion"],
         },
         "Instagram": {
             "global": ["#InstaGood", "#PhotoOfTheDay", "#Love"],
             "technology": ["#TechTrends", "#Gadgets", "#Innovation"],
-            "fashion": ["#FashionBlogger", "#StyleInspo", "#Runway"]
-        }
+            "fashion": ["#FashionBlogger", "#StyleInspo", "#Runway"],
+        },
+        "Facebook": {
+            "global": ["#FBFam", "#HappyHour", "#LifeHacks"],
+            "technology": ["#TechNews", "#CodingTips", "#Productivity"],
+            "fashion": ["#Fashionista", "#BeautyTips", "#TrendAlert"],
+            "food": ["#Foodie", "#RecipeIdeas", "#CookingTips"],
+        },
     }
-    
+
     if platform not in sample_data:
         raise ValueError(f"Platform not supported: {platform}")
-    
+
     category_key = category if category else "global"
     if category_key not in sample_data[platform]:
         raise ValueError(f"Category not supported: {category_key}")
@@ -313,8 +309,9 @@ def get_trending_hashtags(
     return {
         "platform": platform,
         "location": location,
-        "hashtags": sample_data[platform][category_key]
+        "hashtags": sample_data[platform][category_key],
     }
+
 
 from typing import Dict, List, Union
 
@@ -335,7 +332,7 @@ def nearby_friends(
             - location: The location searched
             - friends: List of nearby friends with their names and distances
     """
-    
+
     # Sample data representing friends and their distances from various locations
     sample_data = {
         "New York": [
@@ -368,6 +365,7 @@ def nearby_friends(
         "location": location,
         "friends": nearby_friends,
     }
+
 
 from typing import Dict, List, Union
 
@@ -414,6 +412,7 @@ def post_create_video(id: int) -> Dict[str, Union[str, List[str]]]:
         "hashtags": video_hashtags,
     }
 
+
 from typing import Dict
 
 
@@ -430,22 +429,22 @@ def post_submit_video(title: str, description: str, hashtags: str) -> Dict[str, 
             - video_id: A unique identifier for the submitted video.
             - status: Submission status message.
     """
-    
+
     if not title or not description or not hashtags:
         raise ValueError("All fields (title, description, hashtags) must be provided.")
 
     # Simulate a unique video ID generation using a hash-based approach
     video_id = f"vid_{abs(hash(title + description + hashtags)) % 1000000}"
 
-    return {
-        "video_id": video_id,
-        "status": "Video submitted successfully"
-    }
+    return {"video_id": video_id, "status": "Video submitted successfully"}
+
 
 from typing import Dict, List, Union
 
 
-def rc_smooth_tyres(postcode: str, radius: float = 5) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
+def rc_smooth_tyres(
+    postcode: str, radius: float = 5
+) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
     """Find radio controlled car groups with indoor tracks near a given postcode.
 
     Args:
@@ -481,15 +480,16 @@ def rc_smooth_tyres(postcode: str, radius: float = 5) -> Dict[str, Union[str, fl
         "groups": filtered_groups,
     }
 
-from typing import Dict, List, Literal, Union
+
 from datetime import datetime
+from typing import Dict, List, Literal, Union
 
 
 def schedule_post(
     content: str,
     platform: Literal["twitter", "instagram", "facebook", "linkedin"],
     scheduled_time: str,
-    hashtags: List[str] = []
+    hashtags: List[str] = [],
 ) -> Dict[str, Union[str, List[str]]]:
     """Schedule a social media post for future publication.
 
@@ -523,12 +523,13 @@ def schedule_post(
         "content": content,
         "scheduled_time": scheduled_time,
         "hashtags": hashtags,
-        "status": "Scheduled successfully"
+        "status": "Scheduled successfully",
     }
 
-from typing import Dict, List, Literal, Union
-from datetime import datetime
+
 import hashlib
+from datetime import datetime
+from typing import Dict, List, Literal, Union
 
 
 def search_profiles(
@@ -556,15 +557,31 @@ def search_profiles(
     """
     # Sample data
     profiles = [
-        {"id": 1, "name": "Alice Johnson", "phone": "123-456-7890", "birthday": "1990-01-15"},
-        {"id": 2, "name": "Bob Smith", "phone": "234-567-8901", "birthday": "1985-05-20"},
-        {"id": 3, "name": "Charlie Brown", "phone": "345-678-9012", "birthday": "1992-11-30"},
+        {
+            "id": 1,
+            "name": "Alice Johnson",
+            "phone": "123-456-7890",
+            "birthday": "1990-01-15",
+        },
+        {
+            "id": 2,
+            "name": "Bob Smith",
+            "phone": "234-567-8901",
+            "birthday": "1985-05-20",
+        },
+        {
+            "id": 3,
+            "name": "Charlie Brown",
+            "phone": "345-678-9012",
+            "birthday": "1992-11-30",
+        },
     ]
 
     # Filter by query
     if query:
         profiles = [
-            profile for profile in profiles
+            profile
+            for profile in profiles
             if query.lower() in profile["name"].lower() or query in profile["phone"]
         ]
 
@@ -573,8 +590,11 @@ def search_profiles(
         lower_date = datetime.strptime(lower_range, "%Y-%m-%d")
         upper_date = datetime.strptime(upper_range, "%Y-%m-%d")
         profiles = [
-            profile for profile in profiles
-            if lower_date <= datetime.strptime(profile["birthday"], "%Y-%m-%d") <= upper_date
+            profile
+            for profile in profiles
+            if lower_date
+            <= datetime.strptime(profile["birthday"], "%Y-%m-%d")
+            <= upper_date
         ]
 
     # Sort profiles
@@ -588,6 +608,7 @@ def search_profiles(
 
     return {
         "profile_ids": profile_ids,
-        "message": "Search completed successfully." if profile_ids else "No profiles found."
+        "message": (
+            "Search completed successfully." if profile_ids else "No profiles found."
+        ),
     }
-

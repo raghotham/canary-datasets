@@ -117,6 +117,13 @@ def get_tv_news(channel: str, language: str = "en") -> Dict[str, Union[str, List
                 "Les scientifiques découvrent une nouvelle espèce en Amazonie",
             ],
         },
+        "NHK": {
+            "ja": [
+                "首相が新しい経済計画を発表",
+                "中東で歴史的な平和協定が調印",
+                "アマゾンで新しい種が発見",
+            ],
+        },
     }
 
     if channel not in sample_news:

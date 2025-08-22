@@ -1,13 +1,12 @@
-from typing import Dict, List, Union, Any
 # Technology Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Literal
+from typing import Any, Dict, List, Literal, Union
 
 
 def apply_translation(
     target_language: str,
-    translation_engine: Literal["deepl", "google", "microsoft", "amazon", "modernmt"]
+    translation_engine: Literal["deepl", "google", "microsoft", "amazon", "modernmt"],
 ) -> Dict[str, str]:
     """Translate a novel into a target language using a specified translation engine.
 
@@ -20,23 +19,24 @@ def apply_translation(
             - translated_text: The translated text of the novel
             - engine_used: The translation engine that was used
     """
-    
+
     # Simulated translations for demonstration purposes
     translations = {
         "deepl": "Ceci est un texte traduit par DeepL.",
         "google": "Este es un texto traducido por Google.",
         "microsoft": "Dies ist ein von Microsoft übersetzter Text.",
         "amazon": "Questo è un testo tradotto da Amazon.",
-        "modernmt": "Este é um texto traduzido pelo ModernMT."
+        "modernmt": "Este é um texto traduzido pelo ModernMT.",
     }
-    
+
     if translation_engine not in translations:
         raise ValueError(f"Unsupported translation engine: {translation_engine}")
 
     return {
         "translated_text": translations[translation_engine],
-        "engine_used": translation_engine
+        "engine_used": translation_engine,
     }
+
 
 from typing import Dict
 
@@ -64,10 +64,8 @@ def delete_server(name: str) -> Dict[str, str]:
     # Simulate server deletion
     existing_servers.remove(name)
 
-    return {
-        "name": name,
-        "status": "successfully destroyed"
-    }
+    return {"name": name, "status": "successfully destroyed"}
+
 
 from typing import Dict, Literal
 
@@ -105,9 +103,8 @@ def uuid_by_account_info(
     # Generate a UUID-like hash
     uuid = hashlib.md5(unique_string.encode()).hexdigest()
 
-    return {
-        "uuid": uuid
-    }
+    return {"uuid": uuid}
+
 
 from typing import Dict, List
 
@@ -143,10 +140,13 @@ def add_token(JWT: str) -> Dict[str, Union[str, List[str]]]:
         "valid_tokens": valid_tokens,
     }
 
+
 from typing import Dict, List
 
 
-def create_table(table_name: str, columns: List[Dict[str, Union[str, bool]]]) -> Dict[str, Union[str, List[Dict[str, Union[str, bool]]]]]:
+def create_table(
+    table_name: str, columns: List[Dict[str, Union[str, bool]]]
+) -> Dict[str, Union[str, List[Dict[str, Union[str, bool]]]]]:
     """Creates a new database table with specified columns and constraints.
 
     Args:
@@ -167,9 +167,9 @@ def create_table(table_name: str, columns: List[Dict[str, Union[str, bool]]]) ->
         raise ValueError("At least one column must be defined.")
 
     for column in columns:
-        if 'name' not in column or 'type' not in column:
+        if "name" not in column or "type" not in column:
             raise ValueError("Each column must have a 'name' and a 'type'.")
-        if not isinstance(column.get('nullable', True), bool):
+        if not isinstance(column.get("nullable", True), bool):
             raise ValueError("The 'nullable' property must be a boolean.")
 
     # Simulate table creation
@@ -179,13 +179,14 @@ def create_table(table_name: str, columns: List[Dict[str, Union[str, bool]]]) ->
             {
                 "name": col["name"],
                 "type": col["type"],
-                "nullable": col.get("nullable", True)
+                "nullable": col.get("nullable", True),
             }
             for col in columns
-        ]
+        ],
     }
 
     return created_table
+
 
 from typing import Dict, Literal, Union
 
@@ -193,10 +194,18 @@ from typing import Dict, Literal, Union
 def create_virtual_space(
     space_name: str,
     environment_type: Literal[
-        "forest", "beach", "cityscape", "space_station", "fantasy_castle", "underwater", "custom"
+        "forest",
+        "beach",
+        "cityscape",
+        "space_station",
+        "fantasy_castle",
+        "underwater",
+        "custom",
     ] = "forest",
     max_capacity: int = 20,
-    privacy_level: Literal["public", "friends_only", "invite_only", "private"] = "friends_only",
+    privacy_level: Literal[
+        "public", "friends_only", "invite_only", "private"
+    ] = "friends_only",
 ) -> Dict[str, Union[str, int, Dict[str, Union[str, int]]]]:
     """Create a new virtual reality room or world environment.
 
@@ -233,6 +242,7 @@ def create_virtual_space(
         "privacy_level": privacy_level,
         "details": details,
     }
+
 
 from typing import Dict, Union
 
@@ -277,10 +287,13 @@ def estimate_costs() -> Dict[str, Union[float, str]]:
         "breakdown": breakdown,
     }
 
+
 from typing import Dict, Union
 
 
-def get_cpu_info(device_id: str, pretty_print: bool = False) -> Dict[str, Union[str, int, float]]:
+def get_cpu_info(
+    device_id: str, pretty_print: bool = False
+) -> Dict[str, Union[str, int, float]]:
     """Return information related to the CPU of a given device.
 
     Args:
@@ -295,12 +308,12 @@ def get_cpu_info(device_id: str, pretty_print: bool = False) -> Dict[str, Union[
             - clock_speed: Clock speed in GHz
             - architecture: CPU architecture type
     """
-    
+
     # Simulated data based on device_id hash
     hash_value = hash(device_id)
     cpu_models = ["Intel i7", "AMD Ryzen 5", "Apple M1", "Intel i9", "AMD Ryzen 9"]
     architectures = ["x86_64", "ARM64", "x86", "ARMv7"]
-    
+
     cpu_info = {
         "device_id": device_id,
         "cpu_model": cpu_models[hash_value % len(cpu_models)],
@@ -308,7 +321,7 @@ def get_cpu_info(device_id: str, pretty_print: bool = False) -> Dict[str, Union[
         "clock_speed": round(2.0 + (hash_value % 300) / 100.0, 2),  # 2.0 to 4.99 GHz
         "architecture": architectures[hash_value % len(architectures)],
     }
-    
+
     if pretty_print:
         return {
             "device_id": cpu_info["device_id"],
@@ -317,8 +330,9 @@ def get_cpu_info(device_id: str, pretty_print: bool = False) -> Dict[str, Union[
             "clock_speed": f"Clock Speed: {cpu_info['clock_speed']} GHz",
             "architecture": f"Architecture: {cpu_info['architecture']}",
         }
-    
+
     return cpu_info
+
 
 from typing import Dict, Union
 
@@ -353,6 +367,7 @@ def get_monitor_information(model_number: str) -> Dict[str, Union[str, int, floa
         "refresh_rate": monitor_info["refresh_rate"],
     }
 
+
 from typing import List
 
 
@@ -372,6 +387,7 @@ def list_servers() -> List[str]:
     ]
     return servers
 
+
 from typing import Dict, List
 
 
@@ -386,11 +402,11 @@ def remove_token(JWT: str) -> Dict[str, Union[str, List[str]]]:
             - status: Result of the removal operation
             - valid_tokens: Updated list of valid JWTs
     """
-    
+
     valid_tokens = [
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NTY3ODkwMTIzIiwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3ODkwMTIzNDU2IiwibmFtZSI6IkpvZSBQdWJsaWMiLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3ODkwMTIzNDU2IiwibmFtZSI6IkpvZSBQdWJsaWMiLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
     ]
 
     if JWT not in valid_tokens:
@@ -398,21 +414,21 @@ def remove_token(JWT: str) -> Dict[str, Union[str, List[str]]]:
 
     valid_tokens.remove(JWT)
 
-    return {
-        "status": "success",
-        "valid_tokens": valid_tokens
-    }
+    return {"status": "success", "valid_tokens": valid_tokens}
 
-from typing import Dict, List, Literal, Union
-import os
+
 import hashlib
+import os
+from typing import Dict, List, Literal, Union
 
 
 def upload_3d_asset(
     asset_name: str,
     file_path: str,
-    asset_type: Literal["3d_model", "texture", "audio", "animation", "particle_effect"] = "3d_model",
-    tags: List[str] = []
+    asset_type: Literal[
+        "3d_model", "texture", "audio", "animation", "particle_effect"
+    ] = "3d_model",
+    tags: List[str] = [],
 ) -> Dict[str, Union[str, List[str]]]:
     """Upload a custom 3D model, texture, or audio to use in virtual spaces.
 
@@ -442,6 +458,7 @@ def upload_3d_asset(
         "tags": tags,
     }
 
+
 from typing import Dict, Union
 
 
@@ -459,15 +476,14 @@ def valid_token(JWT: str) -> Dict[str, Union[bool, str]]:
     # Mock JWT validation - check if it follows basic JWT structure
     if not JWT or not isinstance(JWT, str):
         return {"valid": False, "message": "Invalid token format"}
-    
+
     # Simple validation - JWT should have 3 parts separated by dots
-    parts = JWT.split('.')
+    parts = JWT.split(".")
     if len(parts) != 3:
         return {"valid": False, "message": "Invalid token structure"}
-    
+
     # Mock validation - assume tokens starting with "eyJ" are valid (base64 encoded JSON)
     if JWT.startswith("eyJ"):
         return {"valid": True, "message": "Token is valid"}
     else:
         return {"valid": False, "message": "Invalid token"}
-

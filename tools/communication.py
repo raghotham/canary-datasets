@@ -4,28 +4,53 @@
 from typing import Any, Dict, List, Optional, Union
 
 
-def create_server(name: str) -> Dict[str, str]:
-    """Make a new messaging server.
+def create_server(
+    name: str, packages: Optional[List[str]] = None, server_model: Optional[int] = None
+) -> Dict[str, Union[str, int, List[str]]]:
+    """Make a new messaging server with optional packages and server model configuration.
 
     Args:
         name: Name of the new messaging server
+        packages: List of packages to install on the server (e.g., ["mongodb", "nginx"])
+        server_model: Server model/type identifier (e.g., 1, 2, 3 for different server configurations)
 
     Returns:
         Dict containing:
             - server_id: Unique identifier for the server
             - name: Name of the server
             - status: Current status of the server
+            - packages: List of packages installed on the server
+            - server_model: Server model used for the server
     """
     if not name:
         raise ValueError("Server name must be provided")
 
-    # Simulate server ID generation using a hash
-    server_id = f"server_{hash(name) % 10000}"
+    # Default values
+    if packages is None:
+        packages = []
+    if server_model is None:
+        server_model = 1  # Default server model
+
+    # Validate server_model
+    if not isinstance(server_model, int) or server_model < 1:
+        raise ValueError("Server model must be a positive integer")
+
+    # Simulate server ID generation using a hash that includes all parameters
+    hash_input = f"{name}_{str(packages)}_{server_model}"
+    server_id = f"server_{hash(hash_input) % 10000:04d}"
+
+    # Simulate package installation status
+    installed_packages = []
+    for package in packages:
+        if isinstance(package, str) and package.strip():
+            installed_packages.append(package.strip())
 
     return {
         "server_id": server_id,
         "name": name,
         "status": "active",
+        "packages": installed_packages,
+        "server_model": server_model,
     }
 
 
@@ -481,7 +506,9 @@ def create_profile(
 from typing import Dict, Union
 
 
-def dancers(dancer: Optional[int] = None, name: Optional[str] = None) -> Union[Dict[str, Union[int, str]], List[Dict[str, Union[int, str]]]]:
+def dancers(
+    dancer: Optional[int] = None, name: Optional[str] = None
+) -> Union[Dict[str, Union[int, str]], List[Dict[str, Union[int, str]]]]:
     """Set or get dancer contact information.
 
     Args:
@@ -498,13 +525,33 @@ def dancers(dancer: Optional[int] = None, name: Optional[str] = None) -> Union[D
     if dancer is None and name is None:
         # Return a predefined list of dancers
         return [
-            {"dancer": 1, "name": "John Smith", "contact_info": "john.smith@dancers.com"},
-            {"dancer": 2, "name": "Maria Garcia", "contact_info": "maria.garcia@dancers.com"},
-            {"dancer": 3, "name": "David Johnson", "contact_info": "david.johnson@dancers.com"},
-            {"dancer": 4, "name": "Emma Wilson", "contact_info": "emma.wilson@dancers.com"},
-            {"dancer": 5, "name": "James Brown", "contact_info": "james.brown@dancers.com"}
+            {
+                "dancer": 1,
+                "name": "John Smith",
+                "contact_info": "john.smith@dancers.com",
+            },
+            {
+                "dancer": 2,
+                "name": "Maria Garcia",
+                "contact_info": "maria.garcia@dancers.com",
+            },
+            {
+                "dancer": 3,
+                "name": "David Johnson",
+                "contact_info": "david.johnson@dancers.com",
+            },
+            {
+                "dancer": 4,
+                "name": "Emma Wilson",
+                "contact_info": "emma.wilson@dancers.com",
+            },
+            {
+                "dancer": 5,
+                "name": "James Brown",
+                "contact_info": "james.brown@dancers.com",
+            },
         ]
-    
+
     # Validate parameters when provided
     if dancer is not None and (not isinstance(dancer, int) or dancer <= 0):
         raise ValueError("Dancer number must be a positive integer.")
@@ -515,7 +562,11 @@ def dancers(dancer: Optional[int] = None, name: Optional[str] = None) -> Union[D
     if name is not None:
         contact_info = f"{name.lower().replace(' ', '.')}@dancers.com"
     else:
-        contact_info = f"dancer{dancer}@dancers.com" if dancer is not None else "unknown@dancers.com"
+        contact_info = (
+            f"dancer{dancer}@dancers.com"
+            if dancer is not None
+            else "unknown@dancers.com"
+        )
 
     return {
         "dancer": dancer if dancer is not None else 0,
@@ -895,15 +946,16 @@ def send_voice_message(
         raise ValueError("Receiver's name must be provided.")
     if not message:
         raise ValueError("Message must be provided.")
-        
+
     # Convert string to bytes if needed
     if isinstance(message, str):
         try:
             import base64
+
             message = base64.b64decode(message)
         except:
             # If decoding fails, treat the string as raw text and encode to bytes
-            message = message.encode('utf-8')
+            message = message.encode("utf-8")
 
     # Simulate sending the message
     status = "Message sent successfully"
