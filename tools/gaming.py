@@ -1480,7 +1480,7 @@ from typing import Dict, List, Literal, Union
 def get_xp_records(
     rsn: str,
     game: Literal["osrs", "rs3"] = "rs3",
-    skills: List[str] = [],
+    skills: Union[List[str], str] = [],
     start_time: Union[int, None] = None,
     end_time: Union[int, None] = None,
 ) -> Dict[str, Union[str, Dict[str, int]]]:
@@ -1489,7 +1489,7 @@ def get_xp_records(
     Args:
         rsn: Runescape player's name
         game: 'osrs' or 'rs3'; defaults to 'rs3'
-        skills: Skills to include, defaults to all skills
+        skills: Skills to include (list of skill names or single skill name), defaults to all skills
         start_time: Start time to track XP gains
         end_time: End time to track XP gains
 
@@ -1508,6 +1508,10 @@ def get_xp_records(
         "osrs": ["Attack", "Defence", "Strength", "Hitpoints", "Ranged", "Prayer"],
     }
 
+    # Convert string skills to list if needed
+    if isinstance(skills, str):
+        skills = [skills]
+    
     if not skills:
         skills = all_skills[game]
 
@@ -1566,7 +1570,7 @@ from typing import Dict, List, Literal, Union
 
 def join_texas_cash_game(
     playerID: str,
-    blinds: List[Literal[1, 2, 5, 10]],
+    blinds: Union[List[Literal[1, 2, 5, 10]], str],
     buyInAmount: float,
     playerBalance: float,
     ipAddress: str,
@@ -1576,7 +1580,7 @@ def join_texas_cash_game(
 
     Args:
         playerID: The player's 8 digit identification number (e.g. 98712365)
-        blinds: The small and big blind amounts in US dollars
+        blinds: The small and big blind amounts in US dollars. Can be provided as a list [1, 2], a dash-separated string '1-2', or a string representation of a list '[1, 2]'
         buyInAmount: The amount of money the player wants to buy-in to the game with
         playerBalance: The player's current account balance
         ipAddress: The player's current IP address at the time they attempt to join the table
@@ -1591,6 +1595,35 @@ def join_texas_cash_game(
             - buyInAmount: The buy-in amount for the game
             - remainingBalance: The player's remaining balance after buy-in
     """
+
+    # Convert blinds parameter if it's a string
+    if isinstance(blinds, str):
+        # Handle dash-separated format like '5-10'
+        if '-' in blinds:
+            try:
+                blind_values = [int(val.strip()) for val in blinds.split('-')]
+                blinds = blind_values
+            except ValueError:
+                raise ValueError("Invalid blinds format. Expected format like '5-10'")
+        # Handle string representation of a list like '[5, 10]' or '['5', '10']'
+        elif blinds.startswith('[') and blinds.endswith(']'):
+            try:
+                import ast
+                blind_values = ast.literal_eval(blinds)
+                if isinstance(blind_values, list):
+                    # Convert string numbers to integers if needed
+                    blinds = [int(val) if isinstance(val, str) else val for val in blind_values]
+                else:
+                    raise ValueError("Invalid blinds format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid blinds format. Expected a valid list.")
+        else:
+            raise ValueError("Invalid blinds format. Expected format like '5-10' or '[5, 10]'")
+    
+    # Validate that all blinds values are allowed
+    allowed_values = [1, 2, 5, 10]
+    if not all(val in allowed_values for val in blinds):
+        raise ValueError(f"Blind values must be one of {allowed_values}")
 
     if buyInAmount < 50 or buyInAmount > 1000:
         raise ValueError("Buy-in amount must be between $50 and $1000.")

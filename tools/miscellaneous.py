@@ -1030,15 +1030,15 @@ def team_schedule(
 
 def convert_units(
     value: float,
-    from_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
-    to_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
+    from_unit: Literal["celsius", "fahrenheit", "kelvin", "pounds", "kilograms"],
+    to_unit: Literal["celsius", "fahrenheit", "kelvin", "pounds", "kilograms"],
 ) -> Dict[str, Union[float, str]]:
     """Convert values between different units (temperature and weight).
 
     Args:
         value: The value to convert
-        from_unit: The unit to convert from ('celsius', 'fahrenheit', 'pounds', 'kilograms')
-        to_unit: The unit to convert to ('celsius', 'fahrenheit', 'pounds', 'kilograms')
+        from_unit: The unit to convert from ('celsius', 'fahrenheit', 'kelvin', 'pounds', 'kilograms')
+        to_unit: The unit to convert to ('celsius', 'fahrenheit', 'kelvin', 'pounds', 'kilograms')
 
     Returns:
         Dict containing:
@@ -1053,6 +1053,18 @@ def convert_units(
         return {"value": (value - 32) * 5 / 9, "unit": "celsius"}
     if (from_unit, to_unit) == ("celsius", "fahrenheit"):
         return {"value": value * 9 / 5 + 32, "unit": "fahrenheit"}
+    if (from_unit, to_unit) == ("kelvin", "celsius"):
+        return {"value": value - 273.15, "unit": "celsius"}
+    if (from_unit, to_unit) == ("celsius", "kelvin"):
+        return {"value": value + 273.15, "unit": "kelvin"}
+    if (from_unit, to_unit) == ("kelvin", "fahrenheit"):
+        # First convert kelvin to celsius, then celsius to fahrenheit
+        celsius = value - 273.15
+        return {"value": celsius * 9 / 5 + 32, "unit": "fahrenheit"}
+    if (from_unit, to_unit) == ("fahrenheit", "kelvin"):
+        # First convert fahrenheit to celsius, then celsius to kelvin
+        celsius = (value - 32) * 5 / 9
+        return {"value": celsius + 273.15, "unit": "kelvin"}
 
     # Weight conversions
     if (from_unit, to_unit) == ("pounds", "kilograms"):

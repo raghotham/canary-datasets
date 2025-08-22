@@ -119,7 +119,7 @@ from typing import Dict, List, Union
 
 
 def create_calendar_hold(
-    title: str, start_time: str, end_time: str, attendees: List[str], notes: str = ""
+    title: str, start_time: str, end_time: str, attendees: Union[List[str], str], notes: str = ""
 ) -> Dict[str, Union[str, List[str]]]:
     """Create a tentative calendar hold.
 
@@ -127,7 +127,7 @@ def create_calendar_hold(
         title: The title of the calendar hold
         start_time: The start time of the hold in ISO 8601 format
         end_time: The end time of the hold in ISO 8601 format
-        attendees: List of email addresses of attendees
+        attendees: List of email addresses of attendees or comma-separated string
         notes: Additional notes for the hold (optional)
 
     Returns:
@@ -143,6 +143,21 @@ def create_calendar_hold(
         raise ValueError(
             "Missing required fields: title, start_time, end_time, or attendees"
         )
+        
+    # Convert attendees from string to list if needed
+    if isinstance(attendees, str):
+        # Handle both comma-separated strings and string representations of lists
+        if attendees.startswith('[') and attendees.endswith(']'):
+            # Handle string representation of list like "['email1', 'email2']"
+            import ast
+            try:
+                attendees = ast.literal_eval(attendees)
+            except:
+                # If parsing fails, fall back to comma-separated handling
+                attendees = [email.strip() for email in attendees.split(',')]
+        else:
+            # Handle comma-separated strings like "email1,email2" or "email1, email2"
+            attendees = [email.strip() for email in attendees.split(',')]
 
     # Simulate unique ID generation using hash
     unique_id = hash((title, start_time, end_time, tuple(attendees)))
@@ -163,7 +178,7 @@ from typing import Dict, List, Literal, Union
 
 
 def find_overlapping_slots(
-    attendees: List[str],
+    attendees: Union[List[str], str],
     duration_min: int,
     window_start: str,
     window_end: str,
@@ -191,6 +206,10 @@ def find_overlapping_slots(
     # Calculate the total available minutes in the window
     total_minutes = int((end_dt - start_dt).total_seconds() / 60)
 
+    # Convert string of attendees to list if necessary
+    if isinstance(attendees, str):
+        attendees = [email.strip() for email in attendees.split(",")]
+        
     # Simulate availability for each attendee using a hash-based approach
     availability = {}
     for attendee in attendees:
@@ -287,7 +306,7 @@ def get_free_busy(
     """Return free/busy blocks for attendees over a date range.
 
     Args:
-        attendees: List of email addresses of attendees
+        attendees: List of email addresses of attendees or comma-separated string
         start_date: Start date of the range in 'YYYY-MM-DD' format
         end_date: End date of the range in 'YYYY-MM-DD' format
 

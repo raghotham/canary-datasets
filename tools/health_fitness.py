@@ -221,12 +221,12 @@ from typing import Dict, List, Union
 
 
 def compare_energy_drinks(
-    drinks: List[Dict[str, str]]
+    drinks: Union[List[Dict[str, str]], str]
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Compare energy drinks based on nutrition, caffeine content, and price.
 
     Args:
-        drinks: List of drinks to compare. Each drink is an object with brand and flavor.
+        drinks: List of drinks to compare or a comma-separated string of drink names. Each drink should have brand and flavor information.
 
     Returns:
         Dict containing:
@@ -234,6 +234,20 @@ def compare_energy_drinks(
     """
     if not drinks:
         raise ValueError("No drinks provided for comparison.")
+        
+    # Convert string to list of drinks if needed
+    if isinstance(drinks, str):
+        # Handle string input (comma-separated list of drink names)
+        drink_names = [name.strip() for name in drinks.split(',')]
+        processed_drinks = []
+        for name in drink_names:
+            # Try to extract brand and flavor from the name
+            parts = name.split(' ', 1)
+            if len(parts) > 1:
+                processed_drinks.append({"brand": parts[0], "flavor": parts[1]})
+            else:
+                processed_drinks.append({"brand": name, "flavor": "Original"})
+        drinks = processed_drinks
 
     # Sample data for mock comparison
     sample_data = {

@@ -769,14 +769,14 @@ from typing import Dict, Optional, Union
 
 def suggest_drink(
     patron_id: Optional[str] = None,
-    preferences: Optional[Dict[str, Optional[str]]] = None,
+    preferences: Union[Dict[str, Optional[str]], str] = None,
 ) -> Dict[str, Union[str, Dict[str, str]]]:
     """Suggest a drink based on a patron's preferences or past orders.
 
     Args:
         patron_id: Optional patron ID to personalize suggestions.
-        preferences: Optional drink preferences, such as flavor profile
-                     and alcohol preference.
+        preferences: Optional drink preferences, as a dictionary with flavor_profile and
+                     alcohol_preference, or as a string describing preference (e.g., 'fruity').
 
     Returns:
         Dict containing:
@@ -810,6 +810,18 @@ def suggest_drink(
                 "alcohol_content": "none",
             },
         },
+        "fruity": {  # Added for string-based preferences
+            "yes": {
+                "drink_name": "Daiquiri",
+                "flavor_profile": "fruity",
+                "alcohol_content": "medium",
+            },
+            "no": {
+                "drink_name": "Fruit Punch",
+                "flavor_profile": "fruity",
+                "alcohol_content": "none",
+            },
+        },
         "non_alcoholic": {
             "yes": {
                 "drink_name": "Shirley Temple",
@@ -826,6 +838,10 @@ def suggest_drink(
 
     # Default preferences if none provided
     default_preferences = {"flavor_profile": "sweet", "alcohol_preference": "yes"}
+
+    # Convert string preferences to dictionary
+    if isinstance(preferences, str):
+        preferences = {"flavor_profile": preferences, "alcohol_preference": "yes"}
 
     # Use provided preferences or default
     if preferences is None:
@@ -858,7 +874,7 @@ from typing import Dict, List, Union
 
 
 def suggest_energy_drink(
-    preferred_flavors: List[str] = [], max_caffeine_mg: float = 200
+    preferred_flavors: Union[List[str], str] = [], max_caffeine_mg: float = 200
 ) -> Dict[str, Union[str, float]]:
     """Suggest an energy drink based on flavor preferences and caffeine tolerance.
 
@@ -879,6 +895,10 @@ def suggest_energy_drink(
         {"name": "TropicalThunder", "flavor": "tropical", "caffeine_mg": 200},
         {"name": "VanillaVibe", "flavor": "vanilla", "caffeine_mg": 100},
     ]
+
+    # Convert string of preferred flavors to list if necessary
+    if isinstance(preferred_flavors, str):
+        preferred_flavors = [flavor.strip() for flavor in preferred_flavors.split(",")]
 
     # Filter drinks by caffeine content
     suitable_drinks = [
@@ -1766,7 +1786,13 @@ def get_calories(meal_name: str, servings: float = 1) -> Dict[str, Union[str, fl
         "2 eggs": 150,
         "2 slices sourdough with butter": 350,
         "Big Mac": 550,
+        "big mac": 550,
         "Fries": 350,
+        "fries": 350,
+        "porridge": 200,
+        "egg": 75,
+        "sourdough bread": 350,
+        "butter": 100,
     }
 
     if meal_name not in sample_calories:
@@ -1856,7 +1882,13 @@ def get_carbs(meal_name: str, servings: float = 1) -> Dict[str, Union[str, float
         "2 eggs": 1,
         "sourdough with butter": 45,
         "Big Mac": 46,
+        "big mac": 46,
+        "fries": 45,
         "Fries": 45,
+        "butter": 100,
+        "sourdough bread": 45,
+        "egg": 1,
+        "porridge": 35,
     }
 
     if meal_name not in sample_carbs:
@@ -2423,7 +2455,12 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
         "2 eggs": 13,
         "sourdough with butter": 9,
         "Big Mac": 25,
+        "big mac": 25,
         "Fries": 4,
+        "fries": 4,
+        "egg": 6,
+        "sourdough bread": 9,
+        "butter": 7,
     }
 
     if meal_name not in protein_data:
@@ -2535,6 +2572,30 @@ def get_recipe(name: str) -> Dict[str, str]:
         "Spaghetti Bolognese": {
             "ingredients": "400g spaghetti, 2 tablespoons olive oil, 1 onion, chopped, 2 garlic cloves, minced, 500g minced beef, 800g canned tomatoes, 2 tablespoons tomato paste, 1 teaspoon dried oregano, salt and pepper to taste",
             "instructions": "1. Cook the spaghetti according to package instructions. 2. In a large pan, heat the olive oil over medium heat. Add the onion and garlic, and sauté until soft. 3. Add the minced beef and cook until browned. 4. Stir in the canned tomatoes, tomato paste, oregano, salt, and pepper. Simmer for 20 minutes. 5. Serve the sauce over the cooked spaghetti.",
+        },
+        "Shepherd's Pie": {
+            "ingredients": "1 lb ground beef, 1 onion, chopped, 2 cloves garlic, minced",
+            "instructions": "1. In a large pan, cook the ground beef with the onion and garlic until browned. 2. Eat",
+        },
+        "Pasta Bake": {
+            "ingredients": "300g penne pasta, 400g canned tomatoes, 200g mozzarella cheese, 100g parmesan cheese, 2 cloves garlic minced, 1 onion chopped, 2 tbsp olive oil, 1 tsp dried basil, salt and pepper to taste",
+            "instructions": "1. Preheat oven to 180°C. 2. Cook pasta according to package instructions, drain. 3. Heat olive oil in pan, sauté onion and garlic until soft. 4. Add tomatoes and basil, simmer 10 minutes. 5. Mix pasta with sauce, transfer to baking dish. 6. Top with mozzarella and parmesan. 7. Bake 25-30 minutes until golden and bubbly.",
+        },
+        "Fried Rice": {
+            "ingredients": "3 cups cooked rice (preferably day-old), 3 eggs beaten, 2 tbsp vegetable oil, 1 onion diced, 2 cloves garlic minced, 1 cup mixed vegetables, 3 tbsp soy sauce, 2 green onions chopped, salt and pepper to taste",
+            "instructions": "1. Heat 1 tbsp oil in large pan or wok over high heat. 2. Add beaten eggs, scramble and remove from pan. 3. Add remaining oil, sauté onion and garlic until fragrant. 4. Add mixed vegetables, stir-fry 2-3 minutes. 5. Add rice, breaking up clumps. 6. Add soy sauce and scrambled eggs back to pan. 7. Stir-fry 2-3 minutes, garnish with green onions.",
+        },
+        "Chicken Stew": {
+            "ingredients": "1.5 lbs chicken thighs cut into chunks, 3 potatoes diced, 2 carrots sliced, 1 onion chopped, 3 cloves garlic minced, 3 cups chicken broth, 2 tbsp olive oil, 1 tsp thyme, 1 bay leaf, salt and pepper to taste",
+            "instructions": "1. Heat olive oil in large pot over medium-high heat. 2. Season chicken with salt and pepper, brown on all sides. 3. Add onion and garlic, cook until softened. 4. Add potatoes, carrots, broth, thyme, and bay leaf. 5. Bring to boil, then reduce heat and simmer 45 minutes until chicken is tender. 6. Remove bay leaf before serving.",
+        },
+        "Chilli Con Carne": {
+            "ingredients": "1 lb ground beef, 1 onion chopped, 3 cloves garlic minced, 1 bell pepper diced, 400g canned tomatoes, 400g kidney beans drained, 2 tbsp tomato paste, 2 tsp chili powder, 1 tsp cumin, 1 tsp paprika, salt and pepper to taste",
+            "instructions": "1. Heat oil in large pot over medium heat. 2. Brown ground beef, breaking it up with spoon. 3. Add onion, garlic, and bell pepper, cook until softened. 4. Stir in tomato paste, chili powder, cumin, and paprika. 5. Add tomatoes and kidney beans, bring to boil. 6. Reduce heat and simmer 30-40 minutes, stirring occasionally. 7. Season with salt and pepper.",
+        },
+        "Pumpkin Soup": {
+            "ingredients": "2 lbs pumpkin peeled and cubed, 1 onion chopped, 3 cloves garlic minced, 3 cups vegetable broth, 1 cup coconut milk, 2 tbsp olive oil, 1 tsp ground ginger, 1/2 tsp nutmeg, salt and pepper to taste",
+            "instructions": "1. Heat olive oil in large pot over medium heat. 2. Sauté onion and garlic until softened. 3. Add pumpkin cubes, ginger, and nutmeg, cook 5 minutes. 4. Add vegetable broth, bring to boil. 5. Reduce heat and simmer 20-25 minutes until pumpkin is tender. 6. Blend soup until smooth using immersion blender. 7. Stir in coconut milk, season with salt and pepper.",
         },
     }
 
@@ -3478,7 +3539,7 @@ def search_restaurants(
     country: str,
     city: str,
     price_range: Dict[str, float] = None,
-    key_terms: List[str] = None,
+    key_terms: Union[List[str], str] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Search for restaurants by city.
 
@@ -3486,7 +3547,7 @@ def search_restaurants(
         country: The country where the restaurant is located.
         city: The city where the restaurant is located.
         price_range: Price range filter with 'min' and 'max' values.
-        key_terms: Key words such as cuisine or food types.
+        key_terms: Key words such as cuisine or food types (string or list of strings).
 
     Returns:
         Dict containing:
@@ -3525,6 +3586,10 @@ def search_restaurants(
 
     # Filter by key terms if provided
     if key_terms:
+        # Convert string key_terms to list if needed
+        if isinstance(key_terms, str):
+            key_terms = [key_term.strip() for key_term in key_terms.split(",")]
+
         key_terms_lower = [term.lower() for term in key_terms]
         restaurants = [
             r

@@ -778,7 +778,7 @@ from typing import Dict, List, Literal, Union
 
 def diagnose_issue(
     appliance_type: str,
-    symptoms: List[str],
+    symptoms: Union[List[str], str],
     urgency: Literal["low", "normal", "emergency"] = "normal",
     home_age_years: Union[int, None] = None,
     last_service_date: Union[str, None] = None,
@@ -797,6 +797,24 @@ def diagnose_issue(
             - likely_causes: List of possible causes for the issue
             - recommended_steps: List of recommended next steps to resolve the issue
     """
+    
+    # Convert symptoms parameter if provided as string
+    if isinstance(symptoms, str):
+        if symptoms.startswith('[') and symptoms.endswith(']'):
+            # Handle string representation of list like "['symptom1', 'symptom2']"
+            try:
+                import ast
+                parsed_symptoms = ast.literal_eval(symptoms)
+                if isinstance(parsed_symptoms, list):
+                    symptoms = parsed_symptoms
+                else:
+                    raise ValueError("Invalid symptoms format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid symptoms format. Expected a valid list representation.")
+        else:
+            # Handle comma-separated string like "symptom1, symptom2"
+            symptoms = [symptom.strip() for symptom in symptoms.split(',')]
+    
     if not appliance_type or not symptoms:
         raise ValueError("Both 'appliance_type' and 'symptoms' are required.")
 
@@ -899,6 +917,11 @@ def get_device_properties(
         "device1": {"type": "light", "state": True},
         "device2": {"type": "thermostat", "state": False},
         "device3": {"type": "camera", "state": True},
+        "Smart Light Bulb": {"type": "light", "state": True},
+        "Smart Thermostat": {"type": "thermostat", "state": False},
+        "Smart Speaker": {"type": "speaker", "state": True},
+        "Smart Camera": {"type": "camera", "state": True},
+        "Smart Lock": {"type": "lock", "state": True},
     }
 
     properties = []

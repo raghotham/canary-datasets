@@ -507,7 +507,7 @@ from typing import Dict, List, Union
 
 def find_dealers(
     origin_location: Union[str, None] = None,
-    required_vehicles: List[str] = [],
+    required_vehicles: Union[List[str], str] = [],
     range: float = 0,
     brand_dealership: bool = False,
     new_vehicles_only: bool = False,
@@ -528,6 +528,23 @@ def find_dealers(
     """
     if not origin_location:
         raise ValueError("Origin location must be provided.")
+
+    # Convert required_vehicles parameter if provided as string
+    if isinstance(required_vehicles, str):
+        if required_vehicles.startswith('[') and required_vehicles.endswith(']'):
+            # Handle string representation of list like "['GMC Truck']"
+            try:
+                import ast
+                parsed_vehicles = ast.literal_eval(required_vehicles)
+                if isinstance(parsed_vehicles, list):
+                    required_vehicles = parsed_vehicles
+                else:
+                    raise ValueError("Invalid required_vehicles format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid required_vehicles format. Expected a valid list representation.")
+        else:
+            # Handle single vehicle string like "GMC Truck"
+            required_vehicles = [required_vehicles]
 
     # Sample data for dealerships
     sample_dealerships = [
@@ -703,7 +720,7 @@ from typing import Dict, List, Union
 def find_similar_cars(
     search_input: str,
     type: Union[str, None] = None,
-    price: Union[List[int], None] = None,
+    price: Union[List[int], str, None] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Find similar vehicles based on make, model, type, and price range.
 
@@ -717,6 +734,37 @@ def find_similar_cars(
             - search_input: The original search input
             - similar_vehicles: List of similar vehicles with details
     """
+    # Convert price parameter if provided as string
+    if isinstance(price, str):
+        if price.startswith('[') and price.endswith(']'):
+            # Handle string representation of list like "[0, 80000]"
+            try:
+                import ast
+                parsed_price = ast.literal_eval(price)
+                if isinstance(parsed_price, list):
+                    price = parsed_price
+                else:
+                    raise ValueError("Invalid price format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid price format. Expected a valid list representation.")
+        elif ',' in price:
+            # Handle comma-separated string like "0,80000"
+            try:
+                parts = price.split(',')
+                if len(parts) == 2:
+                    price = [int(parts[0].strip()), int(parts[1].strip())]
+                else:
+                    raise ValueError("Invalid price format. Expected format: 'min,max'")
+            except ValueError:
+                raise ValueError("Invalid price format. Could not convert to integers.")
+        else:
+            # Handle single price value like "80000" - treat as maximum price
+            try:
+                max_price = int(price)
+                price = [0, max_price]  # Assume minimum is 0
+            except ValueError:
+                raise ValueError("Invalid price format. Could not convert to integer.")
+                
     # Sample data for demonstration purposes
     sample_vehicles = [
         {"make": "Toyota", "model": "Camry", "type": "sedan", "price": 24000},
@@ -1775,14 +1823,14 @@ from typing import Dict, Union
 
 
 def ride_share_look_up(
-    current_location: Dict[str, Union[str, Dict[str, float]]],
-    destination_location: Dict[str, Union[str, Dict[str, float]]],
+    current_location: Union[Dict[str, Union[str, Dict[str, float]]], str],
+    destination_location: Union[Dict[str, Union[str, Dict[str, float]]], str],
 ) -> Dict[str, Union[str, float]]:
     """Get the price of rides from ride share apps based on parameters.
 
     Args:
-        current_location: A dictionary containing the user's current location details
-        destination_location: A dictionary containing the destination location details
+        current_location: The user's current location (string like 'Mesa, Colorado' or dictionary containing location details)
+        destination_location: The destination location (string like 'Denver, CO' or dictionary containing location details)
 
     Returns:
         Dict containing:
@@ -1790,6 +1838,39 @@ def ride_share_look_up(
             - estimated_price: Estimated price for the ride in USD
             - currency: Currency of the estimated price
     """
+
+    def convert_location_parameter(location):
+        """Helper function to convert string location to expected dictionary format"""
+        if isinstance(location, str):
+            # Handle string representation of dictionary
+            if location.startswith('{') and location.endswith('}'):
+                try:
+                    import ast
+                    parsed_location = ast.literal_eval(location)
+                    if isinstance(parsed_location, dict):
+                        # Ensure we have coordinates even if not provided
+                        if "coordinates" not in parsed_location:
+                            parsed_location["coordinates"] = {"latitude": 0.0, "longitude": 0.0}
+                        return parsed_location
+                except (ValueError, SyntaxError):
+                    pass
+            
+            # Handle plain string like "Mesa" or "Denver, Colorado"
+            city = location.strip()
+            # Generate mock coordinates based on hash for consistency
+            coord_hash = hash(city) % 3600  # Generate values between 0-3600
+            lat = (coord_hash % 180) - 90  # Latitude between -90 and 90
+            lon = ((coord_hash * 2) % 360) - 180  # Longitude between -180 and 180
+            
+            return {
+                "city": city,
+                "coordinates": {"latitude": lat, "longitude": lon}
+            }
+        return location
+
+    # Convert location parameters if they are strings
+    current_location = convert_location_parameter(current_location)
+    destination_location = convert_location_parameter(destination_location)
 
     # Mock data for ride share services and their base prices
     services = {
@@ -1962,6 +2043,21 @@ def search_train(
 
     # Sample train schedules based on hash of the input parameters for consistency
     sample_schedules = {
+        ("Nuremburg", "Berlin", "2024-08-22"): [
+            {"departure": "06:30 AM", "arrival": "10:00 AM"},
+            {"departure": "12:00 PM", "arrival": "03:30 PM"},
+            {"departure": "06:00 PM", "arrival": "09:30 PM"},
+        ],
+        ("Berlin", "Munich", "2024-08-25"): [
+            {"departure": "07:00 AM", "arrival": "11:30 AM"},
+            {"departure": "01:00 PM", "arrival": "05:30 PM"},
+            {"departure": "05:00 PM", "arrival": "09:30 PM"},
+        ],
+        ("Munich", "Nuremburg", "2025-08-27"): [
+            {"departure": "08:00 AM", "arrival": "10:30 AM"},
+            {"departure": "12:30 PM", "arrival": "03:00 PM"},
+            {"departure": "05:00 PM", "arrival": "07:30 PM"},
+        ],
         ("New York", "Boston", "2023-10-01"): [
             {"departure": "08:00 AM", "arrival": "11:00 AM"},
             {"departure": "01:00 PM", "arrival": "04:00 PM"},

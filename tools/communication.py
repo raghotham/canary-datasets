@@ -232,6 +232,7 @@ def join_server(name: str) -> Dict[str, str]:
         "GeneralChat": "active",
         "TechTalk": "active",
         "GamingHub": "inactive",
+        "The Cowboy Fans": "active",
     }
 
     if name not in available_servers:
@@ -603,7 +604,7 @@ from typing import Dict, Literal
 def get_emotional_speech(
     message: str,
     emotional_content: Literal["neutral", "happy", "sad", "angry"] = "neutral",
-) -> Dict[str, Union[str, bytes]]:
+) -> Dict[str, str]:
     """Retrieve audio of a text message with specified emotional content.
 
     Args:
@@ -623,10 +624,15 @@ def get_emotional_speech(
     audio_hash = hash((message, emotional_content)) % 256
     audio_bytes = bytes([audio_hash] * 100)  # Simulated audio data
 
+    # Convert bytes to base64 string for JSON serialization
+    import base64
+
+    audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+
     return {
         "message": message,
         "emotional_content": emotional_content,
-        "audio": audio_bytes,
+        "audio": audio_b64,
     }
 
 
@@ -855,13 +861,13 @@ from typing import Dict, Optional
 
 
 def send_voice_message(
-    receiver: str, message: bytes, sender: Optional[str] = None
+    receiver: str, message: Union[bytes, str], sender: Optional[str] = None
 ) -> Dict[str, str]:
     """Send a voice message to a receiver.
 
     Args:
         receiver: Receiver's name
-        message: The voice message in bytes
+        message: The voice message in bytes or base64-encoded string
         sender: Sender's name (optional)
 
     Returns:
@@ -874,6 +880,15 @@ def send_voice_message(
         raise ValueError("Receiver's name must be provided.")
     if not message:
         raise ValueError("Message must be provided.")
+        
+    # Convert string to bytes if needed
+    if isinstance(message, str):
+        try:
+            import base64
+            message = base64.b64decode(message)
+        except:
+            # If decoding fails, treat the string as raw text and encode to bytes
+            message = message.encode('utf-8')
 
     # Simulate sending the message
     status = "Message sent successfully"

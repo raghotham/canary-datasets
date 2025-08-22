@@ -2058,7 +2058,7 @@ from typing import Dict, Literal, Union
 def withdraw_funds(
     amount: float,
     withdrawalMethod: Literal["paypal", "cryptocurrency"],
-    paypalDetails: Dict[str, str] = None,
+    paypalDetails: Union[Dict[str, str], str] = None,
     cryptoDetails: Dict[
         str, Union[str, Literal["bitcoin", "ethereum", "litecoin"]]
     ] = None,
@@ -2068,7 +2068,8 @@ def withdraw_funds(
     Args:
         amount: The amount of money to withdraw in US dollars. Must be at least $10.
         withdrawalMethod: The method to use for withdrawal ('paypal' or 'cryptocurrency').
-        paypalDetails: The player's PayPal details, required if withdrawalMethod is 'paypal'.
+        paypalDetails: The player's PayPal details, required if withdrawalMethod is 'paypal'. 
+                      Can be provided as a dictionary or an email address string.
         cryptoDetails: The player's cryptocurrency wallet details, required if withdrawalMethod is 'cryptocurrency'.
 
     Returns:
@@ -2082,6 +2083,30 @@ def withdraw_funds(
         raise ValueError("Amount must be at least $10.")
 
     if withdrawalMethod == "paypal":
+        # Convert paypalDetails if provided as string
+        if isinstance(paypalDetails, str):
+            if "@" in paypalDetails:
+                # Handle plain email string
+                paypalDetails = {
+                    "paypalEmail": paypalDetails,
+                    "paypalAccountName": paypalDetails.split("@")[0]
+                }
+            else:
+                # Handle string representation of dictionary
+                try:
+                    import ast
+                    parsed_details = ast.literal_eval(paypalDetails)
+                    if isinstance(parsed_details, dict):
+                        # Map common keys to expected format
+                        paypalDetails = {
+                            "paypalEmail": parsed_details.get("email", parsed_details.get("paypalEmail", "")),
+                            "paypalAccountName": parsed_details.get("name", parsed_details.get("paypalAccountName", parsed_details.get("email", "").split("@")[0] if "@" in parsed_details.get("email", "") else ""))
+                        }
+                    else:
+                        raise ValueError("PayPal details must be a dictionary or email string.")
+                except (ValueError, SyntaxError):
+                    raise ValueError("Invalid PayPal details format.")
+        
         if (
             not paypalDetails
             or "paypalEmail" not in paypalDetails

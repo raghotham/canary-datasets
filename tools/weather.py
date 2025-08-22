@@ -566,7 +566,7 @@ from typing import Dict, List, Optional, Union
 
 
 def tornado_lookup(
-    location: Optional[Dict[str, Union[str, Dict[str, float]]]] = None,
+    location: Optional[Union[Dict[str, Union[str, Dict[str, float]]], str]] = None,
     tornado_name: Optional[str] = None,
     EF_rating: Optional[int] = None,
     tornado_category: Optional[str] = None,
@@ -576,7 +576,7 @@ def tornado_lookup(
     """Find tornado reports that match given parameters.
 
     Args:
-        location: Dictionary containing country, state, city, and coordinates of the tornado.
+        location: Location information as a string (like 'Denver, CO') or dictionary containing country, state, city, and coordinates.
         tornado_name: Name of the tornado event.
         EF_rating: Enhanced Fujita scale rating from 0-5.
         tornado_category: F category of the tornado.
@@ -592,6 +592,41 @@ def tornado_lookup(
             - tornado_damage: Amount of damage from the tornado.
             - damage_indicators: List of damage indicators.
     """
+
+    # Convert location parameter if it's a string
+    if location is not None and isinstance(location, str):
+        # Handle string representation of dictionary
+        if location.startswith('{') and location.endswith('}'):
+            try:
+                import ast
+                parsed_location = ast.literal_eval(location)
+                if isinstance(parsed_location, dict):
+                    # Ensure expected fields are present
+                    if "country" not in parsed_location:
+                        parsed_location["country"] = "USA"
+                    if "state" not in parsed_location:
+                        parsed_location["state"] = "Unknown"
+                    if "city" not in parsed_location:
+                        parsed_location["city"] = parsed_location.get("city", "Unknown")
+                    if "coordinates" not in parsed_location:
+                        parsed_location["coordinates"] = {"latitude": 0.0, "longitude": 0.0}
+                    location = parsed_location
+            except (ValueError, SyntaxError):
+                pass
+        
+        # If still a string (couldn't parse as dict or wasn't dict format)
+        if isinstance(location, str):
+            # Handle plain string like "Denver, CO" or "Denver"
+            city_string = location.strip()
+            city = city_string.split(',')[0].strip() if ',' in city_string else city_string
+            state = city_string.split(',')[1].strip() if ',' in city_string and len(city_string.split(',')) > 1 else "Unknown"
+            
+            location = {
+                "country": "USA",
+                "state": state,
+                "city": city,
+                "coordinates": {"latitude": 0.0, "longitude": 0.0}
+            }
 
     sample_data = {
         "tornado_name": "Twister 2023",

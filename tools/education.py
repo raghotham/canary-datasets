@@ -289,11 +289,11 @@ def admit_student_c(
     }
 
 
-from typing import Dict, List
+from typing import Dict, List, Union
 
 
 def admit_students_e(
-    app_id: List[int], type_number: int, admitted: bool
+    app_id: Union[List[int], str], type_number: int, admitted: bool
 ) -> Dict[str, Union[List[int], str]]:
     """Admit students of type III to the university engineering program.
 
@@ -307,6 +307,33 @@ def admit_students_e(
             - admitted_ids: List of admitted student application numbers
             - status: Admission status message
     """
+    
+    # Convert app_id parameter if provided as string
+    if isinstance(app_id, str):
+        if app_id.startswith('[') and app_id.endswith(']'):
+            # Handle string representation of list like "[88290, 44992]"
+            try:
+                import ast
+                parsed_app_id = ast.literal_eval(app_id)
+                if isinstance(parsed_app_id, list):
+                    app_id = [int(x) for x in parsed_app_id]
+                else:
+                    raise ValueError("Invalid app_id format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid app_id format. Expected a valid list representation.")
+        elif ',' in app_id:
+            # Handle comma-separated string like "88290,44992"
+            try:
+                app_id = [int(x.strip()) for x in app_id.split(',')]
+            except ValueError:
+                raise ValueError("Invalid app_id format. All values must be integers.")
+        else:
+            # Handle single integer string like "88290"
+            try:
+                app_id = [int(app_id)]
+            except ValueError:
+                raise ValueError("Invalid app_id format. Must be an integer or list of integers.")
+    
     if type_number != 3:
         raise ValueError("Only students of type III can be admitted.")
 

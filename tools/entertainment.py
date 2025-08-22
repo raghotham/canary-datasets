@@ -2707,6 +2707,18 @@ def search_anime(query: str) -> Dict[str, Union[str, List[str]]]:
             "genres": ["Action", "Comedy", "Superhero"],
             "description": "In a world where people with superpowers are the norm, a boy without them dreams of becoming a hero.",
         },
+        "Bleach": {
+            "genres": ["Action", "Adventure", "Supernatural"],
+            "description": "A high school student gains the powers of a Soul Reaper and fights against evil spirits.",
+        },
+        "One Piece": {
+            "genres": ["Action", "Adventure", "Comedy"],
+            "description": "A young pirate dreams of becoming the Pirate King by finding the legendary treasure known as 'One Piece'.",
+        },
+        "Dragon Ball Z": {
+            "genres": ["Action", "Adventure", "Martial Arts"],
+            "description": "Earth's mightiest warriors defend the planet against powerful foes and otherworldly threats.",
+        },
     }
 
     if query not in sample_data:
@@ -2727,8 +2739,13 @@ from typing import Dict, List, Literal, Union
 def search_events(
     country: str,
     city: str,
-    type: List[
-        Literal["music", "food", "sports", "arts", "technology", "theatre", "family"]
+    type: Union[
+        List[
+            Literal[
+                "music", "food", "sports", "arts", "technology", "theatre", "family"
+            ]
+        ],
+        Literal["music", "food", "sports", "arts", "technology", "theatre", "family"],
     ],
     date_range: Dict[str, str] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
@@ -2737,7 +2754,7 @@ def search_events(
     Args:
         country: The country where the event is.
         city: The city where the event is.
-        type: List of event categories.
+        type: Event category or list of event categories.
         date_range: Date window for event with 'start_date' and 'end_date'.
 
     Returns:
@@ -2776,7 +2793,11 @@ def search_events(
         raise ValueError(f"No events found for {city}, {country}")
 
     events = sample_events[(country, city)]
-    filtered_events = [event for event in events if event["category"] in type]
+
+    # Convert string type to list if needed
+    event_types = [type] if isinstance(type, str) else type
+
+    filtered_events = [event for event in events if event["category"] in event_types]
 
     if date_range:
         start_date = datetime.strptime(date_range["start_date"], "%Y-%m-%d")

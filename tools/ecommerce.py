@@ -174,7 +174,7 @@ def search_websites(
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
     sort_by: str = "relevance",
-    specific_sites: Optional[List[str]] = None,
+    specific_sites: Optional[Union[List[str], str]] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Search websites to find a specific product.
 
@@ -198,6 +198,23 @@ def search_websites(
     """
     if not product_id:
         raise ValueError("Product ID is required")
+        
+    # Convert specific_sites parameter if provided as string
+    if isinstance(specific_sites, str):
+        if specific_sites.startswith('[') and specific_sites.endswith(']'):
+            # Handle string representation of list like "['target.com']"
+            try:
+                import ast
+                parsed_sites = ast.literal_eval(specific_sites)
+                if isinstance(parsed_sites, list):
+                    specific_sites = parsed_sites
+                else:
+                    raise ValueError("Invalid specific_sites format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError("Invalid specific_sites format. Expected a valid list representation.")
+        else:
+            # Handle single site string like "target.com"
+            specific_sites = [specific_sites]
 
     # Mock data generation based on product_id hash
     hash_value = hash(product_id) % 100
@@ -283,7 +300,7 @@ def track_order(
     }
 
 
-from typing import Dict, Literal, Optional
+from typing import Dict, Literal, Optional, Union
 
 
 def handle_fallback_delivery(
@@ -291,7 +308,7 @@ def handle_fallback_delivery(
     fallback_option: Literal[
         "safe_drop", "neighbor", "locker", "pickup_point", "reschedule"
     ],
-    details: Optional[Dict[str, str]] = None,
+    details: Optional[Union[Dict[str, str], str]] = None,
 ) -> Dict[str, str]:
     """Carries out the chosen fallback delivery option when the recipient is not home.
 
@@ -299,6 +316,7 @@ def handle_fallback_delivery(
         package_id: Unique package ID.
         fallback_option: Chosen fallback option (e.g. 'safe_drop', 'neighbor', 'locker', 'pickup_point', 'reschedule').
         details: Additional details for the fallback, such as neighbor contact info, locker location, locker accessibility info etc.
+               Can be provided as a dictionary or a string (which will be converted to a dictionary).
 
     Returns:
         Dict containing:
@@ -308,6 +326,22 @@ def handle_fallback_delivery(
     """
     if not package_id:
         raise ValueError("Package ID must be provided.")
+        
+    # Convert string details to dictionary if needed
+    if isinstance(details, str):
+        if ":" in details:  # Handle key:value format
+            key, value = details.split(":", 1)
+            details = {key.strip(): value.strip()}
+        elif fallback_option == "neighbor":
+            details = {"neighbor_name": details}
+        elif fallback_option == "locker":
+            details = {"locker_location": details}
+        elif fallback_option == "pickup_point":
+            details = {"pickup_point": details}
+        elif fallback_option == "reschedule":
+            details = {"reschedule_date": details}
+        else:
+            details = {"note": details}
 
     if fallback_option not in [
         "safe_drop",

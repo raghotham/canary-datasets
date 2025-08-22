@@ -1472,9 +1472,9 @@ def get_energy_cost_estimate(
     """
     # Sample pricing data based on station_id
     base_rate = {
-        "station_001": 0.30,
-        "station_002": 0.35,
-        "station_003": 0.25,
+        "Electrify America E": 0.30,
+        "Tesla Supercharger C": 0.35,
+        "ChargePoint Station A": 0.25,
     }
 
     # Sample membership discounts
@@ -1825,7 +1825,7 @@ from typing import Dict, List, Union
 
 def query_data(
     table_name: str,
-    columns: List[str] = None,
+    columns: Union[List[str], str] = None,
     where: Dict[str, Union[str, int, float]] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int, float]]]]]:
     """Execute a query on a table and return results.
@@ -1856,6 +1856,29 @@ def query_data(
 
     if table_name not in mock_db:
         raise ValueError(f"Table not found: {table_name}")
+
+    # Convert columns parameter if provided as string
+    if isinstance(columns, str):
+        if columns == "*":
+            # Handle wildcard selector
+            columns = None
+        elif columns.startswith("[") and columns.endswith("]"):
+            # Handle string representation of list like "['id', 'name']"
+            try:
+                import ast
+
+                parsed_columns = ast.literal_eval(columns)
+                if isinstance(parsed_columns, list):
+                    columns = parsed_columns
+                else:
+                    raise ValueError("Invalid columns format. Expected a list.")
+            except (ValueError, SyntaxError):
+                raise ValueError(
+                    "Invalid columns format. Expected a valid list representation."
+                )
+        else:
+            # Handle comma-separated string like "id, name, age"
+            columns = [col.strip() for col in columns.split(",")]
 
     # Select all columns if none are specified
     if columns is None:

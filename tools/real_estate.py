@@ -54,7 +54,7 @@ from typing import Dict, List, Literal, Optional, Union
 
 def find_contractors(
     service_type: str,
-    location: Dict[str, str],
+    location: Union[Dict[str, str], str],
     date_window: Optional[Dict[str, str]] = None,
     certifications: Optional[List[str]] = None,
     budget_max: Optional[float] = None,
@@ -79,6 +79,18 @@ def find_contractors(
             - service_type: The type of service requested.
             - contractors: List of contractors with details such as name, rating, price, availability, and emergency readiness.
     """
+    
+    # Convert location parameter if provided as string
+    if isinstance(location, str):
+        # Parse string format like "City, State" or "City"
+        if ',' in location:
+            parts = location.split(',', 1)
+            city = parts[0].strip()
+            state = parts[1].strip()
+            location = {'city': city, 'state': state}
+        else:
+            # Single value treated as city
+            location = {'city': location.strip()}
 
     # Mock data generation
     def generate_contractor_data(name_seed: str) -> Dict[str, Union[str, float, bool]]:
@@ -369,8 +381,8 @@ def search_properties(
     adults: int,
     children: int = 0,
     pets: int = 0,
-    price_min: Union[int, None] = None,
-    price_max: Union[int, None] = None,
+    price_min: Union[int, float, None] = None,
+    price_max: Union[int, float, None] = None,
     currency: str = "USD",
     superhost: Union[bool, None] = None,
     min_rating: Union[float, None] = None,

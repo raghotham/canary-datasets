@@ -187,14 +187,14 @@ from typing import Dict, List, Union
 
 
 def get_route(
-    start_location: str, destination: str, waypoints: List[str] = None
+    start_location: str, destination: str, waypoints: Union[List[str], str] = None
 ) -> Dict[str, Union[str, List[str], float]]:
     """Generates the optimal trip route based on start location, destination, and stops.
 
     Args:
         start_location: The starting point of the road trip
         destination: The final destination of the road trip
-        waypoints: List of intermediate stops along the way
+        waypoints: List of intermediate stops along the way or comma-separated string of stops
 
     Returns:
         Dict containing:
@@ -216,6 +216,9 @@ def get_route(
     # Default waypoints to an empty list if not provided
     if waypoints is None:
         waypoints = []
+    # Convert string waypoints to list if needed
+    elif isinstance(waypoints, str):
+        waypoints = [waypoint.strip() for waypoint in waypoints.split(",")]
 
     # Create a full route including start, waypoints, and destination
     full_route = [start_location] + waypoints + [destination]
