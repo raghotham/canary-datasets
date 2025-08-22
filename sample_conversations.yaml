@@ -2717,7 +2717,7 @@ conversations:
   - find_similar
   - filter_cars
   - search_independent_garages
-  - search_delerships
+  - search_dealerships
   messages:
   - I'm looking to purchase a new vehicle. Ideally, I'd like it to be a Ford F150 XLT, given it will be used mostly for my
     work as a contractor, but also as a family vehicle every now and then. From the limited research that I did, the best
