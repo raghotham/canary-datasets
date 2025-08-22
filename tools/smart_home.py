@@ -1133,7 +1133,7 @@ def schedule_home_service(
     ],
     address: str,
     date: str,
-    time_window: Dict[str, str],
+    time_window: Union[str, Dict[str, str]],
     access_instructions: str = "",
     pet_on_premises: bool = False,
 ) -> Dict[str, Union[str, bool, Dict[str, str]]]:
@@ -1143,7 +1143,9 @@ def schedule_home_service(
         service_type: Type of service to be scheduled (e.g., 'plumbing', 'electric')
         address: Service address
         date: Preferred date for the service in 'YYYY-MM-DD' format
-        time_window: Preferred arrival window with 'start' and 'end' in 'HH:MM' 24h format
+        time_window: Preferred arrival window. Can be either:
+            - A string in format 'HH:MM-HH:MM' (e.g., '8:00-12:00')
+            - A dictionary with 'start' and 'end' keys in 'HH:MM' 24h format
         access_instructions: Optional instructions for accessing the premises
         pet_on_premises: Whether pets will be present during the service
 
@@ -1159,10 +1161,28 @@ def schedule_home_service(
     """
     import hashlib
 
+    # Handle time_window parameter - convert string format to dictionary if needed
+    if isinstance(time_window, str):
+        # Parse string format like "8:00-12:00" into {"start": "8:00", "end": "12:00"}
+        if "-" not in time_window:
+            raise ValueError(
+                "Time window string must be in format 'HH:MM-HH:MM' (e.g., '8:00-12:00')"
+            )
+        start_time, end_time = time_window.split("-", 1)
+        time_window_dict = {"start": start_time.strip(), "end": end_time.strip()}
+    elif isinstance(time_window, dict):
+        if "start" not in time_window or "end" not in time_window:
+            raise ValueError(
+                "Time window dictionary must contain 'start' and 'end' keys"
+            )
+        time_window_dict = time_window
+    else:
+        raise ValueError(
+            "Time window must be a string in format 'HH:MM-HH:MM' or a dictionary with 'start' and 'end' keys"
+        )
+
     # Generate a unique confirmation ID based on input parameters
-    hash_input = (
-        f"{service_type}{address}{date}{time_window['start']}{time_window['end']}"
-    )
+    hash_input = f"{service_type}{address}{date}{time_window_dict['start']}{time_window_dict['end']}"
     confirmation_id = hashlib.md5(hash_input.encode()).hexdigest()[:8]
 
     return {
@@ -1170,7 +1190,7 @@ def schedule_home_service(
         "service_type": service_type,
         "address": address,
         "date": date,
-        "time_window": time_window,
+        "time_window": time_window_dict,
         "access_instructions": access_instructions,
         "pet_on_premises": pet_on_premises,
     }

@@ -1372,14 +1372,14 @@ from typing import Dict, List, Union
 
 
 def find_nearby_restaurants(
-    location: str, radius: float = 10, tags: List[str] = None
+    location: str, radius: float = 10, tags: Union[str, List[str]] = None
 ) -> Dict[str, Union[str, List[Dict[str, str]]]]:
     """Get the names and addresses of restaurants near a given location.
 
     Args:
         location: City or address about which to find restaurants.
         radius: The radius (in kilometres) within which to search from the specified location.
-        tags: Tags for filtering results (e.g. ['Chinese', 'brunch']).
+        tags: Tags for filtering results (e.g. ['Chinese', 'brunch']) or single tag as string.
 
     Returns:
         Dict containing:
@@ -1462,6 +1462,9 @@ def find_nearby_restaurants(
     restaurants = sample_data[location]
 
     if tags:
+        # Convert string to list if needed
+        if isinstance(tags, str):
+            tags = [tags]
         # Simulate filtering by tags
         filtered_restaurants = [
             restaurant

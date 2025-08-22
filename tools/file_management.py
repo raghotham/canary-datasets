@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # File Management Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 
 
 def convert_to_ebook(
@@ -39,13 +38,26 @@ def convert_to_ebook(
         "cover_included": cover_image,
     }
 
+
 from typing import Dict, Literal
 
 
-def parse_chapters(parser_profile: Literal[
-    "generic", "wordpress", "blogspot", "syosetu", "wuxiaworld", "royalroad",
-    "qidian", "webnovel", "lightnovelword", "noveldot", "wattpad", "lnmtl"
-]) -> Dict[str, str]:
+def parse_chapters(
+    parser_profile: Literal[
+        "generic",
+        "wordpress",
+        "blogspot",
+        "syosetu",
+        "wuxiaworld",
+        "royalroad",
+        "qidian",
+        "webnovel",
+        "lightnovelword",
+        "noveldot",
+        "wattpad",
+        "lnmtl",
+    ]
+) -> Dict[str, str]:
     """Clean raw HTML into semantically parsed XHTML based on the parser profile.
 
     Args:
@@ -56,7 +68,7 @@ def parse_chapters(parser_profile: Literal[
             - profile: The parser profile used
             - parsed_content: A sample of parsed XHTML content
     """
-    
+
     sample_data = {
         "generic": "<div><p>Generic content</p></div>",
         "wordpress": "<article><h1>WordPress Title</h1><p>Content</p></article>",
@@ -71,7 +83,7 @@ def parse_chapters(parser_profile: Literal[
         "wattpad": "<div><h6>Wattpad Story</h6><p>Content</p></div>",
         "lnmtl": "<div><h6>LNMTL Chapter</h6><p>Content</p></div>",
     }
-    
+
     if parser_profile not in sample_data:
         raise ValueError(f"Unsupported parser profile: {parser_profile}")
 
@@ -79,6 +91,7 @@ def parse_chapters(parser_profile: Literal[
         "profile": parser_profile,
         "parsed_content": sample_data[parser_profile],
     }
+
 
 from typing import Dict
 
@@ -95,14 +108,14 @@ def remove(username: str, JWT: str) -> Dict[str, str]:
             - status: Status of the removal operation ('success' or 'failure')
             - message: Detailed message about the operation result
     """
-    
+
     # Mock user database
     user_db = {
         "user1@example.com": "hashed_password_1",
         "user2@example.com": "hashed_password_2",
         "user3@example.com": "hashed_password_3",
     }
-    
+
     # Mock JWT verification (in reality, this would involve decoding and verifying the JWT)
     def verify_jwt(jwt: str) -> bool:
         return jwt in ["hashed_password_1", "hashed_password_2", "hashed_password_3"]
@@ -117,20 +130,23 @@ def remove(username: str, JWT: str) -> Dict[str, str]:
     del user_db[username]
     return {"status": "success", "message": f"User {username} removed successfully"}
 
-from typing import Dict, Literal, Union, Optional
+
+from typing import Dict, Literal, Optional, Union
 
 
 def upload_ebook(
     destination: Literal["kindle_personal", "google_drive", "dropbox", "custom_sftp"],
-    email_notification: Optional[Dict[str, Union[bool, str]]] = None
+    email_notification: Optional[Union[str, Dict[str, Union[bool, str]]]] = None,
 ) -> Dict[str, Union[str, bool]]:
     """Upload an ebook to a specified cloud destination or custom SFTP server.
 
     Args:
         destination: The service to upload the ebook to ('kindle_personal', 'google_drive', 'dropbox', 'custom_sftp')
-        email_notification: Optional settings for email notifications, containing:
-            - enabled: Whether email notifications are enabled
-            - to: Email address to send notifications to
+        email_notification: Optional settings for email notifications. Can be either:
+            - A string containing an email address (will enable notifications to that address)
+            - A dictionary containing:
+                - enabled: Whether email notifications are enabled
+                - to: Email address to send notifications to
 
     Returns:
         Dict containing:
@@ -147,17 +163,25 @@ def upload_ebook(
     # Handle email notification logic
     notification_sent = False
     if email_notification:
-        if email_notification.get("enabled", False):
-            to_email = email_notification.get("to")
-            if not to_email or "@" not in to_email:
+        # If it's a string, treat it as an email address and enable notifications
+        if isinstance(email_notification, str):
+            if "@" not in email_notification:
                 raise ValueError("Invalid email address for notification")
             notification_sent = True  # Simulate sending email
+        # If it's a dictionary, check the enabled flag
+        elif isinstance(email_notification, dict):
+            if email_notification.get("enabled", False):
+                to_email = email_notification.get("to")
+                if not to_email or "@" not in to_email:
+                    raise ValueError("Invalid email address for notification")
+                notification_sent = True  # Simulate sending email
 
     return {
         "destination": destination,
         "success": success,
         "notification_sent": notification_sent,
     }
+
 
 from typing import Dict, List, Literal
 
@@ -194,6 +218,7 @@ def bulk_upload_content(
         "sample_content_ids": sample_content_ids[:5],  # Return a sample of IDs
     }
 
+
 import os
 import tarfile
 from typing import Dict
@@ -215,9 +240,9 @@ def compress_files(source: str, destination: str) -> Dict[str, str]:
         raise FileNotFoundError(f"Source path does not exist: {source}")
 
     if os.path.isdir(source):
-        mode = 'w:gz'
+        mode = "w:gz"
     else:
-        mode = 'w:gz' if source.endswith('.tar.gz') else 'w'
+        mode = "w:gz" if source.endswith(".tar.gz") else "w"
 
     with tarfile.open(destination, mode) as archive:
         if os.path.isdir(source):
@@ -229,6 +254,7 @@ def compress_files(source: str, destination: str) -> Dict[str, str]:
         "source": source,
         "destination": destination,
     }
+
 
 import os
 from typing import Dict
@@ -254,6 +280,7 @@ def delete_files(path: str) -> Dict[str, str]:
     except Exception as e:
         return {"status": "failure", "message": f"Error deleting file: {str(e)}"}
 
+
 from typing import Dict
 
 
@@ -268,7 +295,7 @@ def delete_profile(id: str) -> Dict[str, str]:
             - status: Result of the deletion operation ('success' or 'failure')
             - message: Additional information about the operation
     """
-    if len(id) != 8 or not all(c in '0123456789ABCDEF' for c in id.upper()):
+    if len(id) != 8 or not all(c in "0123456789ABCDEF" for c in id.upper()):
         raise ValueError("ID must be an 8-digit hexadecimal string")
 
     # Mock database of profiles
@@ -281,13 +308,11 @@ def delete_profile(id: str) -> Dict[str, str]:
         del profiles[id]
         return {
             "status": "success",
-            "message": f"Profile with ID {id} has been deleted."
+            "message": f"Profile with ID {id} has been deleted.",
         }
     else:
-        return {
-            "status": "failure",
-            "message": f"No profile found with ID {id}."
-        }
+        return {"status": "failure", "message": f"No profile found with ID {id}."}
+
 
 from typing import Dict
 
@@ -307,7 +332,7 @@ def drop_table(table_name: str, confirm: bool = False) -> Dict[str, str]:
     if not confirm:
         return {
             "status": "failure",
-            "message": "Deletion not confirmed. Set 'confirm' to True to proceed."
+            "message": "Deletion not confirmed. Set 'confirm' to True to proceed.",
         }
 
     # Simulate a database with a set of tables
@@ -316,7 +341,7 @@ def drop_table(table_name: str, confirm: bool = False) -> Dict[str, str]:
     if table_name not in database_tables:
         return {
             "status": "failure",
-            "message": f"Table '{table_name}' does not exist in the database."
+            "message": f"Table '{table_name}' does not exist in the database.",
         }
 
     # Simulate dropping the table
@@ -324,8 +349,9 @@ def drop_table(table_name: str, confirm: bool = False) -> Dict[str, str]:
 
     return {
         "status": "success",
-        "message": f"Table '{table_name}' has been successfully deleted."
+        "message": f"Table '{table_name}' has been successfully deleted.",
     }
+
 
 from typing import Dict, List, Union
 
@@ -333,7 +359,7 @@ from typing import Dict, List, Union
 def extract_data(
     study_ids: List[str],
     data_fields: List[str],
-    extraction_form_template: Union[str, None] = None
+    extraction_form_template: Union[str, None] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int, float]]]]]:
     """Extract relevant data from included studies.
 
@@ -347,7 +373,7 @@ def extract_data(
             - extraction_form_template: The template used for extraction, if provided
             - extracted_data: List of dictionaries with extracted data for each study
     """
-    
+
     if not study_ids:
         raise ValueError("study_ids cannot be empty")
     if not data_fields:
@@ -355,24 +381,42 @@ def extract_data(
 
     # Mock data for demonstration purposes
     mock_study_data = {
-        "study1": {"author": "Smith", "year": 2020, "sample_size": 150, "outcomes": "positive"},
-        "study2": {"author": "Johnson", "year": 2019, "sample_size": 200, "outcomes": "negative"},
-        "study3": {"author": "Williams", "year": 2021, "sample_size": 100, "outcomes": "neutral"},
+        "study1": {
+            "author": "Smith",
+            "year": 2020,
+            "sample_size": 150,
+            "outcomes": "positive",
+        },
+        "study2": {
+            "author": "Johnson",
+            "year": 2019,
+            "sample_size": 200,
+            "outcomes": "negative",
+        },
+        "study3": {
+            "author": "Williams",
+            "year": 2021,
+            "sample_size": 100,
+            "outcomes": "neutral",
+        },
     }
 
     extracted_data = []
     for study_id in study_ids:
         if study_id not in mock_study_data:
             raise ValueError(f"Study ID not found: {study_id}")
-        
+
         study_data = mock_study_data[study_id]
-        extracted_study = {field: study_data[field] for field in data_fields if field in study_data}
+        extracted_study = {
+            field: study_data[field] for field in data_fields if field in study_data
+        }
         extracted_data.append(extracted_study)
 
     return {
         "extraction_form_template": extraction_form_template or "default_template",
         "extracted_data": extracted_data,
     }
+
 
 import os
 import shutil
@@ -406,11 +450,11 @@ def extract_files(
         raise FileExistsError(f"Destination directory is not empty: {destination}")
 
     try:
-        if archive.endswith('.zip'):
-            with zipfile.ZipFile(archive, 'r') as zip_ref:
+        if archive.endswith(".zip"):
+            with zipfile.ZipFile(archive, "r") as zip_ref:
                 zip_ref.extractall(destination)
-        elif archive.endswith(('.tar.gz', '.tgz', '.tar')):
-            with tarfile.open(archive, 'r:*') as tar_ref:
+        elif archive.endswith((".tar.gz", ".tgz", ".tar")):
+            with tarfile.open(archive, "r:*") as tar_ref:
                 tar_ref.extractall(destination)
         else:
             raise ValueError("Unsupported archive format")
@@ -419,13 +463,12 @@ def extract_files(
 
     return {"status": "Extraction successful", "extracted_to": destination}
 
+
 from typing import Dict, Union
 
 
 def post_add_tags(
-    id: int,
-    tag_text: str,
-    tag_delimiter: str = ","
+    id: int, tag_text: str, tag_delimiter: str = ","
 ) -> Dict[str, Union[int, str, list]]:
     """Add tags as metadata to an entry.
 
@@ -450,11 +493,8 @@ def post_add_tags(
     if not tags:
         raise ValueError("No valid tags found in tag_text")
 
-    return {
-        "id": id,
-        "tags": tags,
-        "status": "Tags added successfully"
-    }
+    return {"id": id, "tags": tags, "status": "Tags added successfully"}
+
 
 from typing import Dict
 
@@ -482,11 +522,12 @@ def return_ebook(name: str) -> Dict[str, str]:
     status = available_ebooks[name]
     if status == "checked out":
         return {"name": name, "status": "already returned"}
-    
+
     return {"name": name, "status": "successfully returned"}
 
-from typing import Dict, List, Literal, Union
+
 from datetime import datetime
+from typing import Dict, List, Literal, Union
 
 
 def search_cards(
@@ -495,7 +536,7 @@ def search_cards(
     upper_range: str = "",
     sort_by: Literal["date", "name"] = "date",
     order: Literal["ascending", "descending"] = "ascending",
-    limit: int = 20
+    limit: int = 20,
 ) -> Dict[str, Union[List[int], str]]:
     """Search records of all cards sent for matching results and return their card IDs.
 
@@ -528,10 +569,18 @@ def search_cards(
     # Filter by date range
     if lower_range:
         lower_date = datetime.strptime(lower_range, "%Y-%m-%d")
-        cards = [card for card in cards if datetime.strptime(card["date"], "%Y-%m-%d") >= lower_date]
+        cards = [
+            card
+            for card in cards
+            if datetime.strptime(card["date"], "%Y-%m-%d") >= lower_date
+        ]
     if upper_range:
         upper_date = datetime.strptime(upper_range, "%Y-%m-%d")
-        cards = [card for card in cards if datetime.strptime(card["date"], "%Y-%m-%d") <= upper_date]
+        cards = [
+            card
+            for card in cards
+            if datetime.strptime(card["date"], "%Y-%m-%d") <= upper_date
+        ]
 
     # Sort results
     reverse_order = order == "descending"
@@ -543,10 +592,8 @@ def search_cards(
     # Extract card IDs
     card_ids = [card["id"] for card in cards]
 
-    return {
-        "card_ids": card_ids,
-        "message": "Search completed successfully."
-    }
+    return {"card_ids": card_ids, "message": "Search completed successfully."}
+
 
 from typing import Dict, List
 
@@ -565,10 +612,19 @@ def search_metadata(query: str) -> Dict[str, List[Dict[str, str]]]:
                 - description: Description of the scene
     """
     sample_data = [
-        {"scene_id": "1", "description": "A sunny day at the beach with children playing."},
+        {
+            "scene_id": "1",
+            "description": "A sunny day at the beach with children playing.",
+        },
         {"scene_id": "2", "description": "A dark and stormy night with howling winds."},
-        {"scene_id": "3", "description": "A bustling city street with people rushing by."},
-        {"scene_id": "4", "description": "A serene mountain landscape with a clear blue sky."},
+        {
+            "scene_id": "3",
+            "description": "A bustling city street with people rushing by.",
+        },
+        {
+            "scene_id": "4",
+            "description": "A serene mountain landscape with a clear blue sky.",
+        },
     ]
 
     if not query:
@@ -580,13 +636,14 @@ def search_metadata(query: str) -> Dict[str, List[Dict[str, str]]]:
 
     return {"results": results}
 
+
 from typing import Dict, List, Literal
 
 
 def share_files(
     path: str,
     recipient_emails: List[str],
-    permission_level: Literal["VIEW", "EDIT"] = "VIEW"
+    permission_level: Literal["VIEW", "EDIT"] = "VIEW",
 ) -> Dict[str, Union[str, List[str]]]:
     """Share a file or directory with specified users, with a permission level.
 
@@ -625,4 +682,3 @@ def share_files(
         "recipients": recipient_emails,
         "permission": permission_level,
     }
-

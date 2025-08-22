@@ -1157,12 +1157,10 @@ from typing import Dict, List, Literal, Union
 
 
 def generate_budget(
-    locations: List[str],
+    locations: str,
     length_days: int,
     comfort: Literal["Low", "Medium", "High"],
-    activities: List[
-        Literal["Skiing", "Beach", "Hiking", "Museums", "Restaurants"]
-    ] = [],
+    activities: str = "",
 ) -> Dict[str, Union[float, Dict[str, float]]]:
     """Generate a daily budget for a trip based on locations, length, comfort, and activities.
 

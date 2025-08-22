@@ -929,7 +929,7 @@ from typing import Dict, Optional, Union
 def search_seek(
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    city: Dict[str, str] = None,
+    city: Union[str, Dict[str, str]] = None,
     job_category: Optional[str] = None,
 ) -> Dict[str, Union[str, list]]:
     """Search for jobs on seek.co.nz based on specified criteria.
@@ -937,7 +937,9 @@ def search_seek(
     Args:
         start_date: Timestamp of jobs posted from (optional)
         end_date: Timestamp of jobs posted until (optional)
-        city: Dictionary containing city information where the job is based
+        city: City information. Can be either:
+            - A string containing the city name
+            - A dictionary containing city information with at least a 'name' key
         job_category: Category of the job (optional)
 
     Returns:
@@ -946,11 +948,22 @@ def search_seek(
             - jobs: List of job titles found
             - total_jobs: Total number of jobs found
     """
-    if not city or "name" not in city:
-        raise ValueError("City information is required and must include a 'name' key.")
+    # Handle city parameter
+    if not city:
+        raise ValueError("City information is required.")
+
+    # Convert string to dictionary format if needed
+    if isinstance(city, str):
+        city_dict = {"name": city}
+    elif isinstance(city, dict):
+        if "name" not in city:
+            raise ValueError("City dictionary must include a 'name' key.")
+        city_dict = city
+    else:
+        raise ValueError("City must be a string or dictionary.")
 
     # Generate a consistent but varied list of jobs based on input parameters
-    seed = f"{start_date}-{end_date}-{city['name']}-{job_category}"
+    seed = f"{start_date}-{end_date}-{city_dict['name']}-{job_category}"
     hash_object = hashlib.md5(seed.encode())
     hash_digest = hash_object.hexdigest()
 
@@ -962,7 +975,7 @@ def search_seek(
     ]
 
     return {
-        "city": city["name"],
+        "city": city_dict["name"],
         "jobs": job_titles,
         "total_jobs": len(job_titles),
     }

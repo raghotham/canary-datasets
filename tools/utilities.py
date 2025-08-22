@@ -1596,17 +1596,29 @@ def get_ram_usage(
 from typing import Dict, List
 
 
-def get_regional_holidays(regions: List[str], date: str) -> Dict[str, List[str]]:
+def get_regional_holidays(
+    regions: Union[str, List[str]], date: str
+) -> Dict[str, List[str]]:
     """Return public holidays for given regions on a date.
 
     Args:
-        regions: List of region codes to get holidays for (e.g., 'US-NY', 'PT', 'NZ')
+        regions: Region codes to get holidays for. Can be either:
+            - A single region code string (e.g., 'US-NY', 'PT', 'NZ')
+            - A list of region codes (e.g., ['US-NY', 'PT', 'NZ'])
         date: The date to check for holidays in YYYY-MM-DD format
 
     Returns:
         Dict containing:
             - region: List of holiday names for the specified date
     """
+
+    # Convert single string to list if needed
+    if isinstance(regions, str):
+        regions_list = [regions]
+    elif isinstance(regions, list):
+        regions_list = regions
+    else:
+        raise ValueError("Regions must be a string or list of strings")
 
     # Sample holiday data
     holidays_data = {
@@ -1630,7 +1642,7 @@ def get_regional_holidays(regions: List[str], date: str) -> Dict[str, List[str]]
     }
 
     result = {}
-    for region in regions:
+    for region in regions_list:
         if region not in holidays_data:
             raise ValueError(f"Region not supported: {region}")
 
