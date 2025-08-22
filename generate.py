@@ -16,6 +16,8 @@ import inspect
 import json
 import os
 import sys
+import threading
+from concurrent.futures import as_completed, ThreadPoolExecutor
 from typing import Any, Dict, get_args, get_type_hints, List, Literal, Type, Union
 
 import openai
@@ -25,6 +27,149 @@ import sample_tools
 import yaml
 from file_search_tool import cleanup_file_search_function, create_file_search_function
 from rich.pretty import pprint
+from tqdm import tqdm
+
+# Thread-safe logging
+log_file_lock = threading.Lock()
+
+
+def log_message(message, console_log_filename=None, prefix="INFO"):
+    """Log message to separate console log file as plain text."""
+    if console_log_filename:
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_line = f"[{timestamp}] {prefix}: {message}"
+
+        with log_file_lock:
+            try:
+                with open(console_log_filename, "a") as f:
+                    f.write(log_line + "\n")
+            except Exception:
+                # Don't let logging errors interrupt the main flow
+                pass
+
+
+def map_with_progress(
+    func, items, num_threads=4, desc="Processing", disable_progress=False
+):
+    """
+    Apply func to each item in items using ThreadPoolExecutor with progress tracking.
+
+    Args:
+        func: Function to apply to each item
+        items: List of items to process
+        num_threads: Number of threads to use (default: 4)
+        desc: Description for progress bar
+        disable_progress: If True, don't show progress bar
+
+    Returns:
+        List of results in the same order as input items
+    """
+    if os.getenv("debug") or num_threads == 1:
+        # Sequential processing for debug or single thread
+        if disable_progress:
+            return [func(item) for item in items]
+        else:
+            return [func(item) for item in tqdm(items, desc=desc)]
+
+    results = [None] * len(items)
+
+    with ThreadPoolExecutor(max_workers=num_threads) as executor:
+        # Submit all tasks
+        future_to_index = {}
+        for i, item in enumerate(items):
+            future = executor.submit(func, item)
+            future_to_index[future] = i
+
+        # Collect results with progress tracking
+        progress_bar = tqdm(total=len(items), desc=desc, disable=disable_progress)
+
+        for future in as_completed(future_to_index):
+            index = future_to_index[future]
+            try:
+                results[index] = future.result()
+            except Exception as e:
+                print(f"\nError processing item {index}: {e}")
+                results[index] = None
+            progress_bar.update(1)
+
+        progress_bar.close()
+
+    return results
+
+
+def thread_safe_log_turn(
+    sample_id,
+    turn_id,
+    user_message,
+    tool_calls,
+    tool_outputs,
+    assistant_message,
+    messages=[],
+    model_name=None,
+    log_filename=None,
+    available_tools=None,
+):
+    """Thread-safe version of log_turn."""
+    # Convert messages to serializable format
+    serializable_messages = []
+    for msg in messages:
+        message_dict = {}
+        # Handle both dicts and objects
+        if isinstance(msg, dict):
+            role = msg.get("role")
+            if role is not None:
+                message_dict["role"] = role
+            content = msg.get("content")
+            if content is not None:
+                message_dict["content"] = content
+            tool_calls_val = msg.get("tool_calls")
+            if tool_calls_val:
+                message_dict["tool_calls"] = [
+                    tc.model_dump() if hasattr(tc, "model_dump") else tc
+                    for tc in tool_calls_val
+                ]
+            tool_call_id = msg.get("tool_call_id")
+            if tool_call_id is not None:
+                message_dict["tool_call_id"] = tool_call_id
+        else:
+            role = getattr(msg, "role", None)
+            if role is not None:
+                message_dict["role"] = role
+            content = getattr(msg, "content", None)
+            if content is not None:
+                message_dict["content"] = content
+            tool_calls_val = getattr(msg, "tool_calls", None)
+            if tool_calls_val:
+                message_dict["tool_calls"] = [
+                    tc.model_dump() if hasattr(tc, "model_dump") else tc
+                    for tc in tool_calls_val
+                ]
+            tool_call_id = getattr(msg, "tool_call_id", None)
+            if tool_call_id is not None:
+                message_dict["tool_call_id"] = tool_call_id
+        if message_dict:  # Only append if we have any non-null fields
+            serializable_messages.append(message_dict)
+
+    # Create turn entry
+    turn_entry = {
+        "sample_id": sample_id,
+        "turn_id": turn_id,
+        "messages": serializable_messages,
+        "user_message": user_message,
+        "tool_calls": tool_calls,
+        "tool_outputs": tool_outputs,
+        "assistant_message": assistant_message,
+        "available_tools": available_tools if available_tools else [],
+    }
+
+    # Thread-safe file writing
+    with log_file_lock:
+        try:
+            with open(log_filename, "a") as f:
+                f.write(json.dumps(turn_entry) + "\n")
+        except Exception as e:
+            print(f"Error writing to log file {log_filename}: {e}")
+            raise
 
 
 class ToolExecutor:
@@ -728,7 +873,7 @@ def assistant_chat_conversation(
                         }
                     )
 
-        log_turn(
+        thread_safe_log_turn(
             sample_id,
             turn_id,
             user_message,
@@ -740,6 +885,117 @@ def assistant_chat_conversation(
             log_filename,
             executor.get_chat_tool_schemas(),
         )
+
+
+def process_single_conversation(conversation_data):
+    """Process a single conversation - safe for parallel execution."""
+    (
+        conversation,
+        sample_id,
+        mode,
+        model,
+        use_system_prompt,
+        log_filename,
+        console_log_filename,
+        debug,
+        client,
+        executor,
+        base_url,
+    ) = conversation_data
+
+    try:
+        log_message(
+            f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n",
+            console_log_filename,
+        )
+
+        # Get tools for this conversation, default to all tools if not specified
+        conversation_tools = conversation.get("tools", [])
+        file_paths = conversation.get("file_paths", [])
+
+        # Handle file_search tool specially if present
+        dynamic_file_search_func = None
+        if "file_search" in conversation_tools and file_paths:
+            log_message(
+                f"Creating file search function with files: {file_paths}",
+                console_log_filename,
+            )
+            try:
+                dynamic_file_search_func = create_file_search_function(
+                    client, file_paths
+                )
+                log_message(
+                    "File search function created successfully", console_log_filename
+                )
+            except Exception as e:
+                error_msg = (
+                    f"\nERROR: Failed to create file search function for conversation '{conversation['name']}'\n"
+                    f"Cause: {e}\n"
+                    f"\nThis conversation requires file search functionality, but the API endpoint\n"
+                    f"at {base_url} does not support OpenAI vector stores.\n"
+                    f"\nTo fix this:\n"
+                    f"1. Use the real OpenAI API (https://api.openai.com/v1) with vector stores support\n"
+                    f"2. Remove the 'file_search' tool and 'file_paths' from this conversation\n"
+                    f"3. Skip this conversation using --samples to exclude sample {sample_id}\n"
+                    f"\nExample: ./generate.py sample_conversations.yaml {model} --samples 1,2,5-10"
+                )
+                print(error_msg)
+                return None
+
+        if conversation_tools:
+            # Create a filtered executor with only the specified tools
+            conversation_executor = executor.create_filtered_executor(
+                conversation_tools
+            )
+
+            # Replace the placeholder file_search function with the dynamic one if created
+            if dynamic_file_search_func and "file_search" in conversation_tools:
+                conversation_executor.register("file_search", dynamic_file_search_func)
+
+            log_message(f"Using tools: {conversation_tools}", console_log_filename)
+        else:
+            # Use all available tools
+            conversation_executor = executor
+            log_message("Using all available tools", console_log_filename)
+
+        try:
+            if mode == "responses":
+                assistant_response_conversation(
+                    client,
+                    model,
+                    conversation_executor,
+                    conversation["messages"],
+                    sample_id,
+                    log_filename,
+                )
+            else:
+                assistant_chat_conversation(
+                    client,
+                    model,
+                    conversation_executor,
+                    conversation["messages"],
+                    sample_id,
+                    use_system_prompt,
+                    log_filename,
+                    console_log_filename,
+                    debug,
+                )
+            return f"Completed conversation {sample_id}: {conversation['name']}"
+        finally:
+            # Clean up the file search function's vector store if it was created
+            if dynamic_file_search_func:
+                print("Cleaning up file search resources...")
+                try:
+                    cleanup_file_search_function(dynamic_file_search_func)
+                except Exception as e:
+                    print(f"Warning: Failed to cleanup file search resources: {e}")
+
+    except Exception as e:
+        error_msg = (
+            f"Error processing conversation {sample_id} ({conversation['name']}): {e}"
+        )
+        print(error_msg)
+        return error_msg
 
 
 def load_conversations_from_yaml(filename):
@@ -781,6 +1037,12 @@ parser.add_argument(
     "--debug",
     action="store_true",
     help="Enable debug mode to print requests and responses",
+)
+parser.add_argument(
+    "--workers",
+    type=int,
+    default=1,
+    help="Number of parallel workers for processing conversations (default: 1, sequential)",
 )
 
 if len(sys.argv) == 1:
@@ -843,8 +1105,14 @@ else:
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     log_filename = f"conversation_logs_{model}_{timestamp}.jsonl"
 
+# Create separate console log filename
+console_log_filename = log_filename.replace(".jsonl", "_console.log")
+
+# Prepare conversations for parallel processing
+conversation_data_list = []
 sample_id = 0
 conversations_run = 0
+
 for conversation in conversations:
     sample_id += 1
 
@@ -853,87 +1121,45 @@ for conversation in conversations:
         continue
 
     conversations_run += 1
+
+    # Package all data needed for parallel processing
+    conversation_data = (
+        conversation,
+        sample_id,
+        args.mode,
+        model,
+        use_system_prompt,
+        log_filename,
+        console_log_filename,
+        debug,
+        client,
+        executor,
+        base_url,
+    )
+    conversation_data_list.append(conversation_data)
+
+# Process conversations in parallel or sequentially based on --workers argument
+if args.workers > 1:
     print(
-        f"\n=== Running conversation: {conversation['name']} (sample_id={sample_id}) ===\n"
+        f"\nProcessing {len(conversation_data_list)} conversations using {args.workers} parallel workers"
+    )
+    results = map_with_progress(
+        process_single_conversation,
+        conversation_data_list,
+        num_threads=args.workers,
+        desc="Processing conversations",
     )
 
-    # Get tools for this conversation, default to all tools if not specified
-    conversation_tools = conversation.get("tools", [])
-    file_paths = conversation.get("file_paths", [])
-
-    # Handle file_search tool specially if present
-    dynamic_file_search_func = None
-    if "file_search" in conversation_tools and file_paths:
-        print(f"Creating file search function with files: {file_paths}")
-        try:
-            dynamic_file_search_func = create_file_search_function(client, file_paths)
-            print("File search function created successfully")
-        except Exception as e:
-            print(
-                f"\nERROR: Failed to create file search function for conversation '{conversation['name']}'"
-            )
-            print(f"Cause: {e}")
-            print(
-                "\nThis conversation requires file search functionality, but the API endpoint"
-            )
-            print(f"at {base_url} does not support OpenAI vector stores.")
-            print("\nTo fix this:")
-            print(
-                "1. Use the real OpenAI API (https://api.openai.com/v1) with vector stores support"
-            )
-            print(
-                "2. Remove the 'file_search' tool and 'file_paths' from this conversation"
-            )
-            print(
-                f"3. Skip this conversation using --samples to exclude sample {sample_id}"
-            )
-            print(
-                f"\nExample: ./generate.py sample_conversations.yaml {model} --samples 1,2,5-10"
-            )
-            sys.exit(1)
-
-    if conversation_tools:
-        # Create a filtered executor with only the specified tools
-        conversation_executor = executor.create_filtered_executor(conversation_tools)
-
-        # Replace the placeholder file_search function with the dynamic one if created
-        if dynamic_file_search_func and "file_search" in conversation_tools:
-            conversation_executor.register("file_search", dynamic_file_search_func)
-
-        print(f"Using tools: {conversation_tools}")
-    else:
-        # Use all available tools
-        conversation_executor = executor
-        print("Using all available tools")
-
-    try:
-        if args.mode == "responses":
-            assistant_response_conversation(
-                client,
-                model,
-                conversation_executor,
-                conversation["messages"],
-                sample_id,
-                log_filename,
-            )
-        else:
-            assistant_chat_conversation(
-                client,
-                model,
-                conversation_executor,
-                conversation["messages"],
-                sample_id,
-                use_system_prompt,
-                log_filename,
-                debug,
-            )
-    finally:
-        # Clean up the file search function's vector store if it was created
-        if dynamic_file_search_func:
-            print("Cleaning up file search resources...")
-            try:
-                cleanup_file_search_function(dynamic_file_search_func)
-            except Exception as e:
-                print(f"Warning: Failed to cleanup file search resources: {e}")
+    # Print results
+    for result in results:
+        if result:
+            print(result)
+else:
+    # Sequential processing (default)
+    print(f"\nProcessing {len(conversation_data_list)} conversations sequentially")
+    for conversation_data in conversation_data_list:
+        result = process_single_conversation(conversation_data)
+        if result:
+            print(result)
 
 print(f"Logged {conversations_run} conversations to {log_filename}")
