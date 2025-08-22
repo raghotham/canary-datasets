@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # Education Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Union
+from typing import Any, Dict, List, Union
 
 
 def get_element_from_index(index: int) -> Dict[str, Union[int, str]]:
@@ -17,9 +16,26 @@ def get_element_from_index(index: int) -> Dict[str, Union[int, str]]:
             - element: The name of the element corresponding to the index
     """
     periodic_table = [
-        "Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon", "Nitrogen",
-        "Oxygen", "Fluorine", "Neon", "Sodium", "Magnesium", "Aluminum", "Silicon",
-        "Phosphorus", "Sulfur", "Chlorine", "Argon", "Potassium", "Calcium",
+        "Hydrogen",
+        "Helium",
+        "Lithium",
+        "Beryllium",
+        "Boron",
+        "Carbon",
+        "Nitrogen",
+        "Oxygen",
+        "Fluorine",
+        "Neon",
+        "Sodium",
+        "Magnesium",
+        "Aluminum",
+        "Silicon",
+        "Phosphorus",
+        "Sulfur",
+        "Chlorine",
+        "Argon",
+        "Potassium",
+        "Calcium",
         # ... (list continues for all elements)
     ]
 
@@ -30,6 +46,7 @@ def get_element_from_index(index: int) -> Dict[str, Union[int, str]]:
         "index": index,
         "element": periodic_table[index - 1],
     }
+
 
 from typing import Dict
 
@@ -67,6 +84,7 @@ def get_element_number(element: str) -> Dict[str, int]:
         "atomic_number": periodic_table[element],
     }
 
+
 from typing import Dict, List, Optional
 
 
@@ -94,9 +112,21 @@ def recommend_book(
     """
     sample_books = [
         {"title": "The Great Adventure", "author": "John Doe", "genre": "Adventure"},
-        {"title": "Mystery of the Old House", "author": "Jane Smith", "genre": "Mystery"},
-        {"title": "Love in the Time of Algorithms", "author": "Emily White", "genre": "Romance"},
-        {"title": "The Science of Everything", "author": "Albert Newton", "genre": "Science"},
+        {
+            "title": "Mystery of the Old House",
+            "author": "Jane Smith",
+            "genre": "Mystery",
+        },
+        {
+            "title": "Love in the Time of Algorithms",
+            "author": "Emily White",
+            "genre": "Romance",
+        },
+        {
+            "title": "The Science of Everything",
+            "author": "Albert Newton",
+            "genre": "Science",
+        },
     ]
 
     # Filter books based on availability
@@ -109,9 +139,17 @@ def recommend_book(
     if genre:
         sample_books = [book for book in sample_books if book["genre"] in genre]
     if previously_enjoyed_book:
-        sample_books = [book for book in sample_books if book["title"] not in previously_enjoyed_book]
+        sample_books = [
+            book
+            for book in sample_books
+            if book["title"] not in previously_enjoyed_book
+        ]
     if previously_disliked_book:
-        sample_books = [book for book in sample_books if book["title"] not in previously_disliked_book]
+        sample_books = [
+            book
+            for book in sample_books
+            if book["title"] not in previously_disliked_book
+        ]
 
     if not sample_books:
         raise ValueError("No books available that match the given preferences.")
@@ -123,6 +161,7 @@ def recommend_book(
         "author": recommended_book["author"],
         "genre": recommended_book["genre"],
     }
+
 
 def accept_applicant(name: str, school: str) -> Dict[str, Union[str, int]]:
     """Officially accept an applicant to a school.
@@ -149,6 +188,7 @@ def accept_applicant(name: str, school: str) -> Dict[str, Union[str, int]]:
         "acceptance_id": acceptance_id,
     }
 
+
 from typing import Dict, Union
 
 
@@ -168,7 +208,9 @@ def admit_student(app_id: int, type_number: int) -> Dict[str, Union[int, str]]:
         ValueError: If the type_number is not 2 or 3
     """
     if type_number not in (2, 3):
-        raise ValueError(f"Invalid student type: {type_number}. Only type 2 or 3 are allowed.")
+        raise ValueError(
+            f"Invalid student type: {type_number}. Only type 2 or 3 are allowed."
+        )
 
     # Simulating a hash-based admission decision for consistency
     decision_hash = hash((app_id, type_number)) % 2
@@ -179,10 +221,13 @@ def admit_student(app_id: int, type_number: int) -> Dict[str, Union[int, str]]:
         "status": status,
     }
 
+
 from typing import Dict, Union
 
 
-def admit_student_admission(app_id: int, type_number: Union[bool, None] = None) -> Dict[str, Union[int, str, bool]]:
+def admit_student_admission(
+    app_id: int, type_number: Union[bool, None] = None
+) -> Dict[str, Union[int, str, bool]]:
     """Admit a student to the university admit pool before admission.
 
     Args:
@@ -195,7 +240,7 @@ def admit_student_admission(app_id: int, type_number: Union[bool, None] = None) 
             - status: Admission status message
             - type_number: Provided student type or default if not provided
     """
-    
+
     if app_id <= 0:
         raise ValueError("Invalid application ID. Must be a positive integer.")
 
@@ -209,10 +254,13 @@ def admit_student_admission(app_id: int, type_number: Union[bool, None] = None) 
         "type_number": type_number,
     }
 
+
 from typing import Dict
 
 
-def admit_student_c(app_id: int, type_number: int, admitted: bool) -> Dict[str, Union[int, bool, str]]:
+def admit_student_c(
+    app_id: int, type_number: int, admitted: bool
+) -> Dict[str, Union[int, bool, str]]:
     """Admit a student of type II to the university and chemistry program.
 
     Args:
@@ -229,7 +277,7 @@ def admit_student_c(app_id: int, type_number: int, admitted: bool) -> Dict[str, 
     """
     if type_number != 2:
         raise ValueError("Only students of type II can be admitted to this program.")
-    
+
     if not admitted:
         raise ValueError("Student must be marked as admitted to proceed.")
 
@@ -237,8 +285,9 @@ def admit_student_c(app_id: int, type_number: int, admitted: bool) -> Dict[str, 
         "app_id": app_id,
         "type_number": type_number,
         "admitted": admitted,
-        "program": "Chemistry"
+        "program": "Chemistry",
     }
+
 
 from typing import Dict, List
 
@@ -268,12 +317,15 @@ def admit_students_e(
         }
 
     # Simulate admission process
-    admitted_ids = [app for app in app_id if app % 2 == 0]  # Example logic: admit even-numbered IDs
+    admitted_ids = [
+        app for app in app_id if app % 2 == 0
+    ]  # Example logic: admit even-numbered IDs
 
     return {
         "admitted_ids": admitted_ids,
         "status": f"{len(admitted_ids)} students admitted successfully.",
     }
+
 
 from typing import Dict, Union
 
@@ -289,23 +341,26 @@ def attitudinal_psyche_description(attitudinal_psyche_combo: str) -> Dict[str, s
             - combination: The inputted attitudinal psyche combination
             - description: A brief description of the combination
     """
-    
+
     descriptions = {
         "ABCD": "ABCD represents a balanced and harmonious psyche, often seen as adaptable and diplomatic.",
         "EFGH": "EFGH indicates a strong-willed and determined personality, with a focus on achieving goals.",
         "IJKL": "IJKL is characterized by creativity and intuition, often thriving in artistic environments.",
         "MNOP": "MNOP signifies a logical and analytical mindset, excelling in problem-solving and strategy.",
     }
-    
+
     if attitudinal_psyche_combo not in descriptions:
-        raise ValueError(f"Unsupported attitudinal psyche combination: {attitudinal_psyche_combo}")
-    
+        raise ValueError(
+            f"Unsupported attitudinal psyche combination: {attitudinal_psyche_combo}"
+        )
+
     return {
         "combination": attitudinal_psyche_combo,
         "description": descriptions[attitudinal_psyche_combo],
     }
 
-from typing import Dict, Union, Literal
+
+from typing import Dict, Literal, Union
 
 
 def calculate_final_grade(
@@ -352,7 +407,9 @@ def calculate_final_grade(
         number_to_drop = method_parameters.get("number_to_drop", 1)
         if number_to_drop >= len(grades):
             raise ValueError("Number to drop must be less than the number of grades")
-        final_grade = sum(sorted(grades)[number_to_drop:]) / (len(grades) - number_to_drop)
+        final_grade = sum(sorted(grades)[number_to_drop:]) / (
+            len(grades) - number_to_drop
+        )
     else:
         raise ValueError(f"Unsupported method: {method}")
 
@@ -360,6 +417,7 @@ def calculate_final_grade(
         "student_id": student_id,
         "final_grade": final_grade,
     }
+
 
 from typing import Dict
 
@@ -391,14 +449,12 @@ def checkout_ebook(name: str) -> Dict[str, str]:
     # Simulate checking out the ebook
     return {"name": name, "status": "Ebook checked out successfully."}
 
+
 from typing import Dict, Literal, Union
 
 
 def create_goal_xp(
-    rsn: str,
-    skill: str,
-    target_xp: float,
-    game: Literal["osrs", "rs3"] = "rs3"
+    rsn: str, skill: str, target_xp: float, game: Literal["osrs", "rs3"] = "rs3"
 ) -> Dict[str, Union[str, float, int]]:
     """Create a goal for a skill to track progress towards the skill.
 
@@ -418,7 +474,9 @@ def create_goal_xp(
             - game: Game type ('osrs' or 'rs3')
     """
     if not rsn or not skill or target_xp <= 0:
-        raise ValueError("Invalid input: rsn, skill, and target_xp must be valid and target_xp must be positive.")
+        raise ValueError(
+            "Invalid input: rsn, skill, and target_xp must be valid and target_xp must be positive."
+        )
 
     # Simulate current XP based on hash of rsn and skill for consistency
     hash_value = hash((rsn, skill)) % 1000000
@@ -432,8 +490,9 @@ def create_goal_xp(
         "current_xp": current_xp,
         "target_xp": target_xp,
         "progress_percentage": round(progress_percentage, 2),
-        "game": game
+        "game": game,
     }
+
 
 from typing import Dict, List
 
@@ -469,6 +528,7 @@ def define_research_question(
         "exclusion_criteria": exclusion_criteria,
     }
 
+
 def deny_applicant(name: str, school: str) -> Dict[str, str]:
     """Officially deny an applicant to a school.
 
@@ -500,6 +560,7 @@ def deny_applicant(name: str, school: str) -> Dict[str, str]:
         "applicant": name,
         "school": school,
     }
+
 
 from typing import Dict
 
@@ -535,6 +596,7 @@ def enneagram_description(enneagram: str) -> Dict[str, str]:
         "description": descriptions[enneagram],
     }
 
+
 from typing import Dict
 
 
@@ -556,7 +618,7 @@ def enneagram_tritype_description(tritype: str) -> Dict[str, str]:
         "258": "The Helper: Caring, interpersonal, and generous.",
         "369": "The Mediator: Harmonious, balanced, and diplomatic.",
     }
-    
+
     if tritype not in descriptions:
         raise ValueError(f"Tritype not supported: {tritype}")
 
@@ -565,14 +627,15 @@ def enneagram_tritype_description(tritype: str) -> Dict[str, str]:
         "description": descriptions[tritype],
     }
 
-from typing import Dict, Literal, Union
+
 import hashlib
+from typing import Dict, Literal, Union
 
 
 def export_grades(
     format: Literal["csv", "xlsx", "pdf"],
     scope: Literal["student", "class"],
-    student_id: str = None
+    student_id: str = None,
 ) -> Dict[str, Union[str, list]]:
     """Export student grades in a chosen file format.
 
@@ -611,10 +674,8 @@ def export_grades(
     else:
         raise ValueError(f"Unsupported format: {format}")
 
-    return {
-        "file_name": file_name,
-        "content": content
-    }
+    return {"file_name": file_name, "content": content}
+
 
 from typing import Dict, Union
 
@@ -650,10 +711,13 @@ def find_boiling_point(element: str) -> Dict[str, Union[str, float]]:
         "boiling_point": sample_boiling_points[element],
     }
 
+
 from typing import Dict, List
 
 
-def find_homologs(gene_symbol: str, target_organism: str) -> Dict[str, Union[str, List[str]]]:
+def find_homologs(
+    gene_symbol: str, target_organism: str
+) -> Dict[str, Union[str, List[str]]]:
     """Find homologous sequences for a gene in a target organism.
 
     Args:
@@ -666,23 +730,27 @@ def find_homologs(gene_symbol: str, target_organism: str) -> Dict[str, Union[str
             - target_organism: The scientific name of the target organism
             - homologs: List of homologous gene sequences
     """
-    
+
     # Sample data for demonstration purposes
     sample_data = {
         ("BRCA1", "Mus musculus"): ["ENSMUSG00000017146", "ENSMUSG00000017147"],
         ("TP53", "Mus musculus"): ["ENSMUSG00000059552"],
         ("BRCA1", "Homo sapiens"): ["ENSG00000012048"],
+        ("HBA1", "Homo sapiens"): ["ENSG00000206172"],
     }
-    
+
     key = (gene_symbol, target_organism)
     if key not in sample_data:
-        raise ValueError(f"No homologous sequences found for gene '{gene_symbol}' in '{target_organism}'")
+        raise ValueError(
+            f"No homologous sequences found for gene '{gene_symbol}' in '{target_organism}'"
+        )
 
     return {
         "gene_symbol": gene_symbol,
         "target_organism": target_organism,
         "homologs": sample_data[key],
     }
+
 
 from typing import Dict, List
 
@@ -697,7 +765,7 @@ def flag_at_risk_students(threshold: float) -> Dict[str, List[str]]:
         Dict containing:
             - at_risk_students: List of student names who are at risk
     """
-    
+
     # Sample student data with grades
     student_grades = {
         "Alice": 85,
@@ -708,17 +776,16 @@ def flag_at_risk_students(threshold: float) -> Dict[str, List[str]]:
         "Frank": 77,
         "Grace": 65,
     }
-    
+
     if threshold < 0 or threshold > 100:
         raise ValueError("Threshold must be between 0 and 100")
-    
+
     at_risk_students = [
         student for student, grade in student_grades.items() if grade < threshold
     ]
-    
-    return {
-        "at_risk_students": at_risk_students
-    }
+
+    return {"at_risk_students": at_risk_students}
+
 
 from typing import Dict, List, Literal, Union
 
@@ -748,7 +815,10 @@ def generate_grade_report(
     students_data = {
         "S001": {"name": "Alice", "grades": {"Math": 85, "Science": 90, "English": 78}},
         "S002": {"name": "Bob", "grades": {"Math": 88, "Science": 76, "English": 92}},
-        "S003": {"name": "Charlie", "grades": {"Math": 95, "Science": 89, "English": 85}},
+        "S003": {
+            "name": "Charlie",
+            "grades": {"Math": 95, "Science": 89, "English": 85},
+        },
     }
 
     def calculate_average(grades: Dict[str, float]) -> float:
@@ -759,22 +829,26 @@ def generate_grade_report(
             raise ValueError(f"Student ID not found: {student_id}")
         student_info = students_data[student_id]
         average = calculate_average(student_info["grades"])
-        report = [{
-            "student_id": student_id,
-            "name": student_info["name"],
-            "grades": student_info["grades"],
-            "average": average,
-        }]
+        report = [
+            {
+                "student_id": student_id,
+                "name": student_info["name"],
+                "grades": student_info["grades"],
+                "average": average,
+            }
+        ]
     elif scope == "class":
         report = []
         for sid, info in students_data.items():
             average = calculate_average(info["grades"])
-            report.append({
-                "student_id": sid,
-                "name": info["name"],
-                "grades": info["grades"],
-                "average": average,
-            })
+            report.append(
+                {
+                    "student_id": sid,
+                    "name": info["name"],
+                    "grades": info["grades"],
+                    "average": average,
+                }
+            )
     else:
         raise ValueError("Invalid scope. Must be 'student' or 'class'.")
 
@@ -783,6 +857,7 @@ def generate_grade_report(
         "report": report,
     }
 
+
 from typing import Dict
 
 
@@ -790,7 +865,7 @@ def generate_prisma_flow_diagram(
     identification_count: int,
     screened_count: int,
     excluded_count: int,
-    included_count: int
+    included_count: int,
 ) -> Dict[str, int]:
     """Generate a PRISMA flow diagram summarizing study selection process.
 
@@ -807,7 +882,12 @@ def generate_prisma_flow_diagram(
             - excluded: Number of records excluded
             - included: Number of studies included
     """
-    if identification_count < 0 or screened_count < 0 or excluded_count < 0 or included_count < 0:
+    if (
+        identification_count < 0
+        or screened_count < 0
+        or excluded_count < 0
+        or included_count < 0
+    ):
         raise ValueError("Counts cannot be negative")
 
     if screened_count > identification_count:
@@ -817,7 +897,9 @@ def generate_prisma_flow_diagram(
         raise ValueError("Excluded count cannot exceed screened count")
 
     if included_count > (screened_count - excluded_count):
-        raise ValueError("Included count cannot exceed available records after exclusion")
+        raise ValueError(
+            "Included count cannot exceed available records after exclusion"
+        )
 
     return {
         "identification": identification_count,
@@ -825,6 +907,7 @@ def generate_prisma_flow_diagram(
         "excluded": excluded_count,
         "included": included_count,
     }
+
 
 from typing import Dict, Union
 
@@ -841,33 +924,34 @@ def get_author_bio(author: str) -> Dict[str, Union[str, int]]:
             - birth_year: Year the author was born
             - biography: A short biography of the author
     """
-    
+
     sample_bios = {
         "Jane Austen": {
             "birth_year": 1775,
             "biography": "Jane Austen was an English novelist known primarily for her six major novels, "
-                         "which interpret, critique and comment upon the British landed gentry at the end of the 18th century."
+            "which interpret, critique and comment upon the British landed gentry at the end of the 18th century.",
         },
         "Mark Twain": {
             "birth_year": 1835,
             "biography": "Mark Twain, born Samuel Langhorne Clemens, was an American writer, humorist, entrepreneur, "
-                         "publisher, and lecturer. He was lauded as the 'greatest humorist the United States has produced'."
+            "publisher, and lecturer. He was lauded as the 'greatest humorist the United States has produced'.",
         },
         "George Orwell": {
             "birth_year": 1903,
             "biography": "George Orwell was an English novelist, essayist, journalist and critic. His work is "
-                         "characterized by lucid prose, biting social criticism, opposition to totalitarianism, and outspoken support of democratic socialism."
-        }
+            "characterized by lucid prose, biting social criticism, opposition to totalitarianism, and outspoken support of democratic socialism.",
+        },
     }
-    
+
     if author not in sample_bios:
         raise ValueError(f"Author not found: {author}")
-    
+
     return {
         "name": author,
         "birth_year": sample_bios[author]["birth_year"],
         "biography": sample_bios[author]["biography"],
     }
+
 
 from typing import Dict
 
@@ -884,39 +968,40 @@ def get_book_summary(title: str) -> Dict[str, str]:
             - author: The author of the book
             - summary: A brief summary of the book's plot
     """
-    
+
     sample_summaries = {
         "1984": {
             "author": "George Orwell",
-            "summary": "A dystopian novel set in a totalitarian society under constant surveillance."
+            "summary": "A dystopian novel set in a totalitarian society under constant surveillance.",
         },
         "To Kill a Mockingbird": {
             "author": "Harper Lee",
-            "summary": "A novel about racial injustice in the Deep South, seen through the eyes of a young girl."
+            "summary": "A novel about racial injustice in the Deep South, seen through the eyes of a young girl.",
         },
         "The Great Gatsby": {
             "author": "F. Scott Fitzgerald",
-            "summary": "A critique of the American Dream, centered around the mysterious Jay Gatsby."
-        }
+            "summary": "A critique of the American Dream, centered around the mysterious Jay Gatsby.",
+        },
     }
-    
+
     if title not in sample_summaries:
         raise ValueError(f"Book not found: {title}")
 
     return {
         "title": title,
         "author": sample_summaries[title]["author"],
-        "summary": sample_summaries[title]["summary"]
+        "summary": sample_summaries[title]["summary"],
     }
 
-from typing import Dict, List, Union, Literal
+
+from typing import Dict, List, Literal, Union
 
 
 def get_dataset_metadata(
     search_query: Union[str, None] = None,
     limit: int = 100,
     offset: int = 0,
-    sort_by: Literal["date_created", "date_modified", "alphabetical"] = "alphabetical"
+    sort_by: Literal["date_created", "date_modified", "alphabetical"] = "alphabetical",
 ) -> Dict[str, Union[List[Dict[str, Union[str, List[str]]]], int]]:
     """Retrieve metadata about datasets from the Austin Open Data Portal.
 
@@ -931,21 +1016,48 @@ def get_dataset_metadata(
             - datasets: List of datasets with metadata including title, description, categories, and dataset ID.
             - total_count: Total number of datasets matching the search criteria.
     """
-    
+
     # Sample data simulating datasets
     sample_datasets = [
-        {"id": "1", "title": "Austin Traffic Data", "description": "Traffic data for Austin city", "categories": ["Transportation", "Public Safety"]},
-        {"id": "2", "title": "Austin Crime Reports", "description": "Crime reports in Austin", "categories": ["Public Safety"]},
-        {"id": "3", "title": "Austin Parks Information", "description": "Information about parks in Austin", "categories": ["Recreation", "Environment"]},
-        {"id": "4", "title": "Austin Water Usage", "description": "Water usage statistics in Austin", "categories": ["Utilities", "Environment"]},
-        {"id": "5", "title": "Austin Housing Data", "description": "Housing data and statistics for Austin", "categories": ["Housing", "Economy"]},
+        {
+            "id": "1",
+            "title": "Austin Traffic Data",
+            "description": "Traffic data for Austin city",
+            "categories": ["Transportation", "Public Safety"],
+        },
+        {
+            "id": "2",
+            "title": "Austin Crime Reports",
+            "description": "Crime reports in Austin",
+            "categories": ["Public Safety"],
+        },
+        {
+            "id": "3",
+            "title": "Austin Parks Information",
+            "description": "Information about parks in Austin",
+            "categories": ["Recreation", "Environment"],
+        },
+        {
+            "id": "4",
+            "title": "Austin Water Usage",
+            "description": "Water usage statistics in Austin",
+            "categories": ["Utilities", "Environment"],
+        },
+        {
+            "id": "5",
+            "title": "Austin Housing Data",
+            "description": "Housing data and statistics for Austin",
+            "categories": ["Housing", "Economy"],
+        },
     ]
 
     # Filter datasets based on search_query
     if search_query:
         sample_datasets = [
-            dataset for dataset in sample_datasets
-            if search_query.lower() in dataset["title"].lower() or search_query.lower() in dataset["description"].lower()
+            dataset
+            for dataset in sample_datasets
+            if search_query.lower() in dataset["title"].lower()
+            or search_query.lower() in dataset["description"].lower()
         ]
 
     # Sort datasets
@@ -959,12 +1071,10 @@ def get_dataset_metadata(
         sample_datasets.sort(key=lambda x: x["id"], reverse=True)
 
     # Apply offset and limit
-    datasets = sample_datasets[offset:offset + limit]
+    datasets = sample_datasets[offset : offset + limit]
 
-    return {
-        "datasets": datasets,
-        "total_count": len(sample_datasets)
-    }
+    return {"datasets": datasets, "total_count": len(sample_datasets)}
+
 
 from typing import Dict
 
@@ -980,13 +1090,14 @@ def get_gene_summary(gene_symbol: str) -> Dict[str, str]:
             - gene_symbol: The input gene symbol
             - summary: A short official summary of the gene
     """
-    
+
     sample_summaries = {
         "HBA1": "HBA1 is a gene that encodes the alpha 1 subunit of hemoglobin, which is involved in oxygen transport in the blood.",
         "TP53": "TP53 is a tumor suppressor gene that regulates the cell cycle and prevents cancer formation.",
         "BRCA1": "BRCA1 is a gene that produces a protein responsible for repairing DNA, playing a role in maintaining genomic stability.",
+        "HBA1": "The HBA1 gene provides instructions for making a protein called alpha-globin.",
     }
-    
+
     if gene_symbol not in sample_summaries:
         raise ValueError(f"Gene symbol not supported: {gene_symbol}")
 
@@ -994,6 +1105,7 @@ def get_gene_summary(gene_symbol: str) -> Dict[str, str]:
         "gene_symbol": gene_symbol,
         "summary": sample_summaries[gene_symbol],
     }
+
 
 def hold_ebook(name: str) -> Dict[str, Union[str, bool]]:
     """Place a hold for a given ebook.
@@ -1022,6 +1134,7 @@ def hold_ebook(name: str) -> Dict[str, Union[str, bool]]:
         "hold_placed": hold_placed,
     }
 
+
 from typing import Dict, List
 
 
@@ -1044,13 +1157,12 @@ def list_instruments() -> Dict[str, List[Dict[str, str]]]:
 
     return {"instruments": instruments}
 
-from typing import Dict, Union, Optional
+
+from typing import Dict, Optional, Union
 
 
 def math_calculator(
-    expression: str,
-    show_steps: Optional[bool] = False,
-    precision: Optional[int] = None
+    expression: str, show_steps: Optional[bool] = False, precision: Optional[int] = None
 ) -> Dict[str, Union[float, str, list]]:
     """Evaluate a mathematical expression exactly as provided.
 
@@ -1067,22 +1179,23 @@ def math_calculator(
     try:
         # Evaluate the expression
         result = eval(expression, {"__builtins__": {}})
-        
+
         # Apply precision if specified
         if precision is not None:
             result = round(result, precision)
-        
+
         # Prepare the response
         response = {"result": result}
-        
+
         # Add steps if requested
         if show_steps:
             steps = [f"Evaluating: {expression}", f"Result: {result}"]
             response["steps"] = steps
-        
+
         return response
     except Exception as e:
         raise ValueError(f"Invalid expression: {expression}. Error: {str(e)}")
+
 
 from typing import Dict
 
@@ -1108,7 +1221,7 @@ def mbti_description(mbti: str) -> Dict[str, str]:
         "ISFP": "Flexible and charming artists, always ready to explore and experience something new.",
         "ESTP": "Smart, energetic, and very perceptive people, who truly enjoy living on the edge.",
     }
-    
+
     if mbti not in descriptions:
         raise ValueError(f"MBTI type not supported: {mbti}")
 
@@ -1116,6 +1229,7 @@ def mbti_description(mbti: str) -> Dict[str, str]:
         "mbti": mbti,
         "description": descriptions[mbti],
     }
+
 
 from typing import Dict
 
@@ -1158,13 +1272,14 @@ def save_grade(
         "status": "Grade saved successfully",
     }
 
+
 from typing import Dict, List, Literal
 
 
 def screen_studies(
     study_ids: List[str],
     screening_stage: Literal["title_abstract", "full_text"],
-    criteria_reference: str
+    criteria_reference: str,
 ) -> Dict[str, List[str]]:
     """Screen identified studies for eligibility by title, abstract, and full-text review.
 
@@ -1199,7 +1314,8 @@ def screen_studies(
         "excluded": excluded,
     }
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def search_author(
@@ -1254,7 +1370,10 @@ def search_author(
         if (
             (name and author["name"] != name)
             or (genre and author["genre"] != genre)
-            or (book_titles and not any(title in author["books"] for title in book_titles))
+            or (
+                book_titles
+                and not any(title in author["books"] for title in book_titles)
+            )
             or (nationality and author["nationality"] != nationality)
             or (birth_date and author["birth_date"] != birth_date)
         ):
@@ -1263,7 +1382,8 @@ def search_author(
 
     raise ValueError("No author found matching the given criteria")
 
-from typing import Dict, Union, Optional
+
+from typing import Dict, Optional, Union
 
 
 def search_book(
@@ -1304,7 +1424,7 @@ def search_book(
             - publisher: Publisher of the book
             - ratings: Average ratings of the book
     """
-    
+
     # Sample data for demonstration purposes
     sample_books = [
         {
@@ -1361,6 +1481,7 @@ def search_book(
 
     return results[0]  # Return the first matching book for simplicity
 
+
 from typing import Dict, List, Optional
 
 
@@ -1381,20 +1502,28 @@ def search_books(
                 - author: Author of the book
                 - genre: Genre of the book
     """
-    
+
     sample_books = [
-        {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "genre": "fiction"},
+        {
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "genre": "fiction",
+        },
         {"title": "To Kill a Mockingbird", "author": "Harper Lee", "genre": "fiction"},
         {"title": "1984", "author": "George Orwell", "genre": "dystopian"},
         {"title": "Moby Dick", "author": "Herman Melville", "genre": "adventure"},
-        {"title": "The Catcher in the Rye", "author": "J.D. Salinger", "genre": "fiction"},
+        {
+            "title": "The Catcher in the Rye",
+            "author": "J.D. Salinger",
+            "genre": "fiction",
+        },
     ]
 
     def matches(book: Dict[str, str]) -> bool:
         return (
-            title.lower() in book["title"].lower() and
-            (author is None or author.lower() in book["author"].lower()) and
-            (genre is None or genre.lower() == book["genre"].lower())
+            title.lower() in book["title"].lower()
+            and (author is None or author.lower() in book["author"].lower())
+            and (genre is None or genre.lower() == book["genre"].lower())
         )
 
     matched_books = [book for book in sample_books if matches(book)]
@@ -1404,14 +1533,13 @@ def search_books(
 
     return {"books": matched_books}
 
-from typing import Dict, List, Union
+
 from datetime import datetime
+from typing import Dict, List, Union
 
 
 def search_databases(
-    databases: List[str],
-    search_terms: List[str],
-    date_range: Dict[str, str] = None
+    databases: List[str], search_terms: List[str], date_range: Dict[str, str] = None
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
     """Perform literature searches across specified databases with defined search terms and filters.
 
@@ -1439,43 +1567,50 @@ def search_databases(
             "title": "Sample Article on Health",
             "authors": "Doe, J.; Smith, A.",
             "publication_date": datetime(2021, 5, 17),
-            "database": "PubMed"
+            "database": "PubMed",
         },
         {
             "title": "Research on Climate Change",
             "authors": "Brown, B.; Green, C.",
             "publication_date": datetime(2020, 11, 23),
-            "database": "Scopus"
+            "database": "Scopus",
         },
         {
             "title": "Innovations in Technology",
             "authors": "White, D.; Black, E.",
             "publication_date": datetime(2022, 3, 14),
-            "database": "Cochrane"
-        }
+            "database": "Cochrane",
+        },
     ]
 
     # Filter results based on the specified databases
-    filtered_results = [result for result in sample_results if result["database"] in databases]
+    filtered_results = [
+        result for result in sample_results if result["database"] in databases
+    ]
 
     # Further filter by date range if specified
     if date_range:
-        start_date = datetime.strptime(date_range.get("start_date", "1900-01-01"), "%Y-%m-%d")
-        end_date = datetime.strptime(date_range.get("end_date", "2100-01-01"), "%Y-%m-%d")
+        start_date = datetime.strptime(
+            date_range.get("start_date", "1900-01-01"), "%Y-%m-%d"
+        )
+        end_date = datetime.strptime(
+            date_range.get("end_date", "2100-01-01"), "%Y-%m-%d"
+        )
         filtered_results = [
-            result for result in filtered_results
+            result
+            for result in filtered_results
             if start_date <= result["publication_date"] <= end_date
         ]
 
-    return {
-        "databases": databases,
-        "results": filtered_results
-    }
+    return {"databases": databases, "results": filtered_results}
+
 
 from typing import Dict, Union
 
 
-def student_admission(app_id: int, type_number: Union[bool, None] = None) -> Dict[str, Union[int, str, bool]]:
+def student_admission(
+    app_id: int, type_number: Union[bool, None] = None
+) -> Dict[str, Union[int, str, bool]]:
     """Admit a student to the university based on application details.
 
     Args:
@@ -1488,13 +1623,13 @@ def student_admission(app_id: int, type_number: Union[bool, None] = None) -> Dic
             - admission_status: The status of the admission process.
             - student_type: The type of student (international or domestic).
     """
-    
+
     if not isinstance(app_id, int) or app_id <= 0:
         raise ValueError("Invalid application ID. It must be a positive integer.")
 
     # Simulate admission status based on a hash of the app_id
     admission_status = "admitted" if hash(app_id) % 2 == 0 else "waitlisted"
-    
+
     # Determine student type
     if type_number is None:
         student_type = "unknown"
@@ -1506,6 +1641,7 @@ def student_admission(app_id: int, type_number: Union[bool, None] = None) -> Dic
         "admission_status": admission_status,
         "student_type": student_type,
     }
+
 
 from typing import Dict
 
@@ -1537,6 +1673,7 @@ def student_admit_type(app_id: int, type_number: int) -> Dict[str, Union[int, st
         "type": type_mapping[type_number],
     }
 
+
 from typing import Dict
 
 
@@ -1566,4 +1703,3 @@ def waitlist_applicant(name: str, school: str) -> Dict[str, str]:
         "school": school,
         "status": "waitlisted",
     }
-

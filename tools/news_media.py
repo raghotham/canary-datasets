@@ -1,13 +1,12 @@
-from typing import Dict, List, Union, Any
 # News Media Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 
 def get_campaign_overview(
     candidate_name: str,
-    include_sections: List[str] = ["donors", "travel", "speeches", "expenditures"]
+    include_sections: List[str] = ["donors", "travel", "speeches", "expenditures"],
 ) -> Dict[str, Union[str, Dict[str, Union[List[str], float]]]]:
     """Retrieve a high-level overview of a candidate's campaign.
 
@@ -41,6 +40,7 @@ def get_campaign_overview(
         "overview": overview,
     }
 
+
 from typing import Dict
 
 
@@ -55,7 +55,7 @@ def get_local_business_headline(location: str) -> Dict[str, str]:
             - location: The specified location
             - headline: A headline about local business news
     """
-    
+
     sample_headlines = {
         "New York, USA": "Wall Street sees record highs amid tech boom",
         "Tokyo, Japan": "Toyota announces new electric vehicle lineup",
@@ -63,7 +63,7 @@ def get_local_business_headline(location: str) -> Dict[str, str]:
         "Berlin, Germany": "Berlin startups attract record venture capital",
         "Sydney, Australia": "Australian dollar strengthens as exports rise",
     }
-    
+
     if location not in sample_headlines:
         raise ValueError(f"Location not supported: {location}")
 
@@ -71,6 +71,7 @@ def get_local_business_headline(location: str) -> Dict[str, str]:
         "location": location,
         "headline": sample_headlines[location],
     }
+
 
 from typing import Dict, List
 
@@ -88,34 +89,34 @@ def get_tv_news(channel: str, language: str = "en") -> Dict[str, Union[str, List
             - language: Language code of the headlines
             - headlines: List of latest news headlines
     """
-    
+
     sample_news = {
         "CNN": {
             "en": [
                 "Breaking: Major breakthrough in climate talks",
                 "Stock markets rally as tech stocks soar",
-                "New study reveals health benefits of coffee"
+                "New study reveals health benefits of coffee",
             ],
             "es": [
                 "Última hora: Avance importante en las conversaciones sobre el clima",
                 "Los mercados bursátiles se recuperan mientras las acciones tecnológicas suben",
-                "Nuevo estudio revela beneficios para la salud del café"
-            ]
+                "Nuevo estudio revela beneficios para la salud del café",
+            ],
         },
         "BBC": {
             "en": [
                 "Prime Minister announces new economic plan",
                 "Historic peace agreement signed in Middle East",
-                "Scientists discover new species in the Amazon"
+                "Scientists discover new species in the Amazon",
             ],
             "fr": [
                 "Le Premier ministre annonce un nouveau plan économique",
                 "Accord de paix historique signé au Moyen-Orient",
-                "Les scientifiques découvrent une nouvelle espèce en Amazonie"
-            ]
-        }
+                "Les scientifiques découvrent une nouvelle espèce en Amazonie",
+            ],
+        },
     }
-    
+
     if channel not in sample_news:
         raise ValueError(f"Channel not supported: {channel}")
     if language not in sample_news[channel]:
@@ -124,17 +125,18 @@ def get_tv_news(channel: str, language: str = "en") -> Dict[str, Union[str, List
     return {
         "channel": channel,
         "language": language,
-        "headlines": sample_news[channel][language]
+        "headlines": sample_news[channel][language],
     }
 
-from typing import Dict, List, Union, Optional
+
 from datetime import datetime
+from typing import Dict, List, Optional, Union
 
 
 def search_speech_transcripts(
     candidate_name: str,
     keywords: List[str],
-    date_range: Optional[Dict[str, Optional[str]]] = None
+    date_range: Optional[Dict[str, Optional[str]]] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, List[str]]]]]]:
     """Search public campaign speech transcripts by keywords or topics.
 
@@ -159,17 +161,17 @@ def search_speech_transcripts(
                 "location": "New York",
                 "transcript": [
                     "Today we discuss the importance of healthcare reform.",
-                    "Our economy needs a boost, and we have the plan to achieve it."
-                ]
+                    "Our economy needs a boost, and we have the plan to achieve it.",
+                ],
             },
             {
                 "date": "2023-02-20",
                 "location": "Los Angeles",
                 "transcript": [
                     "Education is the cornerstone of our future.",
-                    "We must invest in renewable energy sources."
-                ]
-            }
+                    "We must invest in renewable energy sources.",
+                ],
+            },
         ],
         "Jane Smith": [
             {
@@ -177,10 +179,10 @@ def search_speech_transcripts(
                 "location": "Chicago",
                 "transcript": [
                     "Healthcare is a fundamental right for all.",
-                    "We need to address climate change urgently."
-                ]
+                    "We need to address climate change urgently.",
+                ],
             }
-        ]
+        ],
     }
 
     if candidate_name not in sample_speeches:
@@ -198,25 +200,28 @@ def search_speech_transcripts(
                 continue
 
         matching_sentences = [
-            sentence for sentence in speech["transcript"]
+            sentence
+            for sentence in speech["transcript"]
             if any(keyword.lower() in sentence.lower() for keyword in keywords)
         ]
         if matching_sentences:
-            filtered_speeches.append({
-                "date": speech["date"],
-                "location": speech["location"],
-                "transcript": matching_sentences
-            })
+            filtered_speeches.append(
+                {
+                    "date": speech["date"],
+                    "location": speech["location"],
+                    "transcript": matching_sentences,
+                }
+            )
 
-    return {
-        "candidate": candidate_name,
-        "speeches": filtered_speeches
-    }
+    return {"candidate": candidate_name, "speeches": filtered_speeches}
+
 
 from typing import Dict, List, Union
 
 
-def uk_election_statistics(location: str) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def uk_election_statistics(
+    location: str,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Get comprehensive data on general election voting statistics for any UK location for the past 5 years.
 
     Args:
@@ -227,8 +232,13 @@ def uk_election_statistics(location: str) -> Dict[str, Union[str, List[Dict[str,
             - location: The specified location
             - elections: List of dictionaries with election year and voting statistics
     """
-    
+
     sample_data = {
+        "Bushey Road, Wimbledon, SW19": [
+            {"year": 2019, "votes": 75000, "turnout_percentage": 71},
+            {"year": 2017, "votes": 72000, "turnout_percentage": 73},
+            {"year": 2015, "votes": 68000, "turnout_percentage": 69},
+        ],
         "London": [
             {"year": 2019, "votes": 5000000, "turnout_percentage": 68},
             {"year": 2017, "votes": 4800000, "turnout_percentage": 70},
@@ -245,7 +255,7 @@ def uk_election_statistics(location: str) -> Dict[str, Union[str, List[Dict[str,
             {"year": 2015, "votes": 700000, "turnout_percentage": 68},
         ],
     }
-    
+
     if location not in sample_data:
         raise ValueError(f"Location not supported: {location}")
 
@@ -253,4 +263,3 @@ def uk_election_statistics(location: str) -> Dict[str, Union[str, List[Dict[str,
         "location": location,
         "elections": sample_data[location],
     }
-

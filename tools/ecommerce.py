@@ -1,14 +1,11 @@
-from typing import Dict, List, Union, Any
 # Ecommerce Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Union
+from typing import Any, Dict, List, Union
 
 
 def add_to_cart(
-    product_id: str,
-    quantity: int = 1,
-    options: Dict[str, str] = None
+    product_id: str, quantity: int = 1, options: Dict[str, str] = None
 ) -> Dict[str, Union[str, int, Dict[str, str]]]:
     """Add a selected product to the shopping cart with quantity and variation options.
 
@@ -38,13 +35,16 @@ def add_to_cart(
         "product_id": product_id,
         "quantity": quantity,
         "options": options,
-        "message": f"Added {quantity} of product {product_id} to cart with options {options}"
+        "message": f"Added {quantity} of product {product_id} to cart with options {options}",
     }
+
 
 from typing import Dict
 
 
-def checkout(cart_id: str, notification: bool = False) -> Dict[str, Union[str, bool, float]]:
+def checkout(
+    cart_id: str, notification: bool = False
+) -> Dict[str, Union[str, bool, float]]:
     """Checkout with any items that are currently in the cart.
 
     Args:
@@ -58,14 +58,14 @@ def checkout(cart_id: str, notification: bool = False) -> Dict[str, Union[str, b
             - success: Whether the checkout was successful
             - notification_sent: Whether a notification was sent
     """
-    
+
     # Simulated cart data based on cart_id hash
     cart_data = {
         "cart_123": 150.75,
         "cart_456": 89.99,
         "cart_789": 200.50,
     }
-    
+
     if cart_id not in cart_data:
         raise ValueError(f"Cart ID not found: {cart_id}")
 
@@ -80,7 +80,8 @@ def checkout(cart_id: str, notification: bool = False) -> Dict[str, Union[str, b
         "notification_sent": notification_sent,
     }
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def search_product(
@@ -105,15 +106,46 @@ def search_product(
             - results: List of products with details such as product_name, product_id, description, price
     """
     sample_products = [
-        {"product_name": "Wireless Mouse", "product_id": 101, "description": "Ergonomic wireless mouse", "price": 25.99, "category": "electronics"},
-        {"product_name": "Bluetooth Headphones", "product_id": 102, "description": "Noise-cancelling headphones", "price": 89.99, "category": "electronics"},
-        {"product_name": "Running Shoes", "product_id": 201, "description": "Comfortable running shoes", "price": 59.99, "category": "clothing"},
-        {"product_name": "Smartphone", "product_id": 103, "description": "Latest model smartphone", "price": 699.99, "category": "electronics"},
-        {"product_name": "T-shirt", "product_id": 202, "description": "Cotton t-shirt", "price": 15.99, "category": "clothing"},
+        {
+            "product_name": "Wireless Mouse",
+            "product_id": 101,
+            "description": "Ergonomic wireless mouse",
+            "price": 25.99,
+            "category": "electronics",
+        },
+        {
+            "product_name": "Bluetooth Headphones",
+            "product_id": 102,
+            "description": "Noise-cancelling headphones",
+            "price": 89.99,
+            "category": "electronics",
+        },
+        {
+            "product_name": "Running Shoes",
+            "product_id": 201,
+            "description": "Comfortable running shoes",
+            "price": 59.99,
+            "category": "clothing",
+        },
+        {
+            "product_name": "Smartphone",
+            "product_id": 103,
+            "description": "Latest model smartphone",
+            "price": 699.99,
+            "category": "electronics",
+        },
+        {
+            "product_name": "T-shirt",
+            "product_id": 202,
+            "description": "Cotton t-shirt",
+            "price": 15.99,
+            "category": "clothing",
+        },
     ]
 
     filtered_products = [
-        product for product in sample_products
+        product
+        for product in sample_products
         if query.lower() in product["product_name"].lower()
         and (category is None or product["category"] == category)
         and (min_price is None or product["price"] >= min_price)
@@ -131,7 +163,8 @@ def search_product(
         "results": filtered_products,
     }
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def search_websites(
@@ -180,12 +213,14 @@ def search_websites(
         if max_price and price > max_price:
             continue
 
-        results.append({
-            "site": site,
-            "price": price,
-            "rating": 3.5 + (hash_value % 5) * 0.1,
-            "availability": "In Stock" if hash_value % 2 == 0 else "Out of Stock"
-        })
+        results.append(
+            {
+                "site": site,
+                "price": price,
+                "rating": 3.5 + (hash_value % 5) * 0.1,
+                "availability": "In Stock" if hash_value % 2 == 0 else "Out of Stock",
+            }
+        )
 
     # Sort results based on the sort_by parameter
     if sort_by == "price":
@@ -193,15 +228,15 @@ def search_websites(
     elif sort_by == "rating":
         results.sort(key=lambda x: x["rating"], reverse=True)
 
-    return {
-        "product_id": product_id,
-        "results": results
-    }
+    return {"product_id": product_id, "results": results}
+
 
 from typing import Dict, Optional, Union
 
 
-def track_order(order_id: str, email: Optional[str] = None) -> Dict[str, Union[str, bool]]:
+def track_order(
+    order_id: str, email: Optional[str] = None
+) -> Dict[str, Union[str, bool]]:
     """Track the delivery status of an existing order using the order ID.
 
     Args:
@@ -217,9 +252,21 @@ def track_order(order_id: str, email: Optional[str] = None) -> Dict[str, Union[s
     """
     # Simulated order database
     orders = {
-        "12345": {"status": "shipped", "estimated_delivery": "2023-10-15", "email": "customer@example.com"},
-        "67890": {"status": "processing", "estimated_delivery": "2023-10-20", "email": "another@example.com"},
-        "54321": {"status": "delivered", "estimated_delivery": "2023-10-10", "email": "user@example.com"},
+        "12345": {
+            "status": "shipped",
+            "estimated_delivery": "2023-10-15",
+            "email": "customer@example.com",
+        },
+        "67890": {
+            "status": "processing",
+            "estimated_delivery": "2023-10-20",
+            "email": "another@example.com",
+        },
+        "54321": {
+            "status": "delivered",
+            "estimated_delivery": "2023-10-10",
+            "email": "user@example.com",
+        },
     }
 
     if order_id not in orders:
@@ -235,13 +282,16 @@ def track_order(order_id: str, email: Optional[str] = None) -> Dict[str, Union[s
         "verified": verified,
     }
 
+
 from typing import Dict, Literal, Optional
 
 
 def handle_fallback_delivery(
     package_id: str,
-    fallback_option: Literal["safe_drop", "neighbor", "locker", "pickup_point", "reschedule"],
-    details: Optional[Dict[str, str]] = None
+    fallback_option: Literal[
+        "safe_drop", "neighbor", "locker", "pickup_point", "reschedule"
+    ],
+    details: Optional[Dict[str, str]] = None,
 ) -> Dict[str, str]:
     """Carries out the chosen fallback delivery option when the recipient is not home.
 
@@ -259,7 +309,13 @@ def handle_fallback_delivery(
     if not package_id:
         raise ValueError("Package ID must be provided.")
 
-    if fallback_option not in ["safe_drop", "neighbor", "locker", "pickup_point", "reschedule"]:
+    if fallback_option not in [
+        "safe_drop",
+        "neighbor",
+        "locker",
+        "pickup_point",
+        "reschedule",
+    ]:
         raise ValueError(f"Unsupported fallback option: {fallback_option}")
 
     # Simulated responses based on fallback option
@@ -280,13 +336,12 @@ def handle_fallback_delivery(
         "message": message,
     }
 
+
 from typing import Dict, Literal
 
 
 def notify_recipient_of_fallback(
-    recipient_contact: str,
-    message: str,
-    method: Literal["sms", "email", "push"]
+    recipient_contact: str, message: str, method: Literal["sms", "email", "push"]
 ) -> Dict[str, str]:
     """Send a notification to the recipient about package fallback details.
 
@@ -314,11 +369,8 @@ def notify_recipient_of_fallback(
     else:
         status = "failure"
 
-    return {
-        "status": status,
-        "method": method,
-        "recipient": recipient_contact
-    }
+    return {"status": status, "method": method, "recipient": recipient_contact}
+
 
 from typing import Dict, List
 
@@ -342,9 +394,7 @@ def retrieve_recipient_preferences(address: str) -> Dict[str, Union[str, List[st
     # Mock data generation based on address hash
     hash_value = hash(address)
     safe_drop = "yes" if hash_value % 2 == 0 else "no"
-    neighbor_list = [
-        f"Neighbor {i}" for i in range(1, (hash_value % 3) + 2)
-    ]
+    neighbor_list = [f"Neighbor {i}" for i in range(1, (hash_value % 3) + 2)]
     preferred_pickup_points = [
         f"Pickup Point {i}" for i in range(1, (hash_value % 4) + 2)
     ]
@@ -356,13 +406,12 @@ def retrieve_recipient_preferences(address: str) -> Dict[str, Union[str, List[st
         "preferred_pickup_points": preferred_pickup_points,
     }
 
+
 from typing import Dict, Union
 
 
 def add_to_cart(
-    product_id: str,
-    user_id: str,
-    quantity: int = 1
+    product_id: str, user_id: str, quantity: int = 1
 ) -> Dict[str, Union[str, int]]:
     """Add a specified quantity of a product to the user's shopping cart.
 
@@ -403,6 +452,7 @@ def add_to_cart(
         "quantity": new_quantity,
     }
 
+
 from typing import Dict, Union
 
 
@@ -418,18 +468,21 @@ def get_order_status(order_id: str) -> Dict[str, Union[str, int]]:
             - status: Current status of the order (e.g., 'pending', 'shipped', 'delivered')
             - estimated_delivery_days: Estimated number of days for delivery
     """
-    
+
     # Simulated order data based on hash of order_id
     statuses = ["pending", "shipped", "delivered", "cancelled"]
     hash_value = hash(order_id)
     status_index = hash_value % len(statuses)
-    estimated_delivery_days = (hash_value % 5) + 1  # Random delivery days between 1 and 5
+    estimated_delivery_days = (
+        hash_value % 5
+    ) + 1  # Random delivery days between 1 and 5
 
     return {
         "order_id": order_id,
         "status": statuses[status_index],
         "estimated_delivery_days": estimated_delivery_days,
     }
+
 
 from typing import Dict, List, Union
 
@@ -474,10 +527,13 @@ def order_delivery(
         "total_cost": total_cost,
     }
 
-from typing import Dict, Any
+
+from typing import Any, Dict
 
 
-def place_order(payment_info: Dict[str, Any], shipping_address: Dict[str, Any]) -> Dict[str, Union[str, float]]:
+def place_order(
+    payment_info: Dict[str, Any], shipping_address: Dict[str, Any]
+) -> Dict[str, Union[str, float]]:
     """Place an order for all items in the user's shopping cart.
 
     Args:
@@ -504,10 +560,13 @@ def place_order(payment_info: Dict[str, Any], shipping_address: Dict[str, Any]) 
         "status": status,
     }
 
+
 from typing import Dict, Optional
 
 
-def search_products(query: str, category: Optional[str] = None) -> Dict[str, Union[str, int]]:
+def search_products(
+    query: str, category: Optional[str] = None
+) -> Dict[str, Union[str, int]]:
     """Search for a product based on a query and return the product id.
 
     Args:
@@ -520,7 +579,7 @@ def search_products(query: str, category: Optional[str] = None) -> Dict[str, Uni
             - name: The name of the found product
             - category: The category of the found product
     """
-    
+
     # Sample product database
     products = [
         {"id": 101, "name": "Wireless Mouse", "category": "Electronics"},
@@ -529,17 +588,20 @@ def search_products(query: str, category: Optional[str] = None) -> Dict[str, Uni
         {"id": 104, "name": "Coffee Maker", "category": "Appliances"},
         {"id": 105, "name": "Water Bottle", "category": "Outdoors"},
     ]
-    
+
     # Filter products based on query and category
     filtered_products = [
-        product for product in products
-        if query.lower() in product["name"].lower() and
-        (category is None or category.lower() == product["category"].lower())
+        product
+        for product in products
+        if query.lower() in product["name"].lower()
+        and (category is None or category.lower() == product["category"].lower())
     ]
-    
+
     if not filtered_products:
-        raise ValueError(f"No products found for query: '{query}' in category: '{category}'")
-    
+        raise ValueError(
+            f"No products found for query: '{query}' in category: '{category}'"
+        )
+
     # Return the first matched product
     matched_product = filtered_products[0]
     return {
@@ -547,6 +609,7 @@ def search_products(query: str, category: Optional[str] = None) -> Dict[str, Uni
         "name": matched_product["name"],
         "category": matched_product["category"],
     }
+
 
 from typing import Dict
 
@@ -584,6 +647,7 @@ def set_back_in_stock(name: str) -> Dict[str, str]:
         "status": menu_items[name],
     }
 
+
 from typing import Dict
 
 
@@ -606,10 +670,8 @@ def set_out_of_stock(name: str) -> Dict[str, str]:
     if name not in menu_items:
         raise ValueError(f"Menu item not found: {name}")
 
-    return {
-        "name": name,
-        "status": "out of stock"
-    }
+    return {"name": name, "status": "out of stock"}
+
 
 from typing import Dict, List
 
@@ -625,20 +687,21 @@ def add_to_costco_shopping_list(item_name: str) -> Dict[str, Union[str, List[str
             - message: Confirmation message of the item added
             - shopping_list: Updated list of items in the shopping cart
     """
-    
+
     # Simulated existing shopping list
     shopping_list = ["milk", "bread", "eggs"]
-    
+
     if not item_name:
         raise ValueError("Item name cannot be empty.")
-    
+
     # Add the new item to the shopping list
     shopping_list.append(item_name)
-    
+
     return {
         "message": f"'{item_name}' has been added to your CostCo shopping list.",
         "shopping_list": shopping_list,
     }
+
 
 def clear_costco_order() -> Dict[str, Union[str, List[str]]]:
     """Clear the current CostCo shopping list.
@@ -663,6 +726,7 @@ def clear_costco_order() -> Dict[str, Union[str, List[str]]]:
         "cleared_items": cleared_items,
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -675,7 +739,7 @@ def submit_costco_order() -> Dict[str, Union[str, List[str], float]]:
             - items: List of items submitted for order
             - total_cost: Total cost of the order
     """
-    
+
     # Sample data for demonstration purposes
     sample_items = ["Toilet Paper", "Organic Milk", "Almonds", "Chicken Breasts"]
     sample_costs = {
@@ -684,23 +748,26 @@ def submit_costco_order() -> Dict[str, Union[str, List[str], float]]:
         "Almonds": 15.99,
         "Chicken Breasts": 12.99,
     }
-    
+
     # Calculate total cost
     total_cost = sum(sample_costs[item] for item in sample_items)
-    
+
     # Generate a mock order ID
     order_id = "ORD" + str(hash(frozenset(sample_items)) % 10000)
-    
+
     return {
         "order_id": order_id,
         "items": sample_items,
         "total_cost": total_cost,
     }
 
+
 from typing import Dict, List, Union
 
 
-def woolworths_product_search(keyword: str) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def woolworths_product_search(
+    keyword: str,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Search the Woolworths supermarket product range based on input string.
 
     Args:
@@ -714,7 +781,7 @@ def woolworths_product_search(keyword: str) -> Dict[str, Union[str, List[Dict[st
                 - price: Price of the product in AUD
                 - category: Category of the product
     """
-    
+
     sample_products = {
         "milk": [
             {"name": "Full Cream Milk", "price": 1.50, "category": "Dairy"},
@@ -729,7 +796,7 @@ def woolworths_product_search(keyword: str) -> Dict[str, Union[str, List[Dict[st
             {"name": "Green Apple", "price": 0.60, "category": "Fruit"},
         ],
     }
-    
+
     if keyword not in sample_products:
         raise ValueError(f"No products found for keyword: {keyword}")
 
@@ -738,14 +805,12 @@ def woolworths_product_search(keyword: str) -> Dict[str, Union[str, List[Dict[st
         "products": sample_products[keyword],
     }
 
+
 from typing import Dict, Union
 
 
 def add_list_item(
-    item: str,
-    amount: float = 1,
-    units: str = "each",
-    category: Union[str, None] = None
+    item: str, amount: float = 1, units: str = "each", category: Union[str, None] = None
 ) -> Dict[str, Union[str, float]]:
     """Add an item to the shopping list with specified details.
 
@@ -780,6 +845,7 @@ def add_list_item(
         "category": category,
     }
 
+
 from typing import Dict, Literal, Union
 
 
@@ -788,7 +854,7 @@ def book_shoot(
     shoot: Dict[str, Union[str, int]],
     deposit_amount_gbp: float,
     payment_method: Literal["card_on_file", "new_card", "bank_transfer"],
-    notes: str = ""
+    notes: str = "",
 ) -> Dict[str, Union[str, float, Dict[str, str]]]:
     """Confirm a booking and place a deposit for a photography shoot.
 
@@ -813,27 +879,31 @@ def book_shoot(
     if "name" not in client or "email" not in client:
         raise ValueError("Client information must include name and email")
 
-    if "service_type" not in shoot or "start_time" not in shoot or "duration_minutes" not in shoot or "location" not in shoot:
-        raise ValueError("Shoot details must include service type, start time, duration, and location")
+    if (
+        "service_type" not in shoot
+        or "start_time" not in shoot
+        or "duration_minutes" not in shoot
+        or "location" not in shoot
+    ):
+        raise ValueError(
+            "Shoot details must include service type, start time, duration, and location"
+        )
 
-    confirmation_id = hash(f"{client['email']}-{shoot['start_time']}-{shoot['location']}")
-    
+    confirmation_id = hash(
+        f"{client['email']}-{shoot['start_time']}-{shoot['location']}"
+    )
+
     return {
         "confirmation_id": f"CONF-{abs(confirmation_id)}",
-        "client": {
-            "name": client["name"],
-            "email": client["email"]
-        },
+        "client": {"name": client["name"], "email": client["email"]},
         "shoot_details": {
             "service_type": shoot["service_type"],
-            "start_time": shoot["start_time"]
+            "start_time": shoot["start_time"],
         },
-        "deposit": {
-            "amount_gbp": deposit_amount_gbp,
-            "payment_method": payment_method
-        },
-        "status": "confirmed"
+        "deposit": {"amount_gbp": deposit_amount_gbp, "payment_method": payment_method},
+        "status": "confirmed",
     }
+
 
 def change_store_status() -> Dict[str, Union[str, bool]]:
     """Toggle the store status between open and closed.
@@ -857,6 +927,7 @@ def change_store_status() -> Dict[str, Union[str, bool]]:
         "is_open": not is_open,
     }
 
+
 from typing import Dict, Union
 
 
@@ -873,7 +944,7 @@ def check_price(item: str, store: str) -> Dict[str, Union[str, float]]:
             - store: Name of the store
             - price: Price of the item at the store
     """
-    
+
     # Sample data for demonstration purposes
     sample_prices = {
         "Walmart": {
@@ -892,28 +963,27 @@ def check_price(item: str, store: str) -> Dict[str, Union[str, float]]:
             "bread": 1.8,
         },
     }
-    
+
     if store not in sample_prices:
         raise ValueError(f"Store not supported: {store}")
-    
+
     store_prices = sample_prices[store]
-    
+
     if item not in store_prices:
         raise ValueError(f"Item not available at {store}: {item}")
-    
+
     return {
         "item": item,
         "store": store,
         "price": store_prices[item],
     }
 
+
 from typing import Dict, Union
 
 
 def checkout(
-    user_id: str,
-    payment_details: Dict[str, str],
-    shipping_address: str
+    user_id: str, payment_details: Dict[str, str], shipping_address: str
 ) -> Dict[str, Union[str, float, Dict[str, Union[str, float]]]]:
     """Processes payment for all items in the cart and creates an order.
 
@@ -940,7 +1010,9 @@ def checkout(
     # Simulate order processing
     order_id = f"ORD-{hash(user_id) % 10000}"
     total_amount = 99.99  # Mock total amount
-    payment_status = "Success" if payment_details["method"] in ["credit", "debit"] else "Failed"
+    payment_status = (
+        "Success" if payment_details["method"] in ["credit", "debit"] else "Failed"
+    )
     estimated_delivery = 5  # Mock delivery time in days
 
     return {
@@ -950,8 +1022,9 @@ def checkout(
         "shipping_details": {
             "address": shipping_address,
             "estimated_delivery": estimated_delivery,
-        }
+        },
     }
+
 
 def clear_inventory() -> Dict[str, Union[str, int]]:
     """Clear all items from the warehouse inventory.
@@ -969,6 +1042,7 @@ def clear_inventory() -> Dict[str, Union[str, int]]:
         "items_cleared": items_cleared,
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -977,7 +1051,7 @@ def compare_total_cost(
     region: str,
     include_tax: bool = False,
     include_shipping: bool = False,
-    coupon_codes: List[str] = None
+    coupon_codes: List[str] = None,
 ) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
     """Compare effective checkout cost across marketplaces.
 
@@ -1038,29 +1112,32 @@ def compare_total_cost(
                         discount += base_price * coupon_discounts[code]
 
         total_cost = base_price + tax + shipping - discount
-        comparisons.append({
-            "listing_id": listing_id,
-            "base_price": base_price,
-            "tax": tax,
-            "shipping": shipping,
-            "discount": discount,
-            "total_cost": total_cost,
-        })
+        comparisons.append(
+            {
+                "listing_id": listing_id,
+                "base_price": base_price,
+                "tax": tax,
+                "shipping": shipping,
+                "discount": discount,
+                "total_cost": total_cost,
+            }
+        )
 
     return {
         "region": region,
         "comparisons": comparisons,
     }
 
-from typing import Dict, Literal, Union
+
 import hashlib
+from typing import Dict, Literal, Union
 
 
 def compute_price_fairness(
     model: str,
     current_price: float,
     window_days: int = 30,
-    condition: Literal["new", "used", "refurbished", "open-box"] = "new"
+    condition: Literal["new", "used", "refurbished", "open-box"] = "new",
 ) -> Dict[str, Union[str, float, bool]]:
     """Analyze whether a current price is a good deal versus historical trends.
 
@@ -1080,7 +1157,7 @@ def compute_price_fairness(
     # Simulate historical price data using a hash-based approach
     hash_input = f"{model}-{condition}-{window_days}".encode()
     hash_value = int(hashlib.sha256(hash_input).hexdigest(), 16)
-    
+
     # Generate a pseudo-random average historical price
     average_historical_price = (hash_value % 500) + 50  # Range: 50 to 550 USD
 
@@ -1093,6 +1170,7 @@ def compute_price_fairness(
         "average_historical_price": average_historical_price,
         "is_good_deal": is_good_deal,
     }
+
 
 from typing import Dict, List
 
@@ -1121,13 +1199,14 @@ def count_inventory() -> Dict[str, Union[int, Dict[str, int]]]:
         "item_types": item_types,
     }
 
+
 from typing import Dict, List, Optional
 
 
 def filter_books(
     author: Optional[List[str]] = None,
     genre: Optional[List[str]] = None,
-    available: bool = True
+    available: bool = True,
 ) -> Dict[str, List[Dict[str, str]]]:
     """Filter books from a catalog according to user preference.
 
@@ -1145,11 +1224,36 @@ def filter_books(
                 - available: Availability status of the book
     """
     catalog = [
-        {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "genre": "Fiction", "available": True},
-        {"title": "1984", "author": "George Orwell", "genre": "Dystopian", "available": False},
-        {"title": "To Kill a Mockingbird", "author": "Harper Lee", "genre": "Fiction", "available": True},
-        {"title": "The Catcher in the Rye", "author": "J.D. Salinger", "genre": "Fiction", "available": True},
-        {"title": "Brave New World", "author": "Aldous Huxley", "genre": "Dystopian", "available": True},
+        {
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "genre": "Fiction",
+            "available": True,
+        },
+        {
+            "title": "1984",
+            "author": "George Orwell",
+            "genre": "Dystopian",
+            "available": False,
+        },
+        {
+            "title": "To Kill a Mockingbird",
+            "author": "Harper Lee",
+            "genre": "Fiction",
+            "available": True,
+        },
+        {
+            "title": "The Catcher in the Rye",
+            "author": "J.D. Salinger",
+            "genre": "Fiction",
+            "available": True,
+        },
+        {
+            "title": "Brave New World",
+            "author": "Aldous Huxley",
+            "genre": "Dystopian",
+            "available": True,
+        },
     ]
 
     def matches_criteria(book):
@@ -1165,6 +1269,7 @@ def filter_books(
 
     return {"books": filtered_books}
 
+
 from typing import Dict, List, Union
 
 
@@ -1173,7 +1278,7 @@ def find_used_car_parts(
     model: str,
     part_type: str,
     year: Union[int, None] = None,
-    city: Union[str, None] = None
+    city: Union[str, None] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Find sellers with available used car parts of specified type based on make, model, and year.
 
@@ -1194,7 +1299,7 @@ def find_used_car_parts(
                 - city: City where the seller is located
                 - price: Price of the part
     """
-    
+
     # Sample data based on hash of make, model, and part_type
     sample_sellers = {
         ("Toyota", "Camry", "engine"): [
@@ -1205,25 +1310,29 @@ def find_used_car_parts(
             {"name": "Truck Parts Depot", "city": "Houston", "price": 900},
             {"name": "Gear Masters", "city": "Chicago", "price": 950},
         ],
+        ("Hilux", "Hilux", "radiator"): [
+            {"name": "Wellington Auto Parts", "city": "Wellington", "price": 350},
+            {"name": "Kiwi Car Components", "city": "Wellington", "price": 375},
+            {"name": "NZ Truck Parts", "city": "Auckland", "price": 320},
+            {"name": "South Island Auto", "city": "Christchurch", "price": 340},
+        ],
     }
-    
+
     key = (make, model, part_type)
     if key not in sample_sellers:
         raise ValueError(f"No sellers found for {make} {model} {part_type}")
 
     sellers = sample_sellers[key]
-    
+
     if city:
         sellers = [seller for seller in sellers if seller["city"] == city]
         if not sellers:
-            raise ValueError(f"No sellers found in {city} for {make} {model} {part_type}")
+            raise ValueError(
+                f"No sellers found in {city} for {make} {model} {part_type}"
+            )
 
-    return {
-        "make": make,
-        "model": model,
-        "part_type": part_type,
-        "sellers": sellers
-    }
+    return {"make": make, "model": model, "part_type": part_type, "sellers": sellers}
+
 
 from typing import Dict
 
@@ -1257,16 +1366,21 @@ def finish_delivery(id: int) -> Dict[str, Union[int, str]]:
         "message": message,
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
 def generate_quote(
     service_type: Literal["boudoir", "portrait", "wedding", "commercial", "fashion"],
     hours: float,
-    add_ons: List[Literal["retouching", "prints", "album", "hair_makeup", "express_delivery"]] = [],
+    add_ons: List[
+        Literal["retouching", "prints", "album", "hair_makeup", "express_delivery"]
+    ] = [],
     licence: Literal["personal", "commercial", "editorial"] = "personal",
-    deliverables: List[Literal["online_gallery", "usb_drive", "contact_sheet", "proof_book"]] = [],
-    discount_code: str = ""
+    deliverables: List[
+        Literal["online_gallery", "usb_drive", "contact_sheet", "proof_book"]
+    ] = [],
+    discount_code: str = "",
 ) -> Dict[str, Union[float, str, List[str]]]:
     """Create a price quote for a photography shoot.
 
@@ -1319,7 +1433,7 @@ def generate_quote(
     discount_applied = 0
     if discount_code in discount_codes:
         discount_applied = discount_codes[discount_code]
-        total_cost *= (1 - discount_applied)
+        total_cost *= 1 - discount_applied
 
     breakdown = [
         f"Base cost for {hours} hours of {service_type}: ${base_cost:.2f}",
@@ -1333,8 +1447,11 @@ def generate_quote(
     return {
         "total_cost": round(total_cost, 2),
         "breakdown": breakdown,
-        "discount_applied": f"{discount_applied * 100:.0f}%" if discount_applied else "None",
+        "discount_applied": (
+            f"{discount_applied * 100:.0f}%" if discount_applied else "None"
+        ),
     }
+
 
 from typing import Dict, List, Union
 
@@ -1355,7 +1472,7 @@ def genre_search(
             - genre: Genre searched for
             - bookstores: List of bookstore names that match the criteria
     """
-    
+
     # Sample data simulating bookstores in different cities
     sample_data = {
         "New York": {
@@ -1380,13 +1497,16 @@ def genre_search(
 
     # Simulate strictness by filtering the list based on the strictness_measure
     bookstores = sample_data[city][genre]
-    filtered_bookstores = bookstores[:max(1, len(bookstores) - (5 - strictness_measure))]
+    filtered_bookstores = bookstores[
+        : max(1, len(bookstores) - (5 - strictness_measure))
+    ]
 
     return {
         "city": city,
         "genre": genre,
         "bookstores": filtered_bookstores,
     }
+
 
 from typing import Dict, List, Optional, Union
 
@@ -1423,7 +1543,7 @@ def get_blu_rays_for_sale(
                 - certification: Certification of the blu-ray.
                 - edition: Edition type of the blu-ray.
     """
-    
+
     # Sample data for demonstration purposes
     sample_blu_rays = [
         {
@@ -1460,7 +1580,10 @@ def get_blu_rays_for_sale(
     for blu_ray in sample_blu_rays:
         if search_by_title and search_by_title.lower() not in blu_ray["title"].lower():
             continue
-        if search_by_director and search_by_director.lower() not in blu_ray["director"].lower():
+        if (
+            search_by_director
+            and search_by_director.lower() not in blu_ray["director"].lower()
+        ):
             continue
         if released_after and blu_ray["release_date"] <= released_after:
             continue
@@ -1468,7 +1591,10 @@ def get_blu_rays_for_sale(
             continue
         if is_4k and not blu_ray["is_4k"]:
             continue
-        if filter_by_certification and blu_ray["certification"] not in filter_by_certification:
+        if (
+            filter_by_certification
+            and blu_ray["certification"] not in filter_by_certification
+        ):
             continue
         if filter_by_edition and blu_ray["edition"] not in filter_by_edition:
             continue
@@ -1479,10 +1605,13 @@ def get_blu_rays_for_sale(
         "blu_rays": filtered_blu_rays,
     }
 
+
 from typing import Dict, List
 
 
-def get_cart_contents(user_id: str) -> Dict[str, Union[str, List[Dict[str, Union[str, int, float]]]]]:
+def get_cart_contents(
+    user_id: str,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int, float]]]]]:
     """Retrieves all items currently in the user's shopping cart.
 
     Args:
@@ -1520,6 +1649,7 @@ def get_cart_contents(user_id: str) -> Dict[str, Union[str, List[Dict[str, Union
         "items": sample_items[user_hash],
     }
 
+
 from typing import Dict, List
 
 
@@ -1534,19 +1664,20 @@ def get_cart_items() -> Dict[str, List[Dict[str, Union[str, int, float]]]]:
                 - quantity: Quantity of the item in the cart
                 - price: Price per unit of the item
     """
-    
+
     # Sample data simulating items in a shopping cart
     cart_items = [
         {"id": "A123", "name": "Laptop", "quantity": 1, "price": 999.99},
         {"id": "B456", "name": "Headphones", "quantity": 2, "price": 199.99},
         {"id": "C789", "name": "Coffee Mug", "quantity": 3, "price": 12.99},
     ]
-    
+
     return {"items": cart_items}
 
-from typing import Dict, List, Optional, Union
-from datetime import datetime
+
 import hashlib
+from datetime import datetime
+from typing import Dict, List, Optional, Union
 
 
 def get_history(
@@ -1570,21 +1701,22 @@ def get_history(
                 - price: Price of the item
                 - date: Date of purchase
     """
+
     def generate_purchase_data(index: int) -> Dict[str, Union[str, float]]:
         item_name = f"Item-{index}"
-        price = round(hashlib.md5(item_name.encode()).hexdigest()[-3:], 16) % 100 + 1
-        purchase_date = datetime(2025, 1, 1).strftime('%Y-%m-%d')
+        price = int(hashlib.md5(item_name.encode()).hexdigest()[-3:], 16) % 100 + 1
+        purchase_date = datetime(2025, 1, 1).strftime("%Y-%m-%d")
         return {"item": item_name, "price": price, "date": purchase_date}
 
     if start_date:
         try:
-            datetime.strptime(start_date, '%Y-%m-%d')
+            datetime.strptime(start_date, "%Y-%m-%d")
         except ValueError:
             raise ValueError(f"Invalid start_date format: {start_date}")
 
     if end_date:
         try:
-            datetime.strptime(end_date, '%Y-%m-%d')
+            datetime.strptime(end_date, "%Y-%m-%d")
         except ValueError:
             raise ValueError(f"Invalid end_date format: {end_date}")
 
@@ -1597,6 +1729,7 @@ def get_history(
         "end_date": end_date or "N/A",
         "purchases": purchases,
     }
+
 
 from typing import Dict, Union
 
@@ -1614,16 +1747,16 @@ def get_item_details(item_name: str) -> Dict[str, Union[str, int, float]]:
             - price: Price of the item per unit
             - location: Warehouse location of the item
     """
-    
+
     sample_data = {
         "Widget": {"quantity": 150, "price": 2.99, "location": "Aisle 3, Shelf B"},
         "Gadget": {"quantity": 75, "price": 5.49, "location": "Aisle 1, Shelf A"},
         "Doodad": {"quantity": 200, "price": 1.99, "location": "Aisle 5, Shelf C"},
     }
-    
+
     if item_name not in sample_data:
         raise ValueError(f"Item not found in warehouse: {item_name}")
-    
+
     item_details = sample_data[item_name]
     return {
         "item_name": item_name,
@@ -1631,6 +1764,7 @@ def get_item_details(item_name: str) -> Dict[str, Union[str, int, float]]:
         "price": item_details["price"],
         "location": item_details["location"],
     }
+
 
 from typing import Dict, Union
 
@@ -1649,15 +1783,15 @@ def get_listing_details(listing_id: str) -> Dict[str, Union[str, float, int]]:
             - bedrooms: Number of bedrooms in the listing
             - location: Location of the listing
     """
-    
+
     # Simulated data based on hash of the listing_id
     sample_data = {
         "title": f"Cozy Apartment #{hash(listing_id) % 1000}",
         "price": round((hash(listing_id) % 100000) / 100, 2),
         "bedrooms": (hash(listing_id) % 5) + 1,
-        "location": f"City-{hash(listing_id) % 100}"
+        "location": f"City-{hash(listing_id) % 100}",
     }
-    
+
     if not listing_id:
         raise ValueError("Listing ID cannot be empty")
 
@@ -1669,12 +1803,13 @@ def get_listing_details(listing_id: str) -> Dict[str, Union[str, float, int]]:
         "location": sample_data["location"],
     }
 
+
 from typing import Dict, Literal, Union
 
 
 def get_postage_information(
-    post_code: str, 
-    shipping_type: Literal["standard", "express", "overnight"] = "standard"
+    post_code: str,
+    shipping_type: Literal["standard", "express", "overnight"] = "standard",
 ) -> Dict[str, Union[str, float, int]]:
     """Get information about the postage of an order.
 
@@ -1689,21 +1824,21 @@ def get_postage_information(
             - cost: Estimated cost of shipping in USD
             - delivery_days: Estimated delivery time frame in days
     """
-    
+
     # Mock data based on shipping type
     shipping_data = {
         "standard": {"cost": 5.0, "delivery_days": 5},
         "express": {"cost": 10.0, "delivery_days": 2},
         "overnight": {"cost": 20.0, "delivery_days": 1},
     }
-    
+
     if shipping_type not in shipping_data:
         raise ValueError(f"Unsupported shipping type: {shipping_type}")
-    
+
     # Simulate cost and delivery days based on post code hash
     base_data = shipping_data[shipping_type]
     hash_modifier = hash(post_code) % 3  # Simple hash-based variation
-    
+
     return {
         "post_code": post_code,
         "shipping_type": shipping_type,
@@ -1711,8 +1846,9 @@ def get_postage_information(
         "delivery_days": base_data["delivery_days"] + hash_modifier,
     }
 
-from typing import Dict, List, Union
+
 import hashlib
+from typing import Dict, List, Union
 
 
 def get_price_history(
@@ -1731,7 +1867,7 @@ def get_price_history(
             - region: Region for the pricing data
             - history: List of dictionaries with 'date' and 'price' keys
     """
-    
+
     # Generate a consistent but varied price history using a hash of the model
     hash_seed = int(hashlib.sha256(model.encode()).hexdigest(), 16)
     base_price = 500 + (hash_seed % 100)  # Base price between 500 and 599
@@ -1750,6 +1886,7 @@ def get_price_history(
         "history": history,
     }
 
+
 from typing import Dict, Union
 
 
@@ -1767,40 +1904,41 @@ def get_product_details(product_id: str) -> Dict[str, Union[str, float, int]]:
             - stock: The number of items available in stock
             - description: A brief description of the product
     """
-    
+
     # Simulated product database
     product_database = {
         "P001": {
             "name": "Wireless Mouse",
             "price": 29.99,
             "stock": 150,
-            "description": "A high-precision wireless mouse with ergonomic design."
+            "description": "A high-precision wireless mouse with ergonomic design.",
         },
         "P002": {
             "name": "Mechanical Keyboard",
             "price": 89.99,
             "stock": 85,
-            "description": "A durable mechanical keyboard with customizable RGB lighting."
+            "description": "A durable mechanical keyboard with customizable RGB lighting.",
         },
         "P003": {
             "name": "USB-C Hub",
             "price": 49.99,
             "stock": 200,
-            "description": "A versatile USB-C hub with multiple ports for connectivity."
-        }
+            "description": "A versatile USB-C hub with multiple ports for connectivity.",
+        },
     }
-    
+
     if product_id not in product_database:
         raise ValueError(f"Product ID not found: {product_id}")
-    
+
     product_info = product_database[product_id]
     return {
         "product_id": product_id,
         "name": product_info["name"],
         "price": product_info["price"],
         "stock": product_info["stock"],
-        "description": product_info["description"]
+        "description": product_info["description"],
     }
+
 
 from typing import Dict, List, Optional
 
@@ -1817,7 +1955,7 @@ def get_shopping_list(category: Optional[str] = None) -> Dict[str, List[str]]:
             - category: The category of items
             - items: List of items in the specified category
     """
-    
+
     sample_data = {
         "fruits": ["apples", "bananas", "oranges"],
         "vegetables": ["carrots", "broccoli", "spinach"],
@@ -1832,12 +1970,13 @@ def get_shopping_list(category: Optional[str] = None) -> Dict[str, List[str]]:
             "category": category,
             "items": sample_data[category],
         }
-    
+
     all_items = [item for items in sample_data.values() for item in items]
     return {
         "category": "all",
         "items": all_items,
     }
+
 
 from typing import Dict, List
 
@@ -1855,22 +1994,25 @@ def get_stores(county_name: str, state_name: str) -> Dict[str, List[str]]:
             - state: Name of the state
             - stores: List of store names in the county
     """
-    
+
     sample_data = {
         ("Los Angeles", "California"): ["Store A", "Store B", "Store C"],
         ("Cook", "Illinois"): ["Store D", "Store E"],
         ("Harris", "Texas"): ["Store F", "Store G", "Store H", "Store I"],
     }
-    
+
     key = (county_name, state_name)
     if key not in sample_data:
-        raise ValueError(f"No store data available for {county_name} County, {state_name}")
+        raise ValueError(
+            f"No store data available for {county_name} County, {state_name}"
+        )
 
     return {
         "county": county_name,
         "state": state_name,
         "stores": sample_data[key],
     }
+
 
 from typing import Dict, List
 
@@ -1887,14 +2029,14 @@ def get_user_recommendations(user_id: str, count: int = 5) -> Dict[str, List[str
             - user_id: The unique identifier for the user.
             - recommendations: List of recommended product names.
     """
-    
+
     # Mock user purchase history and product recommendations
     user_purchase_history = {
         "user_123": ["Laptop", "Smartphone", "Headphones"],
         "user_456": ["Book", "Pen", "Notebook"],
         "user_789": ["Shoes", "Socks", "T-shirt"],
     }
-    
+
     product_recommendations = {
         "Laptop": ["Mouse", "Keyboard", "Monitor"],
         "Smartphone": ["Phone Case", "Screen Protector", "Charger"],
@@ -1906,15 +2048,15 @@ def get_user_recommendations(user_id: str, count: int = 5) -> Dict[str, List[str
         "Socks": ["Laundry Bag", "Foot Cream", "Shoe Inserts"],
         "T-shirt": ["Jacket", "Cap", "Sunglasses"],
     }
-    
+
     if user_id not in user_purchase_history:
         raise ValueError(f"User ID not found: {user_id}")
-    
+
     # Generate recommendations based on purchase history
     recommendations = []
     for item in user_purchase_history[user_id]:
         recommendations.extend(product_recommendations.get(item, []))
-    
+
     # Ensure unique recommendations and limit to the requested count
     unique_recommendations = list(dict.fromkeys(recommendations))
     return {
@@ -1922,12 +2064,12 @@ def get_user_recommendations(user_id: str, count: int = 5) -> Dict[str, List[str
         "recommendations": unique_recommendations[:count],
     }
 
+
 from typing import Dict, Literal, Union
 
 
 def input_delivery(
-    destination: str,
-    service: str = "ground"
+    destination: str, service: str = "ground"
 ) -> Dict[str, Union[str, int]]:
     """Input delivery information into the system.
 
@@ -1941,15 +2083,11 @@ def input_delivery(
             - service: The type of delivery service
             - estimated_days: Estimated delivery time in days
     """
-    
+
     if not destination:
         raise ValueError("Destination address is required.")
 
-    service_options = {
-        "ground": 5,
-        "air": 3,
-        "express": 1
-    }
+    service_options = {"ground": 5, "air": 3, "express": 1}
 
     if service not in service_options:
         raise ValueError(f"Unsupported service type: {service}")
@@ -1959,8 +2097,9 @@ def input_delivery(
     return {
         "destination": destination,
         "service": service,
-        "estimated_days": estimated_days
+        "estimated_days": estimated_days,
     }
+
 
 from typing import Dict, Union
 
@@ -1988,10 +2127,13 @@ def keyword_rank_checker(url: str, keyword: str) -> Dict[str, Union[str, int]]:
         "rank": rank,
     }
 
+
 from typing import Dict, List, Union
 
 
-def miniature_car_parts(postcode: str, radius: float = 5) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
+def miniature_car_parts(
+    postcode: str, radius: float = 5
+) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
     """Find retailers of miniature, RC, car parts within a specified radius of a postcode.
 
     Args:
@@ -2007,22 +2149,34 @@ def miniature_car_parts(postcode: str, radius: float = 5) -> Dict[str, Union[str
                 - address: Retailer's address.
                 - distance: Distance from the central postcode in miles.
     """
-    
+
     # Simulated retailer data based on hash of postcode for consistent results
     sample_retailers = {
         "12345": [
-            {"name": "Miniature Motors", "address": "123 Elm St, Springfield", "distance": 2.5},
+            {
+                "name": "Miniature Motors",
+                "address": "123 Elm St, Springfield",
+                "distance": 2.5,
+            },
             {"name": "RC World", "address": "456 Oak St, Springfield", "distance": 4.0},
         ],
         "67890": [
-            {"name": "Tiny Car Parts", "address": "789 Pine St, Shelbyville", "distance": 1.2},
-            {"name": "RC Emporium", "address": "101 Maple St, Shelbyville", "distance": 3.8},
+            {
+                "name": "Tiny Car Parts",
+                "address": "789 Pine St, Shelbyville",
+                "distance": 1.2,
+            },
+            {
+                "name": "RC Emporium",
+                "address": "101 Maple St, Shelbyville",
+                "distance": 3.8,
+            },
         ],
     }
-    
+
     # Generate a hash-based key for consistent sample data retrieval
     key = str(abs(hash(postcode)) % 100000)
-    
+
     if key not in sample_retailers:
         raise ValueError(f"No retailers found for postcode: {postcode}")
 
@@ -2031,6 +2185,7 @@ def miniature_car_parts(postcode: str, radius: float = 5) -> Dict[str, Union[str
         "radius": radius,
         "retailers": sample_retailers[key],
     }
+
 
 from typing import Dict, List, Literal, Union
 
@@ -2061,7 +2216,9 @@ def order_parts(
             - delivery_estimate: Estimated delivery date.
     """
     if not model_number or not part_numbers or not shipping_address:
-        raise ValueError("model_number, part_numbers, and shipping_address are required")
+        raise ValueError(
+            "model_number, part_numbers, and shipping_address are required"
+        )
 
     if quantity_map is None:
         quantity_map = {part_number: 1 for part_number in part_numbers}
@@ -2081,11 +2238,13 @@ def order_parts(
         quantity = quantity_map.get(part_number, 1)
         cost = sample_prices[part_number] * quantity
         total_cost += cost
-        parts_ordered.append({
-            "part_number": part_number,
-            "quantity": quantity,
-            "cost": cost,
-        })
+        parts_ordered.append(
+            {
+                "part_number": part_number,
+                "quantity": quantity,
+                "cost": cost,
+            }
+        )
 
     if budget_max is not None and total_cost > budget_max:
         raise ValueError("Total cost exceeds budget_max")
@@ -2102,6 +2261,7 @@ def order_parts(
         "parts_ordered": parts_ordered,
         "delivery_estimate": delivery_estimates[delivery_speed],
     }
+
 
 from typing import Dict, Literal, Union
 
@@ -2146,14 +2306,12 @@ def process_delivery(
         "estimated_days": estimated_days,
     }
 
+
 from typing import Dict, List, Union
 
 
 def rcbay(
-    postcode: str,
-    q: str,
-    max_price: float = 999,
-    radius: float = 10
+    postcode: str, q: str, max_price: float = 999, radius: float = 10
 ) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
     """Search for radio control cars and parts by price, description, and distance.
 
@@ -2175,8 +2333,9 @@ def rcbay(
 
     # Mock data generation based on hash of the query
     import hashlib
+
     hash_seed = int(hashlib.md5(q.encode()).hexdigest(), 16)
-    
+
     # Generate mock results
     items = [
         {"name": "RC Car Model A", "price": 150.0, "description": "Fast and durable"},
@@ -2184,11 +2343,9 @@ def rcbay(
         {"name": "RC Battery Pack", "price": 50.0, "description": "Long-lasting"},
         {"name": "RC Wheels Set", "price": 30.0, "description": "All-terrain"},
     ]
-    
+
     # Filter items based on max_price
-    filtered_items = [
-        item for item in items if item["price"] <= max_price
-    ]
+    filtered_items = [item for item in items if item["price"] <= max_price]
 
     # Simulate search logic based on query
     if "AND" in q or "OR" in q:
@@ -2196,23 +2353,25 @@ def rcbay(
         if "AND" in q:
             tokens = q.split(" AND ")
             filtered_items = [
-                item for item in filtered_items
+                item
+                for item in filtered_items
                 if all(token.lower() in item["description"].lower() for token in tokens)
             ]
         elif "OR" in q:
             tokens = q.split(" OR ")
             filtered_items = [
-                item for item in filtered_items
+                item
+                for item in filtered_items
                 if any(token.lower() in item["description"].lower() for token in tokens)
             ]
     else:
         filtered_items = [
-            item for item in filtered_items
-            if q.lower() in item["description"].lower()
+            item for item in filtered_items if q.lower() in item["description"].lower()
         ]
 
     # Randomly shuffle results for variety
     import random
+
     random.seed(hash_seed)
     random.shuffle(filtered_items)
 
@@ -2220,8 +2379,9 @@ def rcbay(
         "postcode": postcode,
         "radius": radius,
         "max_price": max_price,
-        "results": filtered_items
+        "results": filtered_items,
     }
+
 
 from typing import Dict, Union
 
@@ -2239,30 +2399,31 @@ def remove_from_cart(user_id: str, product_id: str) -> Dict[str, Union[str, bool
             - product_id: The unique identifier for the product.
             - removed: Boolean indicating if the product was successfully removed.
     """
-    
+
     # Simulated cart data for demonstration purposes
     cart_data = {
         "user_123": ["prod_001", "prod_002", "prod_003"],
         "user_456": ["prod_004", "prod_005"],
     }
-    
+
     if user_id not in cart_data:
         raise ValueError(f"User ID not found: {user_id}")
-    
+
     if product_id not in cart_data[user_id]:
         return {
             "user_id": user_id,
             "product_id": product_id,
             "removed": False,
         }
-    
+
     cart_data[user_id].remove(product_id)
-    
+
     return {
         "user_id": user_id,
         "product_id": product_id,
         "removed": True,
     }
+
 
 from typing import Dict, List, Literal, Union
 
@@ -2273,7 +2434,7 @@ def search_listings(
     condition: Literal["new", "used", "refurbished", "open-box"] = "new",
     marketplaces: List[str] = None,
     max_price: float = None,
-    region: str = "US"
+    region: str = "US",
 ) -> Dict[str, Union[str, float, list]]:
     """Search product listings across supported marketplaces and conditions.
 
@@ -2310,7 +2471,8 @@ def search_listings(
         raise ValueError(f"No listings found for query: {query}")
 
     results = [
-        item for item in sample_data[query]
+        item
+        for item in sample_data[query]
         if item["marketplace"] in marketplaces
         and item["condition"] == condition
         and (max_price is None or item["price"] <= max_price)
@@ -2322,14 +2484,19 @@ def search_listings(
         "results": results,
     }
 
-from typing import Dict, List, Literal, Union, Optional
+
+from typing import Dict, List, Literal, Optional, Union
 
 
 def search_monitors(
     size: Optional[float] = None,
     pixel_type: Optional[Literal["VA", "TN", "IPS", "OLED", "QD-OLED"]] = None,
     refresh_rate: Optional[float] = None,
-    resolution: Optional[Literal["1280x720", "1280x1024", "1920x1080", "2560x1440", "3840x2160", "5120x2880"]] = None,
+    resolution: Optional[
+        Literal[
+            "1280x720", "1280x1024", "1920x1080", "2560x1440", "3840x2160", "5120x2880"
+        ]
+    ] = None,
 ) -> List[Dict[str, Union[str, float]]]:
     """Search for monitors that fit the given parameter values.
 
@@ -2348,19 +2515,49 @@ def search_monitors(
             - resolution: Native resolution of the monitor
     """
     sample_monitors = [
-        {"model": "Dell UltraSharp", "size": 27, "pixel_type": "IPS", "refresh_rate": 60, "resolution": "2560x1440"},
-        {"model": "Samsung Odyssey", "size": 32, "pixel_type": "VA", "refresh_rate": 144, "resolution": "3840x2160"},
-        {"model": "LG UltraFine", "size": 24, "pixel_type": "IPS", "refresh_rate": 60, "resolution": "1920x1080"},
-        {"model": "Asus ROG Swift", "size": 27, "pixel_type": "TN", "refresh_rate": 240, "resolution": "1920x1080"},
-        {"model": "Acer Predator", "size": 34, "pixel_type": "OLED", "refresh_rate": 120, "resolution": "5120x2880"},
+        {
+            "model": "Dell UltraSharp",
+            "size": 27,
+            "pixel_type": "IPS",
+            "refresh_rate": 60,
+            "resolution": "2560x1440",
+        },
+        {
+            "model": "Samsung Odyssey",
+            "size": 32,
+            "pixel_type": "VA",
+            "refresh_rate": 144,
+            "resolution": "3840x2160",
+        },
+        {
+            "model": "LG UltraFine",
+            "size": 24,
+            "pixel_type": "IPS",
+            "refresh_rate": 60,
+            "resolution": "1920x1080",
+        },
+        {
+            "model": "Asus ROG Swift",
+            "size": 27,
+            "pixel_type": "TN",
+            "refresh_rate": 240,
+            "resolution": "1920x1080",
+        },
+        {
+            "model": "Acer Predator",
+            "size": 34,
+            "pixel_type": "OLED",
+            "refresh_rate": 120,
+            "resolution": "5120x2880",
+        },
     ]
 
     def matches_criteria(monitor: Dict[str, Union[str, float]]) -> bool:
         return (
-            (size is None or monitor["size"] == size) and
-            (pixel_type is None or monitor["pixel_type"] == pixel_type) and
-            (refresh_rate is None or monitor["refresh_rate"] == refresh_rate) and
-            (resolution is None or monitor["resolution"] == resolution)
+            (size is None or monitor["size"] == size)
+            and (pixel_type is None or monitor["pixel_type"] == pixel_type)
+            and (refresh_rate is None or monitor["refresh_rate"] == refresh_rate)
+            and (resolution is None or monitor["resolution"] == resolution)
         )
 
     results = [monitor for monitor in sample_monitors if matches_criteria(monitor)]
@@ -2370,15 +2567,13 @@ def search_monitors(
 
     return results
 
-from typing import Dict, Union
+
 from datetime import datetime
+from typing import Dict, Union
 
 
 def set_price_alert(
-    model: str,
-    target_price: float,
-    region: str = "US",
-    expire_date: str = None
+    model: str, target_price: float, region: str = "US", expire_date: str = None
 ) -> Dict[str, Union[str, float, bool]]:
     """Create a price alert for a model when it drops to a target price.
 
@@ -2414,6 +2609,7 @@ def set_price_alert(
         "alert_set": alert_set,
     }
 
+
 from typing import Dict, Union
 
 
@@ -2435,8 +2631,16 @@ def track_delivery(id: int) -> Dict[str, Union[int, str, List[str]]]:
 
     # Simulated package data
     package_data = {
-        1: {"status": "In Transit", "location": "New York", "history": ["Los Angeles", "Chicago"]},
-        2: {"status": "Delivered", "location": "San Francisco", "history": ["Seattle", "Portland"]},
+        1: {
+            "status": "In Transit",
+            "location": "New York",
+            "history": ["Los Angeles", "Chicago"],
+        },
+        2: {
+            "status": "Delivered",
+            "location": "San Francisco",
+            "history": ["Seattle", "Portland"],
+        },
         3: {"status": "Pending", "location": "Houston", "history": ["Dallas"]},
     }
 
@@ -2451,6 +2655,7 @@ def track_delivery(id: int) -> Dict[str, Union[int, str, List[str]]]:
         "location": package_info["location"],
         "history": package_info["history"],
     }
+
 
 from typing import Dict, Union
 
@@ -2487,4 +2692,3 @@ def update_item(item_name: str, new_quantity: float) -> Dict[str, Union[str, flo
         "new_quantity": new_quantity,
         "status": "Update successful",
     }
-

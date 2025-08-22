@@ -608,7 +608,7 @@ def get_top_restaurants(
         {"name": "Curry Corner", "rating": 4.9, "cuisine": "Indian", "price": "$$"},
         {"name": "Dragon Delight", "rating": 4.4, "cuisine": "Chinese", "price": "$$"},
         {"name": "Vegan Vibes", "rating": 4.3, "cuisine": "Vegan", "price": "$$$"},
-        {"name": "Pizza Paradise", "rating": 4.2, "cuisine": "Italian", "price": "$"},
+        {"name": "Pizza Paradise", "rating": 4.2, "cuisine": "Pizza", "price": "$"},
         {"name": "Bistro Bliss", "rating": 4.1, "cuisine": "French", "price": "$$$"},
         {"name": "Seafood Shack", "rating": 4.0, "cuisine": "Seafood", "price": "$$$$"},
     ]
@@ -754,6 +754,7 @@ def rate_restaurant(
         "The Great Eatery": "Fantastic food and service!",
         "Quick Bites": "Good for a quick meal.",
         "Gourmet Delight": "Exquisite dining experience.",
+        "Marco's Pizzaria": "The pizza had so little cheese and the crust tasted like cardboard.",
     }
 
     return {
@@ -1405,6 +1406,32 @@ def find_nearby_restaurants(
             {
                 "name": "Lou Malnati's Pizzeria",
                 "address": "1120 N State St, Chicago, IL 60610",
+            },
+        ],
+        "Venice": [
+            {
+                "name": "Osteria alle Testiere",
+                "address": "Castello 5801, 30122 Venezia VE, Italy",
+            },
+            {
+                "name": "Antiche Carampane",
+                "address": "San Polo 1911, 30125 Venezia VE, Italy",
+            },
+            {
+                "name": "Quadri",
+                "address": "Piazza San Marco 121, 30124 Venezia VE, Italy",
+            },
+            {
+                "name": "Trattoria da Romano",
+                "address": "Via Baldassarre Galuppi 221, 30142 Burano VE, Italy",
+            },
+            {
+                "name": "Al Covo",
+                "address": "Campiello de la Pescaria 3968, 30122 Venezia VE, Italy",
+            },
+            {
+                "name": "Caffè Florian",
+                "address": "Piazza San Marco 57, 30124 Venezia VE, Italy",
             },
         ],
     }
@@ -2551,6 +2578,11 @@ def get_refreshments(city: str) -> Dict[str, List[str]]:
             "Venice Beach Drinks",
         ],
         "Chicago": ["Millennium Park Cafe", "Navy Pier Refreshments", "The Bean Kiosk"],
+        "Berlin": [
+            "Café Anna Blume",
+            "House of Small Wonders",
+            "Café Winterfeldt Schokoladen",
+        ],
     }
 
     if city not in sample_data:

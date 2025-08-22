@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # Communication Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict
+from typing import Any, Dict, List, Union
 
 
 def create_server(name: str) -> Dict[str, str]:
@@ -29,6 +28,7 @@ def create_server(name: str) -> Dict[str, str]:
         "status": "active",
     }
 
+
 from typing import Dict, Union
 
 
@@ -43,20 +43,21 @@ def lookup_contact(contact_name: str) -> Dict[str, Union[str, None]]:
             - contact_name: Name of the contact
             - phone_number: Phone number of the contact or None if not found
     """
-    
+
     sample_contacts = {
         "Alice Johnson": "555-1234",
         "Bob Smith": "555-5678",
         "Charlie Brown": "555-8765",
     }
-    
+
     if contact_name not in sample_contacts:
         return {"contact_name": contact_name, "phone_number": None}
-    
+
     return {
         "contact_name": contact_name,
         "phone_number": sample_contacts[contact_name],
     }
+
 
 from typing import Dict, List, Optional, Union
 
@@ -103,6 +104,7 @@ def send_email(
 
     return email_data
 
+
 from typing import Dict
 
 
@@ -119,14 +121,14 @@ def send_text_message(contact_name: str, message: str) -> Dict[str, str]:
             - message: The sent message
             - status: Status of the message delivery
     """
-    
+
     # Simulated contact list
     contacts = {
         "Alice": "+1234567890",
         "Bob": "+0987654321",
         "Charlie": "+1122334455",
     }
-    
+
     if contact_name not in contacts:
         raise ValueError(f"Contact not found: {contact_name}")
 
@@ -138,13 +140,16 @@ def send_text_message(contact_name: str, message: str) -> Dict[str, str]:
     return {
         "contact_name": contact_name,
         "message": message,
-        "status": "Message sent successfully"
+        "status": "Message sent successfully",
     }
+
 
 from typing import Dict, Literal
 
 
-def account_info_by_uuid(uuid: str, region: Literal["North America", "Europe", "Asia"]) -> Dict[str, str]:
+def account_info_by_uuid(
+    uuid: str, region: Literal["North America", "Europe", "Asia"]
+) -> Dict[str, str]:
     """Get the account name and discriminator for an account with the given uuid.
 
     Args:
@@ -156,7 +161,7 @@ def account_info_by_uuid(uuid: str, region: Literal["North America", "Europe", "
             - account_name: The name of the account
             - discriminator: The discriminator of the account
     """
-    
+
     # Simulated account data based on uuid and region
     sample_data = {
         "North America": {
@@ -185,6 +190,7 @@ def account_info_by_uuid(uuid: str, region: Literal["North America", "Europe", "
         "discriminator": discriminator,
     }
 
+
 def contact_user(message: str) -> Dict[str, Union[str, bool]]:
     """Send a message to the home owner.
 
@@ -206,6 +212,7 @@ def contact_user(message: str) -> Dict[str, Union[str, bool]]:
         "message": message,
         "success": success,
     }
+
 
 from typing import Dict
 
@@ -239,6 +246,7 @@ def join_server(name: str) -> Dict[str, str]:
         "status": "successfully joined",
     }
 
+
 from typing import Dict
 
 
@@ -253,15 +261,13 @@ def leave_server(name: str) -> Dict[str, str]:
             - server: Name of the server left
             - status: Confirmation message of the action
     """
-    
-    supported_servers = {"Discord", "Slack", "Teams"}
+
+    supported_servers = {"Discord", "Slack", "Teams", "The Cowboy Fans"}
     if name not in supported_servers:
         raise ValueError(f"Server not supported: {name}")
 
-    return {
-        "server": name,
-        "status": f"Successfully left the {name} server."
-    }
+    return {"server": name, "status": f"Successfully left the {name} server."}
+
 
 from typing import Dict
 
@@ -291,10 +297,13 @@ def report_server(name: str, reason: str) -> Dict[str, str]:
         "status": "submitted",
     }
 
+
 from typing import Dict, List, Union
 
 
-def retrieve_text_message(contact_name: str, keyword: str) -> Dict[str, Union[str, None]]:
+def retrieve_text_message(
+    contact_name: str, keyword: str
+) -> Dict[str, Union[str, None]]:
     """Retrieve the last text message received from a specific contact that contains a certain keyword.
 
     Args:
@@ -306,40 +315,43 @@ def retrieve_text_message(contact_name: str, keyword: str) -> Dict[str, Union[st
             - contact_name: Name of the contact
             - message: The last message containing the keyword, or None if no such message exists
     """
-    
+
     # Sample data simulating a message database
     messages = {
         "Alice": [
             "Hey, are you coming to the party?",
             "Don't forget the meeting tomorrow.",
-            "Lunch at 1pm?"
+            "Lunch at 1pm?",
         ],
         "Bob": [
             "Can you send the report?",
             "Let's catch up over coffee.",
-            "The keyword is important."
+            "The keyword is important.",
         ],
         "Charlie": [
             "Did you see the game last night?",
             "I'll be late to the meeting.",
-            "Keyword found here!"
-        ]
+            "Keyword found here!",
+        ],
     }
-    
+
     if contact_name not in messages:
         raise ValueError(f"Contact not found: {contact_name}")
-    
+
     # Search for the last message containing the keyword
     for message in reversed(messages[contact_name]):
         if keyword.lower() in message.lower():
             return {"contact_name": contact_name, "message": message}
-    
+
     return {"contact_name": contact_name, "message": None}
+
 
 from typing import Dict, Optional
 
 
-def send_message(receiver: str, message: str, sender: Optional[str] = None) -> Dict[str, str]:
+def send_message(
+    receiver: str, message: str, sender: Optional[str] = None
+) -> Dict[str, str]:
     """Send a message from a sender to a receiver.
 
     Args:
@@ -370,6 +382,7 @@ def send_message(receiver: str, message: str, sender: Optional[str] = None) -> D
         "status": status,
     }
 
+
 from typing import Dict
 
 
@@ -398,6 +411,7 @@ def send_text(contact_name: str, message: str) -> Dict[str, str]:
         "status": status,
     }
 
+
 from typing import Dict
 
 
@@ -422,17 +436,15 @@ def add_contact(contact_name: str, contact_phone_number: str) -> Dict[str, str]:
     return {
         "contact_name": contact_name,
         "contact_phone_number": contact_phone_number,
-        "contact_id": f"CT-{contact_id:04d}"
+        "contact_id": f"CT-{contact_id:04d}",
     }
+
 
 from typing import Dict, Optional
 
 
 def create_profile(
-    id: str,
-    phone: str,
-    name: Optional[str] = "",
-    birthday: Optional[str] = ""
+    id: str, phone: str, name: Optional[str] = "", birthday: Optional[str] = ""
 ) -> Dict[str, str]:
     """Creates a profile for a new contact.
 
@@ -451,7 +463,7 @@ def create_profile(
     """
     if len(id) != 8 or not all(c in "0123456789ABCDEF" for c in id.upper()):
         raise ValueError("ID must be an 8-digit hexadecimal string.")
-    
+
     if not phone or len(phone) != 12 or not phone.replace("-", "").isdigit():
         raise ValueError("Phone number must be in the format 123-456-7890.")
 
@@ -461,8 +473,9 @@ def create_profile(
         "name": name,
         "birthday": birthday,
     }
-    
+
     return profile
+
 
 from typing import Dict, Union
 
@@ -494,8 +507,9 @@ def dancers(dancer: int, name: str) -> Dict[str, Union[int, str]]:
         "contact_info": contact_info,
     }
 
-from typing import Dict, List, Union, Optional
+
 from datetime import datetime
+from typing import Dict, List, Optional, Union
 
 
 def get_all_emails(
@@ -503,7 +517,7 @@ def get_all_emails(
     folder: Optional[str] = None,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    sender_email: Optional[str] = None
+    sender_email: Optional[str] = None,
 ) -> Dict[str, Union[int, List[Dict[str, Union[str, datetime]]]]]:
     """Retrieves all emails, matching specific filters.
 
@@ -524,34 +538,71 @@ def get_all_emails(
                 - folder: Folder from which the email was retrieved
     """
     sample_emails = [
-        {"subject": "Meeting Reminder", "sender": "boss@example.com", "date": datetime(2023, 10, 1), "folder": "inbox"},
-        {"subject": "Weekly Report", "sender": "colleague@example.com", "date": datetime(2023, 9, 28), "folder": "sent"},
-        {"subject": "Discount Offer", "sender": "newsletter@shop.com", "date": datetime(2023, 9, 25), "folder": "spam"},
-        {"subject": "Project Update", "sender": "teamlead@example.com", "date": datetime(2023, 9, 20), "folder": "inbox"},
-        {"subject": "Draft Proposal", "sender": "me@example.com", "date": datetime(2023, 9, 15), "folder": "drafts"},
+        {
+            "subject": "Meeting Reminder",
+            "sender": "boss@example.com",
+            "date": datetime(2023, 10, 1),
+            "folder": "inbox",
+        },
+        {
+            "subject": "Weekly Report",
+            "sender": "colleague@example.com",
+            "date": datetime(2023, 9, 28),
+            "folder": "sent",
+        },
+        {
+            "subject": "Discount Offer",
+            "sender": "newsletter@shop.com",
+            "date": datetime(2023, 9, 25),
+            "folder": "spam",
+        },
+        {
+            "subject": "Project Update",
+            "sender": "teamlead@example.com",
+            "date": datetime(2023, 9, 20),
+            "folder": "inbox",
+        },
+        {
+            "subject": "Draft Proposal",
+            "sender": "me@example.com",
+            "date": datetime(2023, 9, 15),
+            "folder": "drafts",
+        },
     ]
 
-    if folder and folder not in ['inbox', 'sent', 'drafts', 'trash', 'spam', 'archived']:
+    if folder and folder not in [
+        "inbox",
+        "sent",
+        "drafts",
+        "trash",
+        "spam",
+        "archived",
+    ]:
         raise ValueError(f"Invalid folder specified: {folder}")
 
     filtered_emails = [
-        email for email in sample_emails
-        if (not folder or email['folder'] == folder)
-        and (not start_date or email['date'] >= datetime.strptime(start_date, "%Y/%m/%d"))
-        and (not end_date or email['date'] <= datetime.strptime(end_date, "%Y/%m/%d"))
-        and (not sender_email or email['sender'] == sender_email)
+        email
+        for email in sample_emails
+        if (not folder or email["folder"] == folder)
+        and (
+            not start_date or email["date"] >= datetime.strptime(start_date, "%Y/%m/%d")
+        )
+        and (not end_date or email["date"] <= datetime.strptime(end_date, "%Y/%m/%d"))
+        and (not sender_email or email["sender"] == sender_email)
     ]
 
     return {
         "count": min(limit, len(filtered_emails)),
-        "emails": filtered_emails[:limit]
+        "emails": filtered_emails[:limit],
     }
+
 
 from typing import Dict, Literal
 
 
 def get_emotional_speech(
-    message: str, emotional_content: Literal["neutral", "happy", "sad", "angry"] = "neutral"
+    message: str,
+    emotional_content: Literal["neutral", "happy", "sad", "angry"] = "neutral",
 ) -> Dict[str, Union[str, bytes]]:
     """Retrieve audio of a text message with specified emotional content.
 
@@ -578,8 +629,9 @@ def get_emotional_speech(
         "audio": audio_bytes,
     }
 
-from typing import Dict, List, Optional, Union
+
 from datetime import datetime
+from typing import Dict, List, Optional, Union
 
 
 def get_unread_emails(
@@ -604,11 +656,31 @@ def get_unread_emails(
     """
     # Sample data for demonstration purposes
     sample_emails = [
-        {"subject": "Meeting Reminder", "sender": "boss@example.com", "date": datetime(2023, 10, 1)},
-        {"subject": "Newsletter", "sender": "newsletter@example.com", "date": datetime(2023, 10, 2)},
-        {"subject": "Project Update", "sender": "colleague@example.com", "date": datetime(2023, 10, 3)},
-        {"subject": "Invitation", "sender": "events@example.com", "date": datetime(2023, 10, 4)},
-        {"subject": "Promotion", "sender": "sales@example.com", "date": datetime(2023, 10, 5)},
+        {
+            "subject": "Meeting Reminder",
+            "sender": "boss@example.com",
+            "date": datetime(2023, 10, 1),
+        },
+        {
+            "subject": "Newsletter",
+            "sender": "newsletter@example.com",
+            "date": datetime(2023, 10, 2),
+        },
+        {
+            "subject": "Project Update",
+            "sender": "colleague@example.com",
+            "date": datetime(2023, 10, 3),
+        },
+        {
+            "subject": "Invitation",
+            "sender": "events@example.com",
+            "date": datetime(2023, 10, 4),
+        },
+        {
+            "subject": "Promotion",
+            "sender": "sales@example.com",
+            "date": datetime(2023, 10, 5),
+        },
     ]
 
     # Convert date strings to datetime objects if provided
@@ -619,9 +691,10 @@ def get_unread_emails(
 
     # Filter emails by date range if applicable
     filtered_emails = [
-        email for email in sample_emails
-        if (not start_date or email["date"] >= start_date) and
-           (not end_date or email["date"] <= end_date)
+        email
+        for email in sample_emails
+        if (not start_date or email["date"] >= start_date)
+        and (not end_date or email["date"] <= end_date)
     ]
 
     # Limit the number of emails returned
@@ -632,13 +705,12 @@ def get_unread_emails(
         "emails": limited_emails,
     }
 
+
 from typing import Dict, List
 
 
 def invite_users_to_space(
-    space_name: str,
-    usernames: List[str],
-    invitation_message: str = "Join me in VR!"
+    space_name: str, usernames: List[str], invitation_message: str = "Join me in VR!"
 ) -> Dict[str, Union[str, List[str]]]:
     """Send invitations to users for a specific virtual space.
 
@@ -666,6 +738,7 @@ def invite_users_to_space(
         "invited_users": successful_invites,
         "message": invitation_message,
     }
+
 
 from typing import Dict, Literal
 
@@ -708,6 +781,7 @@ def one_line_translator(
         "translated": translated_phrase,
     }
 
+
 from typing import Dict
 
 
@@ -740,13 +814,12 @@ def reply_to_email(email_id: str, body: str) -> Dict[str, str]:
         "message": f"Reply to email ID {email_id} has been {status}.",
     }
 
+
 from typing import Dict, Optional
 
 
 def send_card(
-    contact_id: str,
-    recipient: Optional[str] = "",
-    description: Optional[str] = ""
+    contact_id: str, recipient: Optional[str] = "", description: Optional[str] = ""
 ) -> Dict[str, str]:
     """Send a digital birthday card to a recipient using their contact info.
 
@@ -761,8 +834,12 @@ def send_card(
             - recipient_name: The name of the recipient
             - message: The message sent to the recipient
     """
-    if len(contact_id) != 8 or not all(c in "0123456789ABCDEF" for c in contact_id.upper()):
-        raise ValueError("Invalid contact ID format. Must be an 8-digit hexadecimal string.")
+    if len(contact_id) != 8 or not all(
+        c in "0123456789ABCDEF" for c in contact_id.upper()
+    ):
+        raise ValueError(
+            "Invalid contact ID format. Must be an 8-digit hexadecimal string."
+        )
 
     # Simulate fetching recipient name from contact info if not provided
     if not recipient:
@@ -771,19 +848,14 @@ def send_card(
     # Simulate sending the card
     message = f"Happy Birthday, {recipient}! {description}"
 
-    return {
-        "contact_id": contact_id,
-        "recipient_name": recipient,
-        "message": message
-    }
+    return {"contact_id": contact_id, "recipient_name": recipient, "message": message}
+
 
 from typing import Dict, Optional
 
 
 def send_voice_message(
-    receiver: str,
-    message: bytes,
-    sender: Optional[str] = None
+    receiver: str, message: bytes, sender: Optional[str] = None
 ) -> Dict[str, str]:
     """Send a voice message to a receiver.
 
@@ -809,6 +881,5 @@ def send_voice_message(
     return {
         "status": status,
         "receiver": receiver,
-        "sender": sender if sender else "Anonymous"
+        "sender": sender if sender else "Anonymous",
     }
-

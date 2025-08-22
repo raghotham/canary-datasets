@@ -1271,6 +1271,7 @@ def get_current_stock_price(
         "AAPL": {"name": "Apple Inc.", "price": 150.00},
         "GOOGL": {"name": "Alphabet Inc.", "price": 2800.00},
         "AMZN": {"name": "Amazon.com, Inc.", "price": 3400.00},
+        "KO": {"name": "Coca Cola Corporation", "price": 42.00},
     }
 
     if ticker_symbol not in sample_data:
@@ -1317,6 +1318,7 @@ def get_eod_stock_price(
         "AAPL": "Apple Inc.",
         "GOOGL": "Alphabet Inc.",
         "MSFT": "Microsoft Corporation",
+        "KO": "Coca Cola Corporation",
     }
 
     if ticker_symbol not in company_names:
@@ -1575,6 +1577,13 @@ def list_company_filings(
             {"type": "trading status", "date": "2023-02-15"},
             {"type": "insolvency", "date": "2023-03-05"},
         ],
+        "REG-962933": [
+            {"type": "accounts", "date": "2023-12-15"},
+            {"type": "tax returns", "date": "2024-01-20"},
+            {"type": "officers", "date": "2024-02-10"},
+            {"type": "people with significant control", "date": "2024-03-05"},
+            {"type": "trading status", "date": "2024-04-18"},
+        ],
     }
 
     if registration_number not in sample_filings:
@@ -1621,6 +1630,13 @@ def list_company_officers(
         "789012": [
             {"name": "David Wilson", "position": "Director", "active": True},
             {"name": "Eva Green", "position": "COO", "active": False},
+        ],
+        "REG-962933": [
+            {"name": "Sarah Mitchell", "position": "CEO", "active": True},
+            {"name": "James Rodriguez", "position": "CFO", "active": True},
+            {"name": "Emily Chen", "position": "CTO", "active": True},
+            {"name": "Michael Thompson", "position": "COO", "active": False},
+            {"name": "Lisa Wang", "position": "Director", "active": True},
         ],
     }
 

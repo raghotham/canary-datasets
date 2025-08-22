@@ -1,9 +1,9 @@
-from typing import Dict, List, Union, Any
+import hashlib
+
 # Travel Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Literal, Optional, Union
-import hashlib
+from typing import Any, Dict, List, Literal, Optional, Union
 
 
 def book_flight(
@@ -45,7 +45,9 @@ def book_flight(
         "window": "12A",
         "middle": "12B",
     }
-    seat_number = seat_map.get(seat_preference, "12C")  # Default to aisle if not specified
+    seat_number = seat_map.get(
+        seat_preference, "12C"
+    )  # Default to aisle if not specified
 
     return {
         "booking_reference": booking_reference,
@@ -56,8 +58,9 @@ def book_flight(
         "seat_number": seat_number,
     }
 
-from typing import Dict, Literal, Union
+
 import hashlib
+from typing import Dict, Literal, Union
 
 
 def distance(
@@ -87,12 +90,18 @@ def distance(
 
     # Create a unique hash based on the input coordinates and method
     hash_input = (
-        latitude_start + longitude_start + latitude_destination + longitude_destination + method
+        latitude_start
+        + longitude_start
+        + latitude_destination
+        + longitude_destination
+        + method
     ).encode()
     hash_value = hashlib.md5(hash_input).hexdigest()
 
     # Generate mock distance and duration based on the hash value
-    distance_miles = (int(hash_value[:4], 16) % 100) + 1  # Distance between 1 and 100 miles
+    distance_miles = (
+        int(hash_value[:4], 16) % 100
+    ) + 1  # Distance between 1 and 100 miles
     duration_minutes = distance_miles * (2 if method == "walking" else 1)
 
     return {
@@ -101,10 +110,9 @@ def distance(
         "duration": duration_minutes,
     }
 
+
 def estimate_trip_cost(
-    distance_miles: float,
-    fuel_price_per_gallon: float,
-    fuel_efficiency_mpg: float
+    distance_miles: float, fuel_price_per_gallon: float, fuel_efficiency_mpg: float
 ) -> Dict[str, Union[float, str]]:
     """Estimate the cost of a road trip based on distance, fuel price, and fuel efficiency.
 
@@ -128,10 +136,8 @@ def estimate_trip_cost(
     gallons_needed = distance_miles / fuel_efficiency_mpg
     total_cost = gallons_needed * fuel_price_per_gallon
 
-    return {
-        "total_cost": round(total_cost, 2),
-        "currency": "USD"
-    }
+    return {"total_cost": round(total_cost, 2), "currency": "USD"}
+
 
 from typing import Dict, Literal
 
@@ -169,22 +175,19 @@ def find_accommodation(
 
     accommodations = sample_data[location]
     if type != "hotel":
-        accommodations = [
-            acc for acc in accommodations if type in acc["name"].lower()
-        ]
+        accommodations = [acc for acc in accommodations if type in acc["name"].lower()]
 
     return {
         "location": location,
         "accommodations": accommodations,
     }
 
+
 from typing import Dict, List, Union
 
 
 def get_route(
-    start_location: str,
-    destination: str,
-    waypoints: List[str] = None
+    start_location: str, destination: str, waypoints: List[str] = None
 ) -> Dict[str, Union[str, List[str], float]]:
     """Generates the optimal trip route based on start location, destination, and stops.
 
@@ -228,8 +231,9 @@ def get_route(
         "total_distance": total_distance,
     }
 
-from typing import Dict, Union
+
 from datetime import datetime, timedelta
+from typing import Dict, Union
 
 
 def get_travel_time(
@@ -281,8 +285,9 @@ def get_travel_time(
         "arrival_time": arrival_time.isoformat(),
     }
 
-from typing import Dict, Union, Optional
+
 import hashlib
+from typing import Dict, Optional, Union
 
 
 def authenticate_frequent_flyer(
@@ -327,8 +332,9 @@ def authenticate_frequent_flyer(
         "expiration": expiration,
     }
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
 def book_city_tour(
@@ -355,7 +361,9 @@ def book_city_tour(
         raise ValueError("Number of participants must be greater than zero")
 
     # Generate a unique booking ID using a hash
-    booking_id = hashlib.md5(f"{city}{tour_name}{date}{participants}".encode()).hexdigest()[:8]
+    booking_id = hashlib.md5(
+        f"{city}{tour_name}{date}{participants}".encode()
+    ).hexdigest()[:8]
 
     # Mock cost calculation: $50 per participant
     total_cost = participants * 50.0
@@ -369,16 +377,13 @@ def book_city_tour(
         "total_cost": total_cost,
     }
 
-from typing import Dict, Union
+
 from datetime import datetime
+from typing import Dict, Union
 
 
 def book_hotel(
-    hotel_name: str,
-    city: str,
-    check_in: str,
-    check_out: str,
-    guests: int
+    hotel_name: str, city: str, check_in: str, check_out: str, guests: int
 ) -> Dict[str, Union[str, int, float]]:
     """Book a hotel room.
 
@@ -428,6 +433,7 @@ def book_hotel(
         "total_price": total_price,
     }
 
+
 from typing import Dict, Union
 
 
@@ -453,12 +459,14 @@ def book_tour(
     """
     if participants <= 0:
         raise ValueError("Number of participants must be greater than zero.")
-    
+
     # Simulated pricing logic
     base_price_per_person = 50.0
     location_multiplier = hash(location) % 5 + 1
     tour_multiplier = hash(tour_name) % 3 + 1
-    total_cost = base_price_per_person * participants * location_multiplier * tour_multiplier
+    total_cost = (
+        base_price_per_person * participants * location_multiplier * tour_multiplier
+    )
 
     confirmation_number = hash((location, tour_name, date, participants)) % 1000000
 
@@ -471,13 +479,14 @@ def book_tour(
         "total_cost": round(total_cost, 2),
     }
 
+
 from typing import Dict, List
 
 
 def breaks(
     route_distance: float,
     average_speed: float = 60,
-    break_per_minutes_traveled: float = 180
+    break_per_minutes_traveled: float = 180,
 ) -> Dict[str, List[float]]:
     """Generate places to take breaks from driving.
 
@@ -504,9 +513,8 @@ def breaks(
         break_points.append(current_distance)
         current_distance += break_per_minutes_traveled
 
-    return {
-        "break_points": break_points
-    }
+    return {"break_points": break_points}
+
 
 from typing import Dict
 
@@ -550,6 +558,7 @@ def cancel_flight(departure_airport: str, arrival_airport: str) -> Dict[str, str
             "message": f"Failed to cancel the flight from {departure_airport} to {arrival_airport}. Please try again later.",
         }
 
+
 from typing import Dict
 
 
@@ -588,6 +597,7 @@ def cancel_reservation(reservation_id: str) -> Dict[str, str]:
         "status": "canceled",
     }
 
+
 from typing import Dict
 
 
@@ -616,6 +626,7 @@ def change_class(seating_class: str) -> Dict[str, str]:
         "confirmation": f"Seating class changed to {seating_class} successfully.",
     }
 
+
 from typing import Dict, Union
 
 
@@ -631,16 +642,16 @@ def check_flight_status(flight_code: str) -> Dict[str, Union[str, bool]]:
             - status: The current status of the flight (e.g. 'on time', 'delayed', 'cancelled')
             - gate_open: Boolean indicating if the gate is open for boarding
     """
-    
+
     sample_statuses = {
         "AA123": {"status": "on time", "gate_open": True},
         "BA456": {"status": "delayed", "gate_open": False},
         "DL789": {"status": "cancelled", "gate_open": False},
     }
-    
+
     if flight_code not in sample_statuses:
         raise ValueError(f"Flight code not recognized: {flight_code}")
-    
+
     flight_info = sample_statuses[flight_code]
     return {
         "flight_code": flight_code,
@@ -648,8 +659,9 @@ def check_flight_status(flight_code: str) -> Dict[str, Union[str, bool]]:
         "gate_open": flight_info["gate_open"],
     }
 
-from typing import Dict, List, Literal, Union
+
 import hashlib
+from typing import Dict, List, Literal, Union
 
 
 def create_traveling_frame(
@@ -693,7 +705,9 @@ def create_traveling_frame(
         # Generate a hash-based jersey number if not provided
         if "jersey_number" not in player or player["jersey_number"] is None:
             hash_input = f"{name}{dob}".encode()
-            player["jersey_number"] = int(hashlib.md5(hash_input).hexdigest(), 16) % 99 + 1
+            player["jersey_number"] = (
+                int(hashlib.md5(hash_input).hexdigest(), 16) % 99 + 1
+            )
 
         # Ensure secondary_positions is a list
         if "secondary_positions" not in player:
@@ -708,8 +722,9 @@ def create_traveling_frame(
         "players": players,
     }
 
-from typing import Dict, List, Union
+
 from datetime import datetime
+from typing import Dict, List, Union
 
 
 def filter_flight_info(
@@ -774,7 +789,9 @@ def filter_flight_info(
         },
     ]
 
-    def time_filter(flight_time: datetime, before: Union[str, None], after: Union[str, None]) -> bool:
+    def time_filter(
+        flight_time: datetime, before: Union[str, None], after: Union[str, None]
+    ) -> bool:
         if before and flight_time >= datetime.fromisoformat(before):
             return False
         if after and flight_time <= datetime.fromisoformat(after):
@@ -782,10 +799,13 @@ def filter_flight_info(
         return True
 
     filtered_flights = [
-        flight for flight in sample_flights
+        flight
+        for flight in sample_flights
         if flight["departure_airport"] == departure_airport
         and flight["arrival_airport"] == arrival_airport
-        and time_filter(flight["departure_time"], departure_time_before, departure_time_after)
+        and time_filter(
+            flight["departure_time"], departure_time_before, departure_time_after
+        )
         and time_filter(flight["arrival_time"], arrival_time_before, arrival_time_after)
         and (airline is None or flight["airline"] == airline)
         and (aircraft_type is None or flight["aircraft_type"] == aircraft_type)
@@ -793,10 +813,13 @@ def filter_flight_info(
 
     return filtered_flights
 
+
 from typing import Dict, List, Union
 
 
-def find_airports(city: str, state: Union[str, None] = None, country: str = None) -> Dict[str, Union[str, List[str]]]:
+def find_airports(
+    city: str, state: Union[str, None] = None, country: str = None
+) -> Dict[str, Union[str, List[str]]]:
     """Find all airports located in a specified city.
 
     Args:
@@ -814,9 +837,20 @@ def find_airports(city: str, state: Union[str, None] = None, country: str = None
 
     # Sample data for demonstration purposes
     sample_data = {
-        ("New York", "USA"): ["John F. Kennedy International Airport", "LaGuardia Airport", "Newark Liberty International Airport"],
-        ("Los Angeles", "USA"): ["Los Angeles International Airport", "Hollywood Burbank Airport"],
-        ("London", "UK"): ["Heathrow Airport", "Gatwick Airport", "London City Airport"],
+        ("New York", "USA"): [
+            "John F. Kennedy International Airport",
+            "LaGuardia Airport",
+            "Newark Liberty International Airport",
+        ],
+        ("Los Angeles", "USA"): [
+            "Los Angeles International Airport",
+            "Hollywood Burbank Airport",
+        ],
+        ("London", "UK"): [
+            "Heathrow Airport",
+            "Gatwick Airport",
+            "London City Airport",
+        ],
     }
 
     key = (city, country)
@@ -828,6 +862,7 @@ def find_airports(city: str, state: Union[str, None] = None, country: str = None
         "airports": sample_data[key],
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -837,7 +872,7 @@ def find_flights(
     departure_date: str,
     return_date: Union[str, None] = None,
     is_round_trip: bool = False,
-    is_nonstop: bool = False
+    is_nonstop: bool = False,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Find available flights given a departure city, arrival city, and trip type.
 
@@ -865,7 +900,7 @@ def find_flights(
             "departure_time": "08:00 AM",
             "arrival_time": "11:00 AM",
             "price": 250.00,
-            "nonstop": True
+            "nonstop": True,
         },
         {
             "flight_number": "DL456",
@@ -873,7 +908,7 @@ def find_flights(
             "departure_time": "09:30 AM",
             "arrival_time": "12:30 PM",
             "price": 200.00,
-            "nonstop": False
+            "nonstop": False,
         },
         {
             "flight_number": "UA789",
@@ -881,8 +916,8 @@ def find_flights(
             "departure_time": "07:00 AM",
             "arrival_time": "10:00 AM",
             "price": 300.00,
-            "nonstop": True
-        }
+            "nonstop": True,
+        },
     ]
 
     # Filter flights based on nonstop preference
@@ -898,7 +933,7 @@ def find_flights(
                 "departure_time": "04:00 PM",
                 "arrival_time": "07:00 PM",
                 "price": 250.00,
-                "nonstop": True
+                "nonstop": True,
             },
             {
                 "flight_number": "DL654",
@@ -906,8 +941,8 @@ def find_flights(
                 "departure_time": "05:30 PM",
                 "arrival_time": "08:30 PM",
                 "price": 200.00,
-                "nonstop": False
-            }
+                "nonstop": False,
+            },
         ]
         if is_nonstop:
             return_flights = [flight for flight in return_flights if flight["nonstop"]]
@@ -916,8 +951,9 @@ def find_flights(
     return {
         "departure_city": departure_city,
         "arrival_city": arrival_city,
-        "flights": sample_flights
+        "flights": sample_flights,
     }
+
 
 from typing import Dict, List
 
@@ -939,14 +975,20 @@ def find_flights_by_route(
             - date: Date of the flights
             - flights: List of available flights with details
     """
-    
+
     # Sample data generation based on hash of input parameters
     sample_flights = [
         {
             "flight_number": f"FL{hash((origin_airport_code, destination_airport_code, date, i)) % 1000:03}",
             "departure_time": f"{10 + i}:00",
             "arrival_time": f"{13 + i}:00",
-            "price": round(200 + (hash((origin_airport_code, destination_airport_code, date, i)) % 100), 2),
+            "price": round(
+                200
+                + (
+                    hash((origin_airport_code, destination_airport_code, date, i)) % 100
+                ),
+                2,
+            ),
         }
         for i in range(3)
     ]
@@ -961,10 +1003,13 @@ def find_flights_by_route(
         "flights": sample_flights,
     }
 
+
 from typing import Dict, List
 
 
-def find_hotel(location: str, is_open: bool = False) -> Dict[str, List[Dict[str, Union[str, bool]]]]:
+def find_hotel(
+    location: str, is_open: bool = False
+) -> Dict[str, List[Dict[str, Union[str, bool]]]]:
     """Find hotels near a given location.
 
     Args:
@@ -999,8 +1044,9 @@ def find_hotel(location: str, is_open: bool = False) -> Dict[str, List[Dict[str,
 
     return {"hotels": hotels}
 
-from typing import Dict, List, Union
+
 import hashlib
+from typing import Dict, List, Union
 
 
 def find_hotels(
@@ -1028,28 +1074,30 @@ def find_hotels(
     # Generate a consistent but varied list of hotels based on city name
     hash_seed = hashlib.md5(city.encode()).hexdigest()
     hotel_names = [
-        "Grand Plaza", "City Inn", "Comfort Stay", "Luxury Suites", "Budget Lodge"
+        "Grand Plaza",
+        "City Inn",
+        "Comfort Stay",
+        "Luxury Suites",
+        "Budget Lodge",
     ]
     hotels = []
     for i in range(3):  # Simulate finding 3 hotels
         hotel_name = hotel_names[int(hash_seed[i], 16) % len(hotel_names)]
         price_per_night = 100 + (int(hash_seed[i + 1], 16) % 100)
         rating = 3 + (int(hash_seed[i + 2], 16) % 3) + 0.5
-        hotels.append({
-            "name": hotel_name,
-            "price_per_night": price_per_night,
-            "rating": rating
-        })
+        hotels.append(
+            {"name": hotel_name, "price_per_night": price_per_night, "rating": rating}
+        )
 
-    return {
-        "city": city,
-        "hotels": hotels
-    }
+    return {"city": city, "hotels": hotels}
+
 
 from typing import Dict, List, Union
 
 
-def find_rest_stops(route: str, radius_miles: float = 10) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def find_rest_stops(
+    route: str, radius_miles: float = 10
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Find rest stops along a specified route within a given radius.
 
     Args:
@@ -1062,19 +1110,35 @@ def find_rest_stops(route: str, radius_miles: float = 10) -> Dict[str, Union[str
             - radius_miles: The search radius used
             - rest_stops: List of rest stops with details including name, distance from route, and amenities
     """
-    
+
     # Sample data based on hash of the route to ensure consistent but varied results
     sample_data = {
         "I-95": [
-            {"name": "Rest Stop A", "distance_miles": 5.0, "amenities": ["restrooms", "food", "fuel"]},
-            {"name": "Rest Stop B", "distance_miles": 8.5, "amenities": ["restrooms", "picnic area"]},
+            {
+                "name": "Rest Stop A",
+                "distance_miles": 5.0,
+                "amenities": ["restrooms", "food", "fuel"],
+            },
+            {
+                "name": "Rest Stop B",
+                "distance_miles": 8.5,
+                "amenities": ["restrooms", "picnic area"],
+            },
         ],
         "Route 66": [
-            {"name": "Rest Stop C", "distance_miles": 3.2, "amenities": ["restrooms", "food"]},
-            {"name": "Rest Stop D", "distance_miles": 9.0, "amenities": ["restrooms", "fuel"]},
+            {
+                "name": "Rest Stop C",
+                "distance_miles": 3.2,
+                "amenities": ["restrooms", "food"],
+            },
+            {
+                "name": "Rest Stop D",
+                "distance_miles": 9.0,
+                "amenities": ["restrooms", "fuel"],
+            },
         ],
     }
-    
+
     if route not in sample_data:
         raise ValueError(f"Route not supported: {route}")
 
@@ -1088,6 +1152,7 @@ def find_rest_stops(route: str, radius_miles: float = 10) -> Dict[str, Union[str
         "rest_stops": rest_stops,
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
@@ -1095,7 +1160,9 @@ def generate_budget(
     locations: List[str],
     length_days: int,
     comfort: Literal["Low", "Medium", "High"],
-    activities: List[Literal["Skiing", "Beach", "Hiking", "Museums", "Restaurants"]] = []
+    activities: List[
+        Literal["Skiing", "Beach", "Hiking", "Museums", "Restaurants"]
+    ] = [],
 ) -> Dict[str, Union[float, Dict[str, float]]]:
     """Generate a daily budget for a trip based on locations, length, comfort, and activities.
 
@@ -1111,26 +1178,43 @@ def generate_budget(
             - daily_budget: Daily budget breakdown by category
     """
     if not locations or length_days <= 0:
-        raise ValueError("Locations must be provided and length_days must be greater than 0.")
+        raise ValueError(
+            "Locations must be provided and length_days must be greater than 0."
+        )
 
-    comfort_costs = {
-        "Low": 50,
-        "Medium": 100,
-        "High": 200
-    }
+    comfort_costs = {"Low": 50, "Medium": 100, "High": 200}
 
     activity_costs = {
         "Skiing": 150,
         "Beach": 50,
         "Hiking": 30,
         "Museums": 20,
-        "Restaurants": 70
+        "Restaurants": 70,
+        "road trip": 80,
     }
 
-    base_cost_per_day = comfort_costs[comfort]
-    activity_cost_per_day = sum(activity_costs.get(activity, 0) for activity in activities)
+    location_costs = {
+        "Nuremburg": 85,
+        "Berlin": 95,
+        "Munich": 110,
+    }
 
-    daily_budget = base_cost_per_day + activity_cost_per_day
+    # Parse locations and activities from comma-separated strings
+    locations_list = [loc.strip() for loc in locations.split(",")]
+    activities_list = [act.strip() for act in activities.split(",")]
+
+    base_cost_per_day = comfort_costs[comfort]
+    activity_cost_per_day = sum(
+        activity_costs.get(activity, 0) for activity in activities_list
+    )
+
+    # Handle multiple locations - calculate average location cost
+    location_costs_sum = sum(
+        location_costs.get(location, 0) for location in locations_list
+    )
+    location_cost_per_day = location_costs_sum / len(locations_list)
+
+    daily_budget = base_cost_per_day + activity_cost_per_day + location_cost_per_day
     total_budget = daily_budget * length_days
 
     return {
@@ -1138,14 +1222,17 @@ def generate_budget(
         "daily_budget": {
             "accommodation": base_cost_per_day,
             "activities": activity_cost_per_day,
-            "total": daily_budget
-        }
+            "total": daily_budget,
+        },
     }
+
 
 from typing import Dict, List, Union
 
 
-def get_attractions(location: str, radius_miles: float = 15) -> Dict[str, Union[str, float, List[str]]]:
+def get_attractions(
+    location: str, radius_miles: float = 15
+) -> Dict[str, Union[str, float, List[str]]]:
     """Recommends popular tourist attractions or points of interest along a route or near a location.
 
     Args:
@@ -1163,6 +1250,7 @@ def get_attractions(location: str, radius_miles: float = 15) -> Dict[str, Union[
         "New York": ["Statue of Liberty", "Central Park", "Metropolitan Museum of Art"],
         "San Francisco": ["Golden Gate Bridge", "Alcatraz Island", "Fisherman's Wharf"],
         "London": ["British Museum", "Tower of London", "Buckingham Palace"],
+        "Carlisle": ["International House of Potato"],
     }
 
     if location not in sample_data:
@@ -1175,13 +1263,13 @@ def get_attractions(location: str, radius_miles: float = 15) -> Dict[str, Union[
         "attractions": attractions,
     }
 
-from typing import Dict, List, Union, Optional
+
 from datetime import datetime
+from typing import Dict, List, Optional, Union
 
 
 def get_campaign_travel(
-    candidate_name: str,
-    date_range: Optional[Dict[str, Optional[str]]] = None
+    candidate_name: str, date_range: Optional[Dict[str, Optional[str]]] = None
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
     """Retrieve public campaign travel information, including cities visited and dates.
 
@@ -1194,7 +1282,7 @@ def get_campaign_travel(
             - candidate_name: Name of the candidate
             - travel_records: List of dictionaries with 'city' and 'date' of visit
     """
-    
+
     # Sample travel data for demonstration purposes
     sample_data = {
         "John Doe": [
@@ -1215,10 +1303,15 @@ def get_campaign_travel(
     travel_records = sample_data[candidate_name]
 
     if date_range:
-        start_date = datetime.strptime(date_range.get("start_date", "1900-01-01"), "%Y-%m-%d")
-        end_date = datetime.strptime(date_range.get("end_date", "2100-01-01"), "%Y-%m-%d")
+        start_date = datetime.strptime(
+            date_range.get("start_date", "1900-01-01"), "%Y-%m-%d"
+        )
+        end_date = datetime.strptime(
+            date_range.get("end_date", "2100-01-01"), "%Y-%m-%d"
+        )
         travel_records = [
-            record for record in travel_records
+            record
+            for record in travel_records
             if start_date <= record["date"] <= end_date
         ]
 
@@ -1226,6 +1319,7 @@ def get_campaign_travel(
         "candidate_name": candidate_name,
         "travel_records": travel_records,
     }
+
 
 from typing import Dict, List, Union
 
@@ -1254,15 +1348,41 @@ def get_campgrounds(
         raise ValueError("Limit must be a positive integer")
 
     sample_campgrounds = [
-        {"name": "Sunny Meadows", "parkCode": "YNP", "stateCode": "CA", "availableSites": 15},
-        {"name": "Lakeside Retreat", "parkCode": "GNP", "stateCode": "MT", "availableSites": 5},
-        {"name": "Mountain View", "parkCode": "ZNP", "stateCode": "UT", "availableSites": 10},
-        {"name": "Forest Haven", "parkCode": "YNP", "stateCode": "WY", "availableSites": 8},
-        {"name": "Desert Oasis", "parkCode": "DNP", "stateCode": "AZ", "availableSites": 12},
+        {
+            "name": "Sunny Meadows",
+            "parkCode": "YNP",
+            "stateCode": "CA",
+            "availableSites": 15,
+        },
+        {
+            "name": "Lakeside Retreat",
+            "parkCode": "GNP",
+            "stateCode": "MT",
+            "availableSites": 5,
+        },
+        {
+            "name": "Mountain View",
+            "parkCode": "ZNP",
+            "stateCode": "UT",
+            "availableSites": 10,
+        },
+        {
+            "name": "Forest Haven",
+            "parkCode": "YNP",
+            "stateCode": "WY",
+            "availableSites": 8,
+        },
+        {
+            "name": "Desert Oasis",
+            "parkCode": "DNP",
+            "stateCode": "AZ",
+            "availableSites": 12,
+        },
     ]
 
     filtered_campgrounds = [
-        campground for campground in sample_campgrounds
+        campground
+        for campground in sample_campgrounds
         if (not parkCode or campground["parkCode"] in parkCode.split(","))
         and (not stateCode or campground["stateCode"] in stateCode.split(","))
     ]
@@ -1273,8 +1393,9 @@ def get_campgrounds(
         "campgrounds": filtered_campgrounds[:limit],
     }
 
-from typing import Dict, Union, Optional
+
 import hashlib
+from typing import Dict, Optional, Union
 
 
 def get_flight_info(
@@ -1351,11 +1472,14 @@ def get_flight_info(
         "price": selected_flight["price"],
     }
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
-def get_flight_status_by_flight_number(flight_number: str, date: str) -> Dict[str, Union[str, Dict[str, str]]]:
+def get_flight_status_by_flight_number(
+    flight_number: str, date: str
+) -> Dict[str, Union[str, Dict[str, str]]]:
     """Get the real-time status, including departure/arrival times and gate information, for a specific flight.
 
     Args:
@@ -1374,21 +1498,29 @@ def get_flight_status_by_flight_number(flight_number: str, date: str) -> Dict[st
                 - time: Scheduled arrival time
                 - gate: Arrival gate
     """
-    
+
     # Generate mock data based on flight number and date
     hash_input = f"{flight_number}-{date}".encode()
     hash_value = hashlib.md5(hash_input).hexdigest()
-    
+
     # Simulate status based on hash value
     status_options = ["On Time", "Delayed", "Cancelled"]
     status = status_options[int(hash_value[0], 16) % len(status_options)]
-    
+
     # Simulate departure and arrival times and gates
-    departure_time = f"{int(hash_value[1:3], 16) % 24:02}:{int(hash_value[3:5], 16) % 60:02}"
-    arrival_time = f"{int(hash_value[5:7], 16) % 24:02}:{int(hash_value[7:9], 16) % 60:02}"
-    departure_gate = f"{chr(65 + int(hash_value[9], 16) % 6)}{int(hash_value[10], 16) % 30 + 1}"
-    arrival_gate = f"{chr(65 + int(hash_value[11], 16) % 6)}{int(hash_value[12], 16) % 30 + 1}"
-    
+    departure_time = (
+        f"{int(hash_value[1:3], 16) % 24:02}:{int(hash_value[3:5], 16) % 60:02}"
+    )
+    arrival_time = (
+        f"{int(hash_value[5:7], 16) % 24:02}:{int(hash_value[7:9], 16) % 60:02}"
+    )
+    departure_gate = (
+        f"{chr(65 + int(hash_value[9], 16) % 6)}{int(hash_value[10], 16) % 30 + 1}"
+    )
+    arrival_gate = (
+        f"{chr(65 + int(hash_value[11], 16) % 6)}{int(hash_value[12], 16) % 30 + 1}"
+    )
+
     return {
         "flight_number": flight_number,
         "date": date,
@@ -1402,6 +1534,7 @@ def get_flight_status_by_flight_number(flight_number: str, date: str) -> Dict[st
             "gate": arrival_gate,
         },
     }
+
 
 from typing import Dict, List
 
@@ -1432,6 +1565,12 @@ def get_flight_times(
             {"departure_time": "13:00", "arrival_time": "15:15"},
             {"departure_time": "17:00", "arrival_time": "19:15"},
         ],
+        ("MAN", "BFS", "2023-10-17"): [
+            {"departure_time": "07:30", "arrival_time": "08:45"},
+            {"departure_time": "11:20", "arrival_time": "12:35"},
+            {"departure_time": "15:45", "arrival_time": "17:00"},
+            {"departure_time": "19:10", "arrival_time": "20:25"},
+        ],
     }
 
     key = (departure_airport, arrival_airport, date)
@@ -1442,10 +1581,13 @@ def get_flight_times(
         "flights": sample_flights[key],
     }
 
+
 from typing import Dict, List
 
 
-def get_flights(from_city: str, to_city: str) -> Dict[str, List[Dict[str, Union[str, int]]]]:
+def get_flights(
+    from_city: str, to_city: str
+) -> Dict[str, List[Dict[str, Union[str, int]]]]:
     """Returns flight routes for a given day from one city to another.
 
     Args:
@@ -1463,25 +1605,54 @@ def get_flights(from_city: str, to_city: str) -> Dict[str, List[Dict[str, Union[
 
     sample_routes = {
         ("New York", "London"): [
-            {"flight_number": "NY100", "departure_time": "08:00", "arrival_time": "20:00", "duration": 480},
-            {"flight_number": "NY200", "departure_time": "16:00", "arrival_time": "04:00", "duration": 480},
+            {
+                "flight_number": "NY100",
+                "departure_time": "08:00",
+                "arrival_time": "20:00",
+                "duration": 480,
+            },
+            {
+                "flight_number": "NY200",
+                "departure_time": "16:00",
+                "arrival_time": "04:00",
+                "duration": 480,
+            },
         ],
         ("Los Angeles", "Tokyo"): [
-            {"flight_number": "LA300", "departure_time": "10:00", "arrival_time": "14:00", "duration": 720},
-            {"flight_number": "LA400", "departure_time": "22:00", "arrival_time": "02:00", "duration": 720},
+            {
+                "flight_number": "LA300",
+                "departure_time": "10:00",
+                "arrival_time": "14:00",
+                "duration": 720,
+            },
+            {
+                "flight_number": "LA400",
+                "departure_time": "22:00",
+                "arrival_time": "02:00",
+                "duration": 720,
+            },
         ],
         ("Paris", "Rome"): [
-            {"flight_number": "PR500", "departure_time": "09:00", "arrival_time": "11:00", "duration": 120},
-            {"flight_number": "PR600", "departure_time": "15:00", "arrival_time": "17:00", "duration": 120},
+            {
+                "flight_number": "PR500",
+                "departure_time": "09:00",
+                "arrival_time": "11:00",
+                "duration": 120,
+            },
+            {
+                "flight_number": "PR600",
+                "departure_time": "15:00",
+                "arrival_time": "17:00",
+                "duration": 120,
+            },
         ],
     }
 
     if (from_city, to_city) not in sample_routes:
         raise ValueError(f"No flights available from {from_city} to {to_city}")
 
-    return {
-        "flights": sample_routes[(from_city, to_city)]
-    }
+    return {"flights": sample_routes[(from_city, to_city)]}
+
 
 from typing import Dict, Union
 
@@ -1497,23 +1668,26 @@ def get_frequent_flyer_miles(account_token: str) -> Dict[str, Union[str, int]]:
             - account_token: The account token provided
             - miles: The number of frequent flyer miles associated with the account
     """
-    
+
     # Simulated hash-based generation for consistent sample data
     if not account_token:
         raise ValueError("Account token must be provided.")
-    
+
     # Generate a pseudo-random number of miles based on the account token
     miles = sum(ord(char) for char in account_token) % 10000
-    
+
     return {
         "account_token": account_token,
         "miles": miles,
     }
 
+
 from typing import Dict, List, Union
 
 
-def get_hiking_trails(city: str, max_length: Union[float, None] = None) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def get_hiking_trails(
+    city: str, max_length: Union[float, None] = None
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Returns a list of hiking trails based on a given city.
 
     Args:
@@ -1528,7 +1702,7 @@ def get_hiking_trails(city: str, max_length: Union[float, None] = None) -> Dict[
                 - length: Length of the trail in miles
                 - difficulty: Difficulty level of the trail
     """
-    
+
     sample_trails = {
         "Denver": [
             {"name": "Mount Falcon", "length": 2.7, "difficulty": "easy"},
@@ -1546,18 +1720,19 @@ def get_hiking_trails(city: str, max_length: Union[float, None] = None) -> Dict[
             {"name": "Muir Woods Trail", "length": 6.0, "difficulty": "moderate"},
         ],
     }
-    
+
     if city not in sample_trails:
         raise ValueError(f"City not supported: {city}")
-    
+
     trails = sample_trails[city]
     if max_length is not None:
         trails = [trail for trail in trails if trail["length"] <= max_length]
-    
+
     return {
         "city": city,
         "trails": trails,
     }
+
 
 from typing import Dict, List, Optional
 
@@ -1573,13 +1748,13 @@ def get_holiday_destinations(origin: Optional[str] = None) -> Dict[str, List[str
             - origin: Origin location name if provided, otherwise 'Worldwide'
             - destinations: List of recommended holiday destinations
     """
-    
+
     destinations_by_origin = {
         "New York": ["Miami", "Los Angeles", "Las Vegas"],
         "London": ["Paris", "Barcelona", "Rome"],
         "Tokyo": ["Kyoto", "Osaka", "Hokkaido"],
     }
-    
+
     default_destinations = ["Bali", "Maldives", "Santorini"]
 
     if origin and origin not in destinations_by_origin:
@@ -1589,6 +1764,7 @@ def get_holiday_destinations(origin: Optional[str] = None) -> Dict[str, List[str
         "origin": origin if origin else "Worldwide",
         "destinations": destinations_by_origin.get(origin, default_destinations),
     }
+
 
 from typing import Dict, List, Union
 
@@ -1608,14 +1784,38 @@ def get_parks(
             - parks: List of dictionaries with park information
             - message: Status message
     """
-    
+
     sample_parks = {
-        "YELL": {"name": "Yellowstone", "state": "WY", "contact": "307-344-7381", "hours": "24/7", "fee": 35},
-        "YOSE": {"name": "Yosemite", "state": "CA", "contact": "209-372-0200", "hours": "24/7", "fee": 35},
-        "GRCA": {"name": "Grand Canyon", "state": "AZ", "contact": "928-638-7888", "hours": "24/7", "fee": 35},
-        "ZION": {"name": "Zion", "state": "UT", "contact": "435-772-3256", "hours": "24/7", "fee": 35},
+        "YELL": {
+            "name": "Yellowstone",
+            "state": "WY",
+            "contact": "307-344-7381",
+            "hours": "24/7",
+            "fee": 35,
+        },
+        "YOSE": {
+            "name": "Yosemite",
+            "state": "CA",
+            "contact": "209-372-0200",
+            "hours": "24/7",
+            "fee": 35,
+        },
+        "GRCA": {
+            "name": "Grand Canyon",
+            "state": "AZ",
+            "contact": "928-638-7888",
+            "hours": "24/7",
+            "fee": 35,
+        },
+        "ZION": {
+            "name": "Zion",
+            "state": "UT",
+            "contact": "435-772-3256",
+            "hours": "24/7",
+            "fee": 35,
+        },
     }
-    
+
     park_codes = parkCode.split(",") if parkCode else sample_parks.keys()
     state_codes = stateCode.split(",") if stateCode else []
 
@@ -1624,14 +1824,16 @@ def get_parks(
         if code in sample_parks:
             park = sample_parks[code]
             if not state_codes or park["state"] in state_codes:
-                parks.append({
-                    "code": code,
-                    "name": park["name"],
-                    "state": park["state"],
-                    "contact": park["contact"],
-                    "hours": park["hours"],
-                    "fee": park["fee"]
-                })
+                parks.append(
+                    {
+                        "code": code,
+                        "name": park["name"],
+                        "state": park["state"],
+                        "contact": park["contact"],
+                        "hours": park["hours"],
+                        "fee": park["fee"],
+                    }
+                )
         if len(parks) >= limit:
             break
 
@@ -1640,8 +1842,9 @@ def get_parks(
 
     return {"parks": parks, "message": "Parks retrieved successfully."}
 
-from typing import Dict, Union, Optional
+
 import hashlib
+from typing import Dict, Optional, Union
 
 
 def get_ticket_prices(
@@ -1650,7 +1853,7 @@ def get_ticket_prices(
     date: str,
     return_date: Optional[str] = None,
     adults: int = 1,
-    currency: str = "USD"
+    currency: str = "USD",
 ) -> Dict[str, Union[str, float, int]]:
     """Returns ticket prices for travel from an origin to a destination.
 
@@ -1693,13 +1896,18 @@ def get_ticket_prices(
         "price": total_price,
     }
 
+
 from typing import Dict, Literal
 
 
 def make_booking(
     booking_type: Literal[
-        "Badminton Court", "Squash Court", "Climbing Wall", 
-        "Spin Session", "Astro Turf", "Tennis Court"
+        "Badminton Court",
+        "Squash Court",
+        "Climbing Wall",
+        "Spin Session",
+        "Astro Turf",
+        "Tennis Court",
     ],
     time: str,
     name_of_booking: str,
@@ -1726,10 +1934,14 @@ def make_booking(
         raise ValueError("All parameters are required.")
 
     # Simulate a booking ID generation
-    booking_id = f"{hash((booking_type, time, name_of_booking, membership_type)) % 10000:04}"
+    booking_id = (
+        f"{hash((booking_type, time, name_of_booking, membership_type)) % 10000:04}"
+    )
 
     # Simulate a booking confirmation status
-    status = "Confirmed" if membership_type in ["Standard", "Gold", "Diamond"] else "Pending"
+    status = (
+        "Confirmed" if membership_type in ["Standard", "Gold", "Diamond"] else "Pending"
+    )
 
     return {
         "booking_id": booking_id,
@@ -1739,6 +1951,7 @@ def make_booking(
         "membership_type": membership_type,
         "status": status,
     }
+
 
 from typing import Dict, List, Optional
 
@@ -1760,19 +1973,24 @@ def route_plan(
             - route: List of cities in the planned route
             - avoided: List of cities that were avoided
     """
-    
+
     # Sample data for demonstration purposes
     sample_routes = {
-        ("New York", "Los Angeles"): ["Philadelphia", "Columbus", "Denver", "Las Vegas"],
+        ("New York", "Los Angeles"): [
+            "Philadelphia",
+            "Columbus",
+            "Denver",
+            "Las Vegas",
+        ],
         ("San Francisco", "Seattle"): ["Sacramento", "Portland"],
         ("Miami", "Chicago"): ["Atlanta", "Nashville", "Indianapolis"],
     }
-    
+
     # Determine the route based on the start and end locations
     route_key = (start_location, end_location)
     if route_key not in sample_routes:
         raise ValueError(f"Route not supported: {start_location} to {end_location}")
-    
+
     route = sample_routes[route_key]
     avoided = []
 
@@ -1788,6 +2006,7 @@ def route_plan(
         "route": route,
         "avoided": avoided,
     }
+
 
 from typing import Dict, List, Union
 
@@ -1824,12 +2043,28 @@ def search_accommodation(
 
     sample_listings = {
         "USA": [
-            {"name": "Cozy Cottage", "price_per_night": 120, "amenities": ["wifi", "kitchen"]},
-            {"name": "Luxury Villa", "price_per_night": 350, "amenities": ["pool", "wifi", "gym"]},
+            {
+                "name": "Cozy Cottage",
+                "price_per_night": 120,
+                "amenities": ["wifi", "kitchen"],
+            },
+            {
+                "name": "Luxury Villa",
+                "price_per_night": 350,
+                "amenities": ["pool", "wifi", "gym"],
+            },
         ],
         "Japan": [
-            {"name": "Tokyo Apartment", "price_per_night": 90, "amenities": ["wifi", "kitchen"]},
-            {"name": "Kyoto Ryokan", "price_per_night": 200, "amenities": ["onsen", "wifi"]},
+            {
+                "name": "Tokyo Apartment",
+                "price_per_night": 90,
+                "amenities": ["wifi", "kitchen"],
+            },
+            {
+                "name": "Kyoto Ryokan",
+                "price_per_night": 200,
+                "amenities": ["onsen", "wifi"],
+            },
         ],
     }
 
@@ -1839,17 +2074,21 @@ def search_accommodation(
     listings = sample_listings[country]
 
     if city:
-        listings = [listing for listing in listings if city.lower() in listing["name"].lower()]
+        listings = [
+            listing for listing in listings if city.lower() in listing["name"].lower()
+        ]
 
     if price_range:
         listings = [
-            listing for listing in listings
+            listing
+            for listing in listings
             if price_range["min"] <= listing["price_per_night"] <= price_range["max"]
         ]
 
     if amenities:
         listings = [
-            listing for listing in listings
+            listing
+            for listing in listings
             if all(amenity in listing["amenities"] for amenity in amenities)
         ]
 
@@ -1858,6 +2097,7 @@ def search_accommodation(
         "city": city or "Any",
         "listings": listings,
     }
+
 
 from typing import Dict, Optional, Union
 
@@ -1895,7 +2135,9 @@ def search_airfare(
         raise ValueError("Both departure_airport and arrival_airport are required.")
 
     # Mocked sample data based on hash of input parameters for consistency
-    base_price = hash((departure_airport, arrival_airport, airline, flight_number)) % 500 + 100
+    base_price = (
+        hash((departure_airport, arrival_airport, airline, flight_number)) % 500 + 100
+    )
     currency_conversion = {
         "USD": 1.0,
         "EUR": 0.85,
@@ -1918,8 +2160,9 @@ def search_airfare(
         "currency": currency,
     }
 
-from typing import Dict, List, Union
+
 import hashlib
+from typing import Dict, List, Union
 
 
 def search_available_flights(
@@ -1979,6 +2222,7 @@ def search_available_flights(
         "flights": flights,
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -2031,7 +2275,9 @@ def search_available_hotels(
 
     available_hotels = []
     for hotel in sample_hotels[city]:
-        if hotel["beds"] >= number_of_beds and (max_price is None or hotel["price_per_night"] <= max_price):
+        if hotel["beds"] >= number_of_beds and (
+            max_price is None or hotel["price_per_night"] <= max_price
+        ):
             available_hotels.append(hotel)
 
     return {
@@ -2039,8 +2285,9 @@ def search_available_hotels(
         "hotels": available_hotels,
     }
 
-from typing import Dict, List, Literal, Union
+
 import hashlib
+from typing import Dict, List, Literal, Union
 
 
 def search_flights(
@@ -2069,7 +2316,7 @@ def search_flights(
             - arrival: Arrival city or IATA code
             - flights: List of available flights with details
     """
-    
+
     # Simulate flight data generation using hash-based method for consistency
     def generate_flight_id(departure, arrival, date, index):
         hash_input = f"{departure}{arrival}{date}{index}".encode()
@@ -2079,32 +2326,33 @@ def search_flights(
     flights = []
     for i in range(3):  # Simulate 3 flight options
         flight_id = generate_flight_id(departure, arrival, departure_date, i)
-        flights.append({
-            "flight_id": flight_id,
-            "airline": f"Airline {i + 1}",
-            "departure_time": f"{10 + i}:00",
-            "arrival_time": f"{14 + i}:00",
-            "duration": 4.0 + i * 0.5,  # Duration in hours
-            "cabin": cabin,
-            "nonstop": nonstop,
-            "red_eye": red_eye,
-            "price": 200.0 + i * 50.0  # Price in USD
-        })
+        flights.append(
+            {
+                "flight_id": flight_id,
+                "airline": f"Airline {i + 1}",
+                "departure_time": f"{10 + i}:00",
+                "arrival_time": f"{14 + i}:00",
+                "duration": 4.0 + i * 0.5,  # Duration in hours
+                "cabin": cabin,
+                "nonstop": nonstop,
+                "red_eye": red_eye,
+                "price": 200.0 + i * 50.0,  # Price in USD
+            }
+        )
 
-    return {
-        "departure": departure,
-        "arrival": arrival,
-        "flights": flights
-    }
+    return {"departure": departure, "arrival": arrival, "flights": flights}
 
-from typing import Dict, List, Literal, Union
+
 import hashlib
+from typing import Dict, List, Literal, Union
 
 
 def stops_along_route_find(
     start_location: str,
     end_location: str,
-    categories: List[Literal["gas", "food", "electric_charger", "coffee", "bathroom"]] = ["gas"]
+    categories: List[
+        Literal["gas", "food", "electric_charger", "coffee", "bathroom"]
+    ] = ["gas"],
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Suggest places to take a break from driving along a route.
 
@@ -2118,7 +2366,10 @@ def stops_along_route_find(
             - route: Description of the route
             - stops: List of suggested stops with details
     """
-    def generate_sample_data(location: str, category: str) -> Dict[str, Union[str, float]]:
+
+    def generate_sample_data(
+        location: str, category: str
+    ) -> Dict[str, Union[str, float]]:
         """Generate sample data for a stop based on location and category."""
         hash_input = f"{location}-{category}".encode()
         hash_value = hashlib.md5(hash_input).hexdigest()
@@ -2129,7 +2380,7 @@ def stops_along_route_find(
             "name": name,
             "category": category,
             "latitude": latitude,
-            "longitude": longitude
+            "longitude": longitude,
         }
 
     if not start_location or not end_location:
@@ -2140,10 +2391,8 @@ def stops_along_route_find(
         stops.append(generate_sample_data(start_location, category))
         stops.append(generate_sample_data(end_location, category))
 
-    return {
-        "route": f"From {start_location} to {end_location}",
-        "stops": stops
-    }
+    return {"route": f"From {start_location} to {end_location}", "stops": stops}
+
 
 from typing import Dict, Literal, Union
 
@@ -2153,7 +2402,7 @@ def trip_cost_est(
     end_location: str,
     detour_miles: float = 0,
     miles_per_gallon: float = 30,
-    lodging: Literal["car", "hotel", "motel", "campground"] = "motel"
+    lodging: Literal["car", "hotel", "motel", "campground"] = "motel",
 ) -> Dict[str, Union[float, str]]:
     """Estimate the total cost of a trip including fuel and lodging.
 
@@ -2213,4 +2462,3 @@ def trip_cost_est(
         "lodging_cost": lodging_cost,
         "total_miles": total_miles,
     }
-
