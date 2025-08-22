@@ -12,22 +12,54 @@
 import argparse
 import copy
 import datetime
+import importlib
 import inspect
 import json
 import os
+
 import sys
+
 import threading
 from concurrent.futures import as_completed, ThreadPoolExecutor
+from pathlib import Path
 from typing import Any, Dict, get_args, get_type_hints, List, Literal, Type, Union
 
 import openai
-
-# Import sample tools and create executor
-import sample_tools
 import yaml
 from file_search_tool import cleanup_file_search_function, create_file_search_function
 from rich.pretty import pprint
 from tqdm import tqdm
+
+
+def import_tools_from_directory():
+    """Import all functions from the tools directory."""
+    tools_dir = Path("tools")
+    all_tools = []
+
+    if tools_dir.exists():
+        # Add tools directory to path
+        sys.path.insert(0, str(tools_dir.parent))
+
+        for py_file in tools_dir.glob("*.py"):
+            if py_file.name in ["__init__.py", "registry.py"]:
+                continue
+
+            module_name = f"tools.{py_file.stem}"
+            try:
+                module = importlib.import_module(module_name)
+                # Get all functions from the module
+                functions = [
+                    obj
+                    for name, obj in inspect.getmembers(module)
+                    if inspect.isfunction(obj)
+                ]
+                all_tools.extend(functions)
+                print(f"Imported {len(functions)} tools from {module_name}")
+            except Exception as e:
+                print(f"Warning: Could not import {module_name}: {e}")
+
+    return all_tools
+
 
 # Thread-safe logging
 log_file_lock = threading.Lock()
@@ -390,27 +422,38 @@ Here is a list of functions in JSON format that you can invoke:\n\n"""
         required = []
 
         for param_name, param in sig.parameters.items():
-            param_type = hints[param_name]
-
-            # Handle Literal types
-            if hasattr(param_type, "__origin__") and param_type.__origin__ is Literal:
+            # Check if parameter has a type hint
+            if param_name not in hints:
+                # If no type hint, default to string type
                 properties[param_name] = {
                     "type": "string",
-                    "enum": list(get_args(param_type)),
                     "description": param_desc.get(param_name, ""),
                 }
-            # Handle basic types
             else:
-                type_map = {
-                    str: "string",
-                    int: "number",
-                    float: "number",
-                    bool: "boolean",
-                }
-                properties[param_name] = {
-                    "type": type_map.get(param_type, "string"),
-                    "description": param_desc.get(param_name, ""),
-                }
+                param_type = hints[param_name]
+
+                # Handle Literal types
+                if (
+                    hasattr(param_type, "__origin__")
+                    and param_type.__origin__ is Literal
+                ):
+                    properties[param_name] = {
+                        "type": "string",
+                        "enum": list(get_args(param_type)),
+                        "description": param_desc.get(param_name, ""),
+                    }
+                # Handle basic types
+                else:
+                    type_map = {
+                        str: "string",
+                        int: "number",
+                        float: "number",
+                        bool: "boolean",
+                    }
+                    properties[param_name] = {
+                        "type": type_map.get(param_type, "string"),
+                        "description": param_desc.get(param_name, ""),
+                    }
 
             # Check if parameter is required
             if param.default == inspect.Parameter.empty:
@@ -1005,10 +1048,11 @@ def load_conversations_from_yaml(filename):
     return data["conversations"]
 
 
-# Get all functions from sample_tools module
-tools = [
-    obj for name, obj in inspect.getmembers(sample_tools) if inspect.isfunction(obj)
-]
+# Import all tools from the tools directory
+tools = import_tools_from_directory()
+
+print(f"Loaded {len(tools)} total tools from tools/ directory")
+
 executor = ToolExecutor(*tools)
 
 # Set up argument parser
