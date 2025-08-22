@@ -39,10 +39,6 @@ def get_weather(
             {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
             {"day": "Tuesday", "temperature": 72.0, "condition": "cloudy"},
         ],
-        "London": [
-            {"day": "Monday", "temperature": 62.0, "condition": "rainy"},
-            {"day": "Tuesday", "temperature": 64.0, "condition": "sunny"},
-        ],
         "Sydney": [
             {"day": "Monday", "temperature": 77.0, "condition": "sunny"},
             {"day": "Tuesday", "temperature": 78.0, "condition": "windy"},

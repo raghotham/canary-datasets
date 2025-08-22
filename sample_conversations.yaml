@@ -43,14 +43,14 @@ conversations:
   - get_weather
   - convert_currency
   messages:
-  - What's the weather in London?
+  - What's the weather in London? # XFAIL -- not in the function
   - Convert 1000 JPY to CAD
 - name: Unsupported unit
   tools:
   - get_weather
   - convert_units
   messages:
-  - What's the temperature in Boston in Kelvin?
+  - What's the temperature in Boston in Kelvin? # XFAIL -- not in the function
 - name: Multiple tools in one turn
   tools:
   - get_weather
@@ -89,7 +89,7 @@ conversations:
   tools:
   - get_fruit_info
   messages:
-  - What is the color and weight of a dragonfruit?
+  - What is the color and weight of a dragonfruit? # XFAIL -- not in the function
   - Can you tell me about a mango instead?
 - name: Fruits and weather
   tools:
