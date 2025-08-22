@@ -1,11 +1,12 @@
-from typing import Dict, List, Union, Any
 # Transportation Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, List
+from typing import Any, Dict, List, Union
 
 
-def check_traffic(start_location: str, destination: str) -> Dict[str, Union[str, List[str]]]:
+def check_traffic(
+    start_location: str, destination: str
+) -> Dict[str, Union[str, List[str]]]:
     """Retrieves current traffic conditions along a specified route.
 
     Args:
@@ -18,7 +19,7 @@ def check_traffic(start_location: str, destination: str) -> Dict[str, Union[str,
             - destination: Ending point of the route
             - traffic_conditions: List of current traffic conditions
     """
-    
+
     if not start_location or not destination:
         raise ValueError("Both start_location and destination must be provided.")
 
@@ -26,9 +27,9 @@ def check_traffic(start_location: str, destination: str) -> Dict[str, Union[str,
     traffic_data = {
         "heavy": ["accident", "construction"],
         "moderate": ["roadwork", "event"],
-        "light": ["clear"]
+        "light": ["clear"],
     }
-    
+
     # Generate a hash-based index to simulate traffic conditions
     index = (hash(start_location) + hash(destination)) % 3
     conditions = list(traffic_data.keys())[index]
@@ -36,13 +37,16 @@ def check_traffic(start_location: str, destination: str) -> Dict[str, Union[str,
     return {
         "start_location": start_location,
         "destination": destination,
-        "traffic_conditions": traffic_data[conditions]
+        "traffic_conditions": traffic_data[conditions],
     }
+
 
 from typing import Dict, List, Union
 
 
-def get_gas_stations(location: str, radius_miles: float = 5) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def get_gas_stations(
+    location: str, radius_miles: float = 5
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Find nearby gas stations at a specific location.
 
     Args:
@@ -55,7 +59,7 @@ def get_gas_stations(location: str, radius_miles: float = 5) -> Dict[str, Union[
             - radius_miles: The search radius in miles
             - gas_stations: List of nearby gas stations with details
     """
-    
+
     sample_data = {
         "New York": [
             {"name": "Shell", "address": "123 Main St", "distance_miles": 1.2},
@@ -70,7 +74,7 @@ def get_gas_stations(location: str, radius_miles: float = 5) -> Dict[str, Union[
             {"name": "Citgo", "address": "303 Lake Shore Dr", "distance_miles": 2.9},
         ],
     }
-    
+
     if location not in sample_data:
         raise ValueError(f"Location not supported: {location}")
 
@@ -80,14 +84,12 @@ def get_gas_stations(location: str, radius_miles: float = 5) -> Dict[str, Union[
         "gas_stations": sample_data[location],
     }
 
+
 from typing import Dict, Union
 
 
 def arrange_airport_transfer(
-    pickup_location: str,
-    dropoff_location: str,
-    date: str,
-    passengers: int
+    pickup_location: str, dropoff_location: str, date: str, passengers: int
 ) -> Dict[str, Union[str, int, float]]:
     """Arrange a private or shared airport transfer.
 
@@ -123,12 +125,13 @@ def arrange_airport_transfer(
         "estimated_cost": estimated_cost,
     }
 
-from typing import Dict, Literal, Union, Optional
+
 from datetime import datetime, timedelta
+from typing import Dict, Literal, Optional, Union
 
 
 def arrange_transport(
-    mode: Literal['rideshare', 'transit', 'parking'],
+    mode: Literal["rideshare", "transit", "parking"],
     dropoff_location: str,
     pickup_location: Optional[str] = None,
     departure_time: Optional[str] = None,
@@ -158,14 +161,16 @@ def arrange_transport(
             - accessible: Whether the option is wheelchair accessible
             - passengers: Number of passengers accommodated
     """
-    if mode == 'rideshare' and not pickup_location:
+    if mode == "rideshare" and not pickup_location:
         raise ValueError("pickup_location is required for rideshare mode")
 
     if arrival_time and departure_time:
         raise ValueError("Specify either departure_time or arrival_time, not both")
 
     # Mock data generation
-    hash_value = hash((mode, dropoff_location, pickup_location, departure_time, arrival_time))
+    hash_value = hash(
+        (mode, dropoff_location, pickup_location, departure_time, arrival_time)
+    )
     estimated_cost = abs(hash_value) % 50 + 10  # Mock cost between 10 and 60
     estimated_time = abs(hash_value) % 60 + 15  # Mock time between 15 and 75 minutes
 
@@ -180,19 +185,19 @@ def arrange_transport(
         "estimated_cost": estimated_cost,
         "estimated_time": estimated_time,
         "pickup_time": pickup_time,
-        "accessible": wheelchair_accessible if wheelchair_accessible is not None else False,
+        "accessible": (
+            wheelchair_accessible if wheelchair_accessible is not None else False
+        ),
         "passengers": passengers if passengers is not None else 1,
     }
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
 def book_transport(
-    pickup_location: str,
-    dropoff_location: str,
-    date: str,
-    passengers: int
+    pickup_location: str, dropoff_location: str, date: str, passengers: int
 ) -> Dict[str, Union[str, int, float]]:
     """Book transportation between two points.
 
@@ -234,10 +239,13 @@ def book_transport(
         "estimated_cost": round(estimated_cost, 2),
     }
 
+
 from typing import Dict
 
 
-def check_car_price(make: str, model: str, year: int) -> Dict[str, Union[str, int, float]]:
+def check_car_price(
+    make: str, model: str, year: int
+) -> Dict[str, Union[str, int, float]]:
     """Returns an estimated price for a given car.
 
     Args:
@@ -252,29 +260,29 @@ def check_car_price(make: str, model: str, year: int) -> Dict[str, Union[str, in
             - year: The production year of the car
             - estimated_price: The estimated price of the car in USD
     """
-    
+
     # Sample base prices for different makes and models
     base_prices = {
         ("Toyota", "Camry"): 24000,
         ("Ford", "Mustang"): 26000,
         ("Honda", "Civic"): 22000,
     }
-    
+
     # Calculate depreciation based on the year
     current_year = 2023
     depreciation_rate = 0.05  # 5% depreciation per year
-    
+
     if (make, model) not in base_prices:
         raise ValueError(f"Car make and model not supported: {make} {model}")
-    
+
     base_price = base_prices[(make, model)]
     age = current_year - year
-    
+
     if age < 0:
         raise ValueError("Year cannot be in the future")
-    
+
     estimated_price = base_price * ((1 - depreciation_rate) ** age)
-    
+
     return {
         "make": make,
         "model": model,
@@ -282,13 +290,20 @@ def check_car_price(make: str, model: str, year: int) -> Dict[str, Union[str, in
         "estimated_price": round(estimated_price, 2),
     }
 
+
 from typing import Dict, Literal, Optional, Union
 
 
 def filter_cars(
     condition: Literal["new", "used"],
     use_case: Literal[
-        "commuting", "work", "sport", "luxury", "industrial", "taxi", "family_mode_of_transport"
+        "commuting",
+        "work",
+        "sport",
+        "luxury",
+        "industrial",
+        "taxi",
+        "family_mode_of_transport",
     ],
     make: Optional[str] = None,
     model: Optional[str] = None,
@@ -298,8 +313,12 @@ def filter_cars(
     mileage_min: Optional[float] = None,
     exclude_make: Optional[str] = None,
     exclude_model: Optional[str] = None,
-    car_style: Optional[Literal["coupe", "sedan", "van", "truck", "hatchback", "convertible"]] = None,
-    drive_type: Optional[Literal["AWD/4WD", "Front wheel drive", "Rear wheel drive"]] = None,
+    car_style: Optional[
+        Literal["coupe", "sedan", "van", "truck", "hatchback", "convertible"]
+    ] = None,
+    drive_type: Optional[
+        Literal["AWD/4WD", "Front wheel drive", "Rear wheel drive"]
+    ] = None,
     transmission: Optional[Literal["Manual", "Automatic"]] = None,
 ) -> Dict[str, Union[str, int, float]]:
     """Returns the best car make, model year, and mileage for a person to buy given a set of criteria.
@@ -327,17 +346,48 @@ def filter_cars(
             - mileage: Mileage of the car
             - price: Price of the car
     """
-    
+
     # Mock data for demonstration purposes
     sample_cars = [
-        {"make": "Toyota", "model": "Camry", "year": 2020, "mileage": 15000, "price": 22000, "condition": "used", "style": "sedan", "drive": "Front wheel drive", "transmission": "Automatic"},
-        {"make": "Ford", "model": "F-150", "year": 2021, "mileage": 5000, "price": 35000, "condition": "new", "style": "truck", "drive": "AWD/4WD", "transmission": "Automatic"},
-        {"make": "Honda", "model": "Civic", "year": 2019, "mileage": 30000, "price": 18000, "condition": "used", "style": "sedan", "drive": "Front wheel drive", "transmission": "Manual"},
+        {
+            "make": "Toyota",
+            "model": "Camry",
+            "year": 2020,
+            "mileage": 15000,
+            "price": 22000,
+            "condition": "used",
+            "style": "sedan",
+            "drive": "Front wheel drive",
+            "transmission": "Automatic",
+        },
+        {
+            "make": "Ford",
+            "model": "F-150",
+            "year": 2021,
+            "mileage": 5000,
+            "price": 35000,
+            "condition": "new",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+        },
+        {
+            "make": "Honda",
+            "model": "Civic",
+            "year": 2019,
+            "mileage": 30000,
+            "price": 18000,
+            "condition": "used",
+            "style": "sedan",
+            "drive": "Front wheel drive",
+            "transmission": "Manual",
+        },
     ]
 
     # Filter cars based on criteria
     filtered_cars = [
-        car for car in sample_cars
+        car
+        for car in sample_cars
         if car["condition"] == condition
         and (make is None or car["make"] == make)
         and (model is None or car["model"] == model)
@@ -365,6 +415,7 @@ def filter_cars(
         "price": best_car["price"],
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
@@ -375,7 +426,7 @@ def find_charge_stops(
     open_now: bool,
     min_power_kW: float = 50,
     route_bias: Literal["fastest", "cheapest", "avoid_downtown"] = "fastest",
-    top_k: int = 3
+    top_k: int = 3,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float, bool]]]]]:
     """Find high-power EV charging stations along a driving route.
 
@@ -400,28 +451,56 @@ def find_charge_stops(
     """
     # Mock data for demonstration purposes
     sample_stations = [
-        {"name": "ChargePoint Station A", "location": "123 Main St", "power_kW": 150, "open_now": True},
-        {"name": "EVgo Station B", "location": "456 Elm St", "power_kW": 200, "open_now": False},
-        {"name": "Tesla Supercharger C", "location": "789 Oak St", "power_kW": 250, "open_now": True},
-        {"name": "Blink Station D", "location": "321 Pine St", "power_kW": 100, "open_now": True},
-        {"name": "Electrify America E", "location": "654 Maple St", "power_kW": 350, "open_now": True},
+        {
+            "name": "ChargePoint Station A",
+            "location": "123 Main St",
+            "power_kW": 150,
+            "open_now": True,
+        },
+        {
+            "name": "EVgo Station B",
+            "location": "456 Elm St",
+            "power_kW": 200,
+            "open_now": False,
+        },
+        {
+            "name": "Tesla Supercharger C",
+            "location": "789 Oak St",
+            "power_kW": 250,
+            "open_now": True,
+        },
+        {
+            "name": "Blink Station D",
+            "location": "321 Pine St",
+            "power_kW": 100,
+            "open_now": True,
+        },
+        {
+            "name": "Electrify America E",
+            "location": "654 Maple St",
+            "power_kW": 350,
+            "open_now": True,
+        },
     ]
 
     # Filter based on plug type, power, and availability
     filtered_stations = [
-        station for station in sample_stations
-        if station["power_kW"] >= min_power_kW and
-        (not open_now or station["open_now"])
+        station
+        for station in sample_stations
+        if station["power_kW"] >= min_power_kW and (not open_now or station["open_now"])
     ]
 
     # Sort based on power and limit to top_k results
-    sorted_stations = sorted(filtered_stations, key=lambda x: x["power_kW"], reverse=True)[:top_k]
+    sorted_stations = sorted(
+        filtered_stations, key=lambda x: x["power_kW"], reverse=True
+    )[:top_k]
 
     return {
         "origin": origin,
         "destination": destination,
-        "charge_stops": sorted_stations
+        "charge_stops": sorted_stations,
     }
+
 
 from typing import Dict, List, Union
 
@@ -431,7 +510,7 @@ def find_dealers(
     required_vehicles: List[str] = [],
     range: float = 0,
     brand_dealership: bool = False,
-    new_vehicles_only: bool = False
+    new_vehicles_only: bool = False,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, List[str]]]]]]:
     """Find dealerships within a range of an initial location.
 
@@ -457,22 +536,22 @@ def find_dealers(
             "location": "Downtown",
             "vehicles": ["Honda Civic", "Toyota Corolla", "Ford F-150"],
             "brand": True,
-            "new_vehicles": True
+            "new_vehicles": True,
         },
         {
             "name": "Suburban Motors",
             "location": "Suburbia",
             "vehicles": ["Chevrolet Malibu", "Jeep Wrangler"],
             "brand": True,
-            "new_vehicles": False
+            "new_vehicles": False,
         },
         {
             "name": "Budget Cars",
             "location": "Uptown",
             "vehicles": ["Nissan Sentra", "Hyundai Elantra"],
             "brand": False,
-            "new_vehicles": True
-        }
+            "new_vehicles": True,
+        },
     ]
 
     # Filter dealerships based on criteria
@@ -482,23 +561,25 @@ def find_dealers(
             continue
         if new_vehicles_only and not dealership["new_vehicles"]:
             continue
-        if required_vehicles and not any(vehicle in dealership["vehicles"] for vehicle in required_vehicles):
+        if required_vehicles and not any(
+            vehicle in dealership["vehicles"] for vehicle in required_vehicles
+        ):
             continue
         filtered_dealerships.append(dealership)
 
-    return {
-        "origin_location": origin_location,
-        "dealerships": filtered_dealerships
-    }
+    return {"origin_location": origin_location, "dealerships": filtered_dealerships}
+
 
 from typing import Dict, Literal, Union
 
 
 def find_dealership_nearby(
-    make: Literal["Honda", "Toyota", "Jeep", "Hyundai", "Chevrolet", "Volvo", "volkswagen"] = "Honda",
+    make: Literal[
+        "Honda", "Toyota", "Jeep", "Hyundai", "Chevrolet", "Volvo", "volkswagen"
+    ] = "Honda",
     zipcode: str = None,
     distance: Literal["25", "50", "75", "100"] = "25",
-    coordinates: Dict[str, float] = None
+    coordinates: Dict[str, float] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Search for car dealerships in a given location.
 
@@ -519,15 +600,35 @@ def find_dealership_nearby(
     sample_dealerships = {
         "Honda": [
             {"name": "Honda City", "address": "123 Main St, Anytown", "distance": 5.0},
-            {"name": "Auto Honda", "address": "456 Elm St, Othertown", "distance": 20.0},
+            {
+                "name": "Auto Honda",
+                "address": "456 Elm St, Othertown",
+                "distance": 20.0,
+            },
         ],
         "Toyota": [
-            {"name": "Toyota World", "address": "789 Maple Ave, Anytown", "distance": 10.0},
-            {"name": "City Toyota", "address": "321 Oak St, Othertown", "distance": 30.0},
+            {
+                "name": "Toyota World",
+                "address": "789 Maple Ave, Anytown",
+                "distance": 10.0,
+            },
+            {
+                "name": "City Toyota",
+                "address": "321 Oak St, Othertown",
+                "distance": 30.0,
+            },
         ],
         "Jeep": [
-            {"name": "Jeep Junction", "address": "654 Pine Rd, Anytown", "distance": 15.0},
-            {"name": "Offroad Jeep", "address": "987 Cedar Blvd, Othertown", "distance": 40.0},
+            {
+                "name": "Jeep Junction",
+                "address": "654 Pine Rd, Anytown",
+                "distance": 15.0,
+            },
+            {
+                "name": "Offroad Jeep",
+                "address": "987 Cedar Blvd, Othertown",
+                "distance": 40.0,
+            },
         ],
         # Add similar entries for other makes...
     }
@@ -535,10 +636,8 @@ def find_dealership_nearby(
     dealerships = sample_dealerships.get(make, [])
     filtered_dealerships = [d for d in dealerships if d["distance"] <= float(distance)]
 
-    return {
-        "make": make,
-        "dealerships": filtered_dealerships
-    }
+    return {"make": make, "dealerships": filtered_dealerships}
+
 
 from typing import Dict, List, Literal, Optional, Union
 
@@ -584,7 +683,8 @@ def find_similar(
         return True
 
     similar_cars = [
-        car for car in sample_cars
+        car
+        for car in sample_cars
         if car["condition"] == condition
         and is_within_price_range(car["price"])
         and (exclude_make is None or car["make"] != exclude_make)
@@ -596,13 +696,14 @@ def find_similar(
         "similar_cars": similar_cars,
     }
 
+
 from typing import Dict, List, Union
 
 
 def find_similar_cars(
     search_input: str,
     type: Union[str, None] = None,
-    price: Union[List[int], None] = None
+    price: Union[List[int], None] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Find similar vehicles based on make, model, type, and price range.
 
@@ -627,12 +728,16 @@ def find_similar_cars(
 
     # Filter vehicles based on the search criteria
     def vehicle_matches(vehicle):
-        matches_search_input = search_input.lower() in (vehicle["make"] + " " + vehicle["model"]).lower()
+        matches_search_input = (
+            search_input.lower() in (vehicle["make"] + " " + vehicle["model"]).lower()
+        )
         matches_type = type is None or vehicle["type"] == type
         matches_price = price is None or (price[0] <= vehicle["price"] <= price[1])
         return matches_search_input and matches_type and matches_price
 
-    similar_vehicles = [vehicle for vehicle in sample_vehicles if vehicle_matches(vehicle)]
+    similar_vehicles = [
+        vehicle for vehicle in sample_vehicles if vehicle_matches(vehicle)
+    ]
 
     if not similar_vehicles:
         raise ValueError(f"No similar vehicles found for search input: {search_input}")
@@ -641,6 +746,7 @@ def find_similar_cars(
         "search_input": search_input,
         "similar_vehicles": similar_vehicles,
     }
+
 
 from typing import Dict, List
 
@@ -656,15 +762,28 @@ def find_used_car_part_dealer(city: str) -> Dict[str, List[str]]:
             - city: The city name
             - dealers: List of dealer names selling used car parts
     """
-    
+
     sample_data = {
         "New York": ["NYC Auto Parts", "Manhattan Motors", "Brooklyn Car Spares"],
-        "Los Angeles": ["LA Parts Depot", "Hollywood Auto Salvage", "Westside Car Parts"],
-        "Chicago": ["Windy City Auto Parts", "Chicago Car Components", "Midwest Motors"],
+        "Los Angeles": [
+            "LA Parts Depot",
+            "Hollywood Auto Salvage",
+            "Westside Car Parts",
+        ],
+        "Chicago": [
+            "Windy City Auto Parts",
+            "Chicago Car Components",
+            "Midwest Motors",
+        ],
         "Houston": ["Houston Auto Hub", "Lone Star Car Parts", "Bayou City Spares"],
-        "Phoenix": ["Desert Auto Parts", "Phoenix Car Salvage", "Valley Car Components"],
+        "Phoenix": [
+            "Desert Auto Parts",
+            "Phoenix Car Salvage",
+            "Valley Car Components",
+        ],
+        "Wellington": ["Radiator Springs Parts'n'More"],
     }
-    
+
     if city not in sample_data:
         raise ValueError(f"City not supported: {city}")
 
@@ -672,6 +791,7 @@ def find_used_car_part_dealer(city: str) -> Dict[str, List[str]]:
         "city": city,
         "dealers": sample_data[city],
     }
+
 
 from typing import Dict, List, Union
 
@@ -730,7 +850,8 @@ def get_bus(
     ]
 
     filtered_buses = [
-        bus for bus in sample_buses
+        bus
+        for bus in sample_buses
         if bus["loc"] == loc and bus["full"] == full and bus["cost"] <= cost
     ]
 
@@ -749,10 +870,13 @@ def get_bus(
 
     return filtered_buses
 
+
 from typing import Dict, List
 
 
-def get_bus_times(departure_stop: str, arrival_stop: str, date: str) -> Dict[str, List[Dict[str, str]]]:
+def get_bus_times(
+    departure_stop: str, arrival_stop: str, date: str
+) -> Dict[str, List[Dict[str, str]]]:
     """Retrieves bus departure and arrival times between two bus stops for a given date.
 
     Args:
@@ -769,18 +893,18 @@ def get_bus_times(departure_stop: str, arrival_stop: str, date: str) -> Dict[str
 
     # Mock data generation based on hash of inputs for consistency
     hash_seed = hash((departure_stop, arrival_stop, date))
-    base_hour = (hash_seed % 24)  # Ensure hour is within 0-23
+    base_hour = hash_seed % 24  # Ensure hour is within 0-23
     times = []
 
     for i in range(5):  # Generate 5 sample bus times
         departure_hour = (base_hour + i) % 24
         arrival_hour = (departure_hour + 1) % 24  # Assume 1 hour travel time
-        times.append({
-            "departure": f"{departure_hour:02}:00",
-            "arrival": f"{arrival_hour:02}:00"
-        })
+        times.append(
+            {"departure": f"{departure_hour:02}:00", "arrival": f"{arrival_hour:02}:00"}
+        )
 
     return {"times": times}
+
 
 from typing import Dict, Union
 
@@ -797,24 +921,27 @@ def get_car_details(registration_number: str) -> Dict[str, Union[str, int]]:
             - model: Car model
             - year: Year of manufacture
     """
-    
+
     # Sample data based on registration number hash
     sample_data = {
         "ABC123": {"make": "Toyota", "model": "Camry", "year": 2010},
         "XYZ789": {"make": "Ford", "model": "Mustang", "year": 2018},
         "LMN456": {"make": "Honda", "model": "Civic", "year": 2015},
     }
-    
+
     # Hash-based generation for consistent but varied sample data
     if registration_number not in sample_data:
         raise ValueError(f"Registration number not found: {registration_number}")
 
     return sample_data[registration_number]
 
+
 from typing import Dict, Union
 
 
-def get_car_information(car_make: str, car_model: str) -> Dict[str, Union[str, int, float]]:
+def get_car_information(
+    car_make: str, car_model: str
+) -> Dict[str, Union[str, int, float]]:
     """Retrieve various information about a specific car model.
 
     Args:
@@ -829,17 +956,17 @@ def get_car_information(car_make: str, car_model: str) -> Dict[str, Union[str, i
             - horsepower: The horsepower of the vehicle
             - price: The average price of the vehicle in USD
     """
-    
+
     sample_data = {
         ("Toyota", "Camry"): {"year": 2020, "horsepower": 203, "price": 24425},
         ("Ford", "Mustang"): {"year": 2021, "horsepower": 450, "price": 55000},
         ("Honda", "Civic"): {"year": 2019, "horsepower": 158, "price": 20500},
     }
-    
+
     key = (car_make, car_model)
     if key not in sample_data:
         raise ValueError(f"Car make and model not supported: {car_make} {car_model}")
-    
+
     car_info = sample_data[key]
     return {
         "make": car_make,
@@ -848,6 +975,7 @@ def get_car_information(car_make: str, car_model: str) -> Dict[str, Union[str, i
         "horsepower": car_info["horsepower"],
         "price": car_info["price"],
     }
+
 
 from typing import Dict, List
 
@@ -868,17 +996,17 @@ def get_car_reviews(search_input: str) -> Dict[str, Union[str, List[str]]]:
         "Toyota Camry": [
             "Smooth ride and great fuel efficiency.",
             "Comfortable interior with plenty of space.",
-            "Reliable and affordable maintenance."
+            "Reliable and affordable maintenance.",
         ],
         "Ford F-150": [
             "Powerful engine with excellent towing capacity.",
             "Spacious cabin and advanced tech features.",
-            "Rugged design, perfect for off-road adventures."
+            "Rugged design, perfect for off-road adventures.",
         ],
         "Honda Civic": [
             "Sporty design with a comfortable ride.",
             "Excellent fuel economy and low emissions.",
-            "High resale value and reliable performance."
+            "High resale value and reliable performance.",
         ],
     }
 
@@ -890,6 +1018,7 @@ def get_car_reviews(search_input: str) -> Dict[str, Union[str, List[str]]]:
         "reviews": sample_reviews.get(search_input),
     }
 
+
 from typing import Dict, Literal, Union
 
 
@@ -899,7 +1028,7 @@ def get_car_value(
     condition: Literal["new", "used"],
     mileage: float,
     car_identification_type: Literal["vin", "license_plate"],
-    car_identification: str
+    car_identification: str,
 ) -> Dict[str, Union[str, float]]:
     """Returns current value of a vehicle based on retail prices and current trends.
 
@@ -917,39 +1046,44 @@ def get_car_value(
             - model: Model of the car
             - estimated_value: Estimated current value of the car in USD
     """
-    
+
     # Sample base values for demonstration purposes
     base_values = {
         ("Toyota", "Camry"): 24000,
         ("Ford", "Mustang"): 26000,
         ("Honda", "Civic"): 22000,
     }
-    
+
     # Calculate depreciation based on mileage and condition
     depreciation_rate = 0.2 if condition == "used" else 0.0
     mileage_factor = max(0, 1 - (mileage / 100000) * 0.1)
-    
+
     # Generate a base value using make and model
-    base_value = base_values.get((make, model), 20000)  # Default base value if not found
-    
+    base_value = base_values.get(
+        (make, model), 20000
+    )  # Default base value if not found
+
     # Calculate the estimated value
     estimated_value = base_value * (1 - depreciation_rate) * mileage_factor
-    
+
     # Simulate a hash-based adjustment for consistent variation
     hash_adjustment = hash(car_identification) % 1000 / 1000
-    estimated_value *= (0.95 + hash_adjustment * 0.1)
-    
+    estimated_value *= 0.95 + hash_adjustment * 0.1
+
     return {
         "make": make,
         "model": model,
         "estimated_value": round(estimated_value, 2),
     }
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
-def get_fuel_price_by_city(city: str, date: str = "2025-01-01") -> Dict[str, Union[str, float]]:
+def get_fuel_price_by_city(
+    city: str, date: str = "2025-01-01"
+) -> Dict[str, Union[str, float]]:
     """Get the fuel price for a given city in the EU on a specific date.
 
     Args:
@@ -962,21 +1096,32 @@ def get_fuel_price_by_city(city: str, date: str = "2025-01-01") -> Dict[str, Uni
             - date: Date of the fuel price
             - fuel_price: Fuel price in EUR per liter
     """
-    
-    supported_cities = ["Berlin", "Madrid", "Paris", "Rome", "Amsterdam"]
+
+    supported_cities = [
+        "Berlin",
+        "Madrid",
+        "Paris",
+        "Rome",
+        "Amsterdam",
+        "Nuremburg",
+        "Munich",
+    ]
     if city not in supported_cities:
         raise ValueError(f"City not supported: {city}")
 
     # Generate a consistent but varied fuel price based on city and date
     hash_input = f"{city}-{date}".encode()
     hash_value = hashlib.sha256(hash_input).hexdigest()
-    fuel_price = (int(hash_value[:8], 16) % 1000) / 100 + 1.0  # Price between 1.00 and 10.00 EUR
+    fuel_price = (
+        int(hash_value[:8], 16) % 1000
+    ) / 100 + 1.0  # Price between 1.00 and 10.00 EUR
 
     return {
         "city": city,
         "date": date,
         "fuel_price": fuel_price,
     }
+
 
 from typing import Dict, List
 
@@ -988,20 +1133,29 @@ def get_makes() -> Dict[str, List[str]]:
         Dict containing:
             - makes: List of vehicle makes
     """
-    
+
     makes_sample = [
-        "Toyota", "Ford", "Chevrolet", "Honda", "Nissan",
-        "BMW", "Mercedes-Benz", "Volkswagen", "Hyundai", "Audi"
+        "Toyota",
+        "Ford",
+        "Chevrolet",
+        "Honda",
+        "Nissan",
+        "BMW",
+        "Mercedes-Benz",
+        "Volkswagen",
+        "Hyundai",
+        "Audi",
     ]
 
-    return {
-        "makes": makes_sample
-    }
+    return {"makes": makes_sample}
+
 
 from typing import Dict, Literal, Union
 
 
-def get_maximum_tire_pressure(tin: str, units: Literal["psi", "bar"]) -> Dict[str, Union[str, float]]:
+def get_maximum_tire_pressure(
+    tin: str, units: Literal["psi", "bar"]
+) -> Dict[str, Union[str, float]]:
     """Retrieve the maximum allowed pressure for a vehicle's tires.
 
     Args:
@@ -1014,19 +1168,19 @@ def get_maximum_tire_pressure(tin: str, units: Literal["psi", "bar"]) -> Dict[st
             - max_pressure: Maximum allowed tire pressure in the specified units
             - units: The units of the tire pressure
     """
-    
+
     # Simulated database of TIN to maximum pressure in psi
     tin_to_pressure_psi = {
         "DOT123456": 35.0,
         "DOT654321": 40.0,
         "DOT111111": 32.0,
     }
-    
+
     if tin not in tin_to_pressure_psi:
         raise ValueError(f"TIN not supported: {tin}")
 
     max_pressure_psi = tin_to_pressure_psi[tin]
-    
+
     if units == "psi":
         max_pressure = max_pressure_psi
     elif units == "bar":
@@ -1039,6 +1193,7 @@ def get_maximum_tire_pressure(tin: str, units: Literal["psi", "bar"]) -> Dict[st
         "max_pressure": round(max_pressure, 2),
         "units": units,
     }
+
 
 from typing import Dict, List
 
@@ -1054,13 +1209,13 @@ def get_models(make: str) -> Dict[str, List[str]]:
             - make: The vehicle make
             - models: List of vehicle models for the specified make
     """
-    
+
     sample_data = {
         "Toyota": ["Camry", "Corolla", "Prius"],
         "Ford": ["F-150", "Mustang", "Explorer"],
         "Honda": ["Civic", "Accord", "CR-V"],
     }
-    
+
     if make not in sample_data:
         raise ValueError(f"Make not supported: {make}")
 
@@ -1068,6 +1223,7 @@ def get_models(make: str) -> Dict[str, List[str]]:
         "make": make,
         "models": sample_data[make],
     }
+
 
 from typing import Dict, Literal
 
@@ -1120,7 +1276,8 @@ def get_recommended_tire_pressure(
         "units": units,
     }
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def get_taxi(
@@ -1149,15 +1306,40 @@ def get_taxi(
             - smoke: Smoking allowed status
             - arr_time: Arrival time for pickup
     """
-    
+
     sample_taxis = [
-        {"id": "TX001", "driver": "Alice", "range": 50, "availability": True, "cost": 1.5, "smoke": False, "arr_time": "2023-10-01T10:00:00"},
-        {"id": "TX002", "driver": "Bob", "range": 100, "availability": False, "cost": 2.0, "smoke": True, "arr_time": "2023-10-01T11:00:00"},
-        {"id": "TX003", "driver": "Charlie", "range": 75, "availability": True, "cost": 1.8, "smoke": False, "arr_time": "2023-10-01T12:00:00"},
+        {
+            "id": "TX001",
+            "driver": "Alice",
+            "range": 50,
+            "availability": True,
+            "cost": 1.5,
+            "smoke": False,
+            "arr_time": "2023-10-01T10:00:00",
+        },
+        {
+            "id": "TX002",
+            "driver": "Bob",
+            "range": 100,
+            "availability": False,
+            "cost": 2.0,
+            "smoke": True,
+            "arr_time": "2023-10-01T11:00:00",
+        },
+        {
+            "id": "TX003",
+            "driver": "Charlie",
+            "range": 75,
+            "availability": True,
+            "cost": 1.8,
+            "smoke": False,
+            "arr_time": "2023-10-01T12:00:00",
+        },
     ]
 
     filtered_taxis = [
-        taxi for taxi in sample_taxis
+        taxi
+        for taxi in sample_taxis
         if taxi["range"] >= range
         and taxi["availability"] == availability
         and taxi["cost"] <= cost
@@ -1166,6 +1348,7 @@ def get_taxi(
     ]
 
     return filtered_taxis
+
 
 from typing import Dict, List
 
@@ -1203,6 +1386,7 @@ def get_tires(make: str, model: str, year: int) -> Dict[str, Union[str, List[str
         "tire_sizes": sample_data[key],
     }
 
+
 from typing import Dict, Union
 
 
@@ -1235,8 +1419,9 @@ def get_traffic(street_name: str) -> Dict[str, Union[str, bool]]:
         "heavy_traffic": traffic_data.get(street_name),
     }
 
-from typing import Dict, List, Union
+
 import hashlib
+from typing import Dict, List, Union
 
 
 def get_train_times(
@@ -1256,34 +1441,44 @@ def get_train_times(
             - date: The date of travel.
             - schedule: List of dictionaries with 'departure_time' and 'arrival_time'.
     """
-    
+
     if not departure_station or not arrival_station or not date:
         raise ValueError("All parameters must be provided and non-empty.")
-    
+
     # Generate a consistent hash-based seed for reproducible sample data
-    seed = int(hashlib.sha256(f"{departure_station}{arrival_station}{date}".encode()).hexdigest(), 16)
-    
+    seed = int(
+        hashlib.sha256(
+            f"{departure_station}{arrival_station}{date}".encode()
+        ).hexdigest(),
+        16,
+    )
+
     # Generate mock train times
     schedule = []
     for i in range(3):  # Assume 3 trains per day for simplicity
         departure_hour = (seed % 24 + i * 3) % 24
         arrival_hour = (departure_hour + 2) % 24
-        schedule.append({
-            "departure_time": f"{departure_hour:02d}:00",
-            "arrival_time": f"{arrival_hour:02d}:00"
-        })
-    
+        schedule.append(
+            {
+                "departure_time": f"{departure_hour:02d}:00",
+                "arrival_time": f"{arrival_hour:02d}:00",
+            }
+        )
+
     return {
         "departure_station": departure_station,
         "arrival_station": arrival_station,
         "date": date,
-        "schedule": schedule
+        "schedule": schedule,
     }
+
 
 from typing import Dict, List
 
 
-def get_trains(from_city: str, to_city: str) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def get_trains(
+    from_city: str, to_city: str
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Returns train routes for a given day from one city to another.
 
     Args:
@@ -1296,19 +1491,39 @@ def get_trains(from_city: str, to_city: str) -> Dict[str, Union[str, List[Dict[s
             - to: Destination city name
             - routes: List of routes with train details
     """
-    
+
     if not from_city or not to_city:
         raise ValueError("Both 'from_city' and 'to_city' must be provided")
 
     # Sample data simulating train routes
     sample_routes = {
         ("New York", "Boston"): [
-            {"train": "Acela Express", "departure": "08:00 AM", "arrival": "11:00 AM", "duration": 180},
-            {"train": "Northeast Regional", "departure": "09:00 AM", "arrival": "12:30 PM", "duration": 210},
+            {
+                "train": "Acela Express",
+                "departure": "08:00 AM",
+                "arrival": "11:00 AM",
+                "duration": 180,
+            },
+            {
+                "train": "Northeast Regional",
+                "departure": "09:00 AM",
+                "arrival": "12:30 PM",
+                "duration": 210,
+            },
         ],
         ("San Francisco", "Los Angeles"): [
-            {"train": "Coast Starlight", "departure": "07:15 AM", "arrival": "01:30 PM", "duration": 375},
-            {"train": "Pacific Surfliner", "departure": "10:00 AM", "arrival": "04:00 PM", "duration": 360},
+            {
+                "train": "Coast Starlight",
+                "departure": "07:15 AM",
+                "arrival": "01:30 PM",
+                "duration": 375,
+            },
+            {
+                "train": "Pacific Surfliner",
+                "departure": "10:00 AM",
+                "arrival": "04:00 PM",
+                "duration": 360,
+            },
         ],
     }
 
@@ -1321,6 +1536,7 @@ def get_trains(from_city: str, to_city: str) -> Dict[str, Union[str, List[Dict[s
         "to": to_city,
         "routes": routes,
     }
+
 
 from typing import Dict
 
@@ -1352,15 +1568,13 @@ def order_cab(from_location: str, to_location: str) -> Dict[str, str]:
         "to_location": to_location,
     }
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
 def rent_ev_adapter(
-    adapter_type: str,
-    pickup_location: str,
-    date: str,
-    duration_hours: float = 24
+    adapter_type: str, pickup_location: str, date: str, duration_hours: float = 24
 ) -> Dict[str, Union[str, float]]:
     """Reserve a temporary EV adapter for pickup at a specified location.
 
@@ -1399,17 +1613,15 @@ def rent_ev_adapter(
         "pickup_location": pickup_location,
         "date": date,
         "duration_hours": duration_hours,
-        "status": "reserved"
+        "status": "reserved",
     }
+
 
 from typing import Dict, List, Union
 
 
 def report_station_issue(
-    station_id: str,
-    issue_type: str,
-    notes: str = "",
-    photo_urls: List[str] = []
+    station_id: str, issue_type: str, notes: str = "", photo_urls: List[str] = []
 ) -> Dict[str, Union[str, List[str]]]:
     """File a report about a charger problem.
 
@@ -1438,6 +1650,7 @@ def report_station_issue(
         "message": f"Issue '{issue_type}' reported successfully for station {station_id}.",
         "submitted_photos": photo_urls,
     }
+
 
 from typing import Dict, Union
 
@@ -1492,10 +1705,13 @@ def reserve_parking(
         "price": round(total_price, 2),
     }
 
+
 from typing import Dict, List, Union
 
 
-def ride_history(username: str, is_completed: bool = False) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def ride_history(
+    username: str, is_completed: bool = False
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Retrieve the ride history for a user.
 
     Args:
@@ -1511,19 +1727,39 @@ def ride_history(username: str, is_completed: bool = False) -> Dict[str, Union[s
                 - destination: Ending point of the trip
                 - cost: Cost of the trip in USD
     """
-    
+
     if not username:
         raise ValueError("Username must be provided")
 
     # Sample data based on username hash for consistency
     sample_data = {
         "completed": [
-            {"date": "2023-01-15", "origin": "Downtown", "destination": "Airport", "cost": 35.50},
-            {"date": "2023-02-20", "origin": "Home", "destination": "Office", "cost": 12.75},
+            {
+                "date": "2023-01-15",
+                "origin": "Downtown",
+                "destination": "Airport",
+                "cost": 35.50,
+            },
+            {
+                "date": "2023-02-20",
+                "origin": "Home",
+                "destination": "Office",
+                "cost": 12.75,
+            },
         ],
         "upcoming": [
-            {"date": "2023-12-01", "origin": "Office", "destination": "Gym", "cost": 8.00},
-            {"date": "2023-12-05", "origin": "Mall", "destination": "Home", "cost": 15.25},
+            {
+                "date": "2023-12-01",
+                "origin": "Office",
+                "destination": "Gym",
+                "cost": 8.00,
+            },
+            {
+                "date": "2023-12-05",
+                "origin": "Mall",
+                "destination": "Home",
+                "cost": 15.25,
+            },
         ],
     }
 
@@ -1534,12 +1770,13 @@ def ride_history(username: str, is_completed: bool = False) -> Dict[str, Union[s
         "trips": trips,
     }
 
+
 from typing import Dict, Union
 
 
 def ride_share_look_up(
     current_location: Dict[str, Union[str, Dict[str, float]]],
-    destination_location: Dict[str, Union[str, Dict[str, float]]]
+    destination_location: Dict[str, Union[str, Dict[str, float]]],
 ) -> Dict[str, Union[str, float]]:
     """Get the price of rides from ride share apps based on parameters.
 
@@ -1553,32 +1790,35 @@ def ride_share_look_up(
             - estimated_price: Estimated price for the ride in USD
             - currency: Currency of the estimated price
     """
-    
+
     # Mock data for ride share services and their base prices
     services = {
         "Uber": 1.5,
         "Lyft": 1.3,
         "Bolt": 1.4,
     }
-    
+
     # Calculate a mock distance based on coordinates difference
     current_coords = current_location["coordinates"]
     destination_coords = destination_location["coordinates"]
-    distance = ((destination_coords["latitude"] - current_coords["latitude"]) ** 2 +
-                (destination_coords["longitude"] - current_coords["longitude"]) ** 2) ** 0.5
-    
+    distance = (
+        (destination_coords["latitude"] - current_coords["latitude"]) ** 2
+        + (destination_coords["longitude"] - current_coords["longitude"]) ** 2
+    ) ** 0.5
+
     if distance == 0:
         raise ValueError("Current location and destination cannot be the same.")
-    
+
     # Generate a consistent but varied price estimate using hash-based generation
     base_price = services["Uber"]  # Default to Uber for simplicity
     estimated_price = round(base_price * distance * 10, 2)  # Mock calculation for price
-    
+
     return {
         "service": "Uber",
         "estimated_price": estimated_price,
         "currency": "USD",
     }
+
 
 from typing import Dict, List, Union
 
@@ -1599,7 +1839,7 @@ def search_dealerships(
             - location: The location around which the search was conducted
             - dealerships: List of dealerships with their name, address, and distance from the location
     """
-    
+
     if not make or not model or not location:
         raise ValueError("Make, model, and location are required parameters.")
 
@@ -1612,14 +1852,13 @@ def search_dealerships(
 
     # Filter dealerships within the search radius
     filtered_dealerships = [
-        dealership for dealership in sample_dealerships
+        dealership
+        for dealership in sample_dealerships
         if dealership["distance"] <= search_radius
     ]
 
-    return {
-        "location": location,
-        "dealerships": filtered_dealerships
-    }
+    return {"location": location, "dealerships": filtered_dealerships}
+
 
 from typing import Dict, List
 
@@ -1652,9 +1891,8 @@ def search_for_car_model(search_input: str) -> Dict[str, List[str]]:
 
     matches = [model for model in car_models if search_input.lower() in model.lower()]
 
-    return {
-        "matches": matches
-    }
+    return {"matches": matches}
+
 
 from typing import Dict, List, Union
 
@@ -1675,7 +1913,7 @@ def search_independent_garages(
             - location: The location where the search was conducted.
             - garages: List of garages with details such as name, address, and distance.
     """
-    
+
     # Sample data based on hash of the location for consistency
     sample_garages = {
         "New York": [
@@ -1691,7 +1929,7 @@ def search_independent_garages(
             {"name": "West End Motors", "address": "221B Baker St", "distance": 1.9},
         ],
     }
-    
+
     if location not in sample_garages:
         raise ValueError(f"Location not supported: {location}")
 
@@ -1700,10 +1938,13 @@ def search_independent_garages(
         "garages": sample_garages[location],
     }
 
+
 from typing import Dict, List
 
 
-def search_train(from_station: str, to_station: str, date: str) -> Dict[str, Union[str, List[Dict[str, str]]]]:
+def search_train(
+    from_station: str, to_station: str, date: str
+) -> Dict[str, Union[str, List[Dict[str, str]]]]:
     """Search train schedules between two stations on a specific date.
 
     Args:
@@ -1718,7 +1959,7 @@ def search_train(from_station: str, to_station: str, date: str) -> Dict[str, Uni
             - date: Date of journey
             - schedules: List of train schedules with departure and arrival times
     """
-    
+
     # Sample train schedules based on hash of the input parameters for consistency
     sample_schedules = {
         ("New York", "Boston", "2023-10-01"): [
@@ -1730,10 +1971,12 @@ def search_train(from_station: str, to_station: str, date: str) -> Dict[str, Uni
             {"departure": "03:00 PM", "arrival": "07:00 PM"},
         ],
     }
-    
+
     key = (from_station, to_station, date)
     if key not in sample_schedules:
-        raise ValueError(f"No train schedules available for the route from {from_station} to {to_station} on {date}")
+        raise ValueError(
+            f"No train schedules available for the route from {from_station} to {to_station} on {date}"
+        )
 
     return {
         "from": from_station,
@@ -1742,6 +1985,7 @@ def search_train(from_station: str, to_station: str, date: str) -> Dict[str, Uni
         "schedules": sample_schedules[key],
     }
 
+
 from typing import Dict, Union
 
 
@@ -1749,7 +1993,7 @@ def start_charging_session(
     station_id: str,
     kWh_limit: float,
     payment_method_id: str,
-    stall_number: Union[str, None] = None
+    stall_number: Union[str, None] = None,
 ) -> Dict[str, Union[str, float, bool]]:
     """Remotely start a charging session at a specific station stall.
 
@@ -1786,4 +2030,3 @@ def start_charging_session(
         "kWh_limit": kWh_limit,
         "session_active": session_active,
     }
-

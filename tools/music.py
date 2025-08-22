@@ -1,14 +1,11 @@
-from typing import Dict, List, Union, Any
 # Music Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 
 def play_song(
-    song_title: str, 
-    artist_name: Optional[str] = None, 
-    volume_level: Optional[int] = 50
+    song_title: str, artist_name: Optional[str] = None, volume_level: Optional[int] = 50
 ) -> Dict[str, Union[str, int]]:
     """Play a specific song from the user's library or a streaming service.
 
@@ -24,7 +21,7 @@ def play_song(
             - volume_level: Volume level at which the song is played
             - status: Playback status message
     """
-    
+
     if not (0 <= volume_level <= 100):
         raise ValueError("Volume level must be between 0 and 100")
 
@@ -46,13 +43,12 @@ def play_song(
         "status": status,
     }
 
+
 from typing import Dict, List, Union
 
 
 def create_playlist(
-    playlist_name: str,
-    songs: List[Dict[str, str]] = [],
-    is_public: bool = False
+    playlist_name: str, songs: List[Dict[str, str]] = [], is_public: bool = False
 ) -> Dict[str, Union[str, bool, List[Dict[str, str]]]]:
     """Creates a new music playlist with optional initial songs.
 
@@ -90,6 +86,7 @@ def create_playlist(
         "songs": songs,
     }
 
+
 from typing import Dict, List, Optional
 
 
@@ -108,7 +105,7 @@ def add_song_to_playlist(
             - playlist_name: The name of the updated playlist.
             - songs: List of songs in the playlist, each with title and artist.
     """
-    
+
     # Mock existing playlists with songs
     playlists = {
         "Chill Vibes": [
@@ -120,7 +117,7 @@ def add_song_to_playlist(
             {"title": "Stronger", "artist": "Kanye West"},
         ],
     }
-    
+
     if playlist_name not in playlists:
         raise ValueError(f"Playlist not found: {playlist_name}")
 
@@ -132,6 +129,7 @@ def add_song_to_playlist(
         "playlist_name": playlist_name,
         "songs": playlists[playlist_name],
     }
+
 
 from typing import Dict, List, Literal
 
@@ -173,10 +171,13 @@ def search_music(
         raise ValueError(f"Unsupported filter type: {filter_type}")
 
     results = [
-        item for item in sample_data[filter_type] if query.lower() in item["name"].lower()
+        item
+        for item in sample_data[filter_type]
+        if query.lower() in item["name"].lower()
     ]
 
     return {"results": results}
+
 
 from typing import Dict, List, Union
 
@@ -195,7 +196,7 @@ def get_recommendations(
             - genre: The genre used for recommendations
             - recommendations: List of recommended music tracks
     """
-    
+
     sample_data = {
         "rock": [
             "Bohemian Rhapsody - Queen",
@@ -231,6 +232,7 @@ def get_recommendations(
         "recommendations": recommendations,
     }
 
+
 from typing import Dict, Optional
 
 
@@ -247,30 +249,35 @@ def like_song(song_title: str, artist_name: Optional[str] = None) -> Dict[str, s
             - artist_name: The name of the artist (if provided)
             - status: Confirmation message of the action
     """
-    
+
     if not song_title:
         raise ValueError("Song title is required to like a song.")
-    
+
     # Simulate a hash-based generation for consistent but varied sample data
     liked_songs = {
         "Bohemian Rhapsody": "Queen",
         "Imagine": "John Lennon",
         "Billie Jean": "Michael Jackson",
     }
-    
+
     if artist_name and liked_songs.get(song_title) != artist_name:
-        raise ValueError(f"Artist name does not match the known artist for '{song_title}'.")
-    
+        raise ValueError(
+            f"Artist name does not match the known artist for '{song_title}'."
+        )
+
     return {
         "song_title": song_title,
         "artist_name": artist_name or liked_songs.get(song_title, "Unknown Artist"),
-        "status": f"'{song_title}' has been added to your favorites."
+        "status": f"'{song_title}' has been added to your favorites.",
     }
+
 
 from typing import Dict, List
 
 
-def remove_song_from_playlist(playlist_name: str, song_title: str) -> Dict[str, Union[str, List[str]]]:
+def remove_song_from_playlist(
+    playlist_name: str, song_title: str
+) -> Dict[str, Union[str, List[str]]]:
     """Remove a specific song from a playlist.
 
     Args:
@@ -282,27 +289,28 @@ def remove_song_from_playlist(playlist_name: str, song_title: str) -> Dict[str, 
             - playlist_name: The name of the updated playlist
             - songs: List of songs remaining in the playlist
     """
-    
+
     # Sample playlists with songs
     playlists = {
         "Chill Vibes": ["Sunset Lover", "Weightless", "Night Owl"],
         "Workout Hits": ["Eye of the Tiger", "Stronger", "Can't Hold Us"],
         "Classic Rock": ["Bohemian Rhapsody", "Hotel California", "Stairway to Heaven"],
     }
-    
+
     if playlist_name not in playlists:
         raise ValueError(f"Playlist not found: {playlist_name}")
-    
+
     if song_title not in playlists[playlist_name]:
         raise ValueError(f"Song not found in playlist: {song_title}")
-    
+
     # Remove the song from the playlist
     playlists[playlist_name].remove(song_title)
-    
+
     return {
         "playlist_name": playlist_name,
         "songs": playlists[playlist_name],
     }
+
 
 from typing import Dict, List, Union
 
@@ -310,7 +318,7 @@ from typing import Dict, List, Union
 def search_publisher(
     name: Union[str, None] = None,
     genre: Union[str, None] = None,
-    song_titles: Union[List[str], None] = None
+    song_titles: Union[List[str], None] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, List[str]]]]]]:
     """Search for a publisher by name, genre, or song titles.
 
@@ -326,7 +334,7 @@ def search_publisher(
             - published_songs: List of published songs with details
             - published_albums: List of published albums with details
     """
-    
+
     sample_publishers = {
         "Universal Music": {
             "founding_date": "1934-09-01",
@@ -355,9 +363,13 @@ def search_publisher(
     def matches_criteria(publisher_data):
         if name and name != publisher:
             return False
-        if genre and not any(song["genre"] == genre for song in publisher_data["published_songs"]):
+        if genre and not any(
+            song["genre"] == genre for song in publisher_data["published_songs"]
+        ):
             return False
-        if song_titles and not any(song["title"] in song_titles for song in publisher_data["published_songs"]):
+        if song_titles and not any(
+            song["title"] in song_titles for song in publisher_data["published_songs"]
+        ):
             return False
         return True
 
@@ -372,8 +384,9 @@ def search_publisher(
 
     raise ValueError("No publisher found matching the given criteria")
 
-from typing import Dict, List
+
 import random
+from typing import Dict, List
 
 
 def shuffle_play_playlist(playlist_name: str) -> Dict[str, Union[str, List[str]]]:
@@ -397,7 +410,9 @@ def shuffle_play_playlist(playlist_name: str) -> Dict[str, Union[str, List[str]]
         raise ValueError(f"Playlist not found: {playlist_name}")
 
     tracks = sample_playlists[playlist_name]
-    random.seed(hash(playlist_name))  # Ensure consistent shuffling for the same playlist
+    random.seed(
+        hash(playlist_name)
+    )  # Ensure consistent shuffling for the same playlist
     shuffled_tracks = tracks[:]
     random.shuffle(shuffled_tracks)
 
@@ -406,10 +421,13 @@ def shuffle_play_playlist(playlist_name: str) -> Dict[str, Union[str, List[str]]
         "shuffled_tracks": shuffled_tracks,
     }
 
+
 from typing import Dict, Union
 
 
-def play_music(song_name: str, volume: Union[int, None] = None) -> Dict[str, Union[str, int]]:
+def play_music(
+    song_name: str, volume: Union[int, None] = None
+) -> Dict[str, Union[str, int]]:
     """Play music on a connected smart speaker.
 
     Args:
@@ -432,16 +450,16 @@ def play_music(song_name: str, volume: Union[int, None] = None) -> Dict[str, Uni
     default_volume = 50
     actual_volume = volume if volume is not None else default_volume
 
-    return {
-        "song_name": song_name,
-        "volume": actual_volume,
-        "status": "playing"
-    }
+    return {"song_name": song_name, "volume": actual_volume, "status": "playing"}
 
-from typing import Dict, Union
+
 from datetime import datetime
+from typing import Dict, Union
 
-def check_instrument_availability(instrument_name: str, date: str) -> Dict[str, Union[str, bool]]:
+
+def check_instrument_availability(
+    instrument_name: str, date: str
+) -> Dict[str, Union[str, bool]]:
     """Check the availability of an instrument on a given date.
 
     Args:
@@ -459,6 +477,8 @@ def check_instrument_availability(instrument_name: str, date: str) -> Dict[str, 
         "Guitar": ["2023-10-01", "2023-10-05"],
         "Piano": ["2023-10-03"],
         "Violin": ["2023-10-02", "2023-10-04"],
+        "Microscope": ["2024-10-02", "2024-11-04"],
+        "Gene Sequencer": ["2023-12-01", "2023-12-14"],
     }
 
     # Validate date format
@@ -481,6 +501,7 @@ def check_instrument_availability(instrument_name: str, date: str) -> Dict[str, 
         "available": available,
     }
 
+
 from typing import Dict
 
 
@@ -495,7 +516,7 @@ def get_artist_name(song_name: str) -> Dict[str, str]:
             - song_name: The name of the song
             - artist_name: The name of the artist who performed the song
     """
-    
+
     # Simulated song-to-artist mapping
     song_artist_map = {
         "Shape of You": "Ed Sheeran",
@@ -504,7 +525,7 @@ def get_artist_name(song_name: str) -> Dict[str, str]:
         "Bohemian Rhapsody": "Queen",
         "Billie Jean": "Michael Jackson",
     }
-    
+
     if song_name not in song_artist_map:
         raise ValueError(f"Song not found: {song_name}")
 
@@ -513,10 +534,13 @@ def get_artist_name(song_name: str) -> Dict[str, str]:
         "artist_name": song_artist_map[song_name],
     }
 
+
 from typing import Dict
 
 
-def play_album(album_id: str, randomise: bool = False) -> Dict[str, Union[str, List[str]]]:
+def play_album(
+    album_id: str, randomise: bool = False
+) -> Dict[str, Union[str, List[str]]]:
     """Start playing an album.
 
     Args:
@@ -541,6 +565,7 @@ def play_album(album_id: str, randomise: bool = False) -> Dict[str, Union[str, L
     tracks = sample_albums[album_id]
     if randomise:
         import random
+
         random.seed(hash(album_id))
         random.shuffle(tracks)
 
@@ -550,11 +575,14 @@ def play_album(album_id: str, randomise: bool = False) -> Dict[str, Union[str, L
         "tracks": tracks,
     }
 
+
 from typing import Dict, Literal
 
 
 def reserve_instrument(
-    instrument_name: str, date: str, time_slot: Literal["morning", "afternoon", "evening"]
+    instrument_name: str,
+    date: str,
+    time_slot: Literal["morning", "afternoon", "evening"],
 ) -> Dict[str, str]:
     """Books an instrument for a specific date and time slot.
 
@@ -570,16 +598,16 @@ def reserve_instrument(
             - time_slot: Time slot for which the instrument is booked
             - confirmation_code: Unique confirmation code for the booking
     """
-    
+
     # Simulate a list of available instruments
     available_instruments = ["guitar", "piano", "violin", "drums"]
-    
+
     if instrument_name not in available_instruments:
         raise ValueError(f"Instrument not available: {instrument_name}")
-    
+
     # Simulate a hash-based confirmation code generation
     confirmation_code = f"{hash((instrument_name, date, time_slot)) & 0xFFFFFFFF:08X}"
-    
+
     return {
         "instrument_name": instrument_name,
         "date": date,
@@ -587,8 +615,9 @@ def reserve_instrument(
         "confirmation_code": confirmation_code,
     }
 
-from typing import Dict, List, Optional, Union
+
 import hashlib
+from typing import Dict, List, Optional, Union
 
 
 def search_album(
@@ -623,6 +652,7 @@ def search_album(
             - release_date: Release date of the album
             - publisher: Publisher of the album
     """
+
     # Simulate a database of albums using hash-based generation
     def generate_album_data(query: str) -> Dict[str, Union[str, List[str]]]:
         hash_value = int(hashlib.sha256(query.encode()).hexdigest(), 16)
@@ -662,7 +692,8 @@ def search_album(
 
     return album_data
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def search_artist(
@@ -692,7 +723,7 @@ def search_artist(
             - songs: List of published songs
             - albums: List of published albums
     """
-    
+
     # Sample data for mock implementation
     sample_artists = {
         "John Doe": {
@@ -700,17 +731,17 @@ def search_artist(
             "nationality": "American",
             "genre": "Rock",
             "songs": ["Rock Anthem", "Guitar Hero"],
-            "albums": ["Rock On", "Live Loud"]
+            "albums": ["Rock On", "Live Loud"],
         },
         "Jane Smith": {
             "birth_date": "19900202",
             "nationality": "British",
             "genre": "Pop",
             "songs": ["Pop Hit", "Dance Floor"],
-            "albums": ["Pop Life", "Dance Party"]
-        }
+            "albums": ["Pop Life", "Dance Party"],
+        },
     }
-    
+
     # Search logic
     for artist, data in sample_artists.items():
         if name and name != artist:
@@ -731,13 +762,14 @@ def search_artist(
             "nationality": data["nationality"],
             "genre": data["genre"],
             "songs": data["songs"],
-            "albums": data["albums"]
+            "albums": data["albums"],
         }
-    
+
     raise ValueError("Artist not found with the given criteria")
 
-from typing import Dict, List, Optional, Union
+
 import hashlib
+from typing import Dict, List, Optional, Union
 
 
 def search_song(
@@ -828,7 +860,8 @@ def search_song(
 
     # Filter songs based on the criteria
     results = [
-        song for song in sample_songs
+        song
+        for song in sample_songs
         if query.lower() in song["title"].lower() and matches_criteria(song)
     ]
 
@@ -836,4 +869,3 @@ def search_song(
         "query": query,
         "results": results,
     }
-

@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # Gaming Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, List, Union, Optional
+from typing import Any, Dict, List, Optional, Union
 
 
 def deck_search(
@@ -30,19 +29,33 @@ def deck_search(
                 - cards: List of cards in the deck
     """
     sample_decks = [
-        {"name": "Dragon's Fury", "value": 150.0, "cards": ["Red Dragon", "Fireball", "Mountain"]},
-        {"name": "Ocean's Might", "value": 200.0, "cards": ["Blue Whale", "Tidal Wave", "Island"]},
-        {"name": "Forest's Whisper", "value": 120.0, "cards": ["Green Elf", "Forest", "Nature's Lore"]},
+        {
+            "name": "Dragon's Fury",
+            "value": 150.0,
+            "cards": ["Red Dragon", "Fireball", "Mountain"],
+        },
+        {
+            "name": "Ocean's Might",
+            "value": 200.0,
+            "cards": ["Blue Whale", "Tidal Wave", "Island"],
+        },
+        {
+            "name": "Forest's Whisper",
+            "value": 120.0,
+            "cards": ["Green Elf", "Forest", "Nature's Lore"],
+        },
     ]
 
     def matches_criteria(deck):
         if deck_name and deck_name.lower() not in deck["name"].lower():
             return False
-        if deck_card and not any(deck_card.lower() in card.lower() for card in deck["cards"]):
+        if deck_card and not any(
+            deck_card.lower() in card.lower() for card in deck["cards"]
+        ):
             return False
         if deck_keyword and not (
-            deck_keyword.lower() in deck["name"].lower() or
-            any(deck_keyword.lower() in card.lower() for card in deck["cards"])
+            deck_keyword.lower() in deck["name"].lower()
+            or any(deck_keyword.lower() in card.lower() for card in deck["cards"])
         ):
             return False
         if deck_val_min is not None and deck["value"] <= deck_val_min:
@@ -60,13 +73,12 @@ def deck_search(
         "results": results,
     }
 
+
 from typing import Dict, Union
 
 
 def add_item(
-    player_id: str,
-    item_id: str,
-    quantity: int = 1
+    player_id: str, item_id: str, quantity: int = 1
 ) -> Dict[str, Union[str, int, bool]]:
     """Add an item to a player's inventory if they have space and meet level requirements.
 
@@ -82,58 +94,61 @@ def add_item(
             - quantity: Number of items added
             - success: Whether the item was successfully added
     """
-    
+
     # Mock player data
     players = {
         "player1": {"level": 10, "inventory_space": 5},
         "player2": {"level": 5, "inventory_space": 2},
     }
-    
+
     # Mock item data
     items = {
         "itemA": {"required_level": 5, "size": 1},
         "itemB": {"required_level": 10, "size": 2},
     }
-    
+
     if player_id not in players:
         raise ValueError(f"Player ID not found: {player_id}")
     if item_id not in items:
         raise ValueError(f"Item ID not found: {item_id}")
-    
+
     player = players[player_id]
     item = items[item_id]
-    
+
     if player["level"] < item["required_level"]:
         return {
             "player_id": player_id,
             "item_id": item_id,
             "quantity": 0,
-            "success": False
+            "success": False,
         }
-    
+
     total_size = item["size"] * quantity
     if player["inventory_space"] < total_size:
         return {
             "player_id": player_id,
             "item_id": item_id,
             "quantity": 0,
-            "success": False
+            "success": False,
         }
-    
+
     # Simulate adding item to inventory
     player["inventory_space"] -= total_size
-    
+
     return {
         "player_id": player_id,
         "item_id": item_id,
         "quantity": quantity,
-        "success": True
+        "success": True,
     }
+
 
 from typing import Dict, List
 
 
-def best_teammates(pokemon_name: str, format: str = "gen9ou") -> List[Dict[str, Union[str, float]]]:
+def best_teammates(
+    pokemon_name: str, format: str = "gen9ou"
+) -> List[Dict[str, Union[str, float]]]:
     """Return a list of the 10 Pokémon with the highest winrates when used alongside the given Pokémon.
 
     Args:
@@ -145,7 +160,7 @@ def best_teammates(pokemon_name: str, format: str = "gen9ou") -> List[Dict[str, 
             - name: Name of the Pokémon
             - winrate: Winrate percentage when used alongside the given Pokémon
     """
-    
+
     # Sample data simulating winrates for Pokémon combinations
     sample_data = {
         "Pikachu": [
@@ -173,16 +188,19 @@ def best_teammates(pokemon_name: str, format: str = "gen9ou") -> List[Dict[str, 
             {"name": "Lapras", "winrate": 66.7},
         ],
     }
-    
+
     if pokemon_name not in sample_data:
         raise ValueError(f"Pokémon not supported: {pokemon_name}")
 
     return sorted(sample_data[pokemon_name], key=lambda x: x["winrate"], reverse=True)
 
+
 from typing import Dict, List, Literal, Union
 
 
-def get_runner_up_players(region: str) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def get_runner_up_players(
+    region: str,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Gets the ranked stats of the players ranked 1000-300 on the ladder for the given region.
 
     Args:
@@ -196,7 +214,7 @@ def get_runner_up_players(region: str) -> Dict[str, Union[str, List[Dict[str, Un
                 - rank: Player's rank
                 - score: Player's score
     """
-    
+
     if region not in ["North America", "Europe", "Asia"]:
         raise ValueError(f"Region not supported: {region}")
 
@@ -211,10 +229,13 @@ def get_runner_up_players(region: str) -> Dict[str, Union[str, List[Dict[str, Un
         "players": sample_players,
     }
 
+
 from typing import Dict, List, Literal
 
 
-def get_top_players(region: str) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def get_top_players(
+    region: str,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Gets the ranked stats of the top 300 players on the ladder for the given region.
 
     Args:
@@ -236,15 +257,13 @@ def get_top_players(region: str) -> Dict[str, Union[str, List[Dict[str, Union[st
         {
             "rank": i + 1,
             "name": f"Player{i + 1}_{region[:2]}",
-            "score": 3000 - i * 10  # Decreasing score for each rank
+            "score": 3000 - i * 10,  # Decreasing score for each rank
         }
         for i in range(300)
     ]
 
-    return {
-        "region": region,
-        "players": players
-    }
+    return {"region": region, "players": players}
+
 
 from typing import Dict, List, Literal
 
@@ -266,29 +285,57 @@ def pokemon_loadouts(
             - stats: Dictionary of stat spread with keys as stat names and values as stat values
             - moveset: List of most popular moves for the Pokémon
     """
-    
+
     sample_data = {
         "Pikachu": {
             "gen9ou": {
                 "nature": "Timid",
-                "stats": {"HP": 35, "Attack": 55, "Defense": 40, "Sp. Atk": 50, "Sp. Def": 50, "Speed": 90},
+                "stats": {
+                    "HP": 35,
+                    "Attack": 55,
+                    "Defense": 40,
+                    "Sp. Atk": 50,
+                    "Sp. Def": 50,
+                    "Speed": 90,
+                },
                 "moveset": ["Thunderbolt", "Volt Tackle", "Iron Tail", "Quick Attack"],
             },
             "gen8ou": {
                 "nature": "Jolly",
-                "stats": {"HP": 35, "Attack": 55, "Defense": 40, "Sp. Atk": 50, "Sp. Def": 50, "Speed": 90},
+                "stats": {
+                    "HP": 35,
+                    "Attack": 55,
+                    "Defense": 40,
+                    "Sp. Atk": 50,
+                    "Sp. Def": 50,
+                    "Speed": 90,
+                },
                 "moveset": ["Thunderbolt", "Volt Tackle", "Grass Knot", "Quick Attack"],
             },
         },
         "Charizard": {
             "gen9ou": {
                 "nature": "Modest",
-                "stats": {"HP": 78, "Attack": 84, "Defense": 78, "Sp. Atk": 109, "Sp. Def": 85, "Speed": 100},
+                "stats": {
+                    "HP": 78,
+                    "Attack": 84,
+                    "Defense": 78,
+                    "Sp. Atk": 109,
+                    "Sp. Def": 85,
+                    "Speed": 100,
+                },
                 "moveset": ["Flamethrower", "Dragon Pulse", "Air Slash", "Solar Beam"],
             },
             "gen8ou": {
                 "nature": "Timid",
-                "stats": {"HP": 78, "Attack": 84, "Defense": 78, "Sp. Atk": 109, "Sp. Def": 85, "Speed": 100},
+                "stats": {
+                    "HP": 78,
+                    "Attack": 84,
+                    "Defense": 78,
+                    "Sp. Atk": 109,
+                    "Sp. Def": 85,
+                    "Speed": 100,
+                },
                 "moveset": ["Fire Blast", "Hurricane", "Focus Blast", "Roost"],
             },
         },
@@ -309,6 +356,7 @@ def pokemon_loadouts(
         "moveset": data["moveset"],
     }
 
+
 from typing import Dict, Literal
 
 
@@ -325,7 +373,7 @@ def pokemon_tier(pokemon_name: str, format: str = "gen9ou") -> Dict[str, str]:
             - format: The competitive format considered
             - tier: The tier ranking of the Pokémon (S/A/B/C/D/E/F)
     """
-    
+
     # Sample data for demonstration purposes
     sample_data = {
         "gen9ou": {
@@ -341,23 +389,26 @@ def pokemon_tier(pokemon_name: str, format: str = "gen9ou") -> Dict[str, str]:
             "Bulbasaur": "F",
         },
     }
-    
+
     if format not in sample_data:
         raise ValueError(f"Format not supported: {format}")
-    
+
     if pokemon_name not in sample_data[format]:
         raise ValueError(f"Pokémon not found in format {format}: {pokemon_name}")
-    
+
     return {
         "pokemon_name": pokemon_name,
         "format": format,
         "tier": sample_data[format][pokemon_name],
     }
 
+
 from typing import Dict, Union
 
 
-def pokemon_use_stats(pokemon_name: str, format: str = "gen9ou") -> Dict[str, Union[str, float]]:
+def pokemon_use_stats(
+    pokemon_name: str, format: str = "gen9ou"
+) -> Dict[str, Union[str, float]]:
     """Return the usage statistics of a Pokémon in a given format.
 
     Args:
@@ -371,7 +422,7 @@ def pokemon_use_stats(pokemon_name: str, format: str = "gen9ou") -> Dict[str, Un
             - team_percentage: Percentage of teams the Pokémon is included in
             - lead_percentage: Percentage of games the Pokémon is used as a lead
     """
-    
+
     # Sample data based on hash of the Pokémon name and format for consistency
     sample_data = {
         "gen9ou": {
@@ -383,23 +434,24 @@ def pokemon_use_stats(pokemon_name: str, format: str = "gen9ou") -> Dict[str, Un
             "Pikachu": (12.3, 4.8),
             "Charizard": (22.1, 9.7),
             "Bulbasaur": (4.9, 1.9),
-        }
+        },
     }
-    
+
     if format not in sample_data:
         raise ValueError(f"Format not supported: {format}")
-    
+
     if pokemon_name not in sample_data[format]:
         raise ValueError(f"Pokémon not found in format {format}: {pokemon_name}")
-    
+
     team_percentage, lead_percentage = sample_data[format][pokemon_name]
-    
+
     return {
         "pokemon_name": pokemon_name,
         "format": format,
         "team_percentage": team_percentage,
         "lead_percentage": lead_percentage,
     }
+
 
 from typing import Dict, Union
 
@@ -423,43 +475,44 @@ def remove_item(
     Raises:
         ValueError: If the item is equipped, doesn't exist, or quantity is invalid.
     """
-    
+
     # Mock player inventory data
     player_inventory = {
         "player123": {"sword": 2, "shield": 1, "potion": 5},
         "player456": {"axe": 1, "potion": 3},
     }
-    
+
     # Mock equipped items data
     equipped_items = {
         "player123": ["sword"],
         "player456": ["axe"],
     }
-    
+
     if player_id not in player_inventory:
         raise ValueError(f"Player ID not found: {player_id}")
-    
+
     if item_id not in player_inventory[player_id]:
         raise ValueError(f"Item ID not found in inventory: {item_id}")
-    
+
     if item_id in equipped_items.get(player_id, []):
         raise ValueError(f"Cannot remove equipped item: {item_id}")
-    
+
     current_quantity = player_inventory[player_id][item_id]
-    
+
     if quantity < 1 or quantity > current_quantity:
         raise ValueError(f"Invalid quantity: {quantity}")
-    
+
     # Simulate item removal
     player_inventory[player_id][item_id] -= quantity
     if player_inventory[player_id][item_id] == 0:
         del player_inventory[player_id][item_id]
-    
+
     return {
         "player_id": player_id,
         "item_id": item_id,
         "quantity": quantity,
     }
+
 
 from typing import Dict, Literal, Union
 
@@ -467,7 +520,7 @@ from typing import Dict, Literal, Union
 def collection_add(
     card_name: str,
     card_quantity: int = 1,
-    trade_status: Literal["trade", "display"] = "display"
+    trade_status: Literal["trade", "display"] = "display",
 ) -> Dict[str, Union[str, int]]:
     """Add a card to your digital trade/display binder.
 
@@ -504,10 +557,13 @@ def collection_add(
         "trade_status": collection[card_name]["status"],
     }
 
+
 from typing import Dict, Union
 
 
-def collection_rem(card_name: str, card_quantity: int = 1) -> Dict[str, Union[str, int]]:
+def collection_rem(
+    card_name: str, card_quantity: int = 1
+) -> Dict[str, Union[str, int]]:
     """Remove a card from your digital trade/display binder.
 
     Args:
@@ -532,7 +588,9 @@ def collection_rem(card_name: str, card_quantity: int = 1) -> Dict[str, Union[st
 
     current_quantity = collection[card_name]
     if card_quantity > current_quantity:
-        raise ValueError(f"Cannot remove {card_quantity} cards. Only {current_quantity} available.")
+        raise ValueError(
+            f"Cannot remove {card_quantity} cards. Only {current_quantity} available."
+        )
 
     remaining_quantity = current_quantity - card_quantity
     collection[card_name] = remaining_quantity
@@ -543,12 +601,11 @@ def collection_rem(card_name: str, card_quantity: int = 1) -> Dict[str, Union[st
         "remaining_quantity": remaining_quantity,
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
-def apply_condition(
-    condition: str, apply: bool
-) -> Dict[str, Union[str, List[str]]]:
+def apply_condition(condition: str, apply: bool) -> Dict[str, Union[str, List[str]]]:
     """Applies or removes a D&D condition to the character.
 
     Args:
@@ -585,6 +642,7 @@ def apply_condition(
         "conditions": current_conditions,
     }
 
+
 from typing import Dict
 
 
@@ -614,12 +672,11 @@ def attack(attack_dice: str, level: int = 1) -> Dict[str, int]:
     damage = sum(random.randint(1, num_sides) for _ in range(num_dice))
     total_damage = damage + level
 
-    return {
-        "damage": total_damage
-    }
+    return {"damage": total_damage}
 
-from typing import Dict, Union
+
 import random
+from typing import Dict, Union
 
 
 def calculate_attack(attack_roll: str, target_ac: float) -> Dict[str, Union[int, bool]]:
@@ -635,8 +692,8 @@ def calculate_attack(attack_roll: str, target_ac: float) -> Dict[str, Union[int,
             - hit: Boolean indicating if the attack hits the target
     """
     try:
-        dice, modifier = attack_roll.split('+')
-        num_dice, dice_sides = map(int, dice.split('d'))
+        dice, modifier = attack_roll.split("+")
+        num_dice, dice_sides = map(int, dice.split("d"))
         modifier = int(modifier)
     except ValueError:
         raise ValueError("Invalid attack roll format. Use 'XdY+Z' format.")
@@ -652,8 +709,9 @@ def calculate_attack(attack_roll: str, target_ac: float) -> Dict[str, Union[int,
         "hit": hit,
     }
 
-from typing import Dict, Union
+
 from datetime import datetime
+from typing import Dict, Union
 
 
 def check_player_availability_for_date(
@@ -680,7 +738,9 @@ def check_player_availability_for_date(
 
     # Mock return date for unavailable players
     if status != "available":
-        return_date = (datetime.strptime(check_date, "%Y-%m-%d") + timedelta(days=player_hash * 7)).strftime("%Y-%m-%d")
+        return_date = (
+            datetime.strptime(check_date, "%Y-%m-%d") + timedelta(days=player_hash * 7)
+        ).strftime("%Y-%m-%d")
     else:
         return_date = None
 
@@ -693,6 +753,7 @@ def check_player_availability_for_date(
         "status": status,
         "return_date": return_date,
     }
+
 
 from typing import Dict
 
@@ -714,14 +775,14 @@ def craft_item(
             - success: Boolean indicating if the crafting was successful
             - message: Description of the crafting result
     """
-    
+
     # Mock player inventory
     player_inventory = {
         "wood": 10,
         "iron": 5,
         "cloth": 20,
     }
-    
+
     # Check if player has enough materials
     for material_id, required_qty in materials.items():
         if player_inventory.get(material_id, 0) < required_qty:
@@ -731,11 +792,11 @@ def craft_item(
                 "success": False,
                 "message": f"Insufficient {material_id} to craft {target_item_id}.",
             }
-    
+
     # Simulate crafting process
     for material_id, required_qty in materials.items():
         player_inventory[material_id] -= required_qty
-    
+
     return {
         "player_id": player_id,
         "target_item_id": target_item_id,
@@ -743,9 +804,10 @@ def craft_item(
         "message": f"Successfully crafted {target_item_id}.",
     }
 
-from typing import Dict, List, Literal, Optional, Union
-import random
+
 import hashlib
+import random
+from typing import Dict, List, Literal, Optional, Union
 
 
 def create_enemy(
@@ -774,18 +836,18 @@ def create_enemy(
             - stats: Dictionary of enemy stats (health, attack, defense)
             - attacks: List of attacks based on the enemy's element
     """
-    
+
     # Generate consistent random stats using a hash of the name
     hash_seed = int(hashlib.sha256(name.encode()).hexdigest(), 16)
     random.seed(hash_seed)
-    
+
     # Generate stats
     stats = {
         "health": random.randint(50, 100) + level * 10,
         "attack": random.randint(10, 20) + level * 2,
         "defense": random.randint(5, 15) + level * 2,
     }
-    
+
     # Define attacks based on element
     element_attacks = {
         "earth": ["Rock Throw", "Earthquake", "Mud Slide"],
@@ -794,18 +856,20 @@ def create_enemy(
         "wind": ["Gust", "Tornado", "Air Slash"],
         "death": ["Soul Drain", "Necrotic Touch", "Deathly Howl"],
     }
-    
+
     attacks = random.sample(element_attacks[element], k=2)
-    
+
     return {
         "name": name,
         "species": species,
         "element": element,
         "level": level,
-        "description": description or f"A fearsome {species} with mastery over {element} elements.",
+        "description": description
+        or f"A fearsome {species} with mastery over {element} elements.",
         "stats": stats,
         "attacks": attacks,
     }
+
 
 from typing import Dict, Union
 
@@ -821,14 +885,14 @@ def cues_used(pro_name: str) -> Dict[str, Union[str, list]]:
             - pro_name: Name of the pool pro
             - cue_brands: List of cue brands used by the pro
     """
-    
+
     sample_data = {
         "Efren Reyes": ["Predator", "Mezz"],
         "Allison Fisher": ["Cuetec", "McDermott"],
         "Shane Van Boening": ["Cuetec", "Predator"],
         "Jeanette Lee": ["Scorpion", "Viking"],
     }
-    
+
     if pro_name not in sample_data:
         raise ValueError(f"Pro name not supported: {pro_name}")
 
@@ -837,14 +901,17 @@ def cues_used(pro_name: str) -> Dict[str, Union[str, list]]:
         "cue_brands": sample_data[pro_name],
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
 def customize_avatar(
     avatar_name: str,
-    body_type: Literal["human", "robot", "animal", "fantasy_creature", "abstract"] = "human",
+    body_type: Literal[
+        "human", "robot", "animal", "fantasy_creature", "abstract"
+    ] = "human",
     special_abilities: List[str] = [],
-    color_scheme: str = "#0066CC"
+    color_scheme: str = "#0066CC",
 ) -> Dict[str, Union[str, List[str]]]:
     """Modify user's virtual avatar appearance and abilities.
 
@@ -870,7 +937,7 @@ def customize_avatar(
         "robot": "A mechanical marvel with precision and strength.",
         "animal": "Embodies the spirit and agility of the wild.",
         "fantasy_creature": "A mystical being with magical powers.",
-        "abstract": "An enigmatic form that defies conventional understanding."
+        "abstract": "An enigmatic form that defies conventional understanding.",
     }
 
     description = descriptions.get(body_type, "An undefined avatar form.")
@@ -880,8 +947,9 @@ def customize_avatar(
         "body_type": body_type,
         "special_abilities": special_abilities,
         "color_scheme": color_scheme,
-        "description": description
+        "description": description,
     }
+
 
 from typing import Dict
 
@@ -901,7 +969,7 @@ def games_to_duo(
         Dict containing:
             - games_needed: Number of games player one needs to win consecutively to duo with player two.
     """
-    
+
     if not (1 <= rank_1 <= 20) or not (1 <= rank_2 <= 20):
         raise ValueError("Ranks must be between 1 and 20.")
     if not (0 <= points_1 <= 100) or not (0 <= points_2 <= 100):
@@ -924,16 +992,25 @@ def games_to_duo(
 
     return {"games_needed": games_needed}
 
+
 from typing import Dict, List, Literal, Union
 
 
 def get_best_players_for_position(
-    position: Literal["LeftWing", "LeftBack", "PlayMaker", "Pivot", "RightBack", "RightWing", "Goalkeeper"],
+    position: Literal[
+        "LeftWing",
+        "LeftBack",
+        "PlayMaker",
+        "Pivot",
+        "RightBack",
+        "RightWing",
+        "Goalkeeper",
+    ],
     age_group: Literal["U8", "U10", "U12", "U14", "U16", "U18", "Adult"],
     gender: Literal["Male", "Female"],
     only_available: bool,
     min_skill_score: float = 0,
-    max_results: int = 10
+    max_results: int = 10,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Get the best players for a specific position based on their position-specific skill scores.
 
@@ -952,16 +1029,52 @@ def get_best_players_for_position(
     """
     # Sample data for demonstration purposes
     sample_players = [
-        {"name": "Alex Johnson", "age": 15, "gender": "Male", "position": "LeftWing", "skill_score": 8.5, "available": True},
-        {"name": "Jamie Smith", "age": 17, "gender": "Female", "position": "Goalkeeper", "skill_score": 9.0, "available": False},
-        {"name": "Sam Lee", "age": 12, "gender": "Male", "position": "PlayMaker", "skill_score": 7.5, "available": True},
-        {"name": "Taylor Brown", "age": 20, "gender": "Female", "position": "Pivot", "skill_score": 8.0, "available": True},
-        {"name": "Jordan White", "age": 14, "gender": "Male", "position": "RightBack", "skill_score": 6.5, "available": True},
+        {
+            "name": "Alex Johnson",
+            "age": 15,
+            "gender": "Male",
+            "position": "LeftWing",
+            "skill_score": 8.5,
+            "available": True,
+        },
+        {
+            "name": "Jamie Smith",
+            "age": 17,
+            "gender": "Female",
+            "position": "Goalkeeper",
+            "skill_score": 9.0,
+            "available": False,
+        },
+        {
+            "name": "Sam Lee",
+            "age": 12,
+            "gender": "Male",
+            "position": "PlayMaker",
+            "skill_score": 7.5,
+            "available": True,
+        },
+        {
+            "name": "Taylor Brown",
+            "age": 20,
+            "gender": "Female",
+            "position": "Pivot",
+            "skill_score": 8.0,
+            "available": True,
+        },
+        {
+            "name": "Jordan White",
+            "age": 14,
+            "gender": "Male",
+            "position": "RightBack",
+            "skill_score": 6.5,
+            "available": True,
+        },
     ]
 
     # Filter players based on the criteria
     filtered_players = [
-        player for player in sample_players
+        player
+        for player in sample_players
         if player["position"] == position
         and player["age"] <= int(age_group[1:])  # Extract age limit from age_group
         and player["gender"] == gender
@@ -970,15 +1083,15 @@ def get_best_players_for_position(
     ]
 
     # Sort players by skill score in descending order
-    sorted_players = sorted(filtered_players, key=lambda x: x["skill_score"], reverse=True)
+    sorted_players = sorted(
+        filtered_players, key=lambda x: x["skill_score"], reverse=True
+    )
 
     # Limit the number of results
     top_players = sorted_players[:max_results]
 
-    return {
-        "position": position,
-        "players": top_players
-    }
+    return {"position": position, "players": top_players}
+
 
 from typing import Dict, Union
 
@@ -997,28 +1110,28 @@ def get_blu_ray_game_information(game_name: str) -> Dict[str, Union[str, List[st
             - director: The director of the game
             - platforms: List of platforms the game is available on
     """
-    
+
     sample_data = {
         "The Last of Us": {
             "genre": "Action-adventure",
             "certification": "Mature 17+",
             "director": "Neil Druckmann",
-            "platforms": ["PlayStation 4", "PlayStation 5"]
+            "platforms": ["PlayStation 4", "PlayStation 5"],
         },
         "Halo Infinite": {
             "genre": "First-person shooter",
             "certification": "Teen",
             "director": "Joseph Staten",
-            "platforms": ["Xbox One", "Xbox Series X/S", "PC"]
+            "platforms": ["Xbox One", "Xbox Series X/S", "PC"],
         },
         "God of War": {
             "genre": "Action-adventure",
             "certification": "Mature 17+",
             "director": "Cory Barlog",
-            "platforms": ["PlayStation 4", "PlayStation 5"]
-        }
+            "platforms": ["PlayStation 4", "PlayStation 5"],
+        },
     }
-    
+
     if game_name not in sample_data:
         raise ValueError(f"Game not supported: {game_name}")
 
@@ -1031,10 +1144,13 @@ def get_blu_ray_game_information(game_name: str) -> Dict[str, Union[str, List[st
         "platforms": game_info["platforms"],
     }
 
+
 from typing import Dict, Union
 
 
-def get_loot(avg_level: float, number_of_enemies: int = 1) -> Dict[str, Union[int, float, str]]:
+def get_loot(
+    avg_level: float, number_of_enemies: int = 1
+) -> Dict[str, Union[int, float, str]]:
     """Get loot depending on the number and level of the enemies.
 
     Args:
@@ -1068,18 +1184,26 @@ def get_loot(avg_level: float, number_of_enemies: int = 1) -> Dict[str, Union[in
         "rarity": rarity,
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
 def get_recommended_discounted_steam_games(
-    genre: Literal["ACTION", "ROLE_PLAYING", "STRATEGY", "ADVENTURE", "SIMULATION", "SPORTS_&_RACING"],
+    genre: Literal[
+        "ACTION",
+        "ROLE_PLAYING",
+        "STRATEGY",
+        "ADVENTURE",
+        "SIMULATION",
+        "SPORTS_&_RACING",
+    ],
     discount: float = 0,
     min_price: float = 0,
     max_price: float = 0,
     platforms: List[Literal["WINDOWS", "MACOS", "LINUX/STEAMOS"]] = ["WINDOWS"],
     players: List[Literal["SINGLEPLAYER", "ONLINE_MULTIPLAYER", "LOCAL_COOP"]] = None,
     limit: int = 50,
-    sort_by: Literal["POPULARITY", "PRICE", "ALPHANUMERIC"] = "POPULARITY"
+    sort_by: Literal["POPULARITY", "PRICE", "ALPHANUMERIC"] = "POPULARITY",
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float, List[str]]]]]]:
     """Gets recommended games on the Steam platform that are on Special Discount Offers.
 
@@ -1099,15 +1223,46 @@ def get_recommended_discounted_steam_games(
             - games: List of games with details such as name, price, discount, platforms, and player modes.
     """
     sample_games = [
-        {"name": "Action Game 1", "price": 19.99, "discount": 50, "platforms": ["WINDOWS"], "players": ["SINGLEPLAYER"]},
-        {"name": "RPG Adventure", "price": 29.99, "discount": 60, "platforms": ["WINDOWS", "MACOS"], "players": ["ONLINE_MULTIPLAYER"]},
-        {"name": "Strategy Master", "price": 9.99, "discount": 70, "platforms": ["LINUX/STEAMOS"], "players": ["LOCAL_COOP"]},
-        {"name": "Sim Life", "price": 14.99, "discount": 30, "platforms": ["WINDOWS", "LINUX/STEAMOS"], "players": ["SINGLEPLAYER", "LOCAL_COOP"]},
-        {"name": "Racing Pro", "price": 24.99, "discount": 40, "platforms": ["WINDOWS", "MACOS"], "players": ["ONLINE_MULTIPLAYER", "LOCAL_COOP"]},
+        {
+            "name": "Action Game 1",
+            "price": 19.99,
+            "discount": 50,
+            "platforms": ["WINDOWS"],
+            "players": ["SINGLEPLAYER"],
+        },
+        {
+            "name": "RPG Adventure",
+            "price": 29.99,
+            "discount": 60,
+            "platforms": ["WINDOWS", "MACOS"],
+            "players": ["ONLINE_MULTIPLAYER"],
+        },
+        {
+            "name": "Strategy Master",
+            "price": 9.99,
+            "discount": 70,
+            "platforms": ["LINUX/STEAMOS"],
+            "players": ["LOCAL_COOP"],
+        },
+        {
+            "name": "Sim Life",
+            "price": 14.99,
+            "discount": 30,
+            "platforms": ["WINDOWS", "LINUX/STEAMOS"],
+            "players": ["SINGLEPLAYER", "LOCAL_COOP"],
+        },
+        {
+            "name": "Racing Pro",
+            "price": 24.99,
+            "discount": 40,
+            "platforms": ["WINDOWS", "MACOS"],
+            "players": ["ONLINE_MULTIPLAYER", "LOCAL_COOP"],
+        },
     ]
 
     filtered_games = [
-        game for game in sample_games
+        game
+        for game in sample_games
         if game["discount"] > discount
         and (min_price == 0 or game["price"] >= min_price)
         and (max_price == 0 or game["price"] <= max_price)
@@ -1120,10 +1275,8 @@ def get_recommended_discounted_steam_games(
     elif sort_by == "ALPHANUMERIC":
         filtered_games.sort(key=lambda x: x["name"])
 
-    return {
-        "genre": genre,
-        "games": filtered_games[:limit]
-    }
+    return {"genre": genre, "games": filtered_games[:limit]}
+
 
 from typing import Dict, Union
 
@@ -1141,25 +1294,26 @@ def get_schedule_I_game_stats(player_id: int) -> Dict[str, Union[str, int, float
             - average_score: Average score per game
             - total_points: Total points scored in Schedule I
     """
-    
+
     # Simulate some sample data based on player_id
     sample_data = {
         101: {"games_played": 15, "average_score": 22.5, "total_points": 337},
         202: {"games_played": 18, "average_score": 19.8, "total_points": 356},
         303: {"games_played": 20, "average_score": 25.1, "total_points": 502},
     }
-    
+
     if player_id not in sample_data:
         raise ValueError(f"Player ID not found in Schedule I: {player_id}")
-    
+
     player_stats = sample_data[player_id]
-    
+
     return {
         "player_id": player_id,
         "games_played": player_stats["games_played"],
         "average_score": player_stats["average_score"],
         "total_points": player_stats["total_points"],
     }
+
 
 from typing import Dict, Union
 
@@ -1178,20 +1332,20 @@ def get_star_craft_II_game_stats(user_id: int) -> Dict[str, Union[str, int, floa
             - losses: Number of games lost
             - win_rate: Win rate percentage
     """
-    
+
     # Simulated player data based on user_id
     player_data = {
         1: {"player_name": "ZergMaster", "wins": 150, "losses": 50},
         2: {"player_name": "ProtossPro", "wins": 120, "losses": 80},
         3: {"player_name": "TerranTactician", "wins": 200, "losses": 100},
     }
-    
+
     if user_id not in player_data:
         raise ValueError(f"User ID not found: {user_id}")
-    
+
     data = player_data[user_id]
     win_rate = (data["wins"] / (data["wins"] + data["losses"])) * 100
-    
+
     return {
         "user_id": user_id,
         "player_name": data["player_name"],
@@ -1199,6 +1353,7 @@ def get_star_craft_II_game_stats(user_id: int) -> Dict[str, Union[str, int, floa
         "losses": data["losses"],
         "win_rate": round(win_rate, 2),
     }
+
 
 from typing import Dict, Union
 
@@ -1235,11 +1390,20 @@ def get_star_craft_I_game_stats(user_id: int) -> Dict[str, Union[str, int, float
         "favorite_race": favorite_race,
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
 def get_steam_games(
-    name: str, genre: Literal["ACTION", "ROLE_PLAYING", "STRATEGY", "ADVENTURE", "SIMULATION", "SPORTS_&_RACING"] = None
+    name: str,
+    genre: Literal[
+        "ACTION",
+        "ROLE_PLAYING",
+        "STRATEGY",
+        "ADVENTURE",
+        "SIMULATION",
+        "SPORTS_&_RACING",
+    ] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Gets games and their details on the Steam platform that match the name input.
 
@@ -1256,31 +1420,61 @@ def get_steam_games(
                 - release_year: Year the game was released
                 - price: Price of the game in USD
     """
-    
+
     sample_games = [
         {"title": "Action Hero", "genre": "ACTION", "release_year": 2021, "price": 29},
-        {"title": "Role Play Saga", "genre": "ROLE_PLAYING", "release_year": 2019, "price": 49},
-        {"title": "Strategic Minds", "genre": "STRATEGY", "release_year": 2020, "price": 39},
-        {"title": "Adventure Quest", "genre": "ADVENTURE", "release_year": 2018, "price": 19},
-        {"title": "Simulate Life", "genre": "SIMULATION", "release_year": 2022, "price": 59},
-        {"title": "Racing Pro", "genre": "SPORTS_&_RACING", "release_year": 2021, "price": 24},
+        {
+            "title": "Role Play Saga",
+            "genre": "ROLE_PLAYING",
+            "release_year": 2019,
+            "price": 49,
+        },
+        {
+            "title": "Strategic Minds",
+            "genre": "STRATEGY",
+            "release_year": 2020,
+            "price": 39,
+        },
+        {
+            "title": "Adventure Quest",
+            "genre": "ADVENTURE",
+            "release_year": 2018,
+            "price": 19,
+        },
+        {
+            "title": "Simulate Life",
+            "genre": "SIMULATION",
+            "release_year": 2022,
+            "price": 59,
+        },
+        {
+            "title": "Racing Pro",
+            "genre": "SPORTS_&_RACING",
+            "release_year": 2021,
+            "price": 24,
+        },
     ]
 
     filtered_games = [
-        game for game in sample_games
-        if name.lower() in game["title"].lower() and (genre is None or game["genre"] == genre)
+        game
+        for game in sample_games
+        if name.lower() in game["title"].lower()
+        and (genre is None or game["genre"] == genre)
     ]
 
     if not filtered_games:
-        raise ValueError(f"No games found matching the criteria: name='{name}', genre='{genre}'")
+        raise ValueError(
+            f"No games found matching the criteria: name='{name}', genre='{genre}'"
+        )
 
     return {
         "search_name": name,
         "games": filtered_games,
     }
 
-from typing import Dict, List, Literal, Union
+
 import hashlib
+from typing import Dict, List, Literal, Union
 
 
 def get_xp_records(
@@ -1330,6 +1524,7 @@ def get_xp_records(
         "xp_records": xp_records,
     }
 
+
 from typing import Dict, Literal
 
 
@@ -1346,24 +1541,25 @@ def is_pokemon_available(pokemon_name: str, format: str = "gen9ou") -> Dict[str,
             - format: The format checked
             - available: Boolean indicating if the Pokémon is available in the format
     """
-    
+
     # Sample data simulating Pokémon availability in different formats
     availability_data = {
         "gen9ou": {"Pikachu": True, "Charizard": True, "Bulbasaur": False},
         "gen8ou": {"Pikachu": True, "Charizard": False, "Bulbasaur": True},
         "gen7ou": {"Pikachu": False, "Charizard": True, "Bulbasaur": True},
     }
-    
+
     if format not in availability_data:
         raise ValueError(f"Format not supported: {format}")
-    
+
     available = availability_data[format].get(pokemon_name, False)
-    
+
     return {
         "pokemon_name": pokemon_name,
         "format": format,
         "available": available,
     }
+
 
 from typing import Dict, List, Literal, Union
 
@@ -1374,7 +1570,7 @@ def join_texas_cash_game(
     buyInAmount: float,
     playerBalance: float,
     ipAddress: str,
-    seatPreference: int = None
+    seatPreference: int = None,
 ) -> Dict[str, Union[str, float, int, List[int]]]:
     """Allows a player to join an existing Texas Hold'em poker cash game.
 
@@ -1395,13 +1591,13 @@ def join_texas_cash_game(
             - buyInAmount: The buy-in amount for the game
             - remainingBalance: The player's remaining balance after buy-in
     """
-    
+
     if buyInAmount < 50 or buyInAmount > 1000:
         raise ValueError("Buy-in amount must be between $50 and $1000.")
-    
+
     if playerBalance < buyInAmount:
         raise ValueError("Insufficient balance for the buy-in amount.")
-    
+
     # Simulate table ID and seat assignment
     tableID = hash((playerID, blinds, ipAddress)) % 10000
     seatNumber = seatPreference if seatPreference else (hash(ipAddress) % 9) + 1
@@ -1412,13 +1608,16 @@ def join_texas_cash_game(
         "seatNumber": seatNumber,
         "blinds": blinds,
         "buyInAmount": buyInAmount,
-        "remainingBalance": playerBalance - buyInAmount
+        "remainingBalance": playerBalance - buyInAmount,
     }
+
 
 from typing import Dict, Union
 
 
-def league_stats(year: int, incl_playoffs: bool = True) -> Dict[str, Union[int, Dict[str, Union[int, float]]]]:
+def league_stats(
+    year: int, incl_playoffs: bool = True
+) -> Dict[str, Union[int, Dict[str, Union[int, float]]]]:
     """Retrieve league-wide records for a given year.
 
     Args:
@@ -1433,12 +1632,12 @@ def league_stats(year: int, incl_playoffs: bool = True) -> Dict[str, Union[int, 
                 - average_points: Average points scored per game
                 - average_attendance: Average attendance per game
     """
-    
+
     # Simulated data based on year and incl_playoffs
     base_games = 1230  # Regular season games in a typical league
     playoff_games = 82  # Example number of playoff games
     total_games = base_games + (playoff_games if incl_playoffs else 0)
-    
+
     # Generate consistent but varied sample data using a hash of the year
     hash_seed = hash(year) % 100
     average_points = 100 + (hash_seed % 10)  # Average points vary slightly
@@ -1450,11 +1649,12 @@ def league_stats(year: int, incl_playoffs: bool = True) -> Dict[str, Union[int, 
             "total_games": total_games,
             "average_points": average_points,
             "average_attendance": average_attendance,
-        }
+        },
     }
 
-from typing import Dict, Literal, Union
+
 import hashlib
+from typing import Dict, Literal, Union
 
 
 def log_xp_gain(
@@ -1462,7 +1662,7 @@ def log_xp_gain(
     skill: str,
     gained_xp: float,
     time_stamp: str,
-    game: Literal["osrs", "rs3"] = "rs3"
+    game: Literal["osrs", "rs3"] = "rs3",
 ) -> Dict[str, Union[str, float]]:
     """Record xp gain for a Runescape account.
 
@@ -1486,7 +1686,9 @@ def log_xp_gain(
         raise ValueError("Missing required parameters")
 
     # Generate a unique log ID using a hash of the input data
-    log_id = hashlib.md5(f"{rsn}{skill}{gained_xp}{time_stamp}{game}".encode()).hexdigest()
+    log_id = hashlib.md5(
+        f"{rsn}{skill}{gained_xp}{time_stamp}{game}".encode()
+    ).hexdigest()
 
     return {
         "rsn": rsn,
@@ -1496,6 +1698,7 @@ def log_xp_gain(
         "game": game,
         "log_id": log_id,
     }
+
 
 from typing import Dict, Literal
 
@@ -1537,6 +1740,7 @@ def manage_spells(
         "slots": spell_slots,
     }
 
+
 from typing import Dict
 
 
@@ -1551,7 +1755,7 @@ def moral_alignment_description(moral_alignment: str) -> Dict[str, str]:
             - alignment: The moral alignment type
             - description: A brief description of the moral alignment
     """
-    
+
     descriptions = {
         "Lawful Good": "Acts as a good person is expected or required to act.",
         "Neutral Good": "Does the best that a good person can do.",
@@ -1561,9 +1765,9 @@ def moral_alignment_description(moral_alignment: str) -> Dict[str, str]:
         "Chaotic Neutral": "Follows their whims, holding their personal freedom above all else.",
         "Lawful Evil": "Methodically takes what they want within the limits of a code of conduct.",
         "Neutral Evil": "Does whatever they can get away with, without compassion or qualms.",
-        "Chaotic Evil": "Acts with arbitrary violence, spurred by greed, hatred, or bloodlust."
+        "Chaotic Evil": "Acts with arbitrary violence, spurred by greed, hatred, or bloodlust.",
     }
-    
+
     if moral_alignment not in descriptions:
         raise ValueError(f"Unsupported moral alignment: {moral_alignment}")
 
@@ -1572,10 +1776,13 @@ def moral_alignment_description(moral_alignment: str) -> Dict[str, str]:
         "description": descriptions[moral_alignment],
     }
 
+
 from typing import Dict, Union
 
 
-def player_stats(name: str, incl_playoffs: bool = True) -> Dict[str, Union[str, int, float]]:
+def player_stats(
+    name: str, incl_playoffs: bool = True
+) -> Dict[str, Union[str, int, float]]:
     """Retrieve individual stats for a player.
 
     Args:
@@ -1590,7 +1797,7 @@ def player_stats(name: str, incl_playoffs: bool = True) -> Dict[str, Union[str, 
             - assists_per_game: Average assists made per game
             - rebounds_per_game: Average rebounds per game
     """
-    
+
     # Sample data based on player name hash for consistency
     sample_data = {
         "LeBron James": {
@@ -1624,10 +1831,13 @@ def player_stats(name: str, incl_playoffs: bool = True) -> Dict[str, Union[str, 
         "rebounds_per_game": round(stats["rebounds_per_game"], 1),
     }
 
+
 from typing import Dict, List, Union
 
 
-def rc_trackmeets(postcode: str, radius: float = 5) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
+def rc_trackmeets(
+    postcode: str, radius: float = 5
+) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
     """Find radio controlled car groups and tracks near a given postcode.
 
     Args:
@@ -1647,12 +1857,28 @@ def rc_trackmeets(postcode: str, radius: float = 5) -> Dict[str, Union[str, floa
     # Sample data based on hash of postcode for consistent but varied results
     sample_tracks = {
         "12345": [
-            {"name": "Speedway RC Track", "distance": 3.2, "address": "123 RC Lane, Toytown"},
-            {"name": "Fast Wheels Arena", "distance": 4.5, "address": "456 Model Ave, Toytown"},
+            {
+                "name": "Speedway RC Track",
+                "distance": 3.2,
+                "address": "123 RC Lane, Toytown",
+            },
+            {
+                "name": "Fast Wheels Arena",
+                "distance": 4.5,
+                "address": "456 Model Ave, Toytown",
+            },
         ],
         "67890": [
-            {"name": "Mini Racers Circuit", "distance": 2.8, "address": "789 Hobby St, Modelville"},
-            {"name": "RC Fun Park", "distance": 5.0, "address": "1011 Play Rd, Modelville"},
+            {
+                "name": "Mini Racers Circuit",
+                "distance": 2.8,
+                "address": "789 Hobby St, Modelville",
+            },
+            {
+                "name": "RC Fun Park",
+                "distance": 5.0,
+                "address": "1011 Play Rd, Modelville",
+            },
         ],
     }
 
@@ -1668,9 +1894,10 @@ def rc_trackmeets(postcode: str, radius: float = 5) -> Dict[str, Union[str, floa
         "tracks": sample_tracks[key],
     }
 
-from typing import Dict, Union
+
 import random
 import re
+from typing import Dict, Union
 
 
 def roll_dice(dice: str) -> Dict[str, Union[int, str]]:
@@ -1684,7 +1911,7 @@ def roll_dice(dice: str) -> Dict[str, Union[int, str]]:
             - expression: The original dice expression
             - result: The total result after rolling the dice and applying modifiers
     """
-    match = re.fullmatch(r'(\d+)d(\d+)([+-]\d+)?', dice)
+    match = re.fullmatch(r"(\d+)d(\d+)([+-]\d+)?", dice)
     if not match:
         raise ValueError(f"Invalid dice expression: {dice}")
 
@@ -1704,10 +1931,13 @@ def roll_dice(dice: str) -> Dict[str, Union[int, str]]:
         "result": total,
     }
 
+
 from typing import Dict, List
 
 
-def schedule_game(time: str, friends: List[int], game_name: str) -> Dict[str, Union[str, List[int]]]:
+def schedule_game(
+    time: str, friends: List[int], game_name: str
+) -> Dict[str, Union[str, List[int]]]:
     """Schedule a game invite with friends.
 
     Args:
@@ -1722,9 +1952,13 @@ def schedule_game(time: str, friends: List[int], game_name: str) -> Dict[str, Un
             - game: The name of the game scheduled
     """
     if not time or not friends or not game_name:
-        raise ValueError("All parameters 'time', 'friends', and 'game_name' are required.")
+        raise ValueError(
+            "All parameters 'time', 'friends', and 'game_name' are required."
+        )
 
-    if not isinstance(friends, list) or not all(isinstance(friend, int) for friend in friends):
+    if not isinstance(friends, list) or not all(
+        isinstance(friend, int) for friend in friends
+    ):
         raise TypeError("Friends must be a list of player_ids (integers).")
 
     # Simulate scheduling logic
@@ -1738,10 +1972,13 @@ def schedule_game(time: str, friends: List[int], game_name: str) -> Dict[str, Un
         "game": game,
     }
 
+
 from typing import Dict, List
 
 
-def schedule_game_now(friends: List[int], game_name: str) -> Dict[str, Union[str, List[int]]]:
+def schedule_game_now(
+    friends: List[int], game_name: str
+) -> Dict[str, Union[str, List[int]]]:
     """Send out a game invite immediately to a list of friends.
 
     Args:
@@ -1754,20 +1991,23 @@ def schedule_game_now(friends: List[int], game_name: str) -> Dict[str, Union[str
             - invited_friends: List of player_ids who received the invite
             - status: Status of the invite process
     """
-    
+
     if not friends:
         raise ValueError("Friends list cannot be empty")
     if not game_name:
         raise ValueError("Game name cannot be empty")
 
     # Simulate sending invites by hashing player_ids with game_name
-    invited_friends = [friend_id for friend_id in friends if hash((friend_id, game_name)) % 2 == 0]
+    invited_friends = [
+        friend_id for friend_id in friends if hash((friend_id, game_name)) % 2 == 0
+    ]
 
     return {
         "game_name": game_name,
         "invited_friends": invited_friends,
-        "status": "Invites sent successfully" if invited_friends else "No invites sent"
+        "status": "Invites sent successfully" if invited_friends else "No invites sent",
     }
+
 
 from typing import Dict, List, Literal, Union
 
@@ -1776,12 +2016,20 @@ def search_players(
     age_group: Literal["U8", "U10", "U12", "U14", "U16", "U18", "Adult"],
     gender: Literal["Male", "Female"],
     position: Literal[
-        "LeftWing", "LeftBack", "PlayMaker", "Pivot", "RightBack", "RightWing", "Goalkeeper"
+        "LeftWing",
+        "LeftBack",
+        "PlayMaker",
+        "Pivot",
+        "RightBack",
+        "RightWing",
+        "Goalkeeper",
     ] = None,
     min_skill_level: int = 1,
     min_position_skill: int = 0,
     only_available: bool = True,
-    sort_by: Literal["skill_level", "position_skill", "name", "availability"] = "position_skill"
+    sort_by: Literal[
+        "skill_level", "position_skill", "name", "availability"
+    ] = "position_skill",
 ) -> List[Dict[str, Union[str, int, bool]]]:
     """Search for players based on age group, gender, and position criteria.
 
@@ -1805,15 +2053,56 @@ def search_players(
             - available: Player's availability status
     """
     sample_players = [
-        {"name": "Alex Johnson", "age_group": "U14", "gender": "Male", "position": "LeftWing", "skill_level": 7, "position_skill": 8, "available": True},
-        {"name": "Jamie Smith", "age_group": "U16", "gender": "Female", "position": "Goalkeeper", "skill_level": 9, "position_skill": 9, "available": False},
-        {"name": "Taylor Brown", "age_group": "U12", "gender": "Male", "position": "PlayMaker", "skill_level": 6, "position_skill": 7, "available": True},
-        {"name": "Jordan Lee", "age_group": "Adult", "gender": "Female", "position": "Pivot", "skill_level": 8, "position_skill": 8, "available": True},
-        {"name": "Morgan Davis", "age_group": "U18", "gender": "Male", "position": "RightBack", "skill_level": 5, "position_skill": 6, "available": True},
+        {
+            "name": "Alex Johnson",
+            "age_group": "U14",
+            "gender": "Male",
+            "position": "LeftWing",
+            "skill_level": 7,
+            "position_skill": 8,
+            "available": True,
+        },
+        {
+            "name": "Jamie Smith",
+            "age_group": "U16",
+            "gender": "Female",
+            "position": "Goalkeeper",
+            "skill_level": 9,
+            "position_skill": 9,
+            "available": False,
+        },
+        {
+            "name": "Taylor Brown",
+            "age_group": "U12",
+            "gender": "Male",
+            "position": "PlayMaker",
+            "skill_level": 6,
+            "position_skill": 7,
+            "available": True,
+        },
+        {
+            "name": "Jordan Lee",
+            "age_group": "Adult",
+            "gender": "Female",
+            "position": "Pivot",
+            "skill_level": 8,
+            "position_skill": 8,
+            "available": True,
+        },
+        {
+            "name": "Morgan Davis",
+            "age_group": "U18",
+            "gender": "Male",
+            "position": "RightBack",
+            "skill_level": 5,
+            "position_skill": 6,
+            "available": True,
+        },
     ]
 
     filtered_players = [
-        player for player in sample_players
+        player
+        for player in sample_players
         if player["age_group"] == age_group
         and player["gender"] == gender
         and (position is None or player["position"] == position)
@@ -1823,6 +2112,7 @@ def search_players(
     ]
 
     return sorted(filtered_players, key=lambda x: x[sort_by])
+
 
 from typing import Dict, Literal
 
@@ -1863,6 +2153,7 @@ def select_game(
         "status": f"Game '{gameSelection}' selected successfully",
     }
 
+
 from typing import Dict, Literal, Optional
 
 
@@ -1901,6 +2192,7 @@ def send_chat_message(
         "recipient": recipient,
     }
 
+
 from typing import Dict, Literal, Union
 
 
@@ -1935,11 +2227,17 @@ def site_registration(
             - verificationStatus: Boolean indicating if verification was successful
     """
     if playerVerificationMethod == "driver license" and not driverLicenseNo:
-        raise ValueError("Driver license number is required for verification method 'driver license'.")
+        raise ValueError(
+            "Driver license number is required for verification method 'driver license'."
+        )
     if playerVerificationMethod == "passport" and not passportNo:
-        raise ValueError("Passport number is required for verification method 'passport'.")
+        raise ValueError(
+            "Passport number is required for verification method 'passport'."
+        )
     if playerVerificationMethod == "national id" and not nationalIDNo:
-        raise ValueError("National ID number is required for verification method 'national id'.")
+        raise ValueError(
+            "National ID number is required for verification method 'national id'."
+        )
 
     # Simulate registration and verification process
     registration_success = hash(playerEmail) % 2 == 0
@@ -1951,15 +2249,12 @@ def site_registration(
         "verificationStatus": verification_success,
     }
 
+
 import random
 from typing import Dict
 
 
-def throw_dice(
-    d: int,
-    number_of_dice: int = 1,
-    modifier: int = 0
-) -> Dict[str, int]:
+def throw_dice(d: int, number_of_dice: int = 1, modifier: int = 0) -> Dict[str, int]:
     """Simulate throwing dice and calculate the total result with a modifier.
 
     Args:
@@ -1981,11 +2276,8 @@ def throw_dice(
     rolls = [random.randint(1, d) for _ in range(number_of_dice)]
     total = sum(rolls) + modifier
 
-    return {
-        "total": total,
-        "rolls": rolls,
-        "modifier": modifier
-    }
+    return {"total": total, "rolls": rolls, "modifier": modifier}
+
 
 from typing import Dict, Union
 
@@ -2031,6 +2323,7 @@ def track_hit_points(
         "status": status,
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -2055,7 +2348,7 @@ def trade_items(
             - player1_new_items: New inventory of player 1 after the trade
             - player2_new_items: New inventory of player 2 after the trade
     """
-    
+
     # Mock data for player inventories and item rarities
     player_inventories = {
         "player1": ["sword", "shield", "potion"],
@@ -2071,20 +2364,34 @@ def trade_items(
     max_inventory_size = 5
 
     # Validate ownership
-    if not all(item in player_inventories.get(player1_id, []) for item in player1_items):
+    if not all(
+        item in player_inventories.get(player1_id, []) for item in player1_items
+    ):
         raise ValueError("Player 1 does not own all the items offered for trade.")
-    if not all(item in player_inventories.get(player2_id, []) for item in player2_items):
+    if not all(
+        item in player_inventories.get(player2_id, []) for item in player2_items
+    ):
         raise ValueError("Player 2 does not own all the items offered for trade.")
 
     # Validate inventory space
-    if len(player_inventories[player1_id]) - len(player1_items) + len(player2_items) > max_inventory_size:
+    if (
+        len(player_inventories[player1_id]) - len(player1_items) + len(player2_items)
+        > max_inventory_size
+    ):
         raise ValueError("Player 1 does not have enough inventory space for the trade.")
-    if len(player_inventories[player2_id]) - len(player2_items) + len(player1_items) > max_inventory_size:
+    if (
+        len(player_inventories[player2_id]) - len(player2_items) + len(player1_items)
+        > max_inventory_size
+    ):
         raise ValueError("Player 2 does not have enough inventory space for the trade.")
 
     # Perform the trade
-    new_player1_items = [item for item in player_inventories[player1_id] if item not in player1_items] + player2_items
-    new_player2_items = [item for item in player_inventories[player2_id] if item not in player2_items] + player1_items
+    new_player1_items = [
+        item for item in player_inventories[player1_id] if item not in player1_items
+    ] + player2_items
+    new_player2_items = [
+        item for item in player_inventories[player2_id] if item not in player2_items
+    ] + player1_items
 
     return {
         "player1_id": player1_id,
@@ -2093,8 +2400,9 @@ def trade_items(
         "player2_new_items": new_player2_items,
     }
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
 def update_player_availability(
@@ -2146,13 +2454,16 @@ def update_player_availability(
         raise ValueError(f"Player not found: {player_name} with DOB {date_of_birth}")
 
     # Update player information
-    players_db[player_id].update({
-        "available": available,
-        "reason": reason,
-        "return_date": return_date,
-    })
+    players_db[player_id].update(
+        {
+            "available": available,
+            "reason": reason,
+            "return_date": return_date,
+        }
+    )
 
     return players_db[player_id]
+
 
 from typing import Dict, Literal, Union
 
@@ -2161,7 +2472,13 @@ def update_player_position_skill(
     player_name: str,
     date_of_birth: str,
     position: Literal[
-        "LeftWing", "LeftBack", "PlayMaker", "Pivot", "RightBack", "RightWing", "Goalkeeper"
+        "LeftWing",
+        "LeftBack",
+        "PlayMaker",
+        "Pivot",
+        "RightBack",
+        "RightWing",
+        "Goalkeeper",
     ],
     skill_score: float,
 ) -> Dict[str, Union[str, float]]:
@@ -2195,10 +2512,13 @@ def update_player_position_skill(
     # Mocked response simulating a successful update
     return player_data
 
+
 from typing import Dict, List, Union
 
 
-def war_model_shopper(postcode: str, radius: float = 5) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def war_model_shopper(
+    postcode: str, radius: float = 5
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Find retailers of miniature war figures for tabletop gaming or decoration.
 
     Args:
@@ -2214,40 +2534,61 @@ def war_model_shopper(postcode: str, radius: float = 5) -> Dict[str, Union[str, 
                 - address: Retailer address
                 - distance: Distance from the central postcode in miles
     """
-    
+
     # Sample data generation based on postcode hash
     sample_retailers = {
         "12345": [
-            {"name": "Miniature World", "address": "123 Elm St, Springfield", "distance": 2.5},
-            {"name": "Battlefield Models", "address": "456 Oak St, Springfield", "distance": 4.0},
+            {
+                "name": "Miniature World",
+                "address": "123 Elm St, Springfield",
+                "distance": 2.5,
+            },
+            {
+                "name": "Battlefield Models",
+                "address": "456 Oak St, Springfield",
+                "distance": 4.0,
+            },
         ],
         "67890": [
-            {"name": "Warrior's Haven", "address": "789 Pine St, Shelbyville", "distance": 1.2},
-            {"name": "Figures & More", "address": "101 Maple St, Shelbyville", "distance": 3.8},
+            {
+                "name": "Warrior's Haven",
+                "address": "789 Pine St, Shelbyville",
+                "distance": 1.2,
+            },
+            {
+                "name": "Figures & More",
+                "address": "101 Maple St, Shelbyville",
+                "distance": 3.8,
+            },
         ],
     }
-    
+
     # Hash-based selection for consistent but varied results
     postcode_hash = hash(postcode) % 2
     sample_keys = list(sample_retailers.keys())
-    
+
     if postcode_hash >= len(sample_keys):
         raise ValueError(f"No retailers found for postcode: {postcode}")
-    
+
     selected_key = sample_keys[postcode_hash]
     retailers = sample_retailers[selected_key]
-    
+
     # Filter retailers by radius
-    filtered_retailers = [retailer for retailer in retailers if retailer["distance"] <= radius]
-    
+    filtered_retailers = [
+        retailer for retailer in retailers if retailer["distance"] <= radius
+    ]
+
     if not filtered_retailers:
-        raise ValueError(f"No retailers found within {radius} miles of postcode: {postcode}")
-    
+        raise ValueError(
+            f"No retailers found within {radius} miles of postcode: {postcode}"
+        )
+
     return {
         "postcode": postcode,
         "radius": radius,
         "retailers": filtered_retailers,
     }
+
 
 from typing import Dict
 
@@ -2287,6 +2628,7 @@ def wins_to_duo(
 
     return {"wins_needed": wins_needed}
 
+
 from typing import Dict
 
 
@@ -2305,8 +2647,8 @@ def wins_to_match(
         Dict containing:
             - wins_needed: Number of consecutive wins required to meet or exceed the target rank and points.
     """
-    if not (1 <= rank_1 <= 20) or not (1 <= rank_2 <= 20):
-        raise ValueError("Ranks must be between 1 and 20.")
+    if not (1 <= rank_1 <= 20) or not (1 <= rank_2 <= 1000):
+        raise ValueError("Ranks must be between 1 and 1000.")
     if points_1 < 0 or points_2 < 0:
         raise ValueError("Points cannot be negative.")
 
@@ -2321,7 +2663,8 @@ def wins_to_match(
         return {"wins_needed": 0}
 
     points_needed = total_points_2 - total_points_1
-    wins_needed = (points_needed + points_per_win - 1) // points_per_win  # Ceiling division
+    wins_needed = (
+        points_needed + points_per_win - 1
+    ) // points_per_win  # Ceiling division
 
     return {"wins_needed": wins_needed}
-

@@ -7,63 +7,62 @@ from typing import Any, Dict, List, Literal, Union
 
 
 def crawl_lightnovel(
-    source: Dict[str, Union[str, Dict[str, Union[str, int]]]],
-    scope: Dict[str, Union[int, List[int]]],
-    output: Dict[str, Union[bool, str]],
-    media_handling: Dict[str, Union[bool, List[str]]] = None,
+    source: str,
+    scope: str,
+    output: str,
+    media_handling: str = "basic",
 ) -> Dict[str, Union[str, List[str]]]:
     """Recursively fetch each raw chapter HTML from an online web source for a lightnovel.
 
     Args:
-        source: Contains base URL and authentication details for the chapter source.
-        scope: Specifies the chapter range to download.
-        output: Directs the output format for the downloaded raw chapters.
-        media_handling: Specifies how to treat non-text content.
+        source: URL of the lightnovel source
+        scope: Chapter range to download (e.g., "31-41,43-60")
+        output: Output format ("raw", "processed", "text")
+        media_handling: How to handle media content ("basic", "download_all", "skip")
 
     Returns:
         Dict containing:
             - chapters: List of chapter HTML content
             - status: Status of the crawl operation
     """
-    base_url = source["base_url"]
-    auth = source.get("authentication", {})
-    rate_limit = source.get("rate_limit", {}).get("requests_per_minute", 60)
+    import hashlib
 
-    if "chapters_list" in scope:
-        chapters = scope["chapters_list"]
-    else:
-        chapters = list(
-            range(scope["start_chapter_index"], scope["end_chapter_index"] + 1)
-        )
-
-    if media_handling is None:
-        media_handling = {"download_images": False, "inline_images": True}
-
-    if (
-        media_handling.get("download_images", False)
-        and "image_formats" not in media_handling
-    ):
-        raise ValueError("Image formats must be specified if download_images is True")
+    # Parse scope string into chapter numbers
+    chapters = []
+    ranges = scope.split(",")
+    for range_str in ranges:
+        range_str = range_str.strip()
+        if "-" in range_str:
+            start, end = map(int, range_str.split("-"))
+            chapters.extend(list(range(start, end + 1)))
+        else:
+            chapters.append(int(range_str))
 
     # Simulate fetching chapters
     chapter_htmls = []
     for chapter in chapters:
-        chapter_hash = hashlib.md5(f"{base_url}/chapter-{chapter}".encode()).hexdigest()
-        chapter_html = f"<html><body><h1>Chapter {chapter}</h1><p>Content hash: {chapter_hash}</p></body></html>"
+        chapter_hash = hashlib.md5(f"{source}/chapter-{chapter}".encode()).hexdigest()
+        if output == "raw":
+            chapter_html = f"<html><body><h1>Chapter {chapter}</h1><p>Raw HTML content - Hash: {chapter_hash}</p></body></html>"
+        elif output == "text":
+            chapter_html = f"Chapter {chapter}\n\nText content - Hash: {chapter_hash}"
+        else:  # processed
+            chapter_html = f"<div class='chapter'><h2>Chapter {chapter}</h2><p>Processed content - Hash: {chapter_hash}</p></div>"
+
         chapter_htmls.append(chapter_html)
 
-    if output.get("save_raw_html", True):
-        status = "Chapters saved as raw HTML"
-    else:
-        status = "Chapters processed but not saved as raw HTML"
+    # Handle media based on media_handling parameter
+    if media_handling == "download_all":
+        status = f"Downloaded {len(chapters)} chapters with all media content"
+    elif media_handling == "skip":
+        status = f"Downloaded {len(chapters)} chapters without media content"
+    else:  # basic
+        status = f"Downloaded {len(chapters)} chapters with basic media handling"
 
     return {
         "chapters": chapter_htmls,
         "status": status,
     }
-
-
-from typing import Dict, List
 
 
 def get_preacher_sermons(preacher_id: str) -> Dict[str, Union[str, List[str]]]:
@@ -1730,6 +1729,7 @@ def movie_genre(movie_id: str) -> Dict[str, List[str]]:
         "tt0071562": ["Crime", "Drama"],
         "tt0468569": ["Action", "Crime", "Drama"],
         "tt0050083": ["Crime", "Drama", "Mystery"],
+        "932281": ["Romance", "Comedy"],
     }
 
     if movie_id not in movie_genres_db:
@@ -2189,6 +2189,34 @@ def recommend_movie(
             "genre": "Drama",
             "length": 142,
         },
+        {
+            "title": "RoboCop",
+            "director": "Paul Verhoeven",
+            "actor": "Peter Weller",
+            "genre": "Sci-Fi",
+            "length": 102,
+        },
+        {
+            "title": "Total Recall",
+            "director": "Paul Verhoeven",
+            "actor": "Arnold Schwarzenegger",
+            "genre": "Sci-Fi",
+            "length": 113,
+        },
+        {
+            "title": "American Graffiti",
+            "director": "George Lucas",
+            "actor": "Richard Dreyfuss",
+            "genre": "Drama",
+            "length": 110,
+        },
+        {
+            "title": "THX 1138",
+            "director": "George Lucas",
+            "actor": "Robert Duvall",
+            "genre": "Sci-Fi",
+            "length": 95,
+        },
     ]
 
     # Filter movies based on criteria
@@ -2456,6 +2484,9 @@ def revenue(title: str, domestic: bool = True) -> Dict[str, Union[str, int]]:
         "Inception": {"domestic": 292, "international": 535},
         "Titanic": {"domestic": 659, "international": 1543},
         "Avatar": {"domestic": 760, "international": 2020},
+        "I Know What You Did Last Winter": {"domestic": 250, "international": 522},
+        "I Know What You Did Last Winter II": {"domestic": 123, "international": 231},
+        "I Know What You Did Last Winter III": {"domestic": 430, "international": 876},
     }
 
     if title not in sample_revenue_data:

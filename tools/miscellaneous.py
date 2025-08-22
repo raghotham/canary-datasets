@@ -192,15 +192,20 @@ def get_preacher_info(preacher_id: str) -> Dict[str, Union[str, int, list]]:
             "age": 45,
             "sermons": ["Faith and Hope", "The Power of Prayer"],
         },
-        "preacher_002": {
+        "preacher_30": {
             "name": "Jane Smith",
             "age": 50,
             "sermons": ["Love and Compassion", "Living with Purpose"],
         },
-        "preacher_003": {
+        "preacher_29": {
             "name": "Samuel Green",
             "age": 60,
             "sermons": ["Grace and Mercy", "Walking in Faith"],
+        },
+        "preacher_17": {
+            "name": "Samuel Clemens",
+            "age": 82,
+            "sermons": ["Grace and Mercy", "The Power of Prayer"],
         },
     }
 
@@ -440,9 +445,6 @@ def check_email_leak_via_domain(email: str, domain: str) -> Dict[str, Union[str,
             - domain: The domain used for checking
             - leaked: Boolean indicating if the email's password is leaked
     """
-    if "@" not in email or not email.endswith(f"@{domain}"):
-        raise ValueError("Invalid email or domain mismatch")
-
     # Simulated hash-based leak check
     email_hash = hash(email) % 100
     domain_hash = hash(domain) % 100
@@ -479,7 +481,7 @@ def check_phone_number(phone_number: str) -> Dict[str, Union[str, bool, list]]:
     sample_leaks = {
         "1234567890": ["password123", "qwerty", "letmein"],
         "0987654321": ["123456", "password1"],
-        "5555555555": [],
+        "01234 5678": [],
     }
 
     is_leaked = phone_number in sample_leaks and bool(sample_leaks[phone_number])

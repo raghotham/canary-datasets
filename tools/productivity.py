@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # Productivity Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict
+from typing import Any, Dict, List, Union
 
 
 def cancel_appointment(date: str, time: str, location: str) -> Dict[str, str]:
@@ -18,38 +17,39 @@ def cancel_appointment(date: str, time: str, location: str) -> Dict[str, str]:
             - status: Status of the cancellation ('success' or 'failure')
             - message: Details about the cancellation result
     """
-    
+
     # Simulated database of appointments
     appointments = {
         ("15/10/2023", "10:00", "Room 101"): True,
         ("16/10/2023", "14:00", "Room 202"): True,
         ("17/10/2023", "09:00", "Room 303"): True,
     }
-    
+
     appointment_key = (date, time, location)
-    
+
     if appointment_key not in appointments:
         return {
             "status": "failure",
-            "message": f"No appointment found for {date} at {time} in {location}."
+            "message": f"No appointment found for {date} at {time} in {location}.",
         }
-    
+
     if not appointments[appointment_key]:
         return {
             "status": "failure",
-            "message": f"Appointment for {date} at {time} in {location} is already canceled."
+            "message": f"Appointment for {date} at {time} in {location} is already canceled.",
         }
-    
+
     # Cancel the appointment
     appointments[appointment_key] = False
-    
+
     return {
         "status": "success",
-        "message": f"Appointment for {date} at {time} in {location} has been successfully canceled."
+        "message": f"Appointment for {date} at {time} in {location} has been successfully canceled.",
     }
 
-from typing import Dict, Union
+
 from datetime import datetime, timedelta
+from typing import Dict, Union
 
 
 def check_room_availability(
@@ -100,7 +100,9 @@ def check_room_availability(
         if booking_date == date:
             booked_start_dt = datetime.strptime(f"{date} {start}", "%Y-%m-%d %H:%M")
             booked_end_dt = datetime.strptime(f"{date} {end}", "%Y-%m-%d %H:%M")
-            if not (window_end_dt <= booked_start_dt or window_start_dt >= booked_end_dt):
+            if not (
+                window_end_dt <= booked_start_dt or window_start_dt >= booked_end_dt
+            ):
                 available = False
                 break
 
@@ -112,15 +114,12 @@ def check_room_availability(
         "available": available,
     }
 
+
 from typing import Dict, List, Union
 
 
 def create_calendar_hold(
-    title: str,
-    start_time: str,
-    end_time: str,
-    attendees: List[str],
-    notes: str = ""
+    title: str, start_time: str, end_time: str, attendees: List[str], notes: str = ""
 ) -> Dict[str, Union[str, List[str]]]:
     """Create a tentative calendar hold.
 
@@ -141,7 +140,9 @@ def create_calendar_hold(
             - notes: Additional notes for the hold
     """
     if not title or not start_time or not end_time or not attendees:
-        raise ValueError("Missing required fields: title, start_time, end_time, or attendees")
+        raise ValueError(
+            "Missing required fields: title, start_time, end_time, or attendees"
+        )
 
     # Simulate unique ID generation using hash
     unique_id = hash((title, start_time, end_time, tuple(attendees)))
@@ -155,9 +156,10 @@ def create_calendar_hold(
         "notes": notes,
     }
 
-from typing import Dict, List, Literal, Union
-from datetime import datetime, timedelta
+
 import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, List, Literal, Union
 
 
 def find_overlapping_slots(
@@ -221,11 +223,14 @@ def find_overlapping_slots(
         "attendees": list(availability.keys()),
     }
 
-from typing import Dict, List
+
 from datetime import datetime, timedelta
+from typing import Dict, List
 
 
-def get_calendar_events(start_date: str, end_date: str) -> Dict[str, List[Dict[str, str]]]:
+def get_calendar_events(
+    start_date: str, end_date: str
+) -> Dict[str, List[Dict[str, str]]]:
     """Gets all the events in a calendar in the specified date range.
 
     Args:
@@ -270,9 +275,10 @@ def get_calendar_events(start_date: str, end_date: str) -> Dict[str, List[Dict[s
 
     return {"events": events}
 
-from typing import Dict, List, Union
-from datetime import datetime, timedelta
+
 import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, List, Union
 
 
 def get_free_busy(
@@ -307,24 +313,25 @@ def get_free_busy(
         busy_end = busy_start + timedelta(hours=hash_seed % 8 + 1)
 
         if busy_start < end:
-            free_busy_data.append({
-                "attendee": attendee,
-                "start": busy_start.strftime("%Y-%m-%d %H:%M"),
-                "end": busy_end.strftime("%Y-%m-%d %H:%M"),
-            })
+            free_busy_data.append(
+                {
+                    "attendee": attendee,
+                    "start": busy_start.strftime("%Y-%m-%d %H:%M"),
+                    "end": busy_end.strftime("%Y-%m-%d %H:%M"),
+                }
+            )
 
     return {
         "attendees": attendees,
         "free_busy": free_busy_data,
     }
 
+
 from typing import Dict, List, Literal
 
 
 def get_schedule(
-    calendar_type: Literal["work", "personal"],
-    date: str,
-    time: str
+    calendar_type: Literal["work", "personal"], date: str, time: str
 ) -> Dict[str, Union[str, List[str]]]:
     """Gets the schedule for a day based on the given calendar type.
 
@@ -375,6 +382,7 @@ def get_schedule(
         "events": events,
     }
 
+
 from typing import Dict
 
 
@@ -406,7 +414,8 @@ def schedule_appointment(date: str, time: str, location: str) -> Dict[str, str]:
         "confirmation_id": confirmation_id,
     }
 
-from typing import List, Dict
+
+from typing import Dict, List
 
 
 def send_calendar_email(to: List[str], subject: str, body: str) -> Dict[str, str]:
@@ -432,26 +441,20 @@ def send_calendar_email(to: List[str], subject: str, body: str) -> Dict[str, str
     # Simulate sending email
     email_hash = hash((tuple(to), subject, body)) % 1000
     if email_hash % 2 == 0:
-        return {
-            "status": "success",
-            "message": f"Email sent to {len(to)} recipients."
-        }
+        return {"status": "success", "message": f"Email sent to {len(to)} recipients."}
     else:
         return {
             "status": "failure",
-            "message": "Failed to send email due to server error."
+            "message": "Failed to send email due to server error.",
         }
 
-from typing import Dict, List, Union
+
 from datetime import datetime
+from typing import Dict, List, Union
 
 
 def add_calendar_event(
-    title: str,
-    notes: str,
-    emails: List[str],
-    start_datetime: str,
-    end_datetime: str
+    title: str, notes: str, emails: List[str], start_datetime: str, end_datetime: str
 ) -> Dict[str, Union[str, List[str]]]:
     """Add an event to multiple people's calendars.
 
@@ -490,16 +493,15 @@ def add_calendar_event(
         "attendees": sample_attendees,
         "start": start_datetime,
         "end": end_datetime,
-        "notes": notes
+        "notes": notes,
     }
+
 
 from typing import Dict, Literal
 
 
 def add_schedule(
-    calendar_type: Literal["work", "personal"],
-    date: str,
-    time: str
+    calendar_type: Literal["work", "personal"], date: str, time: str
 ) -> Dict[str, str]:
     """Add an item to the schedule for a specific day based on the given calendar type.
 
@@ -532,6 +534,7 @@ def add_schedule(
         "time": time,
         "item": item,
     }
+
 
 from typing import Dict, Union
 
@@ -571,8 +574,9 @@ def check_activity_cancelled(
         "is_cancelled": is_cancelled,
     }
 
-from typing import Dict, Union
+
 from datetime import datetime
+from typing import Dict, Union
 
 
 def create_calendar_event(
@@ -618,6 +622,7 @@ def create_calendar_event(
         "location": location or "No location specified",
     }
 
+
 from typing import Dict, Union
 
 
@@ -653,7 +658,9 @@ def create_calendar_event(
         raise ValueError("Both 'title' and 'start_time' are required fields.")
 
     # Simulate event ID generation using a hash
-    event_id = hash((title, start_time, end_time, location, notes, reminder_text_minutes))
+    event_id = hash(
+        (title, start_time, end_time, location, notes, reminder_text_minutes)
+    )
 
     return {
         "event_id": event_id,
@@ -665,14 +672,12 @@ def create_calendar_event(
         "reminder_text_minutes": reminder_text_minutes,
     }
 
+
 from typing import Dict, List, Union
 
 
 def create_event(
-    title: str,
-    start_time: str,
-    end_time: str = None,
-    attendees: List[str] = None
+    title: str, start_time: str, end_time: str = None, attendees: List[str] = None
 ) -> Dict[str, Union[str, List[str]]]:
     """Create a new calendar event with optional end time and attendees.
 
@@ -703,6 +708,7 @@ def create_event(
         "end_time": end_time or "N/A",
         "attendees": attendees or [],
     }
+
 
 def delete_event(event_id: str) -> Dict[str, Union[str, bool]]:
     """Delete a specific calendar event using its unique ID.
@@ -739,14 +745,12 @@ def delete_event(event_id: str) -> Dict[str, Union[str, bool]]:
         "message": "Event successfully deleted",
     }
 
+
 from typing import Dict, Union
 
 
 def draw_circle(
-    x_0: int,
-    y_0: int,
-    radius: int,
-    color: str = "#000000"
+    x_0: int, y_0: int, radius: int, color: str = "#000000"
 ) -> Dict[str, Union[int, str]]:
     """Draw a circle on the canvas using the bottom left corner as the origin.
 
@@ -775,8 +779,9 @@ def draw_circle(
         "y_0": y_0,
         "radius": radius,
         "color": color,
-        "area": round(area, 2)
+        "area": round(area, 2),
     }
+
 
 from typing import Dict, Union
 
@@ -787,7 +792,7 @@ def draw_line(
     x_1: int,
     y_1: int,
     line_thickness: int = 1,
-    color: str = "#000000"
+    color: str = "#000000",
 ) -> Dict[str, Union[str, int]]:
     """Draw a line segment on a canvas using the bottom left corner as the origin.
 
@@ -806,8 +811,12 @@ def draw_line(
             - line_thickness: Thickness of the line in pixels
             - color: Color of the line in hexadecimal format
     """
-    if not (0 <= x_0 <= 1000 and 0 <= y_0 <= 1000 and 0 <= x_1 <= 1000 and 0 <= y_1 <= 1000):
-        raise ValueError("Coordinates must be within the canvas bounds (0, 0) to (1000, 1000).")
+    if not (
+        0 <= x_0 <= 1000 and 0 <= y_0 <= 1000 and 0 <= x_1 <= 1000 and 0 <= y_1 <= 1000
+    ):
+        raise ValueError(
+            "Coordinates must be within the canvas bounds (0, 0) to (1000, 1000)."
+        )
 
     if line_thickness <= 0:
         raise ValueError("Line thickness must be a positive integer.")
@@ -822,15 +831,12 @@ def draw_line(
         "color": color,
     }
 
+
 from typing import Dict, Union
 
 
 def draw_rectangle(
-    x_0: int,
-    y_0: int,
-    x_1: int,
-    y_1: int,
-    color: str = "#000000"
+    x_0: int, y_0: int, x_1: int, y_1: int, color: str = "#000000"
 ) -> Dict[str, Union[str, int]]:
     """Draw a rectangle on the canvas using the bottom left corner as the origin.
 
@@ -857,8 +863,9 @@ def draw_rectangle(
         "bottom_left": (x_0, y_0),
         "top_right": (x_1, y_1),
         "color": color,
-        "area": area
+        "area": area,
     }
+
 
 from typing import Dict, Union
 
@@ -870,7 +877,7 @@ def draw_text(
     font: str = "Arial",
     font_size: int = 12,
     rotation: int = 0,
-    color: str = "#000000"
+    color: str = "#000000",
 ) -> Dict[str, Union[str, int]]:
     """Draws a text on the canvas using the bottom left corner as the origin.
 
@@ -910,11 +917,14 @@ def draw_text(
         "color": color,
     }
 
-from typing import Dict, Union
+
 from datetime import datetime, timedelta
+from typing import Dict, Union
 
 
-def find_opening(location: str, floor: str, time: datetime) -> Dict[str, Union[str, datetime]]:
+def find_opening(
+    location: str, floor: str, time: datetime
+) -> Dict[str, Union[str, datetime]]:
     """Find the next available time slot at a venue after the specified time.
 
     Args:
@@ -964,6 +974,7 @@ def find_opening(location: str, floor: str, time: datetime) -> Dict[str, Union[s
         "next_available_time": next_available_time,
     }
 
+
 from typing import Dict
 
 
@@ -995,8 +1006,9 @@ def fire_employee(employee_id: str) -> Dict[str, str]:
     return {
         "employee_id": employee_id,
         "status": "success",
-        "message": f"Employee {fired_employee} has been successfully fired."
+        "message": f"Employee {fired_employee} has been successfully fired.",
     }
+
 
 from typing import Dict
 
@@ -1023,11 +1035,14 @@ def get_calendar(email: str) -> Dict[str, str]:
         "calendar_id": calendar_id,
     }
 
-from typing import Dict, List
+
 from datetime import datetime, timedelta
+from typing import Dict, List
 
 
-def get_work_calendar(start_date: str, end_date: str) -> Dict[str, List[Dict[str, str]]]:
+def get_work_calendar(
+    start_date: str, end_date: str
+) -> Dict[str, List[Dict[str, str]]]:
     """Returns work calendar events between a start and end date, including availability and time off.
 
     Args:
@@ -1053,20 +1068,25 @@ def get_work_calendar(start_date: str, end_date: str) -> Dict[str, List[Dict[str
     while current_date <= end:
         day_of_week = current_date.weekday()
         if day_of_week < 5:  # Weekdays
-            events.append({
-                "date": current_date.strftime("%Y-%m-%d"),
-                "type": "work",
-                "description": "Available for work"
-            })
+            events.append(
+                {
+                    "date": current_date.strftime("%Y-%m-%d"),
+                    "type": "work",
+                    "description": "Available for work",
+                }
+            )
         else:  # Weekends
-            events.append({
-                "date": current_date.strftime("%Y-%m-%d"),
-                "type": "time_off",
-                "description": "Weekend"
-            })
+            events.append(
+                {
+                    "date": current_date.strftime("%Y-%m-%d"),
+                    "type": "time_off",
+                    "description": "Weekend",
+                }
+            )
         current_date += timedelta(days=1)
 
     return {"events": events}
+
 
 def hire_employee(applicant_name: str) -> Dict[str, Union[str, int]]:
     """Hire an applicant as an employee.
@@ -1089,8 +1109,9 @@ def hire_employee(applicant_name: str) -> Dict[str, Union[str, int]]:
     return {
         "employee_id": employee_id,
         "name": applicant_name,
-        "status": "Hired successfully"
+        "status": "Hired successfully",
     }
+
 
 from typing import Dict, List, Literal, Union
 
@@ -1101,7 +1122,7 @@ def job_search(
     country: str = "us",
     date_posted: Literal["all", "today", "3days", "week", "month"] = "all",
     work_from_home: bool = False,
-    radius: Union[int, None] = None
+    radius: Union[int, None] = None,
 ) -> Dict[str, Union[str, int, List[Dict[str, Union[str, int]]]]]:
     """Search for jobs based on various criteria.
 
@@ -1124,7 +1145,7 @@ def job_search(
                 - posted_date: Date the job was posted
                 - remote: Whether the job is remote
     """
-    
+
     # Sample data generation based on hash of query for consistency
     sample_jobs = [
         {
@@ -1132,43 +1153,41 @@ def job_search(
             "company": "Tech Corp",
             "location": "New York, NY",
             "posted_date": "2023-10-01",
-            "remote": True
+            "remote": True,
         },
         {
             "title": "Data Analyst",
             "company": "Data Inc.",
             "location": "San Francisco, CA",
             "posted_date": "2023-09-28",
-            "remote": False
+            "remote": False,
         },
         {
             "title": "Product Manager",
             "company": "Innovate LLC",
             "location": "Remote",
             "posted_date": "2023-09-30",
-            "remote": True
-        }
+            "remote": True,
+        },
     ]
-    
+
     # Simulate filtering based on parameters
     filtered_jobs = [
-        job for job in sample_jobs
+        job
+        for job in sample_jobs
         if (work_from_home and job["remote"]) or not work_from_home
     ]
-    
+
     # Simulate pagination
     start_index = (page - 1) * 10
     end_index = start_index + 10
     paginated_jobs = filtered_jobs[start_index:end_index]
-    
-    return {
-        "query": query,
-        "page": page,
-        "jobs": paginated_jobs
-    }
 
-from typing import Dict, List
+    return {"query": query, "page": page, "jobs": paginated_jobs}
+
+
 from datetime import datetime
+from typing import Dict, List
 
 
 def list_events(start_time: str, end_time: str) -> Dict[str, List[Dict[str, str]]]:
@@ -1215,11 +1234,15 @@ def list_events(start_time: str, end_time: str) -> Dict[str, List[Dict[str, str]
 
     # Filter events within the specified time range
     events_in_range = [
-        event for event in sample_events
-        if start_dt <= datetime.fromisoformat(event["start"].replace("Z", "+00:00")) < end_dt
+        event
+        for event in sample_events
+        if start_dt
+        <= datetime.fromisoformat(event["start"].replace("Z", "+00:00"))
+        < end_dt
     ]
 
     return {"events": events_in_range}
+
 
 from typing import Dict
 
@@ -1247,7 +1270,7 @@ def post_format_metadata(
     sample_texts = {
         1: "The sun sets over the horizon, casting a golden glow.",
         2: "A gentle breeze rustles the leaves.",
-        3: "The city lights flicker in the distance."
+        3: "The city lights flicker in the distance.",
     }
     base_text = sample_texts.get(line_number, "A quiet scene unfolds.")
 
@@ -1263,8 +1286,9 @@ def post_format_metadata(
     return {
         "id": str(id),
         "line_number": str(line_number),
-        "formatted_text": formatted_text
+        "formatted_text": formatted_text,
     }
+
 
 from typing import Dict, Union
 
@@ -1282,7 +1306,7 @@ def post_seo_check(id: int) -> Dict[str, Union[int, str, bool]]:
             - seo_score: The SEO score of the record
             - is_optimized: Boolean indicating if the record is SEO optimized
     """
-    
+
     # Simulated data based on the record ID
     titles = {
         1: "How to Learn Python",
@@ -1294,7 +1318,7 @@ def post_seo_check(id: int) -> Dict[str, Union[int, str, bool]]:
         2: 78,
         3: 92,
     }
-    
+
     if id not in titles or id not in seo_scores:
         raise ValueError(f"Record ID not found: {id}")
 
@@ -1308,6 +1332,7 @@ def post_seo_check(id: int) -> Dict[str, Union[int, str, bool]]:
         "seo_score": seo_score,
         "is_optimized": is_optimized,
     }
+
 
 from typing import Dict
 
@@ -1337,6 +1362,7 @@ def process_applicant(name: str, school: str) -> Dict[str, str]:
         "school": school,
     }
 
+
 from typing import Dict
 
 
@@ -1352,7 +1378,7 @@ def promote_employee(employee_id: str) -> Dict[str, str]:
             - new_title: The new title of the employee after promotion
             - promotion_date: The date of promotion
     """
-    
+
     # Mock employee data
     employee_titles = {
         "E001": "Junior Developer",
@@ -1360,7 +1386,7 @@ def promote_employee(employee_id: str) -> Dict[str, str]:
         "E003": "Senior Developer",
         "E004": "Lead Developer",
     }
-    
+
     # Promotion logic
     promotion_path = {
         "Junior Developer": "Developer",
@@ -1368,24 +1394,25 @@ def promote_employee(employee_id: str) -> Dict[str, str]:
         "Senior Developer": "Lead Developer",
         "Lead Developer": "Principal Developer",
     }
-    
+
     if employee_id not in employee_titles:
         raise ValueError(f"Employee ID not found: {employee_id}")
-    
+
     current_title = employee_titles[employee_id]
     new_title = promotion_path.get(current_title)
-    
+
     if not new_title:
         raise ValueError(f"No promotion available for title: {current_title}")
-    
+
     # Mock promotion date
     promotion_date = "2023-10-01"
-    
+
     return {
         "employee_id": employee_id,
         "new_title": new_title,
         "promotion_date": promotion_date,
     }
+
 
 from typing import Dict, Union
 
@@ -1418,7 +1445,11 @@ def schedule_service(
     if not agree_to_terms:
         raise ValueError("You must agree to the terms to schedule the service.")
 
-    if not arrival_window or 'start' not in arrival_window or 'end' not in arrival_window:
+    if (
+        not arrival_window
+        or "start" not in arrival_window
+        or "end" not in arrival_window
+    ):
         raise ValueError("Invalid arrival window provided.")
 
     # Simulate a hash-based confirmation ID generation
@@ -1432,8 +1463,9 @@ def schedule_service(
         "message": "Service visit successfully scheduled.",
     }
 
-from typing import Dict, List
+
 from datetime import datetime
+from typing import Dict, List
 
 
 def search_calendar_events(
@@ -1483,10 +1515,82 @@ def search_calendar_events(
                 "location": "Downtown Cafe",
             },
         ],
+        "sarah@example.com": [
+            {
+                "title": "Marketing Review",
+                "start": "2025-08-21T14:00:00",
+                "end": "2025-08-21T15:00:00",
+                "location": "Office Building A",
+            },
+            {
+                "title": "Client Presentation",
+                "start": "2025-08-21T16:30:00",
+                "end": "2025-08-21T17:30:00",
+                "location": "Main Conference Room",
+            },
+            {
+                "title": "Budget Planning",
+                "start": "2025-08-22T13:00:00",
+                "end": "2025-08-22T14:30:00",
+                "location": "Finance Department",
+            },
+        ],
+        "tom@example.com": [
+            {
+                "title": "Engineering Standup",
+                "start": "2025-08-21T09:00:00",
+                "end": "2025-08-21T09:30:00",
+                "location": "Dev Team Room",
+            },
+            {
+                "title": "Code Review Session",
+                "start": "2025-08-21T15:00:00",
+                "end": "2025-08-21T16:00:00",
+                "location": "Tech Lab",
+            },
+            {
+                "title": "Architecture Discussion",
+                "start": "2025-08-22T10:00:00",
+                "end": "2025-08-22T11:30:00",
+                "location": "Building B Meeting Room",
+            },
+            {
+                "title": "Sprint Planning",
+                "start": "2025-08-22T14:00:00",
+                "end": "2025-08-22T15:30:00",
+                "location": "Agile Room",
+            },
+        ],
+        "harry@example.com": [
+            {
+                "title": "Sales Call",
+                "start": "2025-08-21T11:00:00",
+                "end": "2025-08-21T12:00:00",
+                "location": "Phone Conference",
+            },
+            {
+                "title": "Customer Onboarding",
+                "start": "2025-08-21T14:30:00",
+                "end": "2025-08-21T15:30:00",
+                "location": "Customer Success Office",
+            },
+            {
+                "title": "Weekly Sales Review",
+                "start": "2025-08-22T09:30:00",
+                "end": "2025-08-22T10:30:00",
+                "location": "Sales Conference Room",
+            },
+            {
+                "title": "Training Session",
+                "start": "2025-08-22T16:00:00",
+                "end": "2025-08-22T17:00:00",
+                "location": "Training Center",
+            },
+        ],
     }
 
     if email not in sample_events:
-        raise ValueError(f"No events found for email: {email}")
+        return []  # Return empty list instead of raising error for unknown emails
 
     # Parse input datetimes
     start_dt = datetime.fromisoformat(start_datetime)
@@ -1500,6 +1604,7 @@ def search_calendar_events(
     ]
 
     return filtered_events
+
 
 from typing import Dict, Optional
 
@@ -1546,6 +1651,7 @@ def send_contract(
         "message": message,
     }
 
+
 from typing import Dict
 
 
@@ -1564,8 +1670,18 @@ def set_reminder(task: str, time: str) -> Dict[str, str]:
     """
     # Validate the time format
     try:
-        day, month, year_hour, minute = time.split('-')[0], time.split('-')[1], time.split('-')[2].split(' ')[0], time.split(' ')[1]
-        if not (1 <= int(day) <= 31 and 1 <= int(month) <= 12 and len(year_hour) == 4 and 0 <= int(minute) < 60):
+        day, month, year_hour, minute = (
+            time.split("-")[0],
+            time.split("-")[1],
+            time.split("-")[2].split(" ")[0],
+            time.split(" ")[1],
+        )
+        if not (
+            1 <= int(day) <= 31
+            and 1 <= int(month) <= 12
+            and len(year_hour) == 4
+            and 0 <= int(minute) < 60
+        ):
             raise ValueError
     except (ValueError, IndexError):
         raise ValueError("Time format should be 'DD-MM-YYYY HH:MM'")
@@ -1574,8 +1690,9 @@ def set_reminder(task: str, time: str) -> Dict[str, str]:
     return {
         "task": task,
         "time": time,
-        "status": f"Reminder set for '{task}' at {time}"
+        "status": f"Reminder set for '{task}' at {time}",
     }
+
 
 from typing import Dict, Literal, Optional
 
@@ -1602,8 +1719,8 @@ def submit_time_off_request(
             - status: The status of the request submission.
             - message: A message providing additional information about the request.
     """
-    from datetime import datetime
     import hashlib
+    from datetime import datetime
 
     # Validate date format
     try:
@@ -1626,8 +1743,9 @@ def submit_time_off_request(
         "message": "Your time off request has been successfully submitted.",
     }
 
-from typing import Dict, Optional, Union
+
 import hashlib
+from typing import Dict, Optional, Union
 
 
 def summarize_url(
@@ -1675,8 +1793,9 @@ def summarize_url(
         "included_quotes": include_quotes if include_quotes is not None else False,
     }
 
-from typing import Dict
+
 from datetime import datetime
+from typing import Dict
 
 
 def take_break() -> Dict[str, str]:
@@ -1692,6 +1811,7 @@ def take_break() -> Dict[str, str]:
         "message": "Break started successfully.",
         "start_time": start_time,
     }
+
 
 from typing import Dict, List, Union
 
@@ -1720,7 +1840,7 @@ def update_event(
             - end_time: The updated end time of the event.
             - attendees: The updated list of attendees.
     """
-    
+
     # Mock existing event data
     existing_event = {
         "event_id": event_id,
@@ -1729,20 +1849,25 @@ def update_event(
         "end_time": "2025-08-13T10:00:00Z",
         "attendees": ["alice@example.com", "bob@example.com"],
     }
-    
+
     if event_id != existing_event["event_id"]:
         raise ValueError(f"Event ID not found: {event_id}")
-    
+
     # Update fields if new values are provided
     updated_event = {
         "event_id": event_id,
         "title": title if title is not None else existing_event["title"],
-        "start_time": start_time if start_time is not None else existing_event["start_time"],
+        "start_time": (
+            start_time if start_time is not None else existing_event["start_time"]
+        ),
         "end_time": end_time if end_time is not None else existing_event["end_time"],
-        "attendees": attendees if attendees is not None else existing_event["attendees"],
+        "attendees": (
+            attendees if attendees is not None else existing_event["attendees"]
+        ),
     }
-    
+
     return updated_event
+
 
 from typing import Dict, Optional
 
@@ -1751,7 +1876,7 @@ def update_profile(
     id: str,
     phone: Optional[str] = "",
     name: Optional[str] = "",
-    birthday: Optional[str] = ""
+    birthday: Optional[str] = "",
 ) -> Dict[str, str]:
     """Update a profile with a specific 8-digit ID with new information.
 
@@ -1770,8 +1895,16 @@ def update_profile(
     """
     # Mock database of profiles
     profiles = {
-        "293CCCB4": {"phone": "111-222-3333", "name": "Alice Smith", "birthday": "1990-01-01"},
-        "A1B2C3D4": {"phone": "444-555-6666", "name": "Bob Johnson", "birthday": "1985-05-15"},
+        "293CCCB4": {
+            "phone": "111-222-3333",
+            "name": "Alice Smith",
+            "birthday": "1990-01-01",
+        },
+        "A1B2C3D4": {
+            "phone": "444-555-6666",
+            "name": "Bob Johnson",
+            "birthday": "1985-05-15",
+        },
     }
 
     if id not in profiles:
@@ -1792,7 +1925,6 @@ def update_profile(
         "name": profile["name"],
         "birthday": profile["birthday"],
     }
-
 
 
 def schedule_meeting(

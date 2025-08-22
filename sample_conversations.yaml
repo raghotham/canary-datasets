@@ -1765,8 +1765,8 @@ conversations:
       definition.
 - name: Entry 74
   tools:
-  - AI Recipe Generator
-  - Woolworths Product Search
+  - generate_recipe
+  - woolworths_product_search
   messages:
   - I had a long day at work and just want something frozen that I can heat up for dinner tonight. I'm going to head past
     the shops on the way home. I feel like Italian, what are some of my options?

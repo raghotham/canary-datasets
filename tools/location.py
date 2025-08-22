@@ -896,6 +896,7 @@ def postcode_convert(postcode: str) -> Dict[str, Union[str, float]]:
         "SW1A 1AA": {"city": "London", "latitude": 51.5014, "longitude": -0.1419},
         "90210": {"city": "Beverly Hills", "latitude": 34.0901, "longitude": -118.4065},
         "10001": {"city": "New York", "latitude": 40.7128, "longitude": -74.0060},
+        "SW19": {"city": "London", "latitude": 51.4214, "longitude": -0.2053},
     }
 
     if postcode not in sample_data:
