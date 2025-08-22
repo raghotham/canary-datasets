@@ -2179,13 +2179,54 @@ def miniature_car_parts(
                 "distance": 3.8,
             },
         ],
+        "1234": [
+            {
+                "name": "Bristol RC Models",
+                "address": "45 Park Street, Bristol BS8 1DP",
+                "distance": 0.8,
+            },
+            {
+                "name": "Clifton Miniatures",
+                "address": "22 Queens Road, Bristol BS8 1QE",
+                "distance": 1.5,
+            },
+        ],
+        "5678": [
+            {
+                "name": "UK RC Parts",
+                "address": "67 High Street, Bath BA1 5AN",
+                "distance": 3.2,
+            },
+            {
+                "name": "Model Car Emporium",
+                "address": "89 Union Street, Bath BA1 1RQ",
+                "distance": 4.1,
+            },
+        ],
+        "9876": [
+            {
+                "name": "London RC Shop",
+                "address": "123 Oxford Street, London W1C 1DX",
+                "distance": 2.3,
+            },
+            {
+                "name": "Capital Models",
+                "address": "456 Regent Street, London W1B 2HH",
+                "distance": 3.7,
+            },
+        ],
     }
 
     # Generate a hash-based key for consistent sample data retrieval
     key = str(abs(hash(postcode)) % 100000)
 
+    # If the generated key doesn't exist, use a default fallback
     if key not in sample_retailers:
-        raise ValueError(f"No retailers found for postcode: {postcode}")
+        # Use a fallback based on postcode characteristics
+        if any(char.isalpha() for char in postcode):  # UK postcodes contain letters
+            key = "1234"  # Default to Bristol area for UK postcodes
+        else:
+            key = "12345"  # Default to first US location for numeric postcodes
 
     return {
         "postcode": postcode,
