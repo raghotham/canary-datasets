@@ -1591,6 +1591,10 @@ def list_company_filings(
             {"type": "people with significant control", "date": "2024-03-05"},
             {"type": "trading status", "date": "2024-04-18"},
         ],
+        "REG-386660": [
+            {"type": "accounts", "date": "2023-01-15"},
+            {"type": "tax returns", "date": "2023-02-20"},
+        ],
     }
 
     if registration_number not in sample_filings:
@@ -1644,6 +1648,10 @@ def list_company_officers(
             {"name": "Emily Chen", "position": "CTO", "active": True},
             {"name": "Michael Thompson", "position": "COO", "active": False},
             {"name": "Lisa Wang", "position": "Director", "active": True},
+        ],
+        "REG-386660": [
+            {"name": "John Doe", "position": "CEO", "active": True},
+            {"name": "Jane Smith", "position": "CFO", "active": True},
         ],
     }
 

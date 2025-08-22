@@ -84,6 +84,7 @@ def is_planet_visible(planet_name: str, location: str) -> Dict[str, Union[bool, 
         "Los Angeles, CA": {"Mars": False, "Jupiter": True},
         "Chicago, IL": {"Mars": True, "Jupiter": True},
         "St. Louis, MO": {"Venus": True, "Jupiter": False},
+        "ST. LOUIS, MO": {"Venus": True, "Jupiter": False},
     }
 
     if location not in visibility_data:
