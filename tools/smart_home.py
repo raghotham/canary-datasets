@@ -1,13 +1,12 @@
-from typing import Dict, List, Union, Any
 # Smart Home Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Literal, Union
+from typing import Any, Dict, List, Literal, Union
 
 
 def check_cameras(
     camera: Literal["front_door", "backyard", "driveway", "all"],
-    view_type: Literal["live", "recordings"] = "live"
+    view_type: Literal["live", "recordings"] = "live",
 ) -> Dict[str, Union[str, List[str]]]:
     """View live feed or recordings from security cameras.
 
@@ -24,16 +23,16 @@ def check_cameras(
     feeds_sample = {
         "front_door": {
             "live": ["http://camera-feed/front_door/live"],
-            "recordings": ["front_door_20231001.mp4", "front_door_20231002.mp4"]
+            "recordings": ["front_door_20231001.mp4", "front_door_20231002.mp4"],
         },
         "backyard": {
             "live": ["http://camera-feed/backyard/live"],
-            "recordings": ["backyard_20231001.mp4", "backyard_20231002.mp4"]
+            "recordings": ["backyard_20231001.mp4", "backyard_20231002.mp4"],
         },
         "driveway": {
             "live": ["http://camera-feed/driveway/live"],
-            "recordings": ["driveway_20231001.mp4", "driveway_20231002.mp4"]
-        }
+            "recordings": ["driveway_20231001.mp4", "driveway_20231002.mp4"],
+        },
     }
 
     if camera == "all":
@@ -45,11 +44,8 @@ def check_cameras(
     else:
         raise ValueError(f"Camera location not supported: {camera}")
 
-    return {
-        "camera": camera,
-        "view_type": view_type,
-        "feeds": feeds
-    }
+    return {"camera": camera, "view_type": view_type, "feeds": feeds}
+
 
 from typing import Dict, Literal, Union
 
@@ -57,7 +53,7 @@ from typing import Dict, Literal, Union
 def control_lights(
     light: str,
     action: Literal["on", "off", "toggle"],
-    brightness: Union[int, None] = None
+    brightness: Union[int, None] = None,
 ) -> Dict[str, Union[str, int, bool]]:
     """Control the lights in or around the home.
 
@@ -96,7 +92,11 @@ def control_lights(
     else:
         new_status = action
 
-    new_brightness = brightness if new_status == "on" and brightness is not None else current_brightness
+    new_brightness = (
+        brightness
+        if new_status == "on" and brightness is not None
+        else current_brightness
+    )
 
     return {
         "light": light,
@@ -105,12 +105,12 @@ def control_lights(
         "brightness": new_brightness if new_status == "on" else 0,
     }
 
+
 from typing import Dict, Literal
 
 
 def lock_doors(
-    door: Literal["front", "back", "garage", "all"],
-    action: Literal["lock", "unlock"]
+    door: Literal["front", "back", "garage", "all"], action: Literal["lock", "unlock"]
 ) -> Dict[str, str]:
     """Lock or unlock specific doors in the home.
 
@@ -138,13 +138,13 @@ def lock_doors(
 
     return {door: status}
 
-from typing import Dict, Literal, Union
+
 import time
+from typing import Dict, Literal, Union
 
 
 def set_security_alarm(
-    mode: Literal["arm_home", "arm_away", "disarm"],
-    delay: int = 30
+    mode: Literal["arm_home", "arm_away", "disarm"], delay: int = 30
 ) -> Dict[str, Union[str, int]]:
     """Arm or disarm the home security system.
 
@@ -167,14 +167,11 @@ def set_security_alarm(
     status_messages = {
         "arm_home": "Security system armed in home mode.",
         "arm_away": "Security system armed in away mode.",
-        "disarm": "Security system disarmed."
+        "disarm": "Security system disarmed.",
     }
 
-    return {
-        "status": status_messages[mode],
-        "mode": mode,
-        "delay": delay
-    }
+    return {"status": status_messages[mode], "mode": mode, "delay": delay}
+
 
 from typing import Dict
 
@@ -205,8 +202,9 @@ def change_light_color(light_name: str, color: str) -> Dict[str, str]:
     return {
         "light_name": light_name,
         "color": color,
-        "status": f"The color of '{light_name}' has been changed to '{color}'."
+        "status": f"The color of '{light_name}' has been changed to '{color}'.",
     }
+
 
 from typing import Dict
 
@@ -239,6 +237,7 @@ def lock_door(door_name: str) -> Dict[str, str]:
         "status": sample_doors[door_name],
     }
 
+
 def set_thermostat(temperature: float) -> Dict[str, Union[float, str]]:
     """Adjust the thermostat to a desired temperature.
 
@@ -267,6 +266,7 @@ def set_thermostat(temperature: float) -> Dict[str, Union[float, str]]:
             "set_temperature": None,
         }
 
+
 from typing import Dict
 
 
@@ -281,7 +281,7 @@ def turn_on_device(device_name: str) -> Dict[str, str]:
             - device_name: The name of the device
             - status: The status of the device after the operation
     """
-    
+
     supported_devices = {
         "Living Room Light": "off",
         "Kitchen Light": "off",
@@ -299,6 +299,7 @@ def turn_on_device(device_name: str) -> Dict[str, str]:
         "device_name": device_name,
         "status": supported_devices[device_name],
     }
+
 
 from typing import Dict, Literal, Union
 
@@ -333,12 +334,11 @@ def adjust_thermostat(
         "status": status_message,
     }
 
+
 from typing import Dict, Literal
 
 
-def control_door_lock(
-    door: str, action: Literal["lock", "unlock"]
-) -> Dict[str, str]:
+def control_door_lock(door: str, action: Literal["lock", "unlock"]) -> Dict[str, str]:
     """Locks or unlocks a door in the home.
 
     Args:
@@ -364,6 +364,7 @@ def control_door_lock(
         "door": door,
         "status": status,
     }
+
 
 from typing import Dict, Optional
 
@@ -405,12 +406,13 @@ def device_activation(dev: str, ins: Optional[str] = None) -> Dict[str, str]:
         "command": command,
     }
 
+
 from typing import Dict, Literal
 
 
 def estimate_washing_cycle_length(
     cycle: Literal["normal", "delicates", "quick", "heavy-duty", "bedding", "rinse"],
-    load_size: int
+    load_size: int,
 ) -> Dict[str, Union[int, str]]:
     """Estimate the length of a washing cycle based on cycle type and load size.
 
@@ -448,8 +450,9 @@ def estimate_washing_cycle_length(
         "estimated_time": estimated_time,
     }
 
-from typing import Dict, List, Literal, Optional, Union
+
 import hashlib
+from typing import Dict, List, Literal, Optional, Union
 
 
 def get_camera_summary(
@@ -467,17 +470,31 @@ def get_camera_summary(
             - time_range: The time range for the events
             - events: List of events with details such as timestamp, description, and priority
     """
-    
+
     # Sample event data based on time_range and priority_level
     sample_events = [
-        {"timestamp": "2023-10-01T14:23:00", "description": "Motion detected in the backyard", "priority": "high"},
-        {"timestamp": "2023-10-01T15:45:00", "description": "Person detected at the front door", "priority": "medium"},
-        {"timestamp": "2023-10-01T16:00:00", "description": "Package delivered", "priority": "low"},
+        {
+            "timestamp": "2023-10-01T14:23:00",
+            "description": "Motion detected in the backyard",
+            "priority": "high",
+        },
+        {
+            "timestamp": "2023-10-01T15:45:00",
+            "description": "Person detected at the front door",
+            "priority": "medium",
+        },
+        {
+            "timestamp": "2023-10-01T16:00:00",
+            "description": "Package delivered",
+            "priority": "low",
+        },
     ]
 
     # Filter events based on priority_level if provided
     if priority_level:
-        sample_events = [event for event in sample_events if event["priority"] == priority_level]
+        sample_events = [
+            event for event in sample_events if event["priority"] == priority_level
+        ]
 
     # Generate a hash to simulate varied but consistent sample data
     hash_input = f"{time_range}-{priority_level}".encode()
@@ -489,10 +506,13 @@ def get_camera_summary(
         "events": sample_events[:num_events],
     }
 
+
 from typing import Dict, Optional
 
 
-def register_device(id: int, use_case: Optional[str] = None) -> Dict[str, Union[int, str]]:
+def register_device(
+    id: int, use_case: Optional[str] = None
+) -> Dict[str, Union[int, str]]:
     """Register a device with a smart home network.
 
     Args:
@@ -521,6 +541,7 @@ def register_device(id: int, use_case: Optional[str] = None) -> Dict[str, Union[
 
     return result
 
+
 from typing import Dict
 
 
@@ -540,25 +561,20 @@ def remote_authentication(log_in_id: str, secret: str) -> Dict[str, str]:
     user_db = {
         "user123": "password123",
         "john_doe": "securePass!",
-        "alice": "aliceSecret"
+        "alice": "aliceSecret",
     }
 
     if log_in_id not in user_db:
-        return {
-            "status": "failure",
-            "message": "Login ID not found."
-        }
+        return {"status": "failure", "message": "Login ID not found."}
 
     if user_db[log_in_id] == secret:
         return {
             "status": "success",
-            "message": "Authentication successful. Access granted."
+            "message": "Authentication successful. Access granted.",
         }
     else:
-        return {
-            "status": "failure",
-            "message": "Incorrect password. Access denied."
-        }
+        return {"status": "failure", "message": "Incorrect password. Access denied."}
+
 
 from typing import Dict
 
@@ -594,6 +610,7 @@ def remove_device(id: int) -> Dict[str, str]:
         "message": f"Device '{removed_device}' with ID {id} has been removed from the network.",
     }
 
+
 from typing import Dict, Literal
 
 
@@ -613,10 +630,8 @@ def set_security_mode(mode: Literal["away", "home", "night", "off"]) -> Dict[str
         raise ValueError(f"Invalid mode: {mode}. Valid modes are: {valid_modes}")
 
     # Simulate setting the security mode
-    return {
-        "mode": mode,
-        "status": f"Security mode set to '{mode}' successfully."
-    }
+    return {"mode": mode, "status": f"Security mode set to '{mode}' successfully."}
+
 
 from typing import Dict
 
@@ -632,7 +647,7 @@ def shutdown_network(save_states: bool = True) -> Dict[str, str]:
             - status: The status of the shutdown process
             - message: A message detailing the shutdown operation
     """
-    
+
     # Simulate the process of shutting down devices
     devices = ["lights", "thermostat", "security_system", "entertainment_system"]
     shutdown_log = []
@@ -647,10 +662,8 @@ def shutdown_network(save_states: bool = True) -> Dict[str, str]:
     network_status = "deactivated"
     shutdown_log.append("Network deactivated.")
 
-    return {
-        "status": network_status,
-        "message": " | ".join(shutdown_log)
-    }
+    return {"status": network_status, "message": " | ".join(shutdown_log)}
+
 
 from typing import Dict, Literal, Optional, Union
 
@@ -690,6 +703,7 @@ def start_washing_cycle(
         "delay": delay if delay is not None else 0,
     }
 
+
 from typing import Dict, Union
 
 
@@ -725,12 +739,12 @@ def washing_cycle_status() -> Dict[str, Union[str, int]]:
         "time_remaining": time_remaining_samples[current_stage],
     }
 
+
 from typing import Dict, Literal
 
 
 def brew_coffee(
-    strength: Literal["light", "medium", "strong"] = "medium",
-    cups: int = 1
+    strength: Literal["light", "medium", "strong"] = "medium", cups: int = 1
 ) -> Dict[str, str]:
     """Start brewing coffee with specific settings.
 
@@ -757,8 +771,9 @@ def brew_coffee(
         "cups": str(cups),
     }
 
-from typing import Dict, List, Literal, Union
+
 from datetime import datetime
+from typing import Dict, List, Literal, Union
 
 
 def diagnose_issue(
@@ -818,12 +833,15 @@ def diagnose_issue(
             if (datetime.now() - last_service).days > 365:
                 recommended_steps.append("Schedule a routine maintenance check")
         except ValueError:
-            raise ValueError("Invalid date format for 'last_service_date'. Use YYYY-MM-DD.")
+            raise ValueError(
+                "Invalid date format for 'last_service_date'. Use YYYY-MM-DD."
+            )
 
     return {
         "likely_causes": likely_causes,
         "recommended_steps": recommended_steps,
     }
+
 
 from typing import Dict, List, Literal
 
@@ -854,10 +872,13 @@ def drapes_status(room: List[str]) -> Dict[str, Literal["open", "closed"]]:
 
     return result
 
+
 from typing import Dict, List, Union
 
 
-def get_device_properties(device: Union[str, List[str]]) -> Dict[str, Union[str, List[Dict[str, Union[str, bool]]]]]:
+def get_device_properties(
+    device: Union[str, List[str]]
+) -> Dict[str, Union[str, List[Dict[str, Union[str, bool]]]]]:
     """Return on/off state and device type for one or more devices.
 
     Args:
@@ -885,16 +906,19 @@ def get_device_properties(device: Union[str, List[str]]) -> Dict[str, Union[str,
         if dev_id not in sample_devices:
             raise ValueError(f"Device ID not supported: {dev_id}")
         device_info = sample_devices[dev_id]
-        properties.append({
-            "id": dev_id,
-            "type": device_info["type"],
-            "state": device_info["state"],
-        })
+        properties.append(
+            {
+                "id": dev_id,
+                "type": device_info["type"],
+                "state": device_info["state"],
+            }
+        )
 
     return {
         "device_ids": device,
         "properties": properties,
     }
+
 
 from typing import Dict, List
 
@@ -919,10 +943,13 @@ def get_home_devices() -> Dict[str, List[str]]:
         "devices": sample_devices,
     }
 
+
 from typing import Dict, List, Union
 
 
-def heat(room: List[str], temperature: Union[float, None] = None) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def heat(
+    room: List[str], temperature: Union[float, None] = None
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Adjust the heating setpoint for a given room or set of rooms.
 
     Args:
@@ -958,6 +985,7 @@ def heat(room: List[str], temperature: Union[float, None] = None) -> Dict[str, U
         "details": adjusted_rooms,
     }
 
+
 from typing import Dict, List, Literal
 
 
@@ -979,14 +1007,15 @@ def lights(room: List[str]) -> Dict[str, Literal["on", "off"]]:
         "Bathroom": "off",
         "Garage": "on",
     }
-    
+
     result = {}
     for r in room:
         if r not in sample_status:
             raise ValueError(f"Room not found: {r}")
         result[r] = sample_status[r]
-    
+
     return result
+
 
 from typing import Dict, Literal, Optional, Union
 
@@ -1025,6 +1054,7 @@ def play_music(
 
     return response
 
+
 def preheat_oven(temperature_celsius: float) -> Dict[str, Union[str, float]]:
     """Preheat the oven to a specified temperature.
 
@@ -1049,13 +1079,14 @@ def preheat_oven(temperature_celsius: float) -> Dict[str, Union[str, float]]:
         "temperature": temperature_celsius,
     }
 
+
 from typing import Dict, List, Literal
 
 
 def schedule_cleaning(
     rooms: List[str],
     time: str,
-    intensity: Literal["quiet", "standard", "turbo"] = "standard"
+    intensity: Literal["quiet", "standard", "turbo"] = "standard",
 ) -> Dict[str, Union[str, List[str]]]:
     """Program the robotic vacuum to clean specific areas.
 
@@ -1072,7 +1103,7 @@ def schedule_cleaning(
     """
     if not rooms:
         raise ValueError("At least one room must be specified for cleaning.")
-    if not isinstance(time, str) or len(time) != 5 or time[2] != ':':
+    if not isinstance(time, str) or len(time) != 5 or time[2] != ":":
         raise ValueError("Time must be in HH:MM format.")
 
     # Simulating a hash-based generation for consistent sample data
@@ -1086,12 +1117,19 @@ def schedule_cleaning(
         "cleaning_intensity": cleaning_intensity,
     }
 
+
 from typing import Dict, Literal, Union
 
 
 def schedule_home_service(
     service_type: Literal[
-        "plumbing", "electric", "hvac", "appliance", "cleaning", "pest_control", "internet"
+        "plumbing",
+        "electric",
+        "hvac",
+        "appliance",
+        "cleaning",
+        "pest_control",
+        "internet",
     ],
     address: str,
     date: str,
@@ -1122,7 +1160,9 @@ def schedule_home_service(
     import hashlib
 
     # Generate a unique confirmation ID based on input parameters
-    hash_input = f"{service_type}{address}{date}{time_window['start']}{time_window['end']}"
+    hash_input = (
+        f"{service_type}{address}{date}{time_window['start']}{time_window['end']}"
+    )
     confirmation_id = hashlib.md5(hash_input.encode()).hexdigest()[:8]
 
     return {
@@ -1134,6 +1174,7 @@ def schedule_home_service(
         "access_instructions": access_instructions,
         "pet_on_premises": pet_on_premises,
     }
+
 
 from typing import Dict, List
 
@@ -1166,16 +1207,21 @@ def search_chromecast_devices(
     matching_devices = [
         device_id
         for device_id, capabilities in mock_devices.items()
-        if (capability_video_out == capabilities["video_out"] and
-            capability_audio_out == capabilities["audio_out"])
+        if (
+            capability_video_out == capabilities["video_out"]
+            and capability_audio_out == capabilities["audio_out"]
+        )
     ]
 
     return {"devices": matching_devices}
 
+
 from typing import Dict
 
 
-def set_blind_position(blind_name: str, position: float) -> Dict[str, Union[str, float]]:
+def set_blind_position(
+    blind_name: str, position: float
+) -> Dict[str, Union[str, float]]:
     """Set the position of the specified blinds.
 
     Args:
@@ -1200,6 +1246,7 @@ def set_blind_position(blind_name: str, position: float) -> Dict[str, Union[str,
         "status": status,
     }
 
+
 from typing import Dict, Literal, Optional, Union
 
 
@@ -1207,7 +1254,7 @@ def set_light_state(
     light_name: str,
     state: Literal["on", "off"],
     brightness: Optional[int] = None,
-    color: Optional[str] = None
+    color: Optional[str] = None,
 ) -> Dict[str, Union[str, int, None]]:
     """Control the state of a light, including turning it on/off and adjusting brightness or color.
 
@@ -1250,6 +1297,7 @@ def set_light_state(
         "color": light_states[light_name]["color"],
     }
 
+
 from typing import Dict, Literal
 
 
@@ -1266,30 +1314,24 @@ def set_lock_state(lock_name: str, state: Literal["lock", "unlock"]) -> Dict[str
             - state: The new state of the lock
             - message: Confirmation message of the action performed
     """
-    
+
     valid_locks = {"FrontDoor", "BackDoor", "Garage"}
     if lock_name not in valid_locks:
         raise ValueError(f"Lock not recognized: {lock_name}")
 
     action_messages = {
         "lock": f"{lock_name} has been locked.",
-        "unlock": f"{lock_name} has been unlocked."
+        "unlock": f"{lock_name} has been unlocked.",
     }
-    
-    return {
-        "lock_name": lock_name,
-        "state": state,
-        "message": action_messages[state]
-    }
+
+    return {"lock_name": lock_name, "state": state, "message": action_messages[state]}
+
 
 from typing import Dict, List, Tuple, Union
 
 
 def set_routine(
-    frequency: int,
-    time: str,
-    day: int = 1,
-    commands: List[Tuple[str, str]] = None
+    frequency: int, time: str, day: int = 1, commands: List[Tuple[str, str]] = None
 ) -> Dict[str, Union[str, int, List[Tuple[str, str]]]]:
     """Creates a reoccurring routine of commands for devices on the home network.
 
@@ -1315,7 +1357,9 @@ def set_routine(
     if frequency == 0 and not (1 <= day <= 7):
         raise ValueError("For daily routines, 'day' must be between 1 and 7.")
     if frequency in {1, 2, 3} and not (1 <= day <= 31):
-        raise ValueError("For weekly, monthly, or yearly routines, 'day' must be between 1 and 31.")
+        raise ValueError(
+            "For weekly, monthly, or yearly routines, 'day' must be between 1 and 31."
+        )
 
     sample_commands = [
         ("device_1", "turn_on"),
@@ -1329,6 +1373,7 @@ def set_routine(
         "day": day,
         "commands": commands or sample_commands,
     }
+
 
 def set_thermostat(temperature: float) -> Dict[str, Union[float, str]]:
     """Set the thermostat to the desired temperature.
@@ -1347,12 +1392,12 @@ def set_thermostat(temperature: float) -> Dict[str, Union[float, str]]:
     if temperature < 5 or temperature > 35:
         raise ValueError("Temperature must be between 5 and 35 Celsius.")
 
-    return {
-        "status": "Thermostat set successfully",
-        "set_temperature": temperature
-    }
+    return {"status": "Thermostat set successfully", "set_temperature": temperature}
 
-def set_window_position(window_name: str, position: float) -> Dict[str, Union[str, int]]:
+
+def set_window_position(
+    window_name: str, position: float
+) -> Dict[str, Union[str, int]]:
     """Set the position of a window to a specified level.
 
     Args:
@@ -1384,8 +1429,9 @@ def set_window_position(window_name: str, position: float) -> Dict[str, Union[st
     return {
         "window_name": window_name,
         "position": window_status[window_name],
-        "status": "Window position set successfully"
+        "status": "Window position set successfully",
     }
+
 
 from typing import Dict, Literal, Optional
 
@@ -1433,6 +1479,7 @@ def space(
         "lights_status": current_states[room]["lights"],
     }
 
+
 from typing import Dict, Literal
 
 
@@ -1457,10 +1504,13 @@ def start_dishwasher(mode: Literal["eco", "heavy", "quick"]) -> Dict[str, str]:
         "mode": mode,
     }
 
+
 from typing import Dict, Literal
 
 
-def start_stove(burner: str, heat_level: Literal["low", "medium", "high"]) -> Dict[str, str]:
+def start_stove(
+    burner: str, heat_level: Literal["low", "medium", "high"]
+) -> Dict[str, str]:
     """Turn on the stove and set a burner to a specific heat level.
 
     Args:
@@ -1480,13 +1530,16 @@ def start_stove(burner: str, heat_level: Literal["low", "medium", "high"]) -> Di
     return {
         "burner": burner,
         "heat_level": heat_level,
-        "status": f"The {burner} burner is now set to {heat_level} heat."
+        "status": f"The {burner} burner is now set to {heat_level} heat.",
     }
+
 
 from typing import Dict, Optional
 
 
-def update_device(device_id: str, version_number: Optional[str] = "latest") -> Dict[str, str]:
+def update_device(
+    device_id: str, version_number: Optional[str] = "latest"
+) -> Dict[str, str]:
     """Update the specified device to a given version number.
 
     Args:
@@ -1499,28 +1552,179 @@ def update_device(device_id: str, version_number: Optional[str] = "latest") -> D
             - version_number: The version number the device was updated to
             - status: Status of the update operation
     """
-    
+
     # Simulated device database
     devices = {
         "device_001": "1.0.0",
         "device_002": "1.2.3",
         "device_003": "2.0.1",
     }
-    
+
     # Check if the device exists
     if device_id not in devices:
         raise ValueError(f"Device ID not found: {device_id}")
-    
+
     # Simulate updating the device
     if version_number == "latest":
         version_number = "3.0.0"  # Assume 'latest' is version 3.0.0 for all devices
-    
+
     # Update the device version
     devices[device_id] = version_number
-    
+
     return {
         "device_id": device_id,
         "version_number": version_number,
         "status": "success",
     }
 
+
+def front_door_camera(
+    check_video: str,
+    check_audio: Optional[str] = None,
+    activate_microphone: Optional[str] = None,
+    check_history: Optional[str] = None,
+) -> Dict[str, Union[str, bool, List[str]]]:
+    """Access front door camera.
+
+    Args:
+        check_video: Opens front door video feed on users device
+        check_audio: Activates audio on front door video feed
+        activate_microphone: Activates microphone on front door camera for two way chat
+        check_history: Checks recent doorbell history video feeds
+
+    Returns:
+        Dict containing:
+            - camera_status: Status of the camera access
+            - video_feed: Whether video feed is active
+            - audio_enabled: Whether audio is enabled
+            - microphone_active: Whether microphone is active
+            - recent_activity: List of recent doorbell activity (if history requested)
+    """
+
+    # Simulate camera access
+    camera_status = "connected"
+    video_feed = True if check_video else False
+    audio_enabled = True if check_audio else False
+    microphone_active = True if activate_microphone else False
+
+    result = {
+        "camera_status": camera_status,
+        "video_feed": video_feed,
+        "audio_enabled": audio_enabled,
+        "microphone_active": microphone_active,
+    }
+
+    # If history is requested, provide recent activity
+    if check_history:
+        recent_activity = [
+            "2023-10-15 14:30 - Delivery person at door",
+            "2023-10-15 12:15 - Mailman delivery",
+            "2023-10-15 09:45 - Neighbor walking by",
+        ]
+        result["recent_activity"] = recent_activity
+
+    return result
+
+
+def make_coffee(
+    cappuccino: Optional[str] = None,
+    latte: Optional[str] = None,
+    iced: bool = False,
+    sugar: Optional[int] = None,
+) -> Dict[str, Union[str, bool, int]]:
+    """Makes coffee based on user specifications.
+
+    Args:
+        cappuccino: Makes hot cappuccino
+        latte: Makes hot latte
+        iced: Makes the coffee iced instead of hot
+        sugar: Adds the specified number of sugar
+
+    Returns:
+        Dict containing:
+            - coffee_type: Type of coffee being made
+            - temperature: Hot or iced
+            - sugar_added: Number of sugars added
+            - status: Brewing status
+            - estimated_time: Estimated time to completion in minutes
+    """
+
+    # Determine coffee type
+    if cappuccino:
+        coffee_type = "cappuccino"
+    elif latte:
+        coffee_type = "latte"
+    else:
+        coffee_type = "regular coffee"
+
+    temperature = "iced" if iced else "hot"
+    sugar_added = sugar if sugar is not None else 0
+
+    # Simulate brewing process
+    status = "brewing"
+    estimated_time = 3 if not iced else 2  # Iced coffee is faster
+
+    return {
+        "coffee_type": coffee_type,
+        "temperature": temperature,
+        "sugar_added": sugar_added,
+        "status": status,
+        "estimated_time": estimated_time,
+    }
+
+
+def send_email(
+    send_to: str,
+    body: str,
+    subject_line: str,
+    copy_in: Optional[str] = None,
+    urgent: bool = False,
+) -> Dict[str, Union[str, bool, List[str]]]:
+    """Sends an email based on user specifications.
+
+    Args:
+        send_to: Where the email needs to be sent to
+        body: What the email needs to say
+        subject_line: What the subject line of the email says
+        copy_in: Any sendees that need to be copied into the email
+        urgent: Flags the email as urgent before sending
+
+    Returns:
+        Dict containing:
+            - email_id: Unique identifier for the sent email
+            - recipient: Primary recipient
+            - cc_recipients: List of CC recipients
+            - subject: Email subject line
+            - status: Sending status
+            - urgent_flag: Whether email was marked urgent
+            - sent_time: Timestamp of when email was sent
+    """
+
+    if not send_to or not body or not subject_line:
+        raise ValueError("send_to, body, and subject_line are all required parameters")
+
+    import datetime
+
+    # Generate unique email ID
+    import hashlib
+
+    email_data = f"{send_to}{body}{subject_line}"
+    email_id = f"EMAIL-{hashlib.md5(email_data.encode()).hexdigest()[:8].upper()}"
+
+    # Parse CC recipients
+    cc_recipients = []
+    if copy_in:
+        cc_recipients = [cc.strip() for cc in copy_in.split(",") if cc.strip()]
+
+    # Generate timestamp
+    sent_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    return {
+        "email_id": email_id,
+        "recipient": send_to,
+        "cc_recipients": cc_recipients,
+        "subject": subject_line,
+        "status": "sent",
+        "urgent_flag": urgent,
+        "sent_time": sent_time,
+    }

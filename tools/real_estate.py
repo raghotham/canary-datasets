@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # Real Estate Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Union
+from typing import Any, Dict, List, Union
 
 
 def details(id: int) -> Dict[str, Union[int, str, bool]]:
@@ -18,16 +17,28 @@ def details(id: int) -> Dict[str, Union[int, str, bool]]:
             - is_clean: Boolean indicating if the bathroom is clean
             - has_accessible_facilities: Boolean indicating if the bathroom has accessible facilities
     """
-    
+
     sample_data = {
-        1: {"location": "First Floor, Near Elevator", "is_clean": True, "has_accessible_facilities": True},
-        2: {"location": "Second Floor, Near Cafeteria", "is_clean": False, "has_accessible_facilities": False},
-        3: {"location": "Ground Floor, Near Reception", "is_clean": True, "has_accessible_facilities": True},
+        1: {
+            "location": "First Floor, Near Elevator",
+            "is_clean": True,
+            "has_accessible_facilities": True,
+        },
+        2: {
+            "location": "Second Floor, Near Cafeteria",
+            "is_clean": False,
+            "has_accessible_facilities": False,
+        },
+        3: {
+            "location": "Ground Floor, Near Reception",
+            "is_clean": True,
+            "has_accessible_facilities": True,
+        },
     }
-    
+
     if id not in sample_data:
         raise ValueError(f"Bathroom ID not found: {id}")
-    
+
     bathroom_details = sample_data[id]
     return {
         "id": id,
@@ -36,8 +47,9 @@ def details(id: int) -> Dict[str, Union[int, str, bool]]:
         "has_accessible_facilities": bathroom_details["has_accessible_facilities"],
     }
 
-from typing import Dict, List, Literal, Union, Optional
+
 import hashlib
+from typing import Dict, List, Literal, Optional, Union
 
 
 def find_contractors(
@@ -47,7 +59,9 @@ def find_contractors(
     certifications: Optional[List[str]] = None,
     budget_max: Optional[float] = None,
     emergency: bool = False,
-    sort_by: Literal["rating_desc", "price_asc", "soonest_availability"] = "rating_desc"
+    sort_by: Literal[
+        "rating_desc", "price_asc", "soonest_availability"
+    ] = "rating_desc",
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float, bool]]]]]:
     """Discover qualified contractors near an address, filtered by service type, availability, and constraints.
 
@@ -65,16 +79,18 @@ def find_contractors(
             - service_type: The type of service requested.
             - contractors: List of contractors with details such as name, rating, price, availability, and emergency readiness.
     """
-    
+
     # Mock data generation
     def generate_contractor_data(name_seed: str) -> Dict[str, Union[str, float, bool]]:
         hash_seed = hashlib.sha256(name_seed.encode()).hexdigest()
         return {
             "name": f"Contractor {hash_seed[:6]}",
             "rating": round((int(hash_seed[0], 16) / 15) * 5, 1),  # Rating out of 5
-            "price": round((int(hash_seed[1:3], 16) / 255) * 1000, 2),  # Price in local currency
+            "price": round(
+                (int(hash_seed[1:3], 16) / 255) * 1000, 2
+            ),  # Price in local currency
             "availability": f"2023-10-{int(hash_seed[3:5], 16) % 30 + 1:02d}",  # Random date in October 2023
-            "emergency_ready": int(hash_seed[5], 16) % 2 == 0
+            "emergency_ready": int(hash_seed[5], 16) % 2 == 0,
         }
 
     # Sample contractors
@@ -89,7 +105,11 @@ def find_contractors(
     if emergency:
         contractors = [c for c in contractors if c["emergency_ready"]]
     if date_window:
-        contractors = [c for c in contractors if date_window["start_date"] <= c["availability"] <= date_window["end_date"]]
+        contractors = [
+            c
+            for c in contractors
+            if date_window["start_date"] <= c["availability"] <= date_window["end_date"]
+        ]
 
     # Sorting
     if sort_by == "rating_desc":
@@ -99,19 +119,16 @@ def find_contractors(
     elif sort_by == "soonest_availability":
         contractors.sort(key=lambda x: x["availability"])
 
-    return {
-        "service_type": service_type,
-        "contractors": contractors
-    }
+    return {"service_type": service_type, "contractors": contractors}
 
-from typing import Dict, Union, Optional
-from datetime import datetime
+
 import hashlib
+from datetime import datetime
+from typing import Dict, Optional, Union
 
 
 def get_build_age(
-    build_addr: Optional[str] = None,
-    coordinates: Optional[Dict[str, float]] = None
+    build_addr: Optional[str] = None, coordinates: Optional[Dict[str, float]] = None
 ) -> Dict[str, Union[str, int]]:
     """Retrieve the age of a given building, in months.
 
@@ -147,12 +164,12 @@ def get_build_age(
         "age_months": age_months,
     }
 
-from typing import Dict, Union, Optional
+
+from typing import Dict, Optional, Union
 
 
 def get_build_fire(
-    build_addr: Optional[str] = None,
-    coordinates: Optional[Dict[str, float]] = None
+    build_addr: Optional[str] = None, coordinates: Optional[Dict[str, float]] = None
 ) -> Dict[str, Union[str, int]]:
     """Retrieve the number of fire escapes in a given building.
 
@@ -165,27 +182,30 @@ def get_build_fire(
             - identifier: A unique identifier for the building (address or coordinates)
             - fire_escapes: Number of fire escapes in the building
     """
-    
+
     if not build_addr and not coordinates:
         raise ValueError("Either 'build_addr' or 'coordinates' must be provided.")
-    
+
     if build_addr:
         identifier = build_addr
     else:
         identifier = f"{coordinates['lat']},{coordinates['lng']}"
-    
+
     # Simulate a hash-based generation for consistent but varied sample data
     hash_value = hash(identifier) % 5 + 1  # Generates a number between 1 and 5
-    
+
     return {
         "identifier": identifier,
         "fire_escapes": hash_value,
     }
 
-from typing import Dict, Union, Optional
+
+from typing import Dict, Optional, Union
 
 
-def get_build_height(build_addr: Optional[str] = None, coordinates: Optional[Dict[str, float]] = None) -> Dict[str, Union[str, float]]:
+def get_build_height(
+    build_addr: Optional[str] = None, coordinates: Optional[Dict[str, float]] = None
+) -> Dict[str, Union[str, float]]:
     """Retrieve the height information for a given building.
 
     Args:
@@ -198,36 +218,38 @@ def get_build_height(build_addr: Optional[str] = None, coordinates: Optional[Dic
             - max_height: Maximum height from ground to top in meters
             - foundation_depth: Depth of the foundation from ground level in meters (if available)
     """
-    
+
     if not build_addr and not coordinates:
         raise ValueError("Either 'build_addr' or 'coordinates' must be provided.")
-    
+
     if build_addr:
         # Simulate a hash-based generation for consistent sample data
         hash_value = hash(build_addr) % 100
         address = build_addr
     else:
         # Simulate a hash-based generation for consistent sample data
-        hash_value = hash((coordinates['lat'], coordinates['lng'])) % 100
+        hash_value = hash((coordinates["lat"], coordinates["lng"])) % 100
         address = f"Building at ({coordinates['lat']}, {coordinates['lng']})"
-    
+
     # Generate sample data based on the hash value
     max_height = 50 + (hash_value % 50)  # Random height between 50 and 100 meters
-    foundation_depth = (hash_value % 20) if hash_value % 2 == 0 else None  # Random depth or None
-    
+    foundation_depth = (
+        (hash_value % 20) if hash_value % 2 == 0 else None
+    )  # Random depth or None
+
     return {
         "address": address,
         "max_height": max_height,
         "foundation_depth": foundation_depth,
     }
 
-from typing import Dict, Union, List, Optional
+
 import hashlib
+from typing import Dict, List, Optional, Union
 
 
 def get_build_history(
-    build_addr: Optional[str] = None, 
-    coordinates: Optional[Dict[str, float]] = None
+    build_addr: Optional[str] = None, coordinates: Optional[Dict[str, float]] = None
 ) -> Dict[str, Union[str, List[str]]]:
     """Retrieve historic records for a given building.
 
@@ -242,29 +264,31 @@ def get_build_history(
             - occupancy: List of occupancy history.
             - media_mentions: List of news and media mentions.
     """
-    
+
     if not build_addr and not coordinates:
         raise ValueError("Either 'build_addr' or 'coordinates' must be provided.")
-    
+
     if build_addr:
         key = build_addr
     else:
         key = f"{coordinates['lat']},{coordinates['lng']}"
-    
+
     # Generate a consistent hash for the key to simulate data retrieval
     hash_key = hashlib.md5(key.encode()).hexdigest()
-    
+
     # Mock data generation based on the hash
     deeds = [f"Deed change {i} for {hash_key[:8]}" for i in range(1, 4)]
     occupancy = [f"Occupancy record {i} for {hash_key[8:16]}" for i in range(1, 3)]
     media_mentions = [f"Media mention {i} for {hash_key[16:24]}" for i in range(1, 5)]
-    
+
     return {
-        "address": build_addr or f"Coordinates: {coordinates['lat']}, {coordinates['lng']}",
+        "address": build_addr
+        or f"Coordinates: {coordinates['lat']}, {coordinates['lng']}",
         "deeds": deeds,
         "occupancy": occupancy,
         "media_mentions": media_mentions,
     }
+
 
 from typing import Dict, List, Optional, Union
 
@@ -334,6 +358,7 @@ def request_quote(
 
     return response
 
+
 from typing import Dict, List, Union
 
 
@@ -379,12 +404,52 @@ def search_properties(
     # Sample data generation based on city hash
     sample_data = {
         "New York": [
-            {"name": "Cozy Apartment in Manhattan", "price_per_night": 150, "rating": 4.8, "superhost": True, "accommodates": 3},
-            {"name": "Brooklyn Loft", "price_per_night": 120, "rating": 4.5, "superhost": False, "accommodates": 4},
+            {
+                "name": "Cozy Apartment in Manhattan",
+                "price_per_night": 150,
+                "rating": 4.8,
+                "superhost": True,
+                "accommodates": 3,
+            },
+            {
+                "name": "Brooklyn Loft",
+                "price_per_night": 120,
+                "rating": 4.5,
+                "superhost": False,
+                "accommodates": 4,
+            },
         ],
         "San Francisco": [
-            {"name": "Modern Studio in SF", "price_per_night": 200, "rating": 4.9, "superhost": True, "accommodates": 2},
-            {"name": "Charming Victorian", "price_per_night": 180, "rating": 4.7, "superhost": False, "accommodates": 5},
+            {
+                "name": "Modern Studio in SF",
+                "price_per_night": 200,
+                "rating": 4.9,
+                "superhost": True,
+                "accommodates": 2,
+            },
+            {
+                "name": "Charming Victorian",
+                "price_per_night": 180,
+                "rating": 4.7,
+                "superhost": False,
+                "accommodates": 5,
+            },
+        ],
+        "Bangkok": [
+            {
+                "name": "Modern Condo in Sukhumvit",
+                "price_per_night": 80,
+                "rating": 4.6,
+                "superhost": True,
+                "accommodates": 4,
+            },
+            {
+                "name": "Traditional Thai House",
+                "price_per_night": 60,
+                "rating": 4.4,
+                "superhost": False,
+                "accommodates": 6,
+            },
         ],
     }
 
@@ -392,10 +457,11 @@ def search_properties(
         raise ValueError(f"City not supported: {city}")
 
     listings = sample_data[city]
-    
+
     # Filter listings based on criteria
     filtered_listings = [
-        listing for listing in listings
+        listing
+        for listing in listings
         if (price_min is None or listing["price_per_night"] >= price_min)
         and (price_max is None or listing["price_per_night"] <= price_max)
         and (superhost is None or listing["superhost"] == superhost)
@@ -407,4 +473,3 @@ def search_properties(
         "city": city,
         "listings": filtered_listings,
     }
-

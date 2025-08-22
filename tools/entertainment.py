@@ -1,9 +1,9 @@
-from typing import Dict, List, Union, Any
+import hashlib
+
 # Entertainment Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, List, Literal, Union
-import hashlib
+from typing import Any, Dict, List, Literal, Union
 
 
 def crawl_lightnovel(
@@ -32,12 +32,17 @@ def crawl_lightnovel(
     if "chapters_list" in scope:
         chapters = scope["chapters_list"]
     else:
-        chapters = list(range(scope["start_chapter_index"], scope["end_chapter_index"] + 1))
+        chapters = list(
+            range(scope["start_chapter_index"], scope["end_chapter_index"] + 1)
+        )
 
     if media_handling is None:
         media_handling = {"download_images": False, "inline_images": True}
 
-    if media_handling.get("download_images", False) and "image_formats" not in media_handling:
+    if (
+        media_handling.get("download_images", False)
+        and "image_formats" not in media_handling
+    ):
         raise ValueError("Image formats must be specified if download_images is True")
 
     # Simulate fetching chapters
@@ -57,6 +62,7 @@ def crawl_lightnovel(
         "status": status,
     }
 
+
 from typing import Dict, List
 
 
@@ -71,11 +77,23 @@ def get_preacher_sermons(preacher_id: str) -> Dict[str, Union[str, List[str]]]:
             - preacher_id: The ID of the preacher
             - sermons: List of sermon titles by the preacher
     """
-    
+
     sample_sermons = {
-        "preacher_001": ["The Path to Enlightenment", "Faith and Hope", "Love Thy Neighbor"],
-        "preacher_002": ["The Power of Prayer", "Finding Peace", "Overcoming Adversity"],
-        "preacher_003": ["The Journey of Faith", "Grace and Mercy", "Living with Purpose"],
+        "preacher_001": [
+            "The Path to Enlightenment",
+            "Faith and Hope",
+            "Love Thy Neighbor",
+        ],
+        "preacher_002": [
+            "The Power of Prayer",
+            "Finding Peace",
+            "Overcoming Adversity",
+        ],
+        "preacher_003": [
+            "The Journey of Faith",
+            "Grace and Mercy",
+            "Living with Purpose",
+        ],
     }
 
     if preacher_id not in sample_sermons:
@@ -85,6 +103,7 @@ def get_preacher_sermons(preacher_id: str) -> Dict[str, Union[str, List[str]]]:
         "preacher_id": preacher_id,
         "sermons": sample_sermons.get(preacher_id, []),
     }
+
 
 from typing import Dict, List, Union
 
@@ -108,7 +127,7 @@ def get_tickets(
                 - tickets_available: Number of tickets available
                 - price: Price per ticket
     """
-    
+
     if not home_team or not opponent:
         raise ValueError("Both home_team and opponent must be provided")
 
@@ -132,10 +151,13 @@ def get_tickets(
         "available_games": available_games,
     }
 
+
 from typing import Dict, List, Union
 
 
-def pool_halls(city: str, no_locations: int = 3) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def pool_halls(
+    city: str, no_locations: int = 3
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Get a list of pool halls based on a given input city.
 
     Args:
@@ -150,7 +172,7 @@ def pool_halls(city: str, no_locations: int = 3) -> Dict[str, Union[str, List[Di
                 - tables: Number of pool tables available
                 - rating: Average customer rating
     """
-    
+
     sample_data = {
         "New York": [
             {"name": "The Corner Pocket", "tables": 12, "rating": 4.5},
@@ -168,16 +190,17 @@ def pool_halls(city: str, no_locations: int = 3) -> Dict[str, Union[str, List[Di
             {"name": "Pocket Aces", "tables": 10, "rating": 4.3},
         ],
     }
-    
+
     if city not in sample_data:
         raise ValueError(f"City not supported: {city}")
-    
+
     pool_halls_list = sample_data[city][:no_locations]
-    
+
     return {
         "city": city,
         "pool_halls": pool_halls_list,
     }
+
 
 from typing import Dict, List, Optional
 
@@ -193,7 +216,7 @@ def search_movies(title: str, genre: Optional[str] = None) -> Dict[str, List[int
         Dict containing:
             - movie_ids: List of movie IDs matching the search criteria.
     """
-    
+
     # Sample movie catalogue
     catalogue = {
         "The Matrix": {"id": 1, "genre": "Sci-Fi"},
@@ -215,7 +238,14 @@ def search_movies(title: str, genre: Optional[str] = None) -> Dict[str, List[int
         matching_movies = [
             movie_id
             for movie_id in matching_movies
-            if catalogue[next(title for title, details in catalogue.items() if details["id"] == movie_id)]["genre"].lower() == genre.lower()
+            if catalogue[
+                next(
+                    title
+                    for title, details in catalogue.items()
+                    if details["id"] == movie_id
+                )
+            ]["genre"].lower()
+            == genre.lower()
         ]
 
     if not matching_movies:
@@ -223,8 +253,9 @@ def search_movies(title: str, genre: Optional[str] = None) -> Dict[str, List[int
 
     return {"movie_ids": matching_movies}
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
 def table_available(
@@ -264,8 +295,9 @@ def table_available(
         "available": available,
     }
 
-from typing import Dict, List, Union, Literal
+
 from datetime import datetime
+from typing import Dict, List, Literal, Union
 
 
 def browse_events(
@@ -274,7 +306,7 @@ def browse_events(
     genres: List[str] = None,
     budget_max: float = None,
     all_ages: bool = None,
-    sort_by: Literal['date_asc', 'price_asc', 'popularity_desc'] = None
+    sort_by: Literal["date_asc", "price_asc", "popularity_desc"] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float, bool]]]]]:
     """Search for live events in a city within a date range.
 
@@ -293,16 +325,40 @@ def browse_events(
     """
     # Sample event data
     sample_events = [
-        {"name": "Rock Concert", "date": "2023-11-15", "price": 50.0, "genre": "rock", "all_ages": True},
-        {"name": "Comedy Night", "date": "2023-11-18", "price": 30.0, "genre": "comedy", "all_ages": False},
-        {"name": "Theater Play", "date": "2023-11-20", "price": 40.0, "genre": "theater", "all_ages": True},
-        {"name": "Jazz Festival", "date": "2023-11-22", "price": 60.0, "genre": "jazz", "all_ages": True},
+        {
+            "name": "Rock Concert",
+            "date": "2023-11-15",
+            "price": 50.0,
+            "genre": "rock",
+            "all_ages": True,
+        },
+        {
+            "name": "Comedy Night",
+            "date": "2023-11-18",
+            "price": 30.0,
+            "genre": "comedy",
+            "all_ages": False,
+        },
+        {
+            "name": "Theater Play",
+            "date": "2023-11-20",
+            "price": 40.0,
+            "genre": "theater",
+            "all_ages": True,
+        },
+        {
+            "name": "Jazz Festival",
+            "date": "2023-11-22",
+            "price": 60.0,
+            "genre": "jazz",
+            "all_ages": True,
+        },
     ]
 
     # Validate date range
     try:
-        start_date = datetime.strptime(date_range['start_date'], '%Y-%m-%d')
-        end_date = datetime.strptime(date_range['end_date'], '%Y-%m-%d')
+        start_date = datetime.strptime(date_range["start_date"], "%Y-%m-%d")
+        end_date = datetime.strptime(date_range["end_date"], "%Y-%m-%d")
     except ValueError:
         raise ValueError("Invalid date format. Use YYYY-MM-DD.")
 
@@ -311,27 +367,26 @@ def browse_events(
 
     # Filter events based on criteria
     filtered_events = [
-        event for event in sample_events
-        if start_date <= datetime.strptime(event['date'], '%Y-%m-%d') <= end_date
-        and (genres is None or event['genre'] in genres)
-        and (budget_max is None or event['price'] <= budget_max)
-        and (all_ages is None or event['all_ages'] == all_ages)
+        event
+        for event in sample_events
+        if start_date <= datetime.strptime(event["date"], "%Y-%m-%d") <= end_date
+        and (genres is None or event["genre"] in genres)
+        and (budget_max is None or event["price"] <= budget_max)
+        and (all_ages is None or event["all_ages"] == all_ages)
     ]
 
     # Sort events if sort_by is specified
     if sort_by:
-        if sort_by == 'date_asc':
-            filtered_events.sort(key=lambda x: x['date'])
-        elif sort_by == 'price_asc':
-            filtered_events.sort(key=lambda x: x['price'])
-        elif sort_by == 'popularity_desc':
+        if sort_by == "date_asc":
+            filtered_events.sort(key=lambda x: x["date"])
+        elif sort_by == "price_asc":
+            filtered_events.sort(key=lambda x: x["price"])
+        elif sort_by == "popularity_desc":
             # Assuming popularity is inversely related to price for mock purposes
-            filtered_events.sort(key=lambda x: x['price'], reverse=True)
+            filtered_events.sort(key=lambda x: x["price"], reverse=True)
 
-    return {
-        "city": city,
-        "events": filtered_events
-    }
+    return {"city": city, "events": filtered_events}
+
 
 from typing import Dict, Union
 
@@ -373,6 +428,7 @@ def buy_event_tickets(
         "confirmation_code": confirmation_code,
     }
 
+
 from typing import Dict, List
 
 
@@ -412,6 +468,7 @@ def cast(title: str, include_uncredited: bool = False) -> Dict[str, List[str]]:
         "actors": actors,
     }
 
+
 from typing import Dict, Literal, Union
 
 
@@ -430,17 +487,17 @@ def check_average_movie_rating(
             - average_rating: The average rating out of 5
             - review_type: The type of reviews considered
     """
-    
+
     # Sample data for demonstration purposes
     sample_data = {
         "Inception": {"audience": 4.7, "critic": 4.5},
         "The Matrix": {"audience": 4.6, "critic": 4.4},
         "Titanic": {"audience": 4.3, "critic": 4.2},
     }
-    
+
     # Normalize movie name for lookup
     normalized_name = movie_name.lower().strip()
-    
+
     # Find the closest match in the sample data
     for key in sample_data.keys():
         if normalized_name in key.lower():
@@ -448,7 +505,7 @@ def check_average_movie_rating(
             break
     else:
         raise ValueError(f"Movie not found: {movie_name}")
-    
+
     # Calculate the average rating based on the requested type
     if type == "audience":
         average_rating = movie_data["audience"]
@@ -458,12 +515,13 @@ def check_average_movie_rating(
         average_rating = (movie_data["audience"] + movie_data["critic"]) / 2
     else:
         raise ValueError(f"Unsupported review type: {type}")
-    
+
     return {
         "movie_name": key,
         "average_rating": average_rating,
         "review_type": type,
     }
+
 
 from typing import Dict, List
 
@@ -479,7 +537,7 @@ def check_movie_tags(movie_name: str) -> Dict[str, List[str]]:
             - movie_name: The name of the movie
             - tags: List of tags associated with the movie
     """
-    
+
     # Sample movie database with tags
     movie_database = {
         "Inception": ["ACTION", "THRILLER", "SCI-FI"],
@@ -488,10 +546,10 @@ def check_movie_tags(movie_name: str) -> Dict[str, List[str]]:
         "The Hangover": ["COMEDY", "CASUAL"],
         "Avengers": ["ACTION", "SCI-FI", "ADVENTURE"],
     }
-    
+
     # Normalize the movie name for lookup
     normalized_name = movie_name.strip().lower()
-    
+
     # Find matching movie tags
     for movie, tags in movie_database.items():
         if normalized_name in movie.lower():
@@ -499,8 +557,9 @@ def check_movie_tags(movie_name: str) -> Dict[str, List[str]]:
                 "movie_name": movie,
                 "tags": tags,
             }
-    
+
     raise ValueError(f"Movie not found: {movie_name}")
+
 
 from typing import Dict, List
 
@@ -512,7 +571,7 @@ def crunchyroll_upcoming_shows() -> Dict[str, List[str]]:
         Dict containing:
             - shows: List of upcoming show titles
     """
-    
+
     sample_shows = [
         "Attack on Titan: The Final Season",
         "My Hero Academia: Season 6",
@@ -520,18 +579,15 @@ def crunchyroll_upcoming_shows() -> Dict[str, List[str]]:
         "Jujutsu Kaisen: Season 2",
         "One Piece: Wano Arc",
     ]
-    
-    return {
-        "shows": sample_shows
-    }
+
+    return {"shows": sample_shows}
+
 
 from typing import Dict, Literal
 
 
 def dances(
-    name: str,
-    style: Literal[1, 2, 3, 4],
-    participants: Literal[1, 2]
+    name: str, style: Literal[1, 2, 3, 4], participants: Literal[1, 2]
 ) -> Dict[str, str]:
     """Set or get a list of ballroom and latin dance styles.
 
@@ -546,12 +602,7 @@ def dances(
             - style: Style category as a string
             - participants: Number of participants as a string
     """
-    style_map = {
-        1: "ballroom",
-        2: "latin",
-        3: "argentine tango",
-        4: "flamenco"
-    }
+    style_map = {1: "ballroom", 2: "latin", 3: "argentine tango", 4: "flamenco"}
 
     if style not in style_map:
         raise ValueError(f"Unsupported style: {style}")
@@ -562,8 +613,9 @@ def dances(
     return {
         "name": name,
         "style": style_map[style],
-        "participants": f"{participants} participant{'s' if participants > 1 else ''}"
+        "participants": f"{participants} participant{'s' if participants > 1 else ''}",
     }
+
 
 from typing import Dict, Optional
 
@@ -585,20 +637,44 @@ def find_festival(
             - artist_name: Name of the artist performing
             - start_date: Start date of the festival
     """
-    
+
     # Sample data for demonstration purposes
     sample_festivals = {
         "New York": [
-            {"festival_name": "Summer Jam", "artist_name": "The Weeknd", "start_date": "2023-06-15"},
-            {"festival_name": "Rock Fest", "artist_name": "Imagine Dragons", "start_date": "2023-07-20"},
+            {
+                "festival_name": "Summer Jam",
+                "artist_name": "The Weeknd",
+                "start_date": "2023-06-15",
+            },
+            {
+                "festival_name": "Rock Fest",
+                "artist_name": "Imagine Dragons",
+                "start_date": "2023-07-20",
+            },
         ],
         "Los Angeles": [
-            {"festival_name": "Coachella", "artist_name": "Beyoncé", "start_date": "2023-04-10"},
-            {"festival_name": "Jazz Fest", "artist_name": "Norah Jones", "start_date": "2023-05-05"},
+            {
+                "festival_name": "Coachella",
+                "artist_name": "Beyoncé",
+                "start_date": "2023-04-10",
+            },
+            {
+                "festival_name": "Jazz Fest",
+                "artist_name": "Norah Jones",
+                "start_date": "2023-05-05",
+            },
         ],
         "Chicago": [
-            {"festival_name": "Lollapalooza", "artist_name": "Kendrick Lamar", "start_date": "2023-08-01"},
-            {"festival_name": "Blues Fest", "artist_name": "John Mayer", "start_date": "2023-06-10"},
+            {
+                "festival_name": "Lollapalooza",
+                "artist_name": "Kendrick Lamar",
+                "start_date": "2023-08-01",
+            },
+            {
+                "festival_name": "Blues Fest",
+                "artist_name": "John Mayer",
+                "start_date": "2023-06-10",
+            },
         ],
     }
 
@@ -616,7 +692,10 @@ def find_festival(
                 "start_date": festival["start_date"],
             }
 
-    raise ValueError(f"No festival found for artist '{artist_name}' in {city} on {start_date or 'any date'}")
+    raise ValueError(
+        f"No festival found for artist '{artist_name}' in {city} on {start_date or 'any date'}"
+    )
+
 
 from typing import Dict, List, Union
 
@@ -657,7 +736,8 @@ def find_tickets(
         raise ValueError(f"Festival not supported: {festival_name}")
 
     available_tickets = [
-        ticket for ticket in sample_tickets[festival_name]
+        ticket
+        for ticket in sample_tickets[festival_name]
         if maximum_price is None or ticket["price"] <= maximum_price
     ]
 
@@ -670,10 +750,13 @@ def find_tickets(
         "available_tickets": available_tickets[:amount],
     }
 
+
 from typing import Dict, List, Union
 
 
-def gasic_guzzler_meets(postcode: str, radius: float = 10) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def gasic_guzzler_meets(
+    postcode: str, radius: float = 10
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Find outdoor track meets for RC model racing enthusiasts.
 
     Args:
@@ -689,16 +772,22 @@ def gasic_guzzler_meets(postcode: str, radius: float = 10) -> Dict[str, Union[st
                 - location: Location of the meet
                 - distance: Distance from the central postcode in miles
     """
-    
+
     # Mock data generation based on postcode hash
     def generate_meet_data(postcode_hash: int) -> List[Dict[str, Union[str, float]]]:
         sample_meets = [
             {"name": "Turbo Thrills", "location": "Greenfield Park", "distance": 5.2},
-            {"name": "Nitro Nationals", "location": "Speedway Circuit", "distance": 8.7},
+            {
+                "name": "Nitro Nationals",
+                "location": "Speedway Circuit",
+                "distance": 8.7,
+            },
             {"name": "Combustion Clash", "location": "Racers Arena", "distance": 12.3},
         ]
         # Use hash to simulate variability in returned data
-        return [meet for i, meet in enumerate(sample_meets) if i % 3 == postcode_hash % 3]
+        return [
+            meet for i, meet in enumerate(sample_meets) if i % 3 == postcode_hash % 3
+        ]
 
     if not postcode:
         raise ValueError("Postcode is required")
@@ -713,6 +802,7 @@ def gasic_guzzler_meets(postcode: str, radius: float = 10) -> Dict[str, Union[st
         "radius": radius,
         "meets": meets,
     }
+
 
 from typing import Dict, Union
 
@@ -760,6 +850,7 @@ def get_anime_details(anime_id: int) -> Dict[str, Union[str, int, float, list]]:
 
     return sample_data[anime_id]
 
+
 from typing import Dict, List, Union
 
 
@@ -777,35 +868,33 @@ def get_blu_ray_information(title_name: str) -> Dict[str, Union[str, int, List[s
             - cast: List of main cast members
             - crew: List of main crew members
     """
-    
+
     sample_data = {
         "Inception": {
             "runtime": 148,
             "certification": "PG-13",
             "cast": ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page"],
-            "crew": ["Christopher Nolan", "Emma Thomas"]
+            "crew": ["Christopher Nolan", "Emma Thomas"],
         },
         "The Matrix": {
             "runtime": 136,
             "certification": "R",
             "cast": ["Keanu Reeves", "Laurence Fishburne", "Carrie-Anne Moss"],
-            "crew": ["Lana Wachowski", "Lilly Wachowski"]
+            "crew": ["Lana Wachowski", "Lilly Wachowski"],
         },
         "Interstellar": {
             "runtime": 169,
             "certification": "PG-13",
             "cast": ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"],
-            "crew": ["Christopher Nolan", "Emma Thomas"]
-        }
+            "crew": ["Christopher Nolan", "Emma Thomas"],
+        },
     }
-    
+
     if title_name not in sample_data:
         raise ValueError(f"Title not supported: {title_name}")
 
-    return {
-        "title": title_name,
-        **sample_data[title_name]
-    }
+    return {"title": title_name, **sample_data[title_name]}
+
 
 from typing import Dict, List, Union
 
@@ -855,6 +944,7 @@ def get_channel_video_urls(search_query: str) -> Dict[str, Union[str, List[str]]
         "video_urls": channels[matched_channel],
     }
 
+
 from typing import Dict, Literal
 
 
@@ -874,17 +964,17 @@ def get_love_horoscope(
             - time_period: The time period for the horoscope
             - horoscope: A love and relationship horoscope message
     """
-    
+
     horoscopes = {
         "aries": {
             "today": "Today is a great day to express your feelings to someone special.",
             "this_week": "This week, focus on building trust in your relationships.",
-            "this_month": "This month, you may find love in unexpected places."
+            "this_month": "This month, you may find love in unexpected places.",
         },
         "taurus": {
             "today": "Patience is key today in your love life.",
             "this_week": "This week, you might reconnect with an old flame.",
-            "this_month": "This month, take time to nurture your relationships."
+            "this_month": "This month, take time to nurture your relationships.",
         },
         # Add entries for other zodiac signs...
     }
@@ -895,8 +985,11 @@ def get_love_horoscope(
     return {
         "zodiac_sign": zodiac_sign,
         "time_period": time_period,
-        "horoscope": horoscopes[zodiac_sign].get(time_period, "No horoscope available for this time period.")
+        "horoscope": horoscopes[zodiac_sign].get(
+            time_period, "No horoscope available for this time period."
+        ),
     }
+
 
 from typing import Dict, List
 
@@ -912,13 +1005,13 @@ def get_movie_cast(movie_id: str) -> Dict[str, Union[str, List[str]]]:
             - movie_id: The unique identifier of the movie
             - cast: List of cast members' names
     """
-    
+
     sample_casts = {
         "movie_001": ["John Doe", "Jane Smith", "Alice Johnson"],
         "movie_002": ["Tom Hanks", "Emma Watson", "Chris Evans"],
         "movie_003": ["Scarlett Johansson", "Robert Downey Jr.", "Chris Hemsworth"],
     }
-    
+
     if movie_id not in sample_casts:
         raise ValueError(f"Movie ID not found: {movie_id}")
 
@@ -926,6 +1019,7 @@ def get_movie_cast(movie_id: str) -> Dict[str, Union[str, List[str]]]:
         "movie_id": movie_id,
         "cast": sample_casts[movie_id],
     }
+
 
 from typing import Dict
 
@@ -941,7 +1035,7 @@ def get_movie_genre(movie_name: str) -> Dict[str, str]:
             - movie_name: The name of the movie
             - genre: The genre of the movie
     """
-    
+
     sample_genres = {
         "Inception": "Science Fiction",
         "The Godfather": "Crime",
@@ -949,19 +1043,22 @@ def get_movie_genre(movie_name: str) -> Dict[str, str]:
         "The Shawshank Redemption": "Drama",
         "The Dark Knight": "Action",
     }
-    
+
     if movie_name not in sample_genres:
         raise ValueError(f"Movie not supported: {movie_name}")
-    
+
     return {
         "movie_name": movie_name,
         "genre": sample_genres[movie_name],
     }
 
+
 from typing import Dict, Union
 
 
-def get_movie_ratings(title: str, year: Union[int, None] = None) -> Dict[str, Union[str, float, list]]:
+def get_movie_ratings(
+    title: str, year: Union[int, None] = None
+) -> Dict[str, Union[str, float, list]]:
     """Returns ratings and content advisories for a movie.
 
     Args:
@@ -975,7 +1072,7 @@ def get_movie_ratings(title: str, year: Union[int, None] = None) -> Dict[str, Un
             - rating: Average rating out of 10
             - advisories: List of content advisories
     """
-    
+
     # Simulated data based on title hash for consistency
     sample_ratings = {
         "Inception": 8.8,
@@ -998,6 +1095,7 @@ def get_movie_ratings(title: str, year: Union[int, None] = None) -> Dict[str, Un
         "advisories": sample_advisories[title],
     }
 
+
 from typing import Dict, Union
 
 
@@ -1018,7 +1116,7 @@ def get_movie_recommendation(
             - rating: Rating of the recommended movie
             - actor: Lead actor of the recommended movie
     """
-    
+
     sample_movies = {
         "Action": [
             {"title": "Fast & Furious", "rating": 7.2, "actor": "Vin Diesel"},
@@ -1029,7 +1127,11 @@ def get_movie_recommendation(
             {"title": "The Hangover", "rating": 7.7, "actor": "Bradley Cooper"},
         ],
         "Drama": [
-            {"title": "The Shawshank Redemption", "rating": 9.3, "actor": "Tim Robbins"},
+            {
+                "title": "The Shawshank Redemption",
+                "rating": 9.3,
+                "actor": "Tim Robbins",
+            },
             {"title": "Forrest Gump", "rating": 8.8, "actor": "Tom Hanks"},
         ],
     }
@@ -1048,7 +1150,8 @@ def get_movie_recommendation(
 
     raise ValueError("No movie found matching the criteria")
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def get_movies(
@@ -1075,7 +1178,7 @@ def get_movies(
                 - genre: The genre of the movie
                 - length: The length of the movie in minutes
     """
-    
+
     sample_movies = [
         {"title": "The Great Adventure", "genre": "Action", "length": 120},
         {"title": "Romantic Getaway", "genre": "Romance", "length": 95},
@@ -1096,7 +1199,7 @@ def get_movies(
         return True
 
     filtered_movies = list(filter(matches_criteria, sample_movies))
-    
+
     if num_movies is not None:
         filtered_movies = filtered_movies[:num_movies]
 
@@ -1105,7 +1208,8 @@ def get_movies(
         "movies": filtered_movies,
     }
 
-from typing import Dict, Union, Optional
+
+from typing import Dict, Optional, Union
 
 
 def get_movies_playing(
@@ -1134,10 +1238,34 @@ def get_movies_playing(
                 - rating: Rating of the movie
     """
     sample_movies = [
-        {"name": "Inception", "genre": "Action", "date": "2023-10-15", "start_time": "19:00", "rating": 8.8},
-        {"name": "The Godfather", "genre": "Crime", "date": "2023-10-15", "start_time": "20:00", "rating": 9.2},
-        {"name": "Toy Story", "genre": "Animation", "date": "2023-10-15", "start_time": "17:00", "rating": 8.3},
-        {"name": "Titanic", "genre": "Romance", "date": "2023-10-16", "start_time": "18:00", "rating": 7.8},
+        {
+            "name": "Inception",
+            "genre": "Action",
+            "date": "2023-10-15",
+            "start_time": "19:00",
+            "rating": 8.8,
+        },
+        {
+            "name": "The Godfather",
+            "genre": "Crime",
+            "date": "2023-10-15",
+            "start_time": "20:00",
+            "rating": 9.2,
+        },
+        {
+            "name": "Toy Story",
+            "genre": "Animation",
+            "date": "2023-10-15",
+            "start_time": "17:00",
+            "rating": 8.3,
+        },
+        {
+            "name": "Titanic",
+            "genre": "Romance",
+            "date": "2023-10-16",
+            "start_time": "18:00",
+            "rating": 7.8,
+        },
     ]
 
     def matches_criteria(movie):
@@ -1157,10 +1285,13 @@ def get_movies_playing(
 
     return {"movies": filtered_movies}
 
+
 from typing import Dict, List
 
 
-def get_netflix_streaming_availability(movie_name: str) -> Dict[str, Union[str, List[str]]]:
+def get_netflix_streaming_availability(
+    movie_name: str,
+) -> Dict[str, Union[str, List[str]]]:
     """Retrieve the countries where a movie is available on Netflix.
 
     Args:
@@ -1171,32 +1302,35 @@ def get_netflix_streaming_availability(movie_name: str) -> Dict[str, Union[str, 
             - movie_name: The name of the movie
             - available_countries: List of countries where the movie is available
     """
-    
+
     # Sample data simulating availability based on movie name hash
     sample_data = {
         "Inception": ["United States", "Canada", "United Kingdom", "Germany"],
         "Parasite": ["South Korea", "Japan", "France", "Australia"],
         "The Godfather": ["Italy", "United States", "Brazil"],
     }
-    
+
     # Use a hash-based approach to simulate consistent but varied availability
     hash_value = hash(movie_name) % 3
     movie_keys = list(sample_data.keys())
-    
+
     if movie_name not in movie_keys:
         raise ValueError(f"Movie not supported: {movie_name}")
-    
+
     available_countries = sample_data[movie_keys[hash_value]]
-    
+
     return {
         "movie_name": movie_name,
         "available_countries": available_countries,
     }
 
+
 from typing import Dict, List
 
 
-def get_player_details(player_name: str, date_of_birth: str) -> Dict[str, Union[str, List[str]]]:
+def get_player_details(
+    player_name: str, date_of_birth: str
+) -> Dict[str, Union[str, List[str]]]:
     """Get detailed information about a specific player including their positions, availability, and team eligibility.
 
     Args:
@@ -1219,7 +1353,7 @@ def get_player_details(player_name: str, date_of_birth: str) -> Dict[str, Union[
         raise ValueError("Both player_name and date_of_birth are required")
 
     # Generate a hash-based index for sample data selection
-    index = (hash(player_name + date_of_birth) % 4)
+    index = hash(player_name + date_of_birth) % 4
 
     return {
         "player_name": player_name,
@@ -1228,10 +1362,13 @@ def get_player_details(player_name: str, date_of_birth: str) -> Dict[str, Union[
         "team_eligibility": [sample_teams[index], sample_teams[(index + 2) % 4]],
     }
 
+
 from typing import Dict, List, Union
 
 
-def get_top_rated(page: int = 1) -> Dict[str, Union[int, List[Dict[str, Union[str, float]]]]]:
+def get_top_rated(
+    page: int = 1,
+) -> Dict[str, Union[int, List[Dict[str, Union[str, float]]]]]:
     """Get a paginated list of top-rated animes.
 
     Args:
@@ -1275,10 +1412,13 @@ def get_top_rated(page: int = 1) -> Dict[str, Union[int, List[Dict[str, Union[st
         "animes": paginated_animes,
     }
 
+
 from typing import Dict, List, Union
 
 
-def get_upcoming_tv_shows(channel: str, limit: int = 5) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def get_upcoming_tv_shows(
+    channel: str, limit: int = 5
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Retrieve a list of upcoming television shows for a given channel or platform.
 
     Args:
@@ -1290,7 +1430,7 @@ def get_upcoming_tv_shows(channel: str, limit: int = 5) -> Dict[str, Union[str, 
             - channel: The queried channel or platform
             - shows: List of upcoming shows with title and premiere date
     """
-    
+
     sample_data = {
         "Netflix": [
             {"title": "Stranger Things", "premiere_date": "2023-11-15"},
@@ -1308,22 +1448,25 @@ def get_upcoming_tv_shows(channel: str, limit: int = 5) -> Dict[str, Union[str, 
             {"title": "WandaVision", "premiere_date": "2023-12-12"},
         ],
     }
-    
+
     if channel not in sample_data:
         raise ValueError(f"Channel not supported: {channel}")
-    
+
     shows = sample_data[channel][:limit]
-    
+
     return {
         "channel": channel,
         "shows": shows,
     }
 
-from typing import Dict, List, Union
+
 from datetime import datetime, timedelta
+from typing import Dict, List, Union
 
 
-def get_venue_schedule(venue_id: str, date: Union[str, None] = None) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def get_venue_schedule(
+    venue_id: str, date: Union[str, None] = None
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Retrieve a venue’s event schedule for a specific date or the next 7 days if no date is given.
 
     Args:
@@ -1338,13 +1481,14 @@ def get_venue_schedule(venue_id: str, date: Union[str, None] = None) -> Dict[str
                 - start_time: Event start time in HH:MM format
                 - duration: Duration of the event in minutes
     """
+
     # Sample data generation based on venue_id hash
     def generate_event_data(seed: int) -> Dict[str, Union[str, int]]:
         event_names = ["Concert", "Play", "Exhibition", "Conference", "Workshop"]
         return {
             "event_name": event_names[seed % len(event_names)],
             "start_time": f"{10 + seed % 12:02d}:{seed % 60:02d}",
-            "duration": 60 + (seed % 120)
+            "duration": 60 + (seed % 120),
         }
 
     # Validate date format if provided
@@ -1352,7 +1496,9 @@ def get_venue_schedule(venue_id: str, date: Union[str, None] = None) -> Dict[str
         try:
             target_date = datetime.strptime(date, "%Y-%m-%d")
         except ValueError:
-            raise ValueError(f"Invalid date format: {date}. Expected format is YYYY-MM-DD.")
+            raise ValueError(
+                f"Invalid date format: {date}. Expected format is YYYY-MM-DD."
+            )
     else:
         target_date = datetime.now()
 
@@ -1361,15 +1507,12 @@ def get_venue_schedule(venue_id: str, date: Union[str, None] = None) -> Dict[str
     for i in range(7 if date is None else 1):
         current_date = target_date + timedelta(days=i)
         seed = hash((venue_id, current_date.date())) % 1000
-        schedule.append({
-            "date": current_date.strftime("%Y-%m-%d"),
-            **generate_event_data(seed)
-        })
+        schedule.append(
+            {"date": current_date.strftime("%Y-%m-%d"), **generate_event_data(seed)}
+        )
 
-    return {
-        "venue_id": venue_id,
-        "schedule": schedule
-    }
+    return {"venue_id": venue_id, "schedule": schedule}
+
 
 from typing import Dict, List
 
@@ -1391,14 +1534,13 @@ def get_video_urls(search_query: str) -> Dict[str, List[str]]:
     # Simulate video URL generation based on the search query
     base_url = "https://video.example.com/watch?v="
     hash_base = abs(hash(search_query)) % 1000
-    video_urls = [
-        f"{base_url}{hash_base + i}" for i in range(5)
-    ]
+    video_urls = [f"{base_url}{hash_base + i}" for i in range(5)]
 
     return {
         "search_query": search_query,
         "video_urls": video_urls,
     }
+
 
 from typing import Dict, List, Union
 
@@ -1453,6 +1595,7 @@ def hold_tickets(
         "buyer_name": buyer_name or "Anonymous",
     }
 
+
 from typing import Dict, List
 
 
@@ -1468,17 +1611,32 @@ def list_movies() -> Dict[str, List[Dict[str, str]]]:
     """
 
     sample_movies = [
-        {"title": "The Great Adventure", "showtime": "2023-11-15 19:00", "location": "Cinema City"},
-        {"title": "Space Odyssey", "showtime": "2023-11-16 20:30", "location": "Grand Theater"},
-        {"title": "Mystery of the Night", "showtime": "2023-11-17 18:45", "location": "Downtown Cinema"},
+        {
+            "title": "The Great Adventure",
+            "showtime": "2023-11-15 19:00",
+            "location": "Cinema City",
+        },
+        {
+            "title": "Space Odyssey",
+            "showtime": "2023-11-16 20:30",
+            "location": "Grand Theater",
+        },
+        {
+            "title": "Mystery of the Night",
+            "showtime": "2023-11-17 18:45",
+            "location": "Downtown Cinema",
+        },
     ]
 
     return {"movies": sample_movies}
 
+
 from typing import Dict, List, Literal
 
 
-def lookup_movies(tag: Literal["CASUAL", "ACTION", "THRILLER", "HORROR", "COMEDY", "DRAMA", "ROMANCE"]) -> Dict[str, List[str]]:
+def lookup_movies(
+    tag: Literal["CASUAL", "ACTION", "THRILLER", "HORROR", "COMEDY", "DRAMA", "ROMANCE"]
+) -> Dict[str, List[str]]:
     """Search for movies based on a tag.
 
     Args:
@@ -1489,7 +1647,7 @@ def lookup_movies(tag: Literal["CASUAL", "ACTION", "THRILLER", "HORROR", "COMEDY
             - tag: The tag used for searching
             - movies: List of movie titles that match the tag
     """
-    
+
     movie_database = {
         "CASUAL": ["The Easy Life", "Just Chillin'", "Everyday Adventures"],
         "ACTION": ["Fast & Furious", "Die Hard", "Mad Max: Fury Road"],
@@ -1508,6 +1666,7 @@ def lookup_movies(tag: Literal["CASUAL", "ACTION", "THRILLER", "HORROR", "COMEDY
         "movies": movie_database[tag],
     }
 
+
 from typing import Dict, Union
 
 
@@ -1523,22 +1682,22 @@ def movie_details(title: str) -> Dict[str, Union[str, list]]:
             - description: Brief description of the movie
             - genre: List of genres the movie belongs to
     """
-    
+
     sample_data = {
         "Inception": {
             "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
-            "genre": ["Action", "Adventure", "Sci-Fi"]
+            "genre": ["Action", "Adventure", "Sci-Fi"],
         },
         "The Godfather": {
             "description": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-            "genre": ["Crime", "Drama"]
+            "genre": ["Crime", "Drama"],
         },
         "The Shawshank Redemption": {
             "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
-            "genre": ["Drama"]
-        }
+            "genre": ["Drama"],
+        },
     }
-    
+
     if title not in sample_data:
         raise ValueError(f"Movie not found: {title}")
 
@@ -1547,6 +1706,7 @@ def movie_details(title: str) -> Dict[str, Union[str, list]]:
         "description": sample_data[title]["description"],
         "genre": sample_data[title]["genre"],
     }
+
 
 from typing import Dict, List
 
@@ -1562,7 +1722,7 @@ def movie_genre(movie_id: str) -> Dict[str, List[str]]:
             - movie_id: The ID of the movie
             - genres: List of genres associated with the movie
     """
-    
+
     # Simulated database of movie genres
     movie_genres_db = {
         "tt0111161": ["Drama"],
@@ -1571,7 +1731,7 @@ def movie_genre(movie_id: str) -> Dict[str, List[str]]:
         "tt0468569": ["Action", "Crime", "Drama"],
         "tt0050083": ["Crime", "Drama", "Mystery"],
     }
-    
+
     if movie_id not in movie_genres_db:
         raise ValueError(f"Movie ID not found: {movie_id}")
 
@@ -1580,10 +1740,13 @@ def movie_genre(movie_id: str) -> Dict[str, List[str]]:
         "genres": movie_genres_db[movie_id],
     }
 
+
 from typing import Dict, List, Union
 
 
-def movie_reviews(title: str, review_score: Union[int, None] = None) -> Dict[str, Union[str, List[str]]]:
+def movie_reviews(
+    title: str, review_score: Union[int, None] = None
+) -> Dict[str, Union[str, List[str]]]:
     """Returns a list of review comments about a movie.
 
     Args:
@@ -1595,7 +1758,7 @@ def movie_reviews(title: str, review_score: Union[int, None] = None) -> Dict[str
             - title: Title of the movie
             - reviews: List of review comments
     """
-    
+
     sample_reviews = {
         "Inception": [
             (5, "A mind-bending masterpiece!"),
@@ -1612,21 +1775,24 @@ def movie_reviews(title: str, review_score: Union[int, None] = None) -> Dict[str
             (1, "Found it boring."),
         ],
     }
-    
+
     if title not in sample_reviews:
         raise ValueError(f"Movie not supported: {title}")
-    
+
     if review_score is not None:
         if not (1 <= review_score <= 5):
             raise ValueError("Review score must be between 1 and 5.")
-        reviews = [comment for score, comment in sample_reviews[title] if score == review_score]
+        reviews = [
+            comment for score, comment in sample_reviews[title] if score == review_score
+        ]
     else:
         reviews = [comment for _, comment in sample_reviews[title]]
-    
+
     return {
         "title": title,
         "reviews": reviews,
     }
+
 
 from typing import Dict, List
 
@@ -1642,7 +1808,7 @@ def movies_by_genre(genre: str) -> Dict[str, List[str]]:
             - genre: The genre requested
             - movies: List of movie titles within the specified genre
     """
-    
+
     sample_data = {
         "Action": ["Mad Max: Fury Road", "Die Hard", "John Wick"],
         "Comedy": ["Superbad", "Step Brothers", "The Hangover"],
@@ -1650,7 +1816,7 @@ def movies_by_genre(genre: str) -> Dict[str, List[str]]:
         "Horror": ["The Exorcist", "Get Out", "A Nightmare on Elm Street"],
         "Sci-Fi": ["Inception", "The Matrix", "Interstellar"],
     }
-    
+
     if genre not in sample_data:
         raise ValueError(f"Genre not supported: {genre}")
 
@@ -1658,6 +1824,7 @@ def movies_by_genre(genre: str) -> Dict[str, List[str]]:
         "genre": genre,
         "movies": sample_data[genre],
     }
+
 
 from typing import Dict, List
 
@@ -1675,7 +1842,11 @@ def movies_by_year(year: int) -> Dict[str, Union[int, List[str]]]:
     """
     sample_data = {
         1994: ["The Shawshank Redemption", "Pulp Fiction", "Forrest Gump"],
-        2001: ["The Lord of the Rings: The Fellowship of the Ring", "Harry Potter and the Sorcerer's Stone", "Shrek"],
+        2001: [
+            "The Lord of the Rings: The Fellowship of the Ring",
+            "Harry Potter and the Sorcerer's Stone",
+            "Shrek",
+        ],
         2010: ["Inception", "The Social Network", "Toy Story 3"],
     }
 
@@ -1687,13 +1858,12 @@ def movies_by_year(year: int) -> Dict[str, Union[int, List[str]]]:
         "movies": sample_data[year],
     }
 
+
 from typing import Dict, Literal, Union
 
 
 def myanimelist_data(
-    series_title: str, 
-    series_format: str, 
-    data_type: str
+    series_title: str, series_format: str, data_type: str
 ) -> Dict[str, Union[str, int, float]]:
     """Retrieve data from MyAnimeList for a specified series.
 
@@ -1709,16 +1879,16 @@ def myanimelist_data(
             - data_type: Type of data requested
             - value: The value of the requested data type
     """
-    
+
     # Sample data generation based on series_title hash
     hash_value = hash(series_title) % 1000
-    
+
     if series_format not in ["anime", "manga", "manhwa"]:
         raise ValueError(f"Unsupported series format: {series_format}")
-    
+
     if data_type not in ["score", "popularity rank", "score rank"]:
         raise ValueError(f"Unsupported data type: {data_type}")
-    
+
     # Mock data based on data_type
     if data_type == "score":
         value = 5.0 + (hash_value % 50) / 10  # Score between 5.0 and 9.9
@@ -1726,13 +1896,14 @@ def myanimelist_data(
         value = hash_value % 10000 + 1  # Rank between 1 and 10000
     elif data_type == "score rank":
         value = hash_value % 5000 + 1  # Rank between 1 and 5000
-    
+
     return {
         "series_title": series_title,
         "series_format": series_format,
         "data_type": data_type,
         "value": value,
     }
+
 
 from typing import Dict
 
@@ -1770,6 +1941,7 @@ def play_movie_chromecast(movie_id: str, device_id: str) -> Dict[str, str]:
         "message": f"Playing '{movies[movie_id]}' on {devices[device_id]}",
     }
 
+
 from typing import Dict, Union
 
 
@@ -1799,15 +1971,12 @@ def post_movie_rating(name: str, rating: float) -> Dict[str, Union[str, float]]:
         "status": status,
     }
 
+
 from typing import Dict, Union
 
 
 def purchase_movie_tickets(
-    title: str,
-    cinema: str,
-    date: str,
-    time: str,
-    seats: int = 1
+    title: str, cinema: str, date: str, time: str, seats: int = 1
 ) -> Dict[str, Union[str, int, float]]:
     """Purchases movie tickets for a given show.
 
@@ -1842,6 +2011,7 @@ def purchase_movie_tickets(
         "seats": seats,
         "total_cost": total_cost,
     }
+
 
 from typing import Dict, List, Literal, Union
 
@@ -1897,6 +2067,7 @@ def purchase_tickets(
         "success": True,
     }
 
+
 from typing import Dict, List, Optional
 
 
@@ -1911,35 +2082,47 @@ def recommend_books(genre: str, author: Optional[str] = None) -> Dict[str, List[
         Dict containing:
             - recommendations: List of recommended book titles
     """
-    
+
     # Sample data for book recommendations
     genre_based_recommendations = {
         "Science Fiction": ["Dune", "Neuromancer", "Foundation"],
-        "Fantasy": ["The Hobbit", "Harry Potter and the Sorcerer's Stone", "The Name of the Wind"],
-        "Mystery": ["The Girl with the Dragon Tattoo", "Gone Girl", "The Da Vinci Code"],
+        "Fantasy": [
+            "The Hobbit",
+            "Harry Potter and the Sorcerer's Stone",
+            "The Name of the Wind",
+        ],
+        "Mystery": [
+            "The Girl with the Dragon Tattoo",
+            "Gone Girl",
+            "The Da Vinci Code",
+        ],
     }
-    
+
     author_based_recommendations = {
         "Isaac Asimov": ["Foundation", "I, Robot", "The Gods Themselves"],
-        "J.K. Rowling": ["Harry Potter and the Sorcerer's Stone", "Harry Potter and the Chamber of Secrets"],
+        "J.K. Rowling": [
+            "Harry Potter and the Sorcerer's Stone",
+            "Harry Potter and the Chamber of Secrets",
+        ],
         "Agatha Christie": ["Murder on the Orient Express", "And Then There Were None"],
     }
-    
+
     if genre not in genre_based_recommendations:
         raise ValueError(f"Genre not supported: {genre}")
 
     recommendations = genre_based_recommendations[genre]
-    
+
     if author:
         if author not in author_based_recommendations:
             raise ValueError(f"Author not supported: {author}")
-        recommendations = list(set(recommendations) & set(author_based_recommendations[author]))
+        recommendations = list(
+            set(recommendations) & set(author_based_recommendations[author])
+        )
 
-    return {
-        "recommendations": recommendations
-    }
+    return {"recommendations": recommendations}
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def recommend_movie(
@@ -1968,39 +2151,82 @@ def recommend_movie(
             - genre: Genre of the recommended movie
             - length: Length of the recommended movie in minutes
     """
-    
+
     # Sample data for demonstration
     sample_movies = [
-        {"title": "Inception", "director": "Christopher Nolan", "actor": "Leonardo DiCaprio", "genre": "Sci-Fi", "length": 148},
-        {"title": "The Dark Knight", "director": "Christopher Nolan", "actor": "Christian Bale", "genre": "Action", "length": 152},
-        {"title": "Pulp Fiction", "director": "Quentin Tarantino", "actor": "John Travolta", "genre": "Crime", "length": 154},
-        {"title": "The Shawshank Redemption", "director": "Frank Darabont", "actor": "Tim Robbins", "genre": "Drama", "length": 142},
-        {"title": "Forrest Gump", "director": "Robert Zemeckis", "actor": "Tom Hanks", "genre": "Drama", "length": 142},
+        {
+            "title": "Inception",
+            "director": "Christopher Nolan",
+            "actor": "Leonardo DiCaprio",
+            "genre": "Sci-Fi",
+            "length": 148,
+        },
+        {
+            "title": "The Dark Knight",
+            "director": "Christopher Nolan",
+            "actor": "Christian Bale",
+            "genre": "Action",
+            "length": 152,
+        },
+        {
+            "title": "Pulp Fiction",
+            "director": "Quentin Tarantino",
+            "actor": "John Travolta",
+            "genre": "Crime",
+            "length": 154,
+        },
+        {
+            "title": "The Shawshank Redemption",
+            "director": "Frank Darabont",
+            "actor": "Tim Robbins",
+            "genre": "Drama",
+            "length": 142,
+        },
+        {
+            "title": "Forrest Gump",
+            "director": "Robert Zemeckis",
+            "actor": "Tom Hanks",
+            "genre": "Drama",
+            "length": 142,
+        },
     ]
 
     # Filter movies based on criteria
     filtered_movies = sample_movies
     if director:
-        filtered_movies = [movie for movie in filtered_movies if movie["director"] == director]
+        filtered_movies = [
+            movie for movie in filtered_movies if movie["director"] == director
+        ]
     if actor:
-        filtered_movies = [movie for movie in filtered_movies if movie["actor"] == actor]
+        filtered_movies = [
+            movie for movie in filtered_movies if movie["actor"] == actor
+        ]
     if genre:
-        filtered_movies = [movie for movie in filtered_movies if movie["genre"] == genre]
+        filtered_movies = [
+            movie for movie in filtered_movies if movie["genre"] == genre
+        ]
     if length_less_than is not None:
-        filtered_movies = [movie for movie in filtered_movies if movie["length"] < length_less_than]
+        filtered_movies = [
+            movie for movie in filtered_movies if movie["length"] < length_less_than
+        ]
     if length_more_than is not None:
-        filtered_movies = [movie for movie in filtered_movies if movie["length"] > length_more_than]
+        filtered_movies = [
+            movie for movie in filtered_movies if movie["length"] > length_more_than
+        ]
 
     # If similar_movies is provided, prioritize those
     if similar_movies:
         similar_set = set(similar_movies)
-        filtered_movies = [movie for movie in filtered_movies if movie["title"] in similar_set] or filtered_movies
+        filtered_movies = [
+            movie for movie in filtered_movies if movie["title"] in similar_set
+        ] or filtered_movies
 
     # Return the first match or raise an exception if no match is found
     if not filtered_movies:
         raise ValueError("No movies found matching the given criteria")
 
     return filtered_movies[0]
+
 
 from typing import Dict, List, Union
 
@@ -2033,23 +2259,54 @@ def recommend_movies(
                 - rating: Rating of the movie
                 - duration: Duration of the movie in minutes
     """
-    
+
     # Sample data based on hash of search_query for consistent results
     sample_movies = [
-        {"title": "The Great Adventure", "genre": "action", "language": "en", "rating": 8.2, "duration": 120},
-        {"title": "Love in Paris", "genre": "romance", "language": "fr", "rating": 7.5, "duration": 95},
-        {"title": "Horror Night", "genre": "horror", "language": "en", "rating": 6.8, "duration": 85},
-        {"title": "Animated Dreams", "genre": "animation", "language": "en", "rating": 8.0, "duration": 80},
-        {"title": "Documentary on Life", "genre": "documentary", "language": "en", "rating": 9.0, "duration": 60},
+        {
+            "title": "The Great Adventure",
+            "genre": "action",
+            "language": "en",
+            "rating": 8.2,
+            "duration": 120,
+        },
+        {
+            "title": "Love in Paris",
+            "genre": "romance",
+            "language": "fr",
+            "rating": 7.5,
+            "duration": 95,
+        },
+        {
+            "title": "Horror Night",
+            "genre": "horror",
+            "language": "en",
+            "rating": 6.8,
+            "duration": 85,
+        },
+        {
+            "title": "Animated Dreams",
+            "genre": "animation",
+            "language": "en",
+            "rating": 8.0,
+            "duration": 80,
+        },
+        {
+            "title": "Documentary on Life",
+            "genre": "documentary",
+            "language": "en",
+            "rating": 9.0,
+            "duration": 60,
+        },
     ]
 
     # Filter movies based on provided preferences
     filtered_movies = [
-        movie for movie in sample_movies
-        if (not genre or movie["genre"] in genre) and
-           movie["language"] == language and
-           movie["rating"] >= min_rating and
-           movie["duration"] <= max_duration
+        movie
+        for movie in sample_movies
+        if (not genre or movie["genre"] in genre)
+        and movie["language"] == language
+        and movie["rating"] >= min_rating
+        and movie["duration"] <= max_duration
     ]
 
     if not filtered_movies:
@@ -2059,6 +2316,7 @@ def recommend_movies(
         "search_query": search_query,
         "results": filtered_movies,
     }
+
 
 from typing import Dict, List
 
@@ -2088,7 +2346,8 @@ def recommend_similar_by_title(title: str) -> Dict[str, List[str]]:
         "recommendations": sample_recommendations.get(title, []),
     }
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def recommend_tv_show(
@@ -2117,10 +2376,30 @@ def recommend_tv_show(
 
     # Sample data for demonstration purposes
     sample_shows = [
-        {"title": "Mystery Manor", "creator": "John Doe", "genre": "Mystery", "episodes": 10},
-        {"title": "Sci-Fi Saga", "creator": "Jane Smith", "genre": "Sci-Fi", "episodes": 20},
-        {"title": "Comedy Central", "creator": "Alice Johnson", "genre": "Comedy", "episodes": 15},
-        {"title": "Drama Dreams", "creator": "Bob Brown", "genre": "Drama", "episodes": 25},
+        {
+            "title": "Mystery Manor",
+            "creator": "John Doe",
+            "genre": "Mystery",
+            "episodes": 10,
+        },
+        {
+            "title": "Sci-Fi Saga",
+            "creator": "Jane Smith",
+            "genre": "Sci-Fi",
+            "episodes": 20,
+        },
+        {
+            "title": "Comedy Central",
+            "creator": "Alice Johnson",
+            "genre": "Comedy",
+            "episodes": 15,
+        },
+        {
+            "title": "Drama Dreams",
+            "creator": "Bob Brown",
+            "genre": "Drama",
+            "episodes": 25,
+        },
     ]
 
     # Filter shows based on provided criteria
@@ -2128,13 +2407,19 @@ def recommend_tv_show(
     if creator:
         filtered_shows = [show for show in filtered_shows if show["creator"] == creator]
     if similar_shows:
-        filtered_shows = [show for show in filtered_shows if show["title"] in similar_shows]
+        filtered_shows = [
+            show for show in filtered_shows if show["title"] in similar_shows
+        ]
     if genre:
         filtered_shows = [show for show in filtered_shows if show["genre"] == genre]
     if length_less_than is not None:
-        filtered_shows = [show for show in filtered_shows if show["episodes"] < length_less_than]
+        filtered_shows = [
+            show for show in filtered_shows if show["episodes"] < length_less_than
+        ]
     if length_more_than is not None:
-        filtered_shows = [show for show in filtered_shows if show["episodes"] > length_more_than]
+        filtered_shows = [
+            show for show in filtered_shows if show["episodes"] > length_more_than
+        ]
 
     if not filtered_shows:
         raise ValueError("No TV shows found matching the given criteria.")
@@ -2147,6 +2432,7 @@ def recommend_tv_show(
         "genre": recommended_show["genre"],
         "episodes": recommended_show["episodes"],
     }
+
 
 from typing import Dict, Union
 
@@ -2164,14 +2450,14 @@ def revenue(title: str, domestic: bool = True) -> Dict[str, Union[str, int]]:
             - revenue: Revenue amount in millions
             - type: 'domestic' or 'international' based on the input parameter
     """
-    
+
     # Sample revenue data based on movie title
     sample_revenue_data = {
         "Inception": {"domestic": 292, "international": 535},
         "Titanic": {"domestic": 659, "international": 1543},
         "Avatar": {"domestic": 760, "international": 2020},
     }
-    
+
     if title not in sample_revenue_data:
         raise ValueError(f"Movie title not supported: {title}")
 
@@ -2184,13 +2470,14 @@ def revenue(title: str, domestic: bool = True) -> Dict[str, Union[str, int]]:
         "type": revenue_type,
     }
 
+
 from typing import Dict, Union
 
 
 def ride_look_up(
     location: Dict[str, Union[str, Dict[str, Union[str, float]]]] = None,
     ride_name: str = "",
-    amusement_park_name: str = ""
+    amusement_park_name: str = "",
 ) -> Dict[str, Union[str, Dict[str, Union[str, float]]]]:
     """Find an amusement park ride based on parameters.
 
@@ -2205,7 +2492,7 @@ def ride_look_up(
             - amusement_park_name: Name of the amusement park
             - location: A dictionary with location details
     """
-    
+
     sample_rides = {
         "Roller Coaster": {
             "amusement_park_name": "Thrill Land",
@@ -2213,8 +2500,8 @@ def ride_look_up(
                 "country": "USA",
                 "state": "California",
                 "city": "Los Angeles",
-                "coordinates": {"latitude": 34.0522, "longitude": -118.2437}
-            }
+                "coordinates": {"latitude": 34.0522, "longitude": -118.2437},
+            },
         },
         "Ferris Wheel": {
             "amusement_park_name": "Fun Park",
@@ -2222,16 +2509,16 @@ def ride_look_up(
                 "country": "Japan",
                 "state": "Tokyo",
                 "city": "Tokyo",
-                "coordinates": {"latitude": 35.6895, "longitude": 139.6917}
-            }
-        }
+                "coordinates": {"latitude": 35.6895, "longitude": 139.6917},
+            },
+        },
     }
 
     if ride_name and ride_name in sample_rides:
         return {
             "ride_name": ride_name,
             "amusement_park_name": sample_rides[ride_name]["amusement_park_name"],
-            "location": sample_rides[ride_name]["location"]
+            "location": sample_rides[ride_name]["location"],
         }
 
     if amusement_park_name:
@@ -2240,7 +2527,7 @@ def ride_look_up(
                 return {
                     "ride_name": ride,
                     "amusement_park_name": amusement_park_name,
-                    "location": details["location"]
+                    "location": details["location"],
                 }
 
     if location:
@@ -2249,13 +2536,14 @@ def ride_look_up(
                 return {
                     "ride_name": ride,
                     "amusement_park_name": details["amusement_park_name"],
-                    "location": location
+                    "location": location,
                 }
 
     raise ValueError("Ride not found with the provided parameters")
 
-from typing import Dict, Union, Optional
+
 from datetime import datetime
+from typing import Dict, Optional, Union
 
 
 def schedule(
@@ -2289,7 +2577,9 @@ def schedule(
             - follow: Follow status
     """
     if dancer is not None and (lead is None and follow is None):
-        raise ValueError("Either 'lead' or 'follow' must be specified if 'dancer' is provided.")
+        raise ValueError(
+            "Either 'lead' or 'follow' must be specified if 'dancer' is provided."
+        )
 
     # Mock data generation
     sample_data = {
@@ -2304,6 +2594,7 @@ def schedule(
 
     return sample_data
 
+
 from typing import Dict, Literal
 
 
@@ -2312,7 +2603,13 @@ def schedule_vr_event(
     space_name: str,
     date_time: str,
     event_type: Literal[
-        "party", "meeting", "concert", "game_night", "art_gallery", "meditation", "workshop"
+        "party",
+        "meeting",
+        "concert",
+        "game_night",
+        "art_gallery",
+        "meditation",
+        "workshop",
     ] = "party",
 ) -> Dict[str, str]:
     """Create a scheduled event in a virtual space.
@@ -2335,7 +2632,9 @@ def schedule_vr_event(
     # Simulate event ID generation using a hash
     event_id = hash((event_name, space_name, date_time, event_type)) % 10000
 
-    confirmation = f"Event '{event_name}' scheduled successfully in '{space_name}' on {date_time}."
+    confirmation = (
+        f"Event '{event_name}' scheduled successfully in '{space_name}' on {date_time}."
+    )
     details = (
         f"Event Type: {event_type.capitalize()}, "
         f"Location: {space_name}, "
@@ -2347,6 +2646,7 @@ def schedule_vr_event(
         "confirmation": confirmation,
         "details": details,
     }
+
 
 from typing import Dict, List
 
@@ -2366,16 +2666,16 @@ def search_anime(query: str) -> Dict[str, Union[str, List[str]]]:
     sample_data = {
         "Naruto": {
             "genres": ["Action", "Adventure", "Fantasy"],
-            "description": "A young ninja seeks recognition from his peers and dreams of becoming the Hokage, the leader of his village."
+            "description": "A young ninja seeks recognition from his peers and dreams of becoming the Hokage, the leader of his village.",
         },
         "Attack on Titan": {
             "genres": ["Action", "Drama", "Fantasy"],
-            "description": "Humans are nearly exterminated by giant creatures called Titans. The survivors hide behind enormous walls."
+            "description": "Humans are nearly exterminated by giant creatures called Titans. The survivors hide behind enormous walls.",
         },
         "My Hero Academia": {
             "genres": ["Action", "Comedy", "Superhero"],
-            "description": "In a world where people with superpowers are the norm, a boy without them dreams of becoming a hero."
-        }
+            "description": "In a world where people with superpowers are the norm, a boy without them dreams of becoming a hero.",
+        },
     }
 
     if query not in sample_data:
@@ -2385,18 +2685,21 @@ def search_anime(query: str) -> Dict[str, Union[str, List[str]]]:
     return {
         "title": query,
         "genres": anime_info["genres"],
-        "description": anime_info["description"]
+        "description": anime_info["description"],
     }
 
-from typing import Dict, List, Literal, Union
+
 from datetime import datetime
+from typing import Dict, List, Literal, Union
 
 
 def search_events(
     country: str,
     city: str,
-    type: List[Literal["music", "food", "sports", "arts", "technology", "theatre", "family"]],
-    date_range: Dict[str, str] = None
+    type: List[
+        Literal["music", "food", "sports", "arts", "technology", "theatre", "family"]
+    ],
+    date_range: Dict[str, str] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
     """Search for events by city.
 
@@ -2413,12 +2716,28 @@ def search_events(
     """
     sample_events = {
         ("USA", "New York"): [
-            {"name": "Jazz Festival", "category": "music", "date": datetime(2023, 11, 5)},
-            {"name": "Tech Expo", "category": "technology", "date": datetime(2023, 11, 12)},
+            {
+                "name": "Jazz Festival",
+                "category": "music",
+                "date": datetime(2023, 11, 5),
+            },
+            {
+                "name": "Tech Expo",
+                "category": "technology",
+                "date": datetime(2023, 11, 12),
+            },
         ],
         ("France", "Paris"): [
-            {"name": "Art Gallery Opening", "category": "arts", "date": datetime(2023, 11, 8)},
-            {"name": "Gourmet Food Fair", "category": "food", "date": datetime(2023, 11, 15)},
+            {
+                "name": "Art Gallery Opening",
+                "category": "arts",
+                "date": datetime(2023, 11, 8),
+            },
+            {
+                "name": "Gourmet Food Fair",
+                "category": "food",
+                "date": datetime(2023, 11, 15),
+            },
         ],
     }
 
@@ -2432,7 +2751,8 @@ def search_events(
         start_date = datetime.strptime(date_range["start_date"], "%Y-%m-%d")
         end_date = datetime.strptime(date_range["end_date"], "%Y-%m-%d")
         filtered_events = [
-            event for event in filtered_events
+            event
+            for event in filtered_events
             if start_date <= event["date"] <= end_date
         ]
 
@@ -2441,8 +2761,9 @@ def search_events(
         "events": filtered_events,
     }
 
-from typing import Dict, Literal, Union
+
 import hashlib
+from typing import Dict, Literal, Union
 
 
 def search_for_db_id(
@@ -2473,6 +2794,7 @@ def search_for_db_id(
         "db_id": db_id,
     }
 
+
 import re
 from typing import Dict, List, Union
 
@@ -2493,7 +2815,7 @@ def search_metadata_regex(query_regex: str) -> Dict[str, Union[str, List[str]]]:
         "A gentle breeze rustles the leaves of the ancient oak tree.",
         "The bustling city streets are alive with the sounds of honking cars and chattering pedestrians.",
         "A cat lounges lazily on the windowsill, basking in the warm afternoon sun.",
-        "Raindrops patter softly against the windowpane, creating a soothing rhythm."
+        "Raindrops patter softly against the windowpane, creating a soothing rhythm.",
     ]
 
     try:
@@ -2501,14 +2823,14 @@ def search_metadata_regex(query_regex: str) -> Dict[str, Union[str, List[str]]]:
     except re.error as e:
         raise ValueError(f"Invalid regex pattern: {e}")
 
-    matches = [narration for narration in sample_narrations if pattern.search(narration)]
+    matches = [
+        narration for narration in sample_narrations if pattern.search(narration)
+    ]
 
-    return {
-        "query": query_regex,
-        "matches": matches
-    }
+    return {"query": query_regex, "matches": matches}
 
-from typing import Dict, List, Literal, Union, Optional
+
+from typing import Dict, List, Literal, Optional, Union
 
 
 def search_shows_by_filters(
@@ -2596,6 +2918,7 @@ def search_shows_by_filters(
         "shows": shows_sample,
     }
 
+
 from typing import Dict, List, Literal, Union
 
 
@@ -2604,8 +2927,10 @@ def search_shows_by_title(
     title: str,
     series_granularity: Literal["show", "season", "episode"] = "show",
     show_type: Union[Literal["movie", "series"], None] = None,
-    output_language: Literal["en", "es", "tr", "fr"] = "en"
-) -> Dict[str, Union[str, List[Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]]]]:
+    output_language: Literal["en", "es", "tr", "fr"] = "en",
+) -> Dict[
+    str, Union[str, List[Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]]]
+]:
     """Search for movies and series by a title with streaming availability info for the target country.
 
     Args:
@@ -2621,7 +2946,7 @@ def search_shows_by_title(
             - title: Searched title
             - results: List of shows with streaming availability
     """
-    
+
     # Sample data for demonstration purposes
     sample_data = {
         "en": {
@@ -2659,33 +2984,53 @@ def search_shows_by_title(
         for show in shows:
             if title.lower() in show["title"].lower():
                 if series_granularity == "show":
-                    results.append({"title": show["title"], "availability": show["availability"]})
+                    results.append(
+                        {"title": show["title"], "availability": show["availability"]}
+                    )
                 elif series_granularity == "season":
-                    results.append({
-                        "title": show["title"],
-                        "availability": show["availability"],
-                        "seasons": [{"season": 1, "episodes": 10}, {"season": 2, "episodes": 8}]
-                    })
+                    results.append(
+                        {
+                            "title": show["title"],
+                            "availability": show["availability"],
+                            "seasons": [
+                                {"season": 1, "episodes": 10},
+                                {"season": 2, "episodes": 8},
+                            ],
+                        }
+                    )
                 elif series_granularity == "episode":
-                    results.append({
-                        "title": show["title"],
-                        "availability": show["availability"],
-                        "seasons": [
-                            {"season": 1, "episodes": [{"episode": 1, "title": "Pilot"}, {"episode": 2, "title": "The Beginning"}]},
-                            {"season": 2, "episodes": [{"episode": 1, "title": "Return"}, {"episode": 2, "title": "The Journey"}]}
-                        ]
-                    })
+                    results.append(
+                        {
+                            "title": show["title"],
+                            "availability": show["availability"],
+                            "seasons": [
+                                {
+                                    "season": 1,
+                                    "episodes": [
+                                        {"episode": 1, "title": "Pilot"},
+                                        {"episode": 2, "title": "The Beginning"},
+                                    ],
+                                },
+                                {
+                                    "season": 2,
+                                    "episodes": [
+                                        {"episode": 1, "title": "Return"},
+                                        {"episode": 2, "title": "The Journey"},
+                                    ],
+                                },
+                            ],
+                        }
+                    )
 
-    return {
-        "country": country,
-        "title": title,
-        "results": results
-    }
+    return {"country": country, "title": title, "results": results}
+
 
 from typing import Dict, Literal
 
 
-def soldier_poet_king_description(spk_archetype: Literal["Soldier", "Poet", "King"]) -> Dict[str, str]:
+def soldier_poet_king_description(
+    spk_archetype: Literal["Soldier", "Poet", "King"]
+) -> Dict[str, str]:
     """Return a description of the specified archetype: Soldier, Poet, or King.
 
     Args:
@@ -2696,20 +3041,18 @@ def soldier_poet_king_description(spk_archetype: Literal["Soldier", "Poet", "Kin
             - archetype: The name of the archetype
             - description: A brief description of the archetype
     """
-    
+
     descriptions = {
         "Soldier": "The Soldier is brave and disciplined, always ready to defend and protect.",
         "Poet": "The Poet is creative and introspective, finding beauty and meaning in the world.",
-        "King": "The King is wise and authoritative, leading with vision and fairness."
+        "King": "The King is wise and authoritative, leading with vision and fairness.",
     }
-    
+
     if spk_archetype not in descriptions:
         raise ValueError(f"Archetype not supported: {spk_archetype}")
-    
-    return {
-        "archetype": spk_archetype,
-        "description": descriptions[spk_archetype]
-    }
+
+    return {"archetype": spk_archetype, "description": descriptions[spk_archetype]}
+
 
 from typing import Dict, Literal, Optional, Union
 
@@ -2717,7 +3060,7 @@ from typing import Dict, Literal, Optional, Union
 def talents(
     dancer: Optional[int] = None,
     dance: Optional[str] = None,
-    talent: Optional[Literal[0, 1, 2]] = None
+    talent: Optional[Literal[0, 1, 2]] = None,
 ) -> Dict[str, Union[int, str, None]]:
     """Set or get dancer talents based on provided parameters.
 
@@ -2732,14 +3075,14 @@ def talents(
             - dance: Name of the dance
             - talent: Talent type (0=lead, 1=follow, 2=both)
     """
-    
+
     # Sample data for demonstration purposes
     sample_data = {
         1: {"dance": "Salsa", "talent": 0},
         2: {"dance": "Tango", "talent": 1},
         3: {"dance": "Waltz", "talent": 2},
     }
-    
+
     if dancer is not None:
         if dancer not in sample_data:
             raise ValueError(f"Dancer not found: {dancer}")
@@ -2752,20 +3095,19 @@ def talents(
             "dance": sample_data[dancer]["dance"],
             "talent": sample_data[dancer]["talent"],
         }
-    
+
     return {
         "dancer": None,
         "dance": dance,
         "talent": talent,
     }
 
+
 from typing import Dict, Union
 
 
 def team_record(
-    name: str,
-    year: int,
-    incl_playoffs: bool = True
+    name: str, year: int, incl_playoffs: bool = True
 ) -> Dict[str, Union[str, int, bool]]:
     """Get the win/loss record of a team for a given season.
 
@@ -2782,11 +3124,11 @@ def team_record(
             - losses: Number of losses
             - incl_playoffs: Whether playoff stats are included
     """
-    
+
     # Simulated data based on team name and year
     base_wins = hash(name + str(year)) % 50 + 20
     base_losses = 82 - base_wins
-    
+
     if incl_playoffs:
         playoff_wins = hash(name + str(year) + "playoffs") % 16
         playoff_losses = hash(name + str(year) + "playoffs") % (16 - playoff_wins)
@@ -2801,13 +3143,16 @@ def team_record(
         "year": year,
         "wins": total_wins,
         "losses": total_losses,
-        "incl_playoffs": incl_playoffs
+        "incl_playoffs": incl_playoffs,
     }
+
 
 from typing import Dict, List, Union
 
 
-def where_can_i_watch(title: str, country: str, free: bool = True) -> Dict[str, Union[str, List[str]]]:
+def where_can_i_watch(
+    title: str, country: str, free: bool = True
+) -> Dict[str, Union[str, List[str]]]:
     """Returns a list of streaming services where a movie is available.
 
     Args:
@@ -2820,40 +3165,32 @@ def where_can_i_watch(title: str, country: str, free: bool = True) -> Dict[str, 
             - title: Name of the movie
             - available_on: List of streaming services where the movie is available
     """
-    
+
     # Sample data based on hash of the title for consistent but varied results
     sample_services = {
-        "us": {
-            True: ["Tubi", "Crackle"],
-            False: ["Netflix", "Hulu", "Amazon Prime"]
-        },
+        "us": {True: ["Tubi", "Crackle"], False: ["Netflix", "Hulu", "Amazon Prime"]},
         "uk": {
             True: ["BBC iPlayer", "All 4"],
-            False: ["Netflix", "Sky Go", "Amazon Prime"]
+            False: ["Netflix", "Sky Go", "Amazon Prime"],
         },
-        "in": {
-            True: ["Hotstar", "Voot"],
-            False: ["Netflix", "Amazon Prime", "Zee5"]
-        },
+        "in": {True: ["Hotstar", "Voot"], False: ["Netflix", "Amazon Prime", "Zee5"]},
         "fr": {
             True: ["Arte", "France.tv"],
-            False: ["Netflix", "Canal+", "Amazon Prime"]
-        }
+            False: ["Netflix", "Canal+", "Amazon Prime"],
+        },
     }
 
     if country not in sample_services:
         raise ValueError(f"Country not supported: {country}")
 
     available_services = sample_services[country][free]
-    
+
     # Simulate a hash-based selection for demonstration purposes
     hash_value = hash(title) % len(available_services)
-    selected_services = available_services[:hash_value + 1]
+    selected_services = available_services[: hash_value + 1]
 
-    return {
-        "title": title,
-        "available_on": selected_services
-    }
+    return {"title": title, "available_on": selected_services}
+
 
 from typing import Dict, List
 
@@ -2869,7 +3206,7 @@ def where_to_watch(show_title: str) -> Dict[str, Union[str, List[str]]]:
             - show_title: Title of the show
             - platforms: List of platforms where the show is available
     """
-    
+
     sample_data = {
         "Breaking Bad": ["Netflix", "Amazon Prime", "Hulu"],
         "Game of Thrones": ["HBO Max", "Amazon Prime"],
@@ -2877,7 +3214,7 @@ def where_to_watch(show_title: str) -> Dict[str, Union[str, List[str]]]:
         "The Office": ["Peacock", "Amazon Prime"],
         "Friends": ["HBO Max", "Netflix"],
     }
-    
+
     if show_title not in sample_data:
         raise ValueError(f"Show not supported: {show_title}")
 
@@ -2886,3 +3223,277 @@ def where_to_watch(show_title: str) -> Dict[str, Union[str, List[str]]]:
         "platforms": sample_data[show_title],
     }
 
+
+from typing import Dict, List, Optional, Union
+
+# Movie Information Tools
+# Auto-generated implementations for movie-related operations
+
+
+def find_movie_showing(
+    city: str,
+    movie_name: Optional[str] = None,
+    day: Optional[str] = None,
+    starting_from: Optional[str] = None,
+    ending_until: Optional[str] = None,
+    seat_type: Optional[List[str]] = None,
+    screen_type: Optional[List[str]] = None,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+    """Find movie showing times.
+
+    Args:
+        city: The name of the city to search for movie showtimes in
+        movie_name: The name of the movie
+        day: The day to search (YYYY-MM-DD)
+        starting_from: Return movies starting after this time (24h time format, HH:mm)
+        ending_until: Return movies ending before this time (24h time format, HH:mm)
+        seat_type: The type of seat available for the movie showing
+        screen_type: The screen type of the movie screening
+
+    Returns:
+        Dict containing:
+            - city: The city searched
+            - movie_name: The movie searched for (if specified)
+            - search_date: The date searched for
+            - showtimes: List of available showtimes with details
+    """
+
+    # Sample movie showtimes data
+    sample_movies = {
+        "Man of Steel": [
+            {
+                "time": "14:30",
+                "theater": "AMC Downtown",
+                "screen_type": "imax",
+                "seat_type": "recliner",
+            },
+            {
+                "time": "18:45",
+                "theater": "Cineplex Central",
+                "screen_type": "standard",
+                "seat_type": "standard",
+            },
+            {
+                "time": "21:15",
+                "theater": "IMAX Theater",
+                "screen_type": "imax",
+                "seat_type": "recliner",
+            },
+        ],
+        "Avengers": [
+            {
+                "time": "15:00",
+                "theater": "AMC Downtown",
+                "screen_type": "4dx",
+                "seat_type": "recliner",
+            },
+            {
+                "time": "19:30",
+                "theater": "Cineplex Central",
+                "screen_type": "standard",
+                "seat_type": "standard",
+            },
+        ],
+        "Top Gun": [
+            {
+                "time": "16:00",
+                "theater": "IMAX Theater",
+                "screen_type": "imax",
+                "seat_type": "love_bed",
+            },
+            {
+                "time": "20:00",
+                "theater": "AMC Downtown",
+                "screen_type": "jumbotron",
+                "seat_type": "recliner",
+            },
+        ],
+    }
+
+    # Default search date
+    search_date = day if day else "2024-01-15"
+
+    # Get showtimes for the specific movie or all movies
+    if movie_name and movie_name in sample_movies:
+        available_showtimes = sample_movies[movie_name]
+        actual_movie_name = movie_name
+    else:
+        # If no specific movie or movie not found, return all showtimes
+        available_showtimes = []
+        for movie, times in sample_movies.items():
+            for showtime in times:
+                showtime_copy = showtime.copy()
+                showtime_copy["movie"] = movie
+                available_showtimes.append(showtime_copy)
+        actual_movie_name = "All Movies"
+
+    # Filter by time constraints
+    filtered_showtimes = available_showtimes.copy()
+    if starting_from:
+        filtered_showtimes = [
+            s for s in filtered_showtimes if s["time"] >= starting_from
+        ]
+    if ending_until:
+        # Estimate end time (assume 2.5 hour movies)
+        filtered_showtimes = [
+            s for s in filtered_showtimes if s["time"] <= ending_until
+        ]
+
+    # Filter by seat type
+    if seat_type:
+        filtered_showtimes = [
+            s for s in filtered_showtimes if s["seat_type"] in seat_type
+        ]
+
+    # Filter by screen type
+    if screen_type:
+        filtered_showtimes = [
+            s for s in filtered_showtimes if s["screen_type"] in screen_type
+        ]
+
+    return {
+        "city": city,
+        "movie_name": actual_movie_name,
+        "search_date": search_date,
+        "showtimes": filtered_showtimes,
+    }
+
+
+def get_movie_certification(movie_name: str) -> Dict[str, Union[str, int]]:
+    """Get the certification for the movie specified.
+
+    Args:
+        movie_name: The name of the movie
+
+    Returns:
+        Dict containing:
+            - movie_name: The movie title
+            - certification: Movie rating/certification
+            - reason: Reason for the certification
+            - runtime_minutes: Runtime in minutes
+    """
+
+    # Sample movie certification data
+    certification_data = {
+        "Man of Steel": {
+            "certification": "PG-13",
+            "reason": "Intense sequences of sci-fi violence, action and destruction, and for some language",
+            "runtime_minutes": 143,
+        },
+        "Avengers": {
+            "certification": "PG-13",
+            "reason": "Intense sequences of sci-fi action violence and destruction throughout",
+            "runtime_minutes": 143,
+        },
+        "Top Gun": {
+            "certification": "PG",
+            "reason": "Action violence, some mild language and brief sensuality",
+            "runtime_minutes": 110,
+        },
+        "The Dark Knight": {
+            "certification": "PG-13",
+            "reason": "Intense sequences of violence and some menace",
+            "runtime_minutes": 152,
+        },
+    }
+
+    if movie_name in certification_data:
+        movie_info = certification_data[movie_name]
+        return {
+            "movie_name": movie_name,
+            "certification": movie_info["certification"],
+            "reason": movie_info["reason"],
+            "runtime_minutes": movie_info["runtime_minutes"],
+        }
+    else:
+        return {
+            "movie_name": movie_name,
+            "certification": "Not Found",
+            "reason": "Movie not found in certification database",
+            "runtime_minutes": 0,
+        }
+
+
+def get_movie_cinematographer(movie_name: str) -> Dict[str, Union[str, List[str]]]:
+    """Get the cinematographer for movie specified.
+
+    Args:
+        movie_name: The name of the movie
+
+    Returns:
+        Dict containing:
+            - movie_name: The movie title
+            - cinematographer: Name of the cinematographer
+            - nationality: Cinematographer's nationality
+            - filming_techniques: List of notable filming techniques used
+            - camera_equipment: Information about cameras used
+            - imax_shot: Whether the movie was shot with IMAX cameras
+    """
+
+    # Sample cinematographer data
+    cinematographer_data = {
+        "Man of Steel": {
+            "cinematographer": "Amir Mokri",
+            "nationality": "Iranian-American",
+            "filming_techniques": [
+                "Handheld camera work",
+                "Aerial cinematography",
+                "Digital intermediate",
+            ],
+            "camera_equipment": "Panavision cameras, Arri Alexa cameras",
+            "imax_shot": True,
+        },
+        "The Dark Knight": {
+            "cinematographer": "Wally Pfister",
+            "nationality": "American",
+            "filming_techniques": [
+                "IMAX photography",
+                "Practical effects",
+                "Minimal CGI",
+            ],
+            "camera_equipment": "65mm IMAX cameras, 35mm film cameras",
+            "imax_shot": True,
+        },
+        "Avengers": {
+            "cinematographer": "Seamus McGarvey",
+            "nationality": "Northern Irish",
+            "filming_techniques": [
+                "Digital cinematography",
+                "Motion capture",
+                "Virtual sets",
+            ],
+            "camera_equipment": "Arri Alexa cameras, Red Epic cameras",
+            "imax_shot": False,
+        },
+        "Top Gun": {
+            "cinematographer": "Jeffrey Kimball",
+            "nationality": "American",
+            "filming_techniques": [
+                "Aerial photography",
+                "High-speed cameras",
+                "Practical stunts",
+            ],
+            "camera_equipment": "Panavision cameras, 35mm film",
+            "imax_shot": False,
+        },
+    }
+
+    if movie_name in cinematographer_data:
+        movie_info = cinematographer_data[movie_name]
+        return {
+            "movie_name": movie_name,
+            "cinematographer": movie_info["cinematographer"],
+            "nationality": movie_info["nationality"],
+            "filming_techniques": movie_info["filming_techniques"],
+            "camera_equipment": movie_info["camera_equipment"],
+            "imax_shot": movie_info["imax_shot"],
+        }
+    else:
+        return {
+            "movie_name": movie_name,
+            "cinematographer": "Unknown",
+            "nationality": "Unknown",
+            "filming_techniques": [],
+            "camera_equipment": "Information not available",
+            "imax_shot": False,
+        }

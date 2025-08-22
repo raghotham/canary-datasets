@@ -1793,7 +1793,12 @@ conversations:
       default, but the model still picked 'driving', probably due to the mention of a car in the prompt. It should have inferred
       the method as 'walking' due to the information about the car being broken down.
 - name: Entry 76
-  tools: []
+  tools:
+  - get_flavours
+  - create_desert
+  - order
+  - progress_update
+  - cancel_order
   messages:
   - How long does it take to make one scoop of chocolate ice cream in a tub! If you are not here in the next 5 minutes you
     can forget it and cancel my order on table 5. What's my ETA?
@@ -1936,7 +1941,10 @@ conversations:
       the tax situation dramatically and provide a wrong net income estimate for the user. The model should have used Newark
       as the city parameter to give an accurate estimate for net income after local taxes and fees are deducted.
 - name: Entry 84
-  tools: []
+  tools:
+  - front_door_camera
+  - make_coffee
+  - send_email
   messages:
   - Thanks for the coffee. I need you to send a quick email for me. The door is going to ring any minute. I need to send an
     important email to lawyers@firm.com.au stating that I have seen the documents request and I will send them through before
@@ -2316,7 +2324,12 @@ conversations:
       Yosemite\", type=\"campsite\"),\r\nfind_accommodation(location=\"Grand Canyon\", type=\"campsite\"), \r\nfind_accommodation(location=\"\
       Grand Teton\", type=\"campsite\"), find_accommodation(location=\"Yellowstone\", type=\"campsite\")]"
 - name: Entry 103
-  tools: []
+  tools:
+  - get_flavours
+  - create_desert
+  - order
+  - progress_update
+  - cancel_order
   messages:
   - This place is great. I love the strawberry ice create with nuts. I had 2 flakes - yummy :) Are you open on Sunday? I want
     to come back with my friends.
@@ -3425,7 +3438,10 @@ conversations:
       have identified that I never actually said I lived in NYC, and that I say "Here in Buffalo" to indicate that I am based
       in Buffalo. '
 - name: Entry 159
-  tools: []
+  tools:
+  - find_movie_showing
+  - get_movie_certification
+  - get_movie_cinematographer
   messages:
   - I love the movie "Man of Steel" - it's got an incredible score, Hans Zimmer really out-did himself. And the cinematography!
     WOW, Amir Mokri really knocked it out of the park, he may be the best cinematographer to come out of Tehran! Help me out,
@@ -4897,7 +4913,11 @@ conversations:
       \ list_transactions function. But in this scenario it would be most appropriate just to use the get_category_total function\
       \ since the prompt did not ask for details of each transaction."
 - name: Entry 237
-  tools: []
+  tools:
+  - deposit
+  - get_accounts
+  - transfer_funds
+  - get_last_transaction
   messages:
   - 'Deposit $100 into the account named "savings" if its last transaction was for less than $100.  '
   metadata:

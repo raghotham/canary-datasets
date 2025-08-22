@@ -1,11 +1,12 @@
-from typing import Dict, List, Union, Any
 # Miscellaneous Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Union
+from typing import Any, Dict, List, Union
 
 
-def employer_visa_status_requirements(employer_name: str, city: str) -> Dict[str, Union[str, bool]]:
+def employer_visa_status_requirements(
+    employer_name: str, city: str
+) -> Dict[str, Union[str, bool]]:
     """Check visa status requirements of an employer in the UK.
 
     Args:
@@ -19,14 +20,23 @@ def employer_visa_status_requirements(employer_name: str, city: str) -> Dict[str
             - visa_sponsorship_available: Boolean indicating if visa sponsorship is available
             - skilled_worker_visa: Boolean indicating if the employer can sponsor a Skilled Worker visa
     """
-    
+
     # Simulated data based on employer names and city codes
     sample_data = {
-        ("TechCorp", "LDN"): {"visa_sponsorship_available": True, "skilled_worker_visa": True},
-        ("HealthPlus", "MAN"): {"visa_sponsorship_available": False, "skilled_worker_visa": False},
-        ("EduWorld", "BIR"): {"visa_sponsorship_available": True, "skilled_worker_visa": False},
+        ("TechCorp", "LDN"): {
+            "visa_sponsorship_available": True,
+            "skilled_worker_visa": True,
+        },
+        ("HealthPlus", "MAN"): {
+            "visa_sponsorship_available": False,
+            "skilled_worker_visa": False,
+        },
+        ("EduWorld", "BIR"): {
+            "visa_sponsorship_available": True,
+            "skilled_worker_visa": False,
+        },
     }
-    
+
     key = (employer_name, city)
     if key not in sample_data:
         raise ValueError(f"Employer or city not supported: {employer_name}, {city}")
@@ -36,6 +46,7 @@ def employer_visa_status_requirements(employer_name: str, city: str) -> Dict[str
         "city": city,
         **sample_data[key],
     }
+
 
 from typing import Dict, Union
 
@@ -67,6 +78,7 @@ def evaluate_patron(patron_id: str) -> Dict[str, Union[str, bool]]:
         "is_overly_drunk": is_overly_drunk,
     }
 
+
 from typing import Dict
 
 
@@ -86,7 +98,7 @@ def get_church_service_preacher(
             - sermon_title: Title of the upcoming sermon
             - service_time: Time of the upcoming service
     """
-    
+
     # Generate a hash-based index to simulate varied sample data
     index = hash((church_name, city, street)) % 3
 
@@ -110,11 +122,14 @@ def get_church_service_preacher(
 
     return sample_data[index]
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
-def get_next_grooming_appointment(pet_name: str, owner_name: str) -> Dict[str, Union[str, None]]:
+def get_next_grooming_appointment(
+    pet_name: str, owner_name: str
+) -> Dict[str, Union[str, None]]:
     """Find the next scheduled grooming appointment for a pet.
 
     Args:
@@ -128,12 +143,12 @@ def get_next_grooming_appointment(pet_name: str, owner_name: str) -> Dict[str, U
             - appointment_date: The date of the next grooming appointment in 'YYYY-MM-DD' format
             - appointment_time: The time of the next grooming appointment in 'HH:MM AM/PM' format
     """
-    
+
     if not pet_name or not owner_name:
         raise ValueError("Both pet_name and owner_name are required")
 
     # Generate a consistent but varied appointment date and time based on the hash of the inputs
-    hash_input = f"{pet_name}{owner_name}".encode('utf-8')
+    hash_input = f"{pet_name}{owner_name}".encode("utf-8")
     hash_digest = hashlib.sha256(hash_input).hexdigest()
 
     # Use the hash to generate a pseudo-random date and time
@@ -154,6 +169,7 @@ def get_next_grooming_appointment(pet_name: str, owner_name: str) -> Dict[str, U
         "appointment_time": appointment_time,
     }
 
+
 from typing import Dict, Union
 
 
@@ -169,22 +185,37 @@ def get_preacher_info(preacher_id: str) -> Dict[str, Union[str, int, list]]:
             - age: Age of the preacher
             - sermons: List of sermon titles given by the preacher
     """
-    
+
     sample_data = {
-        "preacher_001": {"name": "John Doe", "age": 45, "sermons": ["Faith and Hope", "The Power of Prayer"]},
-        "preacher_002": {"name": "Jane Smith", "age": 50, "sermons": ["Love and Compassion", "Living with Purpose"]},
-        "preacher_003": {"name": "Samuel Green", "age": 60, "sermons": ["Grace and Mercy", "Walking in Faith"]},
+        "preacher_001": {
+            "name": "John Doe",
+            "age": 45,
+            "sermons": ["Faith and Hope", "The Power of Prayer"],
+        },
+        "preacher_002": {
+            "name": "Jane Smith",
+            "age": 50,
+            "sermons": ["Love and Compassion", "Living with Purpose"],
+        },
+        "preacher_003": {
+            "name": "Samuel Green",
+            "age": 60,
+            "sermons": ["Grace and Mercy", "Walking in Faith"],
+        },
     }
-    
+
     if preacher_id not in sample_data:
         raise ValueError(f"Preacher ID not found: {preacher_id}")
-    
+
     return sample_data[preacher_id]
+
 
 from typing import Dict, Literal
 
 
-def rank_stats_by_uuid(uuid: str, region: Literal["North America", "Europe", "Asia"]) -> Dict[str, int]:
+def rank_stats_by_uuid(
+    uuid: str, region: Literal["North America", "Europe", "Asia"]
+) -> Dict[str, int]:
     """Get the ranked stats for the account with the given uuid.
 
     Args:
@@ -197,10 +228,10 @@ def rank_stats_by_uuid(uuid: str, region: Literal["North America", "Europe", "As
             - region: The region of the account
             - rank: The rank of the account between 1 and 20
     """
-    
+
     if not uuid or not isinstance(uuid, str):
         raise ValueError("Invalid uuid provided.")
-    
+
     if region not in ["North America", "Europe", "Asia"]:
         raise ValueError("Invalid region provided.")
 
@@ -213,6 +244,7 @@ def rank_stats_by_uuid(uuid: str, region: Literal["North America", "Europe", "As
         "region": region,
         "rank": rank,
     }
+
 
 from typing import Dict
 
@@ -229,19 +261,18 @@ def register(username: str, password: str) -> Dict[str, str]:
             - message: Confirmation message of registration
             - user_id: Unique identifier for the registered user
     """
-    
+
     if not username or not password:
         raise ValueError("Both username and password are required.")
-    
+
     # Simulate user ID generation using a hash-based approach
     import hashlib
+
     user_id = hashlib.sha256(username.encode()).hexdigest()[:8]
 
     # Simulate a registration confirmation message
-    return {
-        "message": f"User {username} registered successfully.",
-        "user_id": user_id
-    }
+    return {"message": f"User {username} registered successfully.", "user_id": user_id}
+
 
 from typing import Dict, List, Literal
 
@@ -250,7 +281,7 @@ def search_indeed(
     start: str,
     end: str,
     country: Literal["Canada", "USA", "UK", "Netherlands", "Germany"],
-    city: str = "London"
+    city: str = "London",
 ) -> Dict[str, Union[str, List[Dict[str, str]]]]:
     """Search Indeed.com for jobs within a specified time range and location.
 
@@ -266,7 +297,7 @@ def search_indeed(
             - city: City where the job search was performed
             - jobs: List of job postings with title and company
     """
-    
+
     if country not in ["Canada", "USA", "UK", "Netherlands", "Germany"]:
         raise ValueError(f"Country not supported: {country}")
 
@@ -302,6 +333,7 @@ def search_indeed(
         "city": city,
         "jobs": jobs,
     }
+
 
 from typing import Dict, List, Literal, Union
 
@@ -359,6 +391,7 @@ def add_player(
         "availability": availability,
     }
 
+
 from typing import Dict, Union
 
 
@@ -389,6 +422,7 @@ def check_email_leak(email: str) -> Dict[str, Union[str, bool]]:
         "email": email,
         "leaked": leaked,
     }
+
 
 from typing import Dict, Union
 
@@ -421,6 +455,7 @@ def check_email_leak_via_domain(email: str, domain: str) -> Dict[str, Union[str,
         "domain": domain,
         "leaked": leaked,
     }
+
 
 from typing import Dict, Union
 
@@ -456,8 +491,9 @@ def check_phone_number(phone_number: str) -> Dict[str, Union[str, bool, list]]:
         "leaked_passwords": leaked_passwords,
     }
 
-from typing import Dict, Literal, Optional, Union
+
 from datetime import datetime, timedelta
+from typing import Dict, Literal, Optional, Union
 
 
 def check_photographer_availability(
@@ -524,12 +560,15 @@ def check_photographer_availability(
         "available": available,
     }
 
+
 from typing import Dict, Literal
 
 
 def get_career_horoscope(
     zodiac_sign: str,
-    focus_area: Literal["job_search", "promotion", "business", "finances", "general"] = "general",
+    focus_area: Literal[
+        "job_search", "promotion", "business", "finances", "general"
+    ] = "general",
     time_period: Literal["today", "this_week", "this_month"] = "today",
 ) -> Dict[str, str]:
     """Get the career and money horoscope for a given zodiac sign.
@@ -546,10 +585,20 @@ def get_career_horoscope(
             - time_period: The time period of the horoscope
             - horoscope: The career and money horoscope message
     """
-    
+
     if zodiac_sign not in {
-        "aries", "taurus", "gemini", "cancer", "leo", "virgo",
-        "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces",
     }:
         raise ValueError(f"Unsupported zodiac sign: {zodiac_sign}")
 
@@ -569,7 +618,9 @@ def get_career_horoscope(
     }
 
     horoscope_key = f"{zodiac_sign}_{focus_area}_{time_period}"
-    horoscope_message = sample_horoscopes.get(zodiac_sign, "Your career path is full of potential.")
+    horoscope_message = sample_horoscopes.get(
+        zodiac_sign, "Your career path is full of potential."
+    )
 
     return {
         "zodiac_sign": zodiac_sign,
@@ -577,6 +628,7 @@ def get_career_horoscope(
         "time_period": time_period,
         "horoscope": horoscope_message,
     }
+
 
 from typing import Dict
 
@@ -594,7 +646,7 @@ def get_daily_horoscope(zodiac_sign: str, date: str) -> Dict[str, str]:
             - date: The date for the horoscope
             - horoscope: The daily horoscope message
     """
-    
+
     sample_horoscopes = {
         "aries": "Today is a day to focus on your personal growth.",
         "taurus": "You might find unexpected opportunities at work.",
@@ -607,9 +659,9 @@ def get_daily_horoscope(zodiac_sign: str, date: str) -> Dict[str, str]:
         "sagittarius": "Adventure awaits, be open to new experiences.",
         "capricorn": "Hard work will pay off, stay focused on your goals.",
         "aquarius": "Innovation is your strength, think outside the box.",
-        "pisces": "Embrace your creativity, it will lead to fulfillment."
+        "pisces": "Embrace your creativity, it will lead to fulfillment.",
     }
-    
+
     if zodiac_sign not in sample_horoscopes:
         raise ValueError(f"Zodiac sign not supported: {zodiac_sign}")
 
@@ -618,6 +670,7 @@ def get_daily_horoscope(zodiac_sign: str, date: str) -> Dict[str, str]:
         "date": date,
         "horoscope": sample_horoscopes[zodiac_sign],
     }
+
 
 from typing import Dict
 
@@ -647,6 +700,7 @@ def get_instructions(type: str) -> Dict[str, str]:
         "instructions": instructions_map[type],
     }
 
+
 from typing import Dict
 
 
@@ -661,7 +715,7 @@ def get_league(team: str) -> Dict[str, str]:
             - team: Team name
             - league: League name the team belongs to
     """
-    
+
     sample_leagues = {
         "Lakers": "NBA",
         "Yankees": "MLB",
@@ -669,14 +723,15 @@ def get_league(team: str) -> Dict[str, str]:
         "Red Sox": "MLB",
         "Warriors": "NBA",
     }
-    
+
     if team not in sample_leagues:
         raise ValueError(f"Team not supported: {team}")
-    
+
     return {
         "team": team,
         "league": sample_leagues[team],
     }
+
 
 from typing import Dict
 
@@ -694,7 +749,7 @@ def get_weekly_horoscope(zodiac_sign: str, week_start: str) -> Dict[str, str]:
             - week_start: The starting date of the week
             - horoscope: The horoscope prediction for the week
     """
-    
+
     sample_horoscopes = {
         "aries": "This week, focus on your personal growth and embrace new challenges.",
         "taurus": "A financial opportunity may present itself. Be ready to seize it.",
@@ -709,7 +764,7 @@ def get_weekly_horoscope(zodiac_sign: str, week_start: str) -> Dict[str, str]:
         "aquarius": "Innovation is your strength. Think outside the box.",
         "pisces": "Trust your intuition. It will guide you to the right path.",
     }
-    
+
     if zodiac_sign not in sample_horoscopes:
         raise ValueError(f"Unsupported zodiac sign: {zodiac_sign}")
 
@@ -718,6 +773,7 @@ def get_weekly_horoscope(zodiac_sign: str, week_start: str) -> Dict[str, str]:
         "week_start": week_start,
         "horoscope": sample_horoscopes[zodiac_sign],
     }
+
 
 from typing import Dict
 
@@ -738,20 +794,20 @@ def motives_description(motives: str) -> Dict[str, str]:
         raise ValueError("MOTIVES combination must be exactly 7 letters long.")
 
     preference_map = {
-        'M': "Materialistic",
-        'O': "Offbeat",
-        'T': "Thinking",
-        'I': "Interpersonal",
-        'V': "Vital",
-        'E': "Easygoing",
-        'S': "Sectarian",
-        'A': "Ascetic",
-        'C': "Conventional",
-        'H': "Haphazard",
-        'W': "Withholding",
-        'D': "Depressed",
-        'R': "Rigid",
-        'G': "Globalistic"
+        "M": "Materialistic",
+        "O": "Offbeat",
+        "T": "Thinking",
+        "I": "Interpersonal",
+        "V": "Vital",
+        "E": "Easygoing",
+        "S": "Sectarian",
+        "A": "Ascetic",
+        "C": "Conventional",
+        "H": "Haphazard",
+        "W": "Withholding",
+        "D": "Depressed",
+        "R": "Rigid",
+        "G": "Globalistic",
     }
 
     description_parts = []
@@ -762,10 +818,8 @@ def motives_description(motives: str) -> Dict[str, str]:
 
     description = ", ".join(description_parts)
 
-    return {
-        "motives": motives,
-        "description": description
-    }
+    return {"motives": motives, "description": description}
+
 
 from typing import Dict, Union
 
@@ -788,6 +842,7 @@ def quit_job(time_from_now: float) -> Dict[str, Union[str, float]]:
         "status": "Job quitting scheduled",
         "days_until_quit": time_from_now,
     }
+
 
 from typing import Dict, Union
 
@@ -820,13 +875,12 @@ def rate(id: int, score: float, comment: str = "") -> Dict[str, Union[int, float
         "status": status,
     }
 
+
 from typing import Dict, Union
 
 
 def reserve_court(
-    reserve_time: str,
-    duration: float = 1,
-    location: str = None
+    reserve_time: str, duration: float = 1, location: str = None
 ) -> Dict[str, Union[str, float, bool]]:
     """Find and reserve an available pickleball court.
 
@@ -855,7 +909,9 @@ def reserve_court(
     if location not in sample_courts:
         raise ValueError(f"No courts available in the specified location: {location}")
 
-    court_id = sample_courts[location][hash(reserve_time) % len(sample_courts[location])]
+    court_id = sample_courts[location][
+        hash(reserve_time) % len(sample_courts[location])
+    ]
 
     return {
         "location": location,
@@ -865,8 +921,9 @@ def reserve_court(
         "success": True,
     }
 
-from typing import Dict, Union, Optional
+
 import hashlib
+from typing import Dict, Optional, Union
 
 
 def search_seek(
@@ -889,7 +946,7 @@ def search_seek(
             - jobs: List of job titles found
             - total_jobs: Total number of jobs found
     """
-    if not city or 'name' not in city:
+    if not city or "name" not in city:
         raise ValueError("City information is required and must include a 'name' key.")
 
     # Generate a consistent but varied list of jobs based on input parameters
@@ -905,10 +962,11 @@ def search_seek(
     ]
 
     return {
-        "city": city['name'],
+        "city": city["name"],
         "jobs": job_titles,
         "total_jobs": len(job_titles),
     }
+
 
 from typing import Dict, List
 
@@ -929,7 +987,7 @@ def team_schedule(
             - year: The season year
             - opponents: List of opponent team names played in the given year
     """
-    
+
     # Sample data generation based on hash for consistency
     sample_teams = ["Lakers", "Warriors", "Celtics", "Bulls", "Heat"]
     sample_opponents = [
@@ -939,17 +997,17 @@ def team_schedule(
         ["Celtics", "Lakers", "Heat"],
         ["Bulls", "Warriors", "Lakers"],
     ]
-    
+
     if name not in sample_teams:
         raise ValueError(f"Team not supported: {name}")
 
     index = sample_teams.index(name)
     opponents = sample_opponents[index]
-    
+
     if incl_playoffs:
         playoff_opponents = ["Spurs", "Nets"]
         opponents.extend(playoff_opponents)
-    
+
     return {
         "team": name,
         "year": year,
@@ -957,30 +1015,38 @@ def team_schedule(
     }
 
 
-
 def convert_units(
     value: float,
-    from_unit: Literal["celsius", "fahrenheit"],
-    to_unit: Literal["celsius", "fahrenheit"],
+    from_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
+    to_unit: Literal["celsius", "fahrenheit", "pounds", "kilograms"],
 ) -> Dict[str, Union[float, str]]:
-    """Convert a temperature value between Celsius and Fahrenheit.
+    """Convert values between different units (temperature and weight).
 
     Args:
-        value: The temperature value to convert
-        from_unit: The unit to convert from ('celsius' or 'fahrenheit')
-        to_unit: The unit to convert to ('celsius' or 'fahrenheit')
+        value: The value to convert
+        from_unit: The unit to convert from ('celsius', 'fahrenheit', 'pounds', 'kilograms')
+        to_unit: The unit to convert to ('celsius', 'fahrenheit', 'pounds', 'kilograms')
 
     Returns:
         Dict containing:
-            - value: Converted temperature value
-            - unit: Unit of the converted temperature
+            - value: Converted value
+            - unit: Unit of the converted value
     """
     if from_unit == to_unit:
         return {"value": value, "unit": to_unit}
+
+    # Temperature conversions
     if (from_unit, to_unit) == ("fahrenheit", "celsius"):
         return {"value": (value - 32) * 5 / 9, "unit": "celsius"}
     if (from_unit, to_unit) == ("celsius", "fahrenheit"):
         return {"value": value * 9 / 5 + 32, "unit": "fahrenheit"}
+
+    # Weight conversions
+    if (from_unit, to_unit) == ("pounds", "kilograms"):
+        return {"value": value * 0.453592, "unit": "kilograms"}
+    if (from_unit, to_unit) == ("kilograms", "pounds"):
+        return {"value": value / 0.453592, "unit": "pounds"}
+
     raise ValueError("unsupported units")
 
 
@@ -1002,6 +1068,7 @@ def convert_currency(
         "JPY": 153.2,
         "CAD": 1.37,
         "AUD": 1.52,
+        "THB": 36.25,
     }
     # Normalize currency codes to uppercase
     from_currency = from_currency.upper()
@@ -1040,6 +1107,7 @@ def get_fruit_info(fruit: str) -> Dict[str, Union[str, float, Dict[str, float]]]
         "apple": {"color": "red or green", "average_weight_grams": 182.0},
         "banana": {"color": "yellow", "average_weight_grams": 118.0},
         "mango": {"color": "orange or green", "average_weight_grams": 200.0},
+        "dragonfruit": {"color": "pink or white", "average_weight_grams": 600.0},
     }
     if fruit.lower() not in sample_data:
         raise ValueError(f"Fruit not supported: {fruit}")
@@ -1139,6 +1207,8 @@ def get_population(city_name: str) -> Dict[str, Union[str, int]]:
         "New York": 8419600,
         "Seattle": 733919,
         "Boston": 654776,
+        "Las Vegas": 651319,
+        "Chicago": 2746388,
     }
     city = city_name.title()
     if city not in sample_data:
@@ -1235,8 +1305,8 @@ def quadratic_roots(a: int, b: int, c: int) -> Dict[str, Union[float, str]]:
         c: Constant term.
     Returns:
         Dict containing:
-            - root1: First root (float or complex)
-            - root2: Second root (float or complex)
+            - root1: First root (float or string representation if complex)
+            - root2: Second root (float or string representation if complex)
     """
     import cmath
 
@@ -1244,7 +1314,22 @@ def quadratic_roots(a: int, b: int, c: int) -> Dict[str, Union[float, str]]:
     sqrt_disc = cmath.sqrt(discriminant)
     root1 = (-b + sqrt_disc) / (2 * a)
     root2 = (-b - sqrt_disc) / (2 * a)
+
+    # Convert complex numbers to their real values if imaginary part is negligible,
+    # otherwise convert to string representation for JSON serialization
+    def serialize_root(root):
+        if isinstance(root, complex):
+            if abs(root.imag) < 1e-10:  # Effectively real
+                return float(root.real)
+            else:
+                return (
+                    f"{root.real:.6f}+{root.imag:.6f}j"
+                    if root.imag >= 0
+                    else f"{root.real:.6f}{root.imag:.6f}j"
+                )
+        return float(root)
+
     return {
-        "root1": root1,
-        "root2": root2,
+        "root1": serialize_root(root1),
+        "root2": serialize_root(root2),
     }

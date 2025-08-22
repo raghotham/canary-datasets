@@ -55,8 +55,6 @@ def import_tools_from_directory():
 
     return all_tools
 
-    return all_tools
-
 
 class ToolExecutor:
     """Executes tool calls by mapping function names to registered functions."""

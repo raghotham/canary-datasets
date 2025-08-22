@@ -1,16 +1,16 @@
-from typing import Dict, List, Union, Any
+from datetime import datetime, timedelta
+
 # Food Dining Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Union
-from datetime import datetime, timedelta
+from typing import Any, Dict, List, Union
 
 
 def book_table(
     table_id: str,
     start_time: Dict[str, Union[int, str]],
     duration: int = 90,
-    customer_id: str = None
+    customer_id: str = None,
 ) -> Dict[str, Union[str, int, Dict[str, Union[int, str]]]]:
     """Mark a table as booked in the system.
 
@@ -33,11 +33,11 @@ def book_table(
 
     try:
         start_dt = datetime(
-            year=start_time['year'],
-            month=start_time['month'],
-            day=start_time['day'],
-            hour=start_time['hour'],
-            minute=start_time['minute']
+            year=start_time["year"],
+            month=start_time["month"],
+            day=start_time["day"],
+            hour=start_time["hour"],
+            minute=start_time["minute"],
         )
     except KeyError as e:
         raise ValueError(f"Missing time component: {e}")
@@ -53,15 +53,18 @@ def book_table(
             "month": end_dt.month,
             "day": end_dt.day,
             "hour": end_dt.hour,
-            "minute": end_dt.minute
+            "minute": end_dt.minute,
         },
-        "status": "booked"
+        "status": "booked",
     }
 
-from typing import Dict, Union, Optional
+
+from typing import Dict, Optional, Union
 
 
-def check_inventory(ingredient: Optional[str] = None) -> Dict[str, Union[str, int, Dict[str, int]]]:
+def check_inventory(
+    ingredient: Optional[str] = None,
+) -> Dict[str, Union[str, int, Dict[str, int]]]:
     """Checks the current inventory levels for bar ingredients.
 
     Args:
@@ -97,6 +100,7 @@ def check_inventory(ingredient: Optional[str] = None) -> Dict[str, Union[str, in
         "inventory": inventory_data,
     }
 
+
 from typing import Dict, Union
 
 
@@ -105,7 +109,7 @@ def add_new_menu_item(
     price: float,
     quantity: int,
     description: str = None,
-    is_daily_special: bool = False
+    is_daily_special: bool = False,
 ) -> Dict[str, Union[str, float, int, bool]]:
     """Add a new item to the menu.
 
@@ -125,7 +129,9 @@ def add_new_menu_item(
             - is_daily_special: Whether the item is a daily special
     """
     if not name or price <= 0 or quantity <= 0:
-        raise ValueError("Invalid input: Ensure name is provided and price/quantity are positive.")
+        raise ValueError(
+            "Invalid input: Ensure name is provided and price/quantity are positive."
+        )
 
     # Simulate adding the item to a menu
     menu_item = {
@@ -133,16 +139,19 @@ def add_new_menu_item(
         "price": price,
         "quantity": quantity,
         "description": description or "No description available.",
-        "is_daily_special": is_daily_special
+        "is_daily_special": is_daily_special,
     }
 
     # Mocked response as if the item was successfully added to a database
     return menu_item
 
+
 from typing import Dict, Optional
 
 
-def cut_off_patron(patron_id: str, reason: Optional[str] = None) -> Dict[str, Union[str, bool]]:
+def cut_off_patron(
+    patron_id: str, reason: Optional[str] = None
+) -> Dict[str, Union[str, bool]]:
     """Flags a patron as cut off from further alcohol service.
 
     Args:
@@ -155,18 +164,21 @@ def cut_off_patron(patron_id: str, reason: Optional[str] = None) -> Dict[str, Un
             - cut_off: Boolean indicating if the patron is cut off.
             - reason: Reason for cutting off the patron, if provided.
     """
-    
+
     if not patron_id:
         raise ValueError("patron_id is required")
 
     # Simulate a database of patrons with a simple hash-based check
-    cut_off_status = hash(patron_id) % 2 == 0  # Randomly decide cut-off status for demonstration
+    cut_off_status = (
+        hash(patron_id) % 2 == 0
+    )  # Randomly decide cut-off status for demonstration
 
     return {
         "patron_id": patron_id,
         "cut_off": cut_off_status,
-        "reason": reason if reason else "No reason provided"
+        "reason": reason if reason else "No reason provided",
     }
+
 
 from typing import Dict, List, Union
 
@@ -175,7 +187,7 @@ def find_delivery_now(
     location: str,
     open_now: bool,
     takes_delivery: bool,
-    cuisine_type: Union[str, None] = None
+    cuisine_type: Union[str, None] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, bool]]]]]:
     """Find open restaurants near the user that can deliver to them.
 
@@ -196,14 +208,44 @@ def find_delivery_now(
     """
     sample_restaurants = {
         "New York": [
-            {"name": "Pizza Palace", "open_now": True, "takes_delivery": True, "cuisine": "Italian"},
-            {"name": "Sushi Central", "open_now": False, "takes_delivery": True, "cuisine": "Japanese"},
-            {"name": "Burger Barn", "open_now": True, "takes_delivery": False, "cuisine": "American"},
+            {
+                "name": "Pizza Palace",
+                "open_now": True,
+                "takes_delivery": True,
+                "cuisine": "Italian",
+            },
+            {
+                "name": "Sushi Central",
+                "open_now": False,
+                "takes_delivery": True,
+                "cuisine": "Japanese",
+            },
+            {
+                "name": "Burger Barn",
+                "open_now": True,
+                "takes_delivery": False,
+                "cuisine": "American",
+            },
         ],
         "San Francisco": [
-            {"name": "Taco Town", "open_now": True, "takes_delivery": True, "cuisine": "Mexican"},
-            {"name": "Curry Corner", "open_now": True, "takes_delivery": True, "cuisine": "Indian"},
-            {"name": "Noodle Nook", "open_now": False, "takes_delivery": True, "cuisine": "Chinese"},
+            {
+                "name": "Taco Town",
+                "open_now": True,
+                "takes_delivery": True,
+                "cuisine": "Mexican",
+            },
+            {
+                "name": "Curry Corner",
+                "open_now": True,
+                "takes_delivery": True,
+                "cuisine": "Indian",
+            },
+            {
+                "name": "Noodle Nook",
+                "open_now": False,
+                "takes_delivery": True,
+                "cuisine": "Chinese",
+            },
         ],
     }
 
@@ -212,10 +254,11 @@ def find_delivery_now(
 
     restaurants = sample_restaurants[location]
     filtered_restaurants = [
-        restaurant for restaurant in restaurants
-        if (not open_now or restaurant["open_now"]) and
-           (not takes_delivery or restaurant["takes_delivery"]) and
-           (cuisine_type is None or restaurant["cuisine"] == cuisine_type)
+        restaurant
+        for restaurant in restaurants
+        if (not open_now or restaurant["open_now"])
+        and (not takes_delivery or restaurant["takes_delivery"])
+        and (cuisine_type is None or restaurant["cuisine"] == cuisine_type)
     ]
 
     return {
@@ -223,10 +266,13 @@ def find_delivery_now(
         "restaurants": filtered_restaurants,
     }
 
+
 from typing import Dict, List, Union
 
 
-def find_energy_drinks_by_ingredient(ingredient: str) -> Dict[str, Union[str, List[str]]]:
+def find_energy_drinks_by_ingredient(
+    ingredient: str,
+) -> Dict[str, Union[str, List[str]]]:
     """Search for energy drinks that contain a specific ingredient.
 
     Args:
@@ -251,6 +297,7 @@ def find_energy_drinks_by_ingredient(ingredient: str) -> Dict[str, Union[str, Li
         "ingredient": ingredient,
         "energy_drinks": sample_data.get(ingredient, []),
     }
+
 
 from typing import Dict, Union
 
@@ -293,13 +340,13 @@ def get_daily_feeding_plan(
         "meals": [{"name": meal[0], "quantity_g": meal[1]} for meal in meals],
     }
 
-from typing import Dict, Optional, Union
+
 from datetime import datetime
+from typing import Dict, Optional, Union
 
 
 def get_drink_summary(
-    patron_id: str,
-    time_range: Optional[Dict[str, Optional[str]]] = None
+    patron_id: str, time_range: Optional[Dict[str, Optional[str]]] = None
 ) -> Dict[str, Union[str, int]]:
     """Retrieves a summary of how many drinks a patron has consumed.
 
@@ -350,10 +397,13 @@ def get_drink_summary(
         "total_drinks": total_drinks,
     }
 
+
 from typing import Dict, Optional
 
 
-def get_energy_drink_info(brand_name: str, flavor: Optional[str] = None) -> Dict[str, str]:
+def get_energy_drink_info(
+    brand_name: str, flavor: Optional[str] = None
+) -> Dict[str, str]:
     """Retrieves detailed information about a specific energy drink.
 
     Args:
@@ -368,39 +418,39 @@ def get_energy_drink_info(brand_name: str, flavor: Optional[str] = None) -> Dict
             - sugar_content: Sugar content in grams
             - description: A brief description of the drink
     """
-    
+
     sample_data = {
         "Red Bull": {
             "Original": {
                 "caffeine_content": "80mg",
                 "sugar_content": "27g",
-                "description": "The original energy drink with a unique taste."
+                "description": "The original energy drink with a unique taste.",
             },
             "Sugarfree": {
                 "caffeine_content": "80mg",
                 "sugar_content": "0g",
-                "description": "The sugar-free version of the classic energy drink."
-            }
+                "description": "The sugar-free version of the classic energy drink.",
+            },
         },
         "Monster": {
             "Original": {
                 "caffeine_content": "160mg",
                 "sugar_content": "54g",
-                "description": "A powerful energy drink with a bold flavor."
+                "description": "A powerful energy drink with a bold flavor.",
             },
             "Ultra": {
                 "caffeine_content": "140mg",
                 "sugar_content": "0g",
-                "description": "A zero-sugar energy drink with a refreshing taste."
-            }
-        }
+                "description": "A zero-sugar energy drink with a refreshing taste.",
+            },
+        },
     }
-    
+
     if brand_name not in sample_data:
         raise ValueError(f"Brand not supported: {brand_name}")
-    
+
     brand_info = sample_data[brand_name]
-    
+
     if flavor:
         if flavor not in brand_info:
             raise ValueError(f"Flavor not supported for {brand_name}: {flavor}")
@@ -408,7 +458,7 @@ def get_energy_drink_info(brand_name: str, flavor: Optional[str] = None) -> Dict
     else:
         # Default to the first available flavor if none specified
         flavor, flavor_info = next(iter(brand_info.items()))
-    
+
     return {
         "brand_name": brand_name,
         "flavor": flavor,
@@ -416,6 +466,7 @@ def get_energy_drink_info(brand_name: str, flavor: Optional[str] = None) -> Dict
         "sugar_content": flavor_info["sugar_content"],
         "description": flavor_info["description"],
     }
+
 
 from typing import Dict, Union
 
@@ -431,29 +482,32 @@ def get_friends_rating(restaurant_name: str) -> Dict[str, Union[str, float]]:
             - restaurant_name: Name of the restaurant
             - average_rating: Average rating from friends
     """
-    
+
     # Simulated ratings data based on restaurant names
     ratings_data = {
         "Pasta Palace": [4.5, 4.0, 4.7, 5.0],
         "Burger Barn": [3.5, 3.8, 4.0, 4.2],
         "Sushi Spot": [4.8, 4.9, 5.0, 4.7],
     }
-    
+
     if restaurant_name not in ratings_data:
         raise ValueError(f"Restaurant not found: {restaurant_name}")
-    
+
     ratings = ratings_data[restaurant_name]
     average_rating = sum(ratings) / len(ratings)
-    
+
     return {
         "restaurant_name": restaurant_name,
         "average_rating": round(average_rating, 2),
     }
 
+
 from typing import Dict, List, Union
 
 
-def get_ingredients(location: str = "Kitchen", on_order: bool = False) -> Dict[str, Union[str, List[str]]]:
+def get_ingredients(
+    location: str = "Kitchen", on_order: bool = False
+) -> Dict[str, Union[str, List[str]]]:
     """Retrieve all ingredients paid for in the restaurant.
 
     Args:
@@ -465,31 +519,32 @@ def get_ingredients(location: str = "Kitchen", on_order: bool = False) -> Dict[s
             - location: The location from which ingredients are retrieved
             - ingredients: List of ingredients available at the specified location
     """
-    
+
     sample_data = {
         "Kitchen": ["Tomatoes", "Basil", "Olive Oil", "Garlic"],
         "Pantry": ["Flour", "Sugar", "Salt", "Baking Powder"],
         "Bar": ["Lemon", "Mint", "Rum", "Vodka"],
     }
-    
+
     on_order_data = {
         "Kitchen": ["Parmesan Cheese", "Pasta"],
         "Pantry": ["Yeast", "Cocoa Powder"],
         "Bar": ["Gin", "Tonic Water"],
     }
-    
+
     if location not in sample_data:
         raise ValueError(f"Location not supported: {location}")
-    
+
     ingredients = sample_data[location]
-    
+
     if on_order:
         ingredients.extend(on_order_data.get(location, []))
-    
+
     return {
         "location": location,
         "ingredients": ingredients,
     }
+
 
 from typing import Dict, Union
 
@@ -505,23 +560,24 @@ def get_public_rating(restaurant_name: str) -> Dict[str, Union[str, float]]:
             - restaurant_name: Name of the restaurant
             - average_rating: Average rating of the restaurant
     """
-    
+
     sample_ratings = {
         "The Gourmet Kitchen": [4.5, 4.0, 5.0, 3.5],
         "Pasta Palace": [3.0, 3.5, 4.0, 4.5],
         "Burger Barn": [4.0, 4.5, 4.0, 5.0],
     }
-    
+
     if restaurant_name not in sample_ratings:
         raise ValueError(f"Restaurant not found: {restaurant_name}")
-    
+
     ratings = sample_ratings[restaurant_name]
     average_rating = sum(ratings) / len(ratings)
-    
+
     return {
         "restaurant_name": restaurant_name,
         "average_rating": average_rating,
     }
+
 
 from typing import Dict, List, Optional
 
@@ -543,7 +599,7 @@ def get_top_restaurants(
                 - cuisine: Type of cuisine
                 - price: Price range
     """
-    
+
     sample_restaurants = [
         {"name": "Pasta Palace", "rating": 4.8, "cuisine": "Italian", "price": "$$"},
         {"name": "Sushi Central", "rating": 4.7, "cuisine": "Japanese", "price": "$$$"},
@@ -559,12 +615,16 @@ def get_top_restaurants(
 
     if cuisine:
         sample_restaurants = [
-            restaurant for restaurant in sample_restaurants if restaurant["cuisine"] == cuisine
+            restaurant
+            for restaurant in sample_restaurants
+            if restaurant["cuisine"] == cuisine
         ]
 
     if price:
         sample_restaurants = [
-            restaurant for restaurant in sample_restaurants if restaurant["price"] == price
+            restaurant
+            for restaurant in sample_restaurants
+            if restaurant["price"] == price
         ]
 
     if not sample_restaurants:
@@ -572,13 +632,14 @@ def get_top_restaurants(
 
     return {"restaurants": sample_restaurants[:10]}
 
-from typing import Dict, Union, Literal
+
+from typing import Dict, Literal, Union
 
 
 def make_drink(
     drink_name: str,
     customizations: Dict[str, Union[str, bool]] = None,
-    patron_id: str = None
+    patron_id: str = None,
 ) -> Dict[str, Union[str, Dict[str, Union[str, bool]]]]:
     """Prepares a drink based on the specified recipe.
 
@@ -600,7 +661,7 @@ def make_drink(
     default_customizations = {
         "ice_level": "normal",
         "alcohol_strength": "normal",
-        "garnish": True
+        "garnish": True,
     }
 
     # Merge provided customizations with defaults
@@ -618,8 +679,9 @@ def make_drink(
     return {
         "drink_name": drink_name,
         "customizations": customizations,
-        "patron_id": patron_id
+        "patron_id": patron_id,
     }
+
 
 from typing import Dict, Union
 
@@ -628,7 +690,7 @@ def rate_energy_drink(
     brand_name: str,
     rating: float,
     flavor: Union[str, None] = None,
-    review: Union[str, None] = None
+    review: Union[str, None] = None,
 ) -> Dict[str, Union[str, float, None]]:
     """Rate and review an energy drink.
 
@@ -650,13 +712,7 @@ def rate_energy_drink(
         raise ValueError("Rating must be between 1 and 5.")
 
     # Generate a summary based on the rating
-    summary_map = {
-        1: "Terrible",
-        2: "Poor",
-        3: "Average",
-        4: "Good",
-        5: "Excellent"
-    }
+    summary_map = {1: "Terrible", 2: "Poor", 3: "Average", 4: "Good", 5: "Excellent"}
     summary = summary_map.get(int(rating), "No summary available")
 
     return {
@@ -664,16 +720,15 @@ def rate_energy_drink(
         "flavor": flavor,
         "rating": rating,
         "review": review,
-        "summary": summary
+        "summary": summary,
     }
+
 
 from typing import Dict, Optional
 
 
 def rate_restaurant(
-    restaurant_name: str, 
-    rating: str, 
-    review: Optional[str] = None
+    restaurant_name: str, rating: str, review: Optional[str] = None
 ) -> Dict[str, Union[str, float]]:
     """Rates a given restaurant out of 5.
 
@@ -698,21 +753,22 @@ def rate_restaurant(
     sample_reviews = {
         "The Great Eatery": "Fantastic food and service!",
         "Quick Bites": "Good for a quick meal.",
-        "Gourmet Delight": "Exquisite dining experience."
+        "Gourmet Delight": "Exquisite dining experience.",
     }
 
     return {
         "restaurant_name": restaurant_name,
         "rating": numeric_rating,
-        "review": review or sample_reviews.get(restaurant_name, "No review available.")
+        "review": review or sample_reviews.get(restaurant_name, "No review available."),
     }
+
 
 from typing import Dict, Optional, Union
 
 
 def suggest_drink(
     patron_id: Optional[str] = None,
-    preferences: Optional[Dict[str, Optional[str]]] = None
+    preferences: Optional[Dict[str, Optional[str]]] = None,
 ) -> Dict[str, Union[str, Dict[str, str]]]:
     """Suggest a drink based on a patron's preferences or past orders.
 
@@ -726,28 +782,49 @@ def suggest_drink(
             - drink_name: Suggested drink name
             - details: Dictionary with flavor profile and alcohol content
     """
-    
+
     # Sample data for demonstration purposes
     drinks = {
         "sweet": {
-            "yes": {"drink_name": "Mojito", "flavor_profile": "sweet", "alcohol_content": "medium"},
-            "no": {"drink_name": "Virgin Pina Colada", "flavor_profile": "sweet", "alcohol_content": "none"},
+            "yes": {
+                "drink_name": "Mojito",
+                "flavor_profile": "sweet",
+                "alcohol_content": "medium",
+            },
+            "no": {
+                "drink_name": "Virgin Pina Colada",
+                "flavor_profile": "sweet",
+                "alcohol_content": "none",
+            },
         },
         "strong": {
-            "yes": {"drink_name": "Old Fashioned", "flavor_profile": "strong", "alcohol_content": "high"},
-            "no": {"drink_name": "Espresso", "flavor_profile": "strong", "alcohol_content": "none"},
+            "yes": {
+                "drink_name": "Old Fashioned",
+                "flavor_profile": "strong",
+                "alcohol_content": "high",
+            },
+            "no": {
+                "drink_name": "Espresso",
+                "flavor_profile": "strong",
+                "alcohol_content": "none",
+            },
         },
         "non_alcoholic": {
-            "yes": {"drink_name": "Shirley Temple", "flavor_profile": "fruity", "alcohol_content": "none"},
-            "no": {"drink_name": "Lemonade", "flavor_profile": "citrus", "alcohol_content": "none"},
-        }
+            "yes": {
+                "drink_name": "Shirley Temple",
+                "flavor_profile": "fruity",
+                "alcohol_content": "none",
+            },
+            "no": {
+                "drink_name": "Lemonade",
+                "flavor_profile": "citrus",
+                "alcohol_content": "none",
+            },
+        },
     }
 
     # Default preferences if none provided
-    default_preferences = {
-        "flavor_profile": "sweet",
-        "alcohol_preference": "yes"
-    }
+    default_preferences = {"flavor_profile": "sweet", "alcohol_preference": "yes"}
 
     # Use provided preferences or default
     if preferences is None:
@@ -761,15 +838,20 @@ def suggest_drink(
         suggestion = drinks[flavor_profile][alcohol_preference]
     else:
         # Fallback suggestion
-        suggestion = {"drink_name": "Water", "flavor_profile": "neutral", "alcohol_content": "none"}
+        suggestion = {
+            "drink_name": "Water",
+            "flavor_profile": "neutral",
+            "alcohol_content": "none",
+        }
 
     return {
         "drink_name": suggestion["drink_name"],
         "details": {
             "flavor_profile": suggestion["flavor_profile"],
-            "alcohol_content": suggestion["alcohol_content"]
-        }
+            "alcohol_content": suggestion["alcohol_content"],
+        },
     }
+
 
 from typing import Dict, List, Union
 
@@ -823,11 +905,13 @@ def suggest_energy_drink(
         "caffeine_mg": suggested_drink["caffeine_mg"],
     }
 
+
 from typing import Dict, Literal
 
 
 def verify_id(
-    id_number: str, id_type: Literal["driver_license", "passport", "state_id"] = "driver_license"
+    id_number: str,
+    id_type: Literal["driver_license", "passport", "state_id"] = "driver_license",
 ) -> Dict[str, Union[bool, str]]:
     """Verify a patron's ID to confirm they are of legal drinking age.
 
@@ -840,7 +924,7 @@ def verify_id(
             - is_valid: Boolean indicating if the ID is valid and the patron is of legal age
             - message: A message providing additional information
     """
-    
+
     # Sample hash-based ID verification simulation
     if not id_number:
         raise ValueError("ID number cannot be empty")
@@ -850,9 +934,16 @@ def verify_id(
     is_valid = hash_value >= 21  # Simulating age check
 
     if is_valid:
-        return {"is_valid": True, "message": "ID is valid and patron is of legal drinking age."}
+        return {
+            "is_valid": True,
+            "message": "ID is valid and patron is of legal drinking age.",
+        }
     else:
-        return {"is_valid": False, "message": "ID is invalid or patron is not of legal drinking age."}
+        return {
+            "is_valid": False,
+            "message": "ID is invalid or patron is not of legal drinking age.",
+        }
+
 
 from typing import Dict, List, Optional, Union
 
@@ -905,6 +996,7 @@ def generate_recipe(
         "dietaries": dietaries,
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -926,7 +1018,7 @@ def chinese_restaurant(
                 - distance_km: The distance from the user's location in kilometers
                 - rating: The average rating of the restaurant
     """
-    
+
     # Simulated sample data based on hash of coordinates
     sample_data = {
         (42.3601, -71.0589): [
@@ -938,7 +1030,7 @@ def chinese_restaurant(
             {"name": "Szechuan Palace", "distance_km": 2.8, "rating": 4.3},
         ],
     }
-    
+
     location_key = (round(lat, 4), round(lng, 4))
     if location_key not in sample_data:
         raise ValueError(f"No data available for location: {location_key}")
@@ -947,6 +1039,7 @@ def chinese_restaurant(
         "location": f"Lat: {lat}, Lng: {lng}",
         "restaurants": sample_data[location_key],
     }
+
 
 from typing import Dict
 
@@ -976,6 +1069,7 @@ def book_cafe(cafe_name: str, date: str) -> Dict[str, str]:
         "confirmation_code": confirmation_code,
     }
 
+
 from typing import Dict
 
 
@@ -1002,6 +1096,7 @@ def book_restaurant_reservation(people: int) -> Dict[str, Union[str, int]]:
         "people": people,
         "status": "confirmed",
     }
+
 
 from typing import Dict
 
@@ -1033,6 +1128,7 @@ def book_store_cafe(bookstore_name: str) -> Dict[str, bool]:
         "has_cafe": sample_data[bookstore_name],
     }
 
+
 from typing import Dict, Optional
 
 
@@ -1057,24 +1153,25 @@ def cafe_has_library(cafe_name: str, city: Optional[str] = None) -> Dict[str, bo
     }
 
     # Generate a key for consistent hash-based lookup
-    key = f"{cafe_name.lower()}_{city.lower() if city else ''}".strip('_')
+    key = f"{cafe_name.lower()}_{city.lower() if city else ''}".strip("_")
 
     # Check if the cafe is in the sample data
     if key not in sample_data:
-        raise ValueError(f"Cafe not found: {cafe_name} in {city if city else 'unknown city'}")
+        raise ValueError(
+            f"Cafe not found: {cafe_name} in {city if city else 'unknown city'}"
+        )
 
     return {
         "cafe_name": cafe_name,
         "has_library": sample_data[key],
     }
 
+
 from typing import Dict
 
 
 def clean_table(
-    table_id: str,
-    staff_id: str,
-    clean_complete: bool = True
+    table_id: str, staff_id: str, clean_complete: bool = True
 ) -> Dict[str, str]:
     """Cleans a table and updates its status to 'cleaned' in the booking system.
 
@@ -1094,13 +1191,10 @@ def clean_table(
 
     status = "cleaned" if clean_complete else "not cleaned"
 
-    return {
-        "table_id": table_id,
-        "status": status,
-        "staff_id": staff_id
-    }
+    return {"table_id": table_id, "status": status, "staff_id": staff_id}
 
-from typing import Dict, List, Union, Literal
+
+from typing import Dict, List, Literal, Union
 
 
 def create_desert(
@@ -1137,7 +1231,7 @@ def create_desert(
             - chocolate_flake: Number of chocolate flakes added
     """
     # Validate scoops
-    scoop_list = scoops.split(',')
+    scoop_list = scoops.split(",")
     if len(scoop_list) > 3:
         raise ValueError("Maximum of 3 scoops allowed.")
 
@@ -1161,8 +1255,9 @@ def create_desert(
         "chocolate_flake": chocolate_flake,
     }
 
-from typing import Dict, List, Union
+
 import hashlib
+from typing import Dict, List, Union
 
 
 def filter_menu(menu: str, allegens: List[str]) -> Dict[str, Union[str, List[str]]]:
@@ -1177,7 +1272,7 @@ def filter_menu(menu: str, allegens: List[str]) -> Dict[str, Union[str, List[str
             - original_menu: Original menu text
             - filtered_items: List of menu items excluding those with allergens
     """
-    
+
     # Sample menu items for demonstration purposes
     sample_menu_items = [
         "Grilled Chicken Salad",
@@ -1187,25 +1282,28 @@ def filter_menu(menu: str, allegens: List[str]) -> Dict[str, Union[str, List[str
         "Seafood Pasta",
         "Chocolate Cake",
     ]
-    
+
     # Hash-based generation to simulate filtering
     def contains_allergen(item: str, allergens: List[str]) -> bool:
         item_hash = hashlib.md5(item.encode()).hexdigest()
         return any(allergen.lower() in item_hash for allergen in allergens)
-    
+
     filtered_items = [
         item for item in sample_menu_items if not contains_allergen(item, allegens)
     ]
-    
+
     return {
         "original_menu": menu,
         "filtered_items": filtered_items,
     }
 
+
 from typing import Dict, List
 
 
-def find_cheapest(item: List[str], cafes: List[Dict[str, Dict[str, float]]]) -> Dict[str, Union[str, float]]:
+def find_cheapest(
+    item: List[str], cafes: List[Dict[str, Dict[str, float]]]
+) -> Dict[str, Union[str, float]]:
     """Find the cheapest cafe for a particular drink or food item.
 
     Args:
@@ -1224,7 +1322,7 @@ def find_cheapest(item: List[str], cafes: List[Dict[str, Dict[str, float]]]) -> 
     """
     item_name = item[0]
     cheapest_cafe = None
-    cheapest_price = float('inf')
+    cheapest_price = float("inf")
 
     for cafe in cafes:
         for cafe_name, menu in cafe.items():
@@ -1237,11 +1335,8 @@ def find_cheapest(item: List[str], cafes: List[Dict[str, Dict[str, float]]]) -> 
     if cheapest_cafe is None:
         raise ValueError(f"Item not found in any cafe: {item_name}")
 
-    return {
-        "cafe": cheapest_cafe,
-        "item": item_name,
-        "price": cheapest_price
-    }
+    return {"cafe": cheapest_cafe, "item": item_name, "price": cheapest_price}
+
 
 from typing import Dict, List
 
@@ -1262,7 +1357,7 @@ def find_lunch_spots_at_location(location: str) -> Dict[str, List[str]]:
         "San Francisco": ["Tartine Bakery", "The Slanted Door", "Zuni Café"],
         "Chicago": ["Portillo's", "Lou Malnati's", "Alinea"],
     }
-    
+
     if location not in sample_data:
         raise ValueError(f"Location not supported: {location}")
 
@@ -1270,6 +1365,7 @@ def find_lunch_spots_at_location(location: str) -> Dict[str, List[str]]:
         "location": location,
         "lunch_spots": sample_data[location],
     }
+
 
 from typing import Dict, List, Union
 
@@ -1292,15 +1388,24 @@ def find_nearby_restaurants(
     sample_data = {
         "New York": [
             {"name": "Joe's Pizza", "address": "7 Carmine St, New York, NY 10014"},
-            {"name": "Shake Shack", "address": "Madison Ave & E.23rd St, New York, NY 10010"},
+            {
+                "name": "Shake Shack",
+                "address": "Madison Ave & E.23rd St, New York, NY 10010",
+            },
         ],
         "San Francisco": [
-            {"name": "Tartine Bakery", "address": "600 Guerrero St, San Francisco, CA 94110"},
+            {
+                "name": "Tartine Bakery",
+                "address": "600 Guerrero St, San Francisco, CA 94110",
+            },
             {"name": "Nopa", "address": "560 Divisadero St, San Francisco, CA 94117"},
         ],
         "Chicago": [
             {"name": "Alinea", "address": "1723 N Halsted St, Chicago, IL 60614"},
-            {"name": "Lou Malnati's Pizzeria", "address": "1120 N State St, Chicago, IL 60610"},
+            {
+                "name": "Lou Malnati's Pizzeria",
+                "address": "1120 N State St, Chicago, IL 60610",
+            },
         ],
     }
 
@@ -1312,7 +1417,9 @@ def find_nearby_restaurants(
     if tags:
         # Simulate filtering by tags
         filtered_restaurants = [
-            restaurant for restaurant in restaurants if any(tag.lower() in restaurant["name"].lower() for tag in tags)
+            restaurant
+            for restaurant in restaurants
+            if any(tag.lower() in restaurant["name"].lower() for tag in tags)
         ]
         restaurants = filtered_restaurants if filtered_restaurants else restaurants
 
@@ -1320,6 +1427,7 @@ def find_nearby_restaurants(
         "location": location,
         "restaurants": restaurants,
     }
+
 
 from typing import Dict, Union
 
@@ -1339,7 +1447,7 @@ def find_recipe(
             - ingredients: List of ingredients required for the recipe
             - instructions: Step-by-step cooking instructions
     """
-    
+
     recipes = {
         "spaghetti": {
             "ingredients": ["pasta", "tomato sauce", "ground beef", "parmesan"],
@@ -1347,7 +1455,7 @@ def find_recipe(
                 "Boil pasta until al dente.",
                 "Cook ground beef in a pan.",
                 "Add tomato sauce to beef and simmer.",
-                "Combine pasta with sauce and serve with parmesan."
+                "Combine pasta with sauce and serve with parmesan.",
             ],
         },
         "vegetable curry": {
@@ -1356,23 +1464,34 @@ def find_recipe(
                 "Chop vegetables and sauté in a pan.",
                 "Add curry powder and stir well.",
                 "Pour in coconut milk and simmer until thick.",
-                "Serve with cooked rice."
+                "Serve with cooked rice.",
             ],
         },
         "chicken salad": {
-            "ingredients": ["chicken breast", "lettuce", "tomatoes", "cucumber", "dressing"],
+            "ingredients": [
+                "chicken breast",
+                "lettuce",
+                "tomatoes",
+                "cucumber",
+                "dressing",
+            ],
             "instructions": [
                 "Grill chicken breast and slice.",
                 "Chop lettuce, tomatoes, and cucumber.",
                 "Mix all ingredients in a bowl.",
-                "Add dressing and toss before serving."
+                "Add dressing and toss before serving.",
             ],
         },
     }
 
     # Filter recipes based on dietary preference
     if dietary_preference == "vegetarian":
-        recipes = {k: v for k, v in recipes.items() if "ground beef" not in v["ingredients"] and "chicken breast" not in v["ingredients"]}
+        recipes = {
+            k: v
+            for k, v in recipes.items()
+            if "ground beef" not in v["ingredients"]
+            and "chicken breast" not in v["ingredients"]
+        }
     elif dietary_preference == "Halal":
         # Assuming all recipes are Halal for simplicity
         pass
@@ -1386,10 +1505,13 @@ def find_recipe(
         "instructions": recipes[dish]["instructions"],
     }
 
+
 from typing import Dict, List, Optional
 
 
-def find_restaurant(location: str, food_type: Optional[str] = None) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+def find_restaurant(
+    location: str, food_type: Optional[str] = None
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Find a restaurant near a location.
 
     Args:
@@ -1405,17 +1527,47 @@ def find_restaurant(location: str, food_type: Optional[str] = None) -> Dict[str,
                 - rating: Average rating of the restaurant
                 - food_type: Type of food served
     """
-    
+
     sample_data = {
         "New York": [
-            {"name": "Joe's Pizza", "address": "7 Carmine St", "rating": 4.5, "food_type": "Italian"},
-            {"name": "Shake Shack", "address": "Madison Ave", "rating": 4.2, "food_type": "American"},
-            {"name": "Sushi Nakazawa", "address": "23 Commerce St", "rating": 4.8, "food_type": "Japanese"},
+            {
+                "name": "Joe's Pizza",
+                "address": "7 Carmine St",
+                "rating": 4.5,
+                "food_type": "Italian",
+            },
+            {
+                "name": "Shake Shack",
+                "address": "Madison Ave",
+                "rating": 4.2,
+                "food_type": "American",
+            },
+            {
+                "name": "Sushi Nakazawa",
+                "address": "23 Commerce St",
+                "rating": 4.8,
+                "food_type": "Japanese",
+            },
         ],
         "San Francisco": [
-            {"name": "Tartine Bakery", "address": "600 Guerrero St", "rating": 4.7, "food_type": "Bakery"},
-            {"name": "La Taqueria", "address": "2889 Mission St", "rating": 4.6, "food_type": "Mexican"},
-            {"name": "House of Prime Rib", "address": "1906 Van Ness Ave", "rating": 4.7, "food_type": "Steakhouse"},
+            {
+                "name": "Tartine Bakery",
+                "address": "600 Guerrero St",
+                "rating": 4.7,
+                "food_type": "Bakery",
+            },
+            {
+                "name": "La Taqueria",
+                "address": "2889 Mission St",
+                "rating": 4.6,
+                "food_type": "Mexican",
+            },
+            {
+                "name": "House of Prime Rib",
+                "address": "1906 Van Ness Ave",
+                "rating": 4.7,
+                "food_type": "Steakhouse",
+            },
         ],
     }
 
@@ -1424,12 +1576,15 @@ def find_restaurant(location: str, food_type: Optional[str] = None) -> Dict[str,
 
     restaurants = sample_data[location]
     if food_type:
-        restaurants = [r for r in restaurants if r["food_type"].lower() == food_type.lower()]
+        restaurants = [
+            r for r in restaurants if r["food_type"].lower() == food_type.lower()
+        ]
 
     return {
         "location": location,
         "restaurants": restaurants,
     }
+
 
 from typing import Dict, List, Union
 
@@ -1462,9 +1617,24 @@ def find_restaurants_near_venue(
 
     # Simulated sample data
     sample_restaurants = [
-        {"name": "Pasta Palace", "cuisine": "italian", "distance": 0.3, "availability": "12:00-22:00"},
-        {"name": "Taco Town", "cuisine": "mexican", "distance": 0.5, "availability": "11:00-23:00"},
-        {"name": "Green Garden", "cuisine": "vegan", "distance": 0.2, "availability": "10:00-20:00"},
+        {
+            "name": "Pasta Palace",
+            "cuisine": "italian",
+            "distance": 0.3,
+            "availability": "12:00-22:00",
+        },
+        {
+            "name": "Taco Town",
+            "cuisine": "mexican",
+            "distance": 0.5,
+            "availability": "11:00-23:00",
+        },
+        {
+            "name": "Green Garden",
+            "cuisine": "vegan",
+            "distance": 0.2,
+            "availability": "10:00-20:00",
+        },
     ]
 
     # Filter by cuisine
@@ -1479,20 +1649,28 @@ def find_restaurants_near_venue(
     if open_now:
         current_time = "14:00"  # Simulated current time
         sample_restaurants = [
-            r for r in sample_restaurants if r["availability"].split("-")[0] <= current_time <= r["availability"].split("-")[1]
+            r
+            for r in sample_restaurants
+            if r["availability"].split("-")[0]
+            <= current_time
+            <= r["availability"].split("-")[1]
         ]
 
     # Filter by time window
     if time_window:
         start_time, end_time = time_window["start_time"], time_window["end_time"]
         sample_restaurants = [
-            r for r in sample_restaurants if start_time <= r["availability"].split("-")[0] and end_time >= r["availability"].split("-")[1]
+            r
+            for r in sample_restaurants
+            if start_time <= r["availability"].split("-")[0]
+            and end_time >= r["availability"].split("-")[1]
         ]
 
     return {
         "venue_id": venue_id,
         "restaurants": sample_restaurants,
     }
+
 
 from typing import Dict, List
 
@@ -1505,11 +1683,12 @@ def get_beverages_menu() -> Dict[str, List[str]]:
             - hot: List of available hot beverages
             - cold: List of available cold beverages
     """
-    
+
     return {
         "hot": ["Coffee", "Tea", "Hot Chocolate", "Espresso"],
         "cold": ["Iced Coffee", "Lemonade", "Iced Tea", "Smoothie"],
     }
+
 
 from typing import Dict, Union
 
@@ -1527,14 +1706,14 @@ def get_calories(meal_name: str, servings: float = 1) -> Dict[str, Union[str, fl
             - calories_per_serving: Calories in one serving of the meal
             - total_calories: Total calories based on the number of servings
     """
-    
+
     sample_calories = {
         "Spaghetti Bolognese": 350,
         "Caesar Salad": 150,
         "Grilled Chicken": 220,
         "Vegetable Stir Fry": 180,
     }
-    
+
     if meal_name not in sample_calories:
         raise ValueError(f"Meal not supported: {meal_name}")
 
@@ -1547,10 +1726,13 @@ def get_calories(meal_name: str, servings: float = 1) -> Dict[str, Union[str, fl
         "total_calories": total_calories,
     }
 
+
 from typing import Dict, Union
 
 
-def get_cals(prod_name: Union[str, None] = None, barcode: Union[str, None] = None) -> Dict[str, Union[str, int]]:
+def get_cals(
+    prod_name: Union[str, None] = None, barcode: Union[str, None] = None
+) -> Dict[str, Union[str, int]]:
     """Retrieve calorific content for a given product.
 
     Args:
@@ -1565,7 +1747,7 @@ def get_cals(prod_name: Union[str, None] = None, barcode: Union[str, None] = Non
     Raises:
         ValueError: If neither prod_name nor barcode is provided or if the product is not found.
     """
-    
+
     if not prod_name and not barcode:
         raise ValueError("Either 'prod_name' or 'barcode' must be provided.")
 
@@ -1591,6 +1773,7 @@ def get_cals(prod_name: Union[str, None] = None, barcode: Union[str, None] = Non
         "product": key,
         "calories": sample_data[key],
     }
+
 
 from typing import Dict, Union
 
@@ -1628,6 +1811,7 @@ def get_carbs(meal_name: str, servings: float = 1) -> Dict[str, Union[str, float
         "carbohydrates": total_carbs,
     }
 
+
 from typing import Dict, List
 
 
@@ -1650,9 +1834,10 @@ def get_daily_specials_menu() -> Dict[str, List[str]]:
 
     return sample_menu
 
-from typing import Dict
-from datetime import datetime, timedelta
+
 import hashlib
+from datetime import datetime, timedelta
+from typing import Dict
 
 
 def get_delivery_eta(
@@ -1679,7 +1864,9 @@ def get_delivery_eta(
     # Generate a consistent but varied delivery time based on restaurant and address
     hash_input = f"{restaurant_name}{delivery_address}".encode()
     hash_digest = hashlib.sha256(hash_input).hexdigest()
-    delivery_minutes = int(hash_digest[:2], 16) % 60 + 20  # Random delivery time between 20 and 79 minutes
+    delivery_minutes = (
+        int(hash_digest[:2], 16) % 60 + 20
+    )  # Random delivery time between 20 and 79 minutes
 
     estimated_arrival = order_datetime + timedelta(minutes=delivery_minutes)
 
@@ -1688,6 +1875,7 @@ def get_delivery_eta(
         "delivery_address": delivery_address,
         "estimated_arrival": estimated_arrival.isoformat(),
     }
+
 
 from typing import Dict, Literal
 
@@ -1720,6 +1908,7 @@ def get_espresso_grind(roast: str, is_ground: bool) -> Dict[str, str]:
         "grind_size": roast_to_grind[roast],
         "note": "Adjust grind size based on personal taste preference",
     }
+
 
 from typing import Dict, Literal
 
@@ -1755,6 +1944,7 @@ def get_espresso_weight(origin: str, process: str) -> Dict[str, Union[str, int]]
         "end_weight": sample_weights[key],
     }
 
+
 from typing import Dict, List, Union
 
 
@@ -1768,7 +1958,7 @@ def get_flavours(preferences: Union[str, None] = None) -> Dict[str, List[str]]:
         Dict containing:
             - flavours: List of available flavours, sorted by preferences if provided
     """
-    
+
     available_flavours = [
         "vanilla",
         "chocolate",
@@ -1783,12 +1973,13 @@ def get_flavours(preferences: Union[str, None] = None) -> Dict[str, List[str]]:
     if preferences:
         sorted_flavours = sorted(
             available_flavours,
-            key=lambda flavour: (preferences.lower() not in flavour.lower(), flavour)
+            key=lambda flavour: (preferences.lower() not in flavour.lower(), flavour),
         )
     else:
         sorted_flavours = available_flavours
 
     return {"flavours": sorted_flavours}
+
 
 from typing import Dict, List, Union
 
@@ -1804,25 +1995,28 @@ def get_guest_details(guest_name: str) -> Dict[str, Union[str, List[str]]]:
             - guest_name: Name of the guest
             - dietary_restrictions: List of dietary restrictions for the guest
     """
-    
+
     guest_data = {
         "Alice Johnson": ["vegetarian", "gluten-free"],
         "Bob Smith": ["vegan"],
         "Charlie Brown": ["nut allergy"],
     }
-    
+
     if guest_name not in guest_data:
         raise ValueError(f"Guest not found: {guest_name}")
-    
+
     return {
         "guest_name": guest_name,
         "dietary_restrictions": guest_data[guest_name],
     }
 
+
 from typing import Dict, List, Union
 
 
-def get_ingr(prod_name: Union[str, None] = None, barcode: Union[str, None] = None) -> Dict[str, Union[str, List[str]]]:
+def get_ingr(
+    prod_name: Union[str, None] = None, barcode: Union[str, None] = None
+) -> Dict[str, Union[str, List[str]]]:
     """Retrieve ingredient list for a given product.
 
     Args:
@@ -1834,16 +2028,28 @@ def get_ingr(prod_name: Union[str, None] = None, barcode: Union[str, None] = Non
             - product: Name of the product
             - ingredients: List of ingredients for the product
     """
-    
+
     if prod_name is None and barcode is None:
         raise ValueError("Either 'prod_name' or 'barcode' must be provided.")
 
     # Sample data for demonstration purposes
     sample_data = {
-        "123456789012": {"product": "Chocolate Bar", "ingredients": ["Sugar", "Cocoa Butter", "Milk", "Cocoa Mass"]},
-        "987654321098": {"product": "Orange Juice", "ingredients": ["Water", "Orange Concentrate", "Sugar"]},
-        "Chocolate Bar": {"product": "Chocolate Bar", "ingredients": ["Sugar", "Cocoa Butter", "Milk", "Cocoa Mass"]},
-        "Orange Juice": {"product": "Orange Juice", "ingredients": ["Water", "Orange Concentrate", "Sugar"]},
+        "123456789012": {
+            "product": "Chocolate Bar",
+            "ingredients": ["Sugar", "Cocoa Butter", "Milk", "Cocoa Mass"],
+        },
+        "987654321098": {
+            "product": "Orange Juice",
+            "ingredients": ["Water", "Orange Concentrate", "Sugar"],
+        },
+        "Chocolate Bar": {
+            "product": "Chocolate Bar",
+            "ingredients": ["Sugar", "Cocoa Butter", "Milk", "Cocoa Mass"],
+        },
+        "Orange Juice": {
+            "product": "Orange Juice",
+            "ingredients": ["Water", "Orange Concentrate", "Sugar"],
+        },
     }
 
     key = barcode if barcode else prod_name
@@ -1852,10 +2058,13 @@ def get_ingr(prod_name: Union[str, None] = None, barcode: Union[str, None] = Non
 
     return sample_data[key]
 
+
 from typing import Dict, List, Optional
 
 
-def get_inventory(category: Optional[str] = None) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def get_inventory(
+    category: Optional[str] = None,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Retrieve ingredient inventory based on category.
 
     Args:
@@ -1868,7 +2077,7 @@ def get_inventory(category: Optional[str] = None) -> Dict[str, Union[str, List[D
                 - name: Name of the ingredient
                 - quantity: Quantity available in stock
     """
-    
+
     inventory = {
         "fruits": [
             {"name": "apple", "quantity": 50},
@@ -1891,13 +2100,14 @@ def get_inventory(category: Optional[str] = None) -> Dict[str, Union[str, List[D
             "category": category,
             "items": inventory[category],
         }
-    
+
     # If no category is specified, return all items
     all_items = [item for items in inventory.values() for item in items]
     return {
         "category": "all",
         "items": all_items,
     }
+
 
 from typing import Dict, List
 
@@ -1919,6 +2129,7 @@ def get_meals_menu() -> Dict[str, List[str]]:
 
     return sample_menu
 
+
 from typing import Dict, List
 
 
@@ -1933,15 +2144,39 @@ def get_menu_item_ingredients(menu_item: str) -> Dict[str, List[str]]:
             - menu_item: The name of the menu item
             - ingredients: List of ingredients for the menu item
     """
-    
+
     menu_database = {
         "Margherita Pizza": ["tomato sauce", "mozzarella cheese", "basil", "olive oil"],
-        "Caesar Salad": ["romaine lettuce", "croutons", "parmesan cheese", "Caesar dressing"],
-        "Spaghetti Carbonara": ["spaghetti", "eggs", "parmesan cheese", "pancetta", "black pepper"],
-        "Chicken Tacos": ["chicken breast", "taco shells", "lettuce", "tomato", "cheddar cheese", "sour cream"],
-        "Vegan Burger": ["vegan patty", "lettuce", "tomato", "vegan cheese", "burger bun"],
+        "Caesar Salad": [
+            "romaine lettuce",
+            "croutons",
+            "parmesan cheese",
+            "Caesar dressing",
+        ],
+        "Spaghetti Carbonara": [
+            "spaghetti",
+            "eggs",
+            "parmesan cheese",
+            "pancetta",
+            "black pepper",
+        ],
+        "Chicken Tacos": [
+            "chicken breast",
+            "taco shells",
+            "lettuce",
+            "tomato",
+            "cheddar cheese",
+            "sour cream",
+        ],
+        "Vegan Burger": [
+            "vegan patty",
+            "lettuce",
+            "tomato",
+            "vegan cheese",
+            "burger bun",
+        ],
     }
-    
+
     if menu_item not in menu_database:
         raise ValueError(f"Menu item not found: {menu_item}")
 
@@ -1950,12 +2185,12 @@ def get_menu_item_ingredients(menu_item: str) -> Dict[str, List[str]]:
         "ingredients": menu_database[menu_item],
     }
 
+
 from typing import Dict, List, Optional
 
 
 def get_menu_items(
-    dietary_restriction: Optional[str] = None,
-    include_secret_menu: bool = False
+    dietary_restriction: Optional[str] = None, include_secret_menu: bool = False
 ) -> Dict[str, List[str]]:
     """Retrieve a list of all menu items.
 
@@ -1971,7 +2206,7 @@ def get_menu_items(
         "vegan": ["Vegan Burger", "Vegan Salad"],
         "gluten-free": ["Gluten-Free Pizza", "Gluten-Free Pasta"],
         "vegetarian": ["Vegetarian Sandwich", "Vegetarian Soup"],
-        "secret": ["Secret Nachos", "Secret Smoothie"]
+        "secret": ["Secret Nachos", "Secret Smoothie"],
     }
 
     if dietary_restriction and dietary_restriction not in all_menu_items:
@@ -1988,14 +2223,15 @@ def get_menu_items(
     if include_secret_menu:
         menu_items.extend(all_menu_items["secret"])
 
-    return {
-        "menu_items": menu_items
-    }
+    return {"menu_items": menu_items}
+
 
 from typing import Dict, Union
 
 
-def get_nuts(prod_name: Union[str, None] = None, barcode: Union[str, None] = None) -> Dict[str, Union[str, float, Dict[str, float]]]:
+def get_nuts(
+    prod_name: Union[str, None] = None, barcode: Union[str, None] = None
+) -> Dict[str, Union[str, float, Dict[str, float]]]:
     """Retrieve nutrients for a given food product by name or barcode.
 
     Args:
@@ -2011,7 +2247,7 @@ def get_nuts(prod_name: Union[str, None] = None, barcode: Union[str, None] = Non
     Raises:
         ValueError: If neither prod_name nor barcode is provided or if the product is not found.
     """
-    
+
     if not prod_name and not barcode:
         raise ValueError("Either 'prod_name' or 'barcode' must be provided.")
 
@@ -2056,17 +2292,24 @@ def get_nuts(prod_name: Union[str, None] = None, barcode: Union[str, None] = Non
     key = barcode if barcode else prod_name
 
     # Search for the product in the sample data
-    product_info = sample_data.get(key) or next((v for k, v in sample_data.items() if v["product"] == prod_name), None)
+    product_info = sample_data.get(key) or next(
+        (v for k, v in sample_data.items() if v["product"] == prod_name), None
+    )
 
     if not product_info:
-        raise ValueError(f"Product not found for {'barcode' if barcode else 'prod_name'}: {key}")
+        raise ValueError(
+            f"Product not found for {'barcode' if barcode else 'prod_name'}: {key}"
+        )
 
     return product_info
+
 
 from typing import Dict, Union
 
 
-def get_price_level(restaurant_id: str, currency: str = "USD") -> Dict[str, Union[str, int]]:
+def get_price_level(
+    restaurant_id: str, currency: str = "USD"
+) -> Dict[str, Union[str, int]]:
     """Returns the price level or cost range for a specific restaurant.
 
     Args:
@@ -2091,6 +2334,7 @@ def get_price_level(restaurant_id: str, currency: str = "USD") -> Dict[str, Unio
         "currency": currency,
     }
 
+
 from typing import Dict, Union
 
 
@@ -2107,7 +2351,7 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
             - protein_per_serving: Protein content per serving in grams
             - total_protein: Total protein content for the given servings in grams
     """
-    
+
     # Sample protein data per serving for different meals
     protein_data = {
         "chicken salad": 30.0,
@@ -2116,7 +2360,7 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
         "tofu curry": 20.0,
         "pasta primavera": 12.0,
     }
-    
+
     if meal_name not in protein_data:
         raise ValueError(f"Meal not supported: {meal_name}")
 
@@ -2128,6 +2372,7 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
         "protein_per_serving": protein_per_serving,
         "total_protein": total_protein,
     }
+
 
 from typing import Dict, List, Union
 
@@ -2157,7 +2402,7 @@ def get_pubs(
             - serves_food: Whether the pub serves food
             - live_music: Whether the pub has live music
     """
-    
+
     sample_pubs = [
         {
             "name": "The Happy Pint",
@@ -2189,7 +2434,8 @@ def get_pubs(
         raise ValueError("Location must be specified")
 
     filtered_pubs = [
-        pub for pub in sample_pubs
+        pub
+        for pub in sample_pubs
         if pub["location"] == loc
         and pub["closing_time"] <= clo_time
         and pub["opening_time"] >= op_time
@@ -2198,6 +2444,7 @@ def get_pubs(
     ]
 
     return filtered_pubs
+
 
 from typing import Dict
 
@@ -2214,18 +2461,18 @@ def get_recipe(name: str) -> Dict[str, str]:
             - ingredients: List of ingredients required for the recipe
             - instructions: Step-by-step instructions to prepare the dish
     """
-    
+
     sample_recipes = {
         "Pancakes": {
             "ingredients": "2 cups all-purpose flour, 2 tablespoons sugar, 2 teaspoons baking powder, 1/2 teaspoon salt, 2 eggs, 1 1/2 cups milk, 1/4 cup melted butter",
-            "instructions": "1. In a large bowl, whisk together the flour, sugar, baking powder, and salt. 2. In another bowl, beat the eggs and then whisk in the milk and melted butter. 3. Pour the wet ingredients into the dry ingredients and stir until just combined. 4. Heat a non-stick skillet over medium heat and pour 1/4 cup of batter for each pancake. 5. Cook until bubbles form on the surface, then flip and cook until golden brown. Serve warm."
+            "instructions": "1. In a large bowl, whisk together the flour, sugar, baking powder, and salt. 2. In another bowl, beat the eggs and then whisk in the milk and melted butter. 3. Pour the wet ingredients into the dry ingredients and stir until just combined. 4. Heat a non-stick skillet over medium heat and pour 1/4 cup of batter for each pancake. 5. Cook until bubbles form on the surface, then flip and cook until golden brown. Serve warm.",
         },
         "Spaghetti Bolognese": {
             "ingredients": "400g spaghetti, 2 tablespoons olive oil, 1 onion, chopped, 2 garlic cloves, minced, 500g minced beef, 800g canned tomatoes, 2 tablespoons tomato paste, 1 teaspoon dried oregano, salt and pepper to taste",
-            "instructions": "1. Cook the spaghetti according to package instructions. 2. In a large pan, heat the olive oil over medium heat. Add the onion and garlic, and sauté until soft. 3. Add the minced beef and cook until browned. 4. Stir in the canned tomatoes, tomato paste, oregano, salt, and pepper. Simmer for 20 minutes. 5. Serve the sauce over the cooked spaghetti."
-        }
+            "instructions": "1. Cook the spaghetti according to package instructions. 2. In a large pan, heat the olive oil over medium heat. Add the onion and garlic, and sauté until soft. 3. Add the minced beef and cook until browned. 4. Stir in the canned tomatoes, tomato paste, oregano, salt, and pepper. Simmer for 20 minutes. 5. Serve the sauce over the cooked spaghetti.",
+        },
     }
-    
+
     if name not in sample_recipes:
         raise ValueError(f"Recipe not found: {name}")
 
@@ -2235,10 +2482,13 @@ def get_recipe(name: str) -> Dict[str, str]:
         "instructions": sample_recipes[name]["instructions"],
     }
 
+
 from typing import Dict, List, Literal
 
 
-def get_recipes(type: Literal["cake", "cookie", "candy", "chocolate"]) -> Dict[str, List[str]]:
+def get_recipes(
+    type: Literal["cake", "cookie", "candy", "chocolate"]
+) -> Dict[str, List[str]]:
     """Gets all the recipes of a given type.
 
     Args:
@@ -2249,14 +2499,22 @@ def get_recipes(type: Literal["cake", "cookie", "candy", "chocolate"]) -> Dict[s
             - type: The type of recipes requested
             - recipes: List of recipe names for the given type
     """
-    
+
     sample_recipes = {
         "cake": ["Chocolate Cake", "Vanilla Sponge Cake", "Red Velvet Cake"],
-        "cookie": ["Chocolate Chip Cookie", "Oatmeal Raisin Cookie", "Peanut Butter Cookie"],
+        "cookie": [
+            "Chocolate Chip Cookie",
+            "Oatmeal Raisin Cookie",
+            "Peanut Butter Cookie",
+        ],
         "candy": ["Gummy Bears", "Caramel Toffee", "Lollipop"],
-        "chocolate": ["Dark Chocolate Truffles", "Milk Chocolate Bar", "White Chocolate Bark"],
+        "chocolate": [
+            "Dark Chocolate Truffles",
+            "Milk Chocolate Bar",
+            "White Chocolate Bark",
+        ],
     }
-    
+
     if type not in sample_recipes:
         raise ValueError(f"Recipe type not supported: {type}")
 
@@ -2264,6 +2522,7 @@ def get_recipes(type: Literal["cake", "cookie", "candy", "chocolate"]) -> Dict[s
         "type": type,
         "recipes": sample_recipes[type],
     }
+
 
 from typing import Dict, List
 
@@ -2279,13 +2538,21 @@ def get_refreshments(city: str) -> Dict[str, List[str]]:
             - city: City name
             - venues: List of venue names offering refreshments
     """
-    
+
     sample_data = {
-        "New York": ["Central Park Kiosk", "Times Square Cafe", "Brooklyn Bridge Stand"],
-        "Los Angeles": ["Santa Monica Pier Refreshments", "Hollywood Snack Bar", "Venice Beach Drinks"],
+        "New York": [
+            "Central Park Kiosk",
+            "Times Square Cafe",
+            "Brooklyn Bridge Stand",
+        ],
+        "Los Angeles": [
+            "Santa Monica Pier Refreshments",
+            "Hollywood Snack Bar",
+            "Venice Beach Drinks",
+        ],
         "Chicago": ["Millennium Park Cafe", "Navy Pier Refreshments", "The Bean Kiosk"],
     }
-    
+
     if city not in sample_data:
         raise ValueError(f"City not supported: {city}")
 
@@ -2294,10 +2561,13 @@ def get_refreshments(city: str) -> Dict[str, List[str]]:
         "venues": sample_data.get(city, []),
     }
 
+
 from typing import Dict, Union
 
 
-def get_res_dishes(restaurant_id: str, cuisine_type: str) -> Dict[str, Union[str, bool]]:
+def get_res_dishes(
+    restaurant_id: str, cuisine_type: str
+) -> Dict[str, Union[str, bool]]:
     """Check if the restaurant offers a specific type of cuisine.
 
     Args:
@@ -2309,23 +2579,21 @@ def get_res_dishes(restaurant_id: str, cuisine_type: str) -> Dict[str, Union[str
             - restaurant_id: The unique identifier for the restaurant
             - offers_cuisine: Boolean indicating if the restaurant offers the specified cuisine
     """
-    
+
     # Simulated database of restaurants and their offered cuisines
     restaurant_data = {
         "res_001": ["seafood", "italian", "mexican"],
         "res_002": ["chinese", "thai"],
         "res_003": ["seafood", "french"],
     }
-    
+
     if restaurant_id not in restaurant_data:
         raise ValueError(f"Restaurant ID not found: {restaurant_id}")
-    
+
     offers_cuisine = cuisine_type.lower() in restaurant_data[restaurant_id]
-    
-    return {
-        "restaurant_id": restaurant_id,
-        "offers_cuisine": offers_cuisine
-    }
+
+    return {"restaurant_id": restaurant_id, "offers_cuisine": offers_cuisine}
+
 
 from typing import Dict, List
 
@@ -2341,22 +2609,23 @@ def get_reservation_list(service: str) -> Dict[str, List[str]]:
             - service: Name of the service
             - guests: List of guest names with reservations
     """
-    
+
     sample_reservations = {
         "spa": ["Alice Johnson", "Bob Smith", "Charlie Brown"],
         "restaurant": ["David Wilson", "Eve Davis", "Frank Miller"],
         "gym": ["Grace Lee", "Hannah King", "Ian Scott"],
     }
-    
+
     if service not in sample_reservations:
         raise ValueError(f"Service not supported: {service}")
-    
+
     return {
         "service": service,
         "guests": sample_reservations.get(service, []),
     }
 
-from typing import Dict, List, Union, Optional
+
+from typing import Dict, List, Optional, Union
 
 
 def get_restaurants(
@@ -2383,13 +2652,43 @@ def get_restaurants(
             - closing_time: Closing time
             - rating: Rating out of 5
     """
-    
+
     sample_restaurants = [
-        {"name": "Pasta Palace", "cuisine": "Italian", "opening_time": "11:00", "closing_time": "23:00", "rating": 4.5},
-        {"name": "Sushi Central", "cuisine": "Japanese", "opening_time": "12:00", "closing_time": "22:00", "rating": 4.7},
-        {"name": "Burger Barn", "cuisine": "American", "opening_time": "10:00", "closing_time": "21:00", "rating": 4.2},
-        {"name": "Curry Corner", "cuisine": "Indian", "opening_time": "11:30", "closing_time": "22:30", "rating": 4.6},
-        {"name": "Taco Town", "cuisine": "Mexican", "opening_time": "09:00", "closing_time": "20:00", "rating": 4.3},
+        {
+            "name": "Pasta Palace",
+            "cuisine": "Italian",
+            "opening_time": "11:00",
+            "closing_time": "23:00",
+            "rating": 4.5,
+        },
+        {
+            "name": "Sushi Central",
+            "cuisine": "Japanese",
+            "opening_time": "12:00",
+            "closing_time": "22:00",
+            "rating": 4.7,
+        },
+        {
+            "name": "Burger Barn",
+            "cuisine": "American",
+            "opening_time": "10:00",
+            "closing_time": "21:00",
+            "rating": 4.2,
+        },
+        {
+            "name": "Curry Corner",
+            "cuisine": "Indian",
+            "opening_time": "11:30",
+            "closing_time": "22:30",
+            "rating": 4.6,
+        },
+        {
+            "name": "Taco Town",
+            "cuisine": "Mexican",
+            "opening_time": "09:00",
+            "closing_time": "20:00",
+            "rating": 4.3,
+        },
     ]
 
     def matches_filters(restaurant: Dict[str, Union[str, float]]) -> bool:
@@ -2405,7 +2704,10 @@ def get_restaurants(
             return False
         return True
 
-    return [restaurant for restaurant in sample_restaurants if matches_filters(restaurant)]
+    return [
+        restaurant for restaurant in sample_restaurants if matches_filters(restaurant)
+    ]
+
 
 from typing import Dict, Union
 
@@ -2426,39 +2728,36 @@ def get_step(name: str, step: int = 1) -> Dict[str, Union[str, int]]:
     Raises:
         ValueError: If the recipe name is not supported or the step number is invalid.
     """
-    
+
     recipes = {
         "Pancakes": [
             "Mix flour, sugar, baking powder, and salt.",
             "Whisk in milk, eggs, and melted butter.",
             "Pour batter onto a hot griddle.",
-            "Cook until bubbles form, then flip and cook until golden."
+            "Cook until bubbles form, then flip and cook until golden.",
         ],
         "Spaghetti Bolognese": [
             "Heat oil in a pan and cook onions until soft.",
             "Add minced beef and cook until browned.",
             "Stir in tomato sauce and simmer for 20 minutes.",
-            "Serve over cooked spaghetti."
+            "Serve over cooked spaghetti.",
         ],
         "Caesar Salad": [
             "Chop lettuce and place in a bowl.",
             "Add croutons and grated parmesan cheese.",
             "Toss with Caesar dressing.",
-            "Top with grilled chicken slices."
-        ]
+            "Top with grilled chicken slices.",
+        ],
     }
-    
+
     if name not in recipes:
         raise ValueError(f"Recipe not supported: {name}")
-    
+
     if step < 1 or step > len(recipes[name]):
         raise ValueError(f"Invalid step number: {step} for recipe {name}")
-    
-    return {
-        "name": name,
-        "step": step,
-        "instruction": recipes[name][step - 1]
-    }
+
+    return {"name": name, "step": step, "instruction": recipes[name][step - 1]}
+
 
 from typing import Dict, List
 
@@ -2474,13 +2773,17 @@ def gluten_free_cafes(city: str) -> Dict[str, List[str]]:
             - city: City name
             - cafes: List of cafes with gluten-free options
     """
-    
+
     sample_data = {
-        "San Francisco": ["Cafe Gratitude", "The Plant Cafe Organic", "KitTea Cat Lounge"],
+        "San Francisco": [
+            "Cafe Gratitude",
+            "The Plant Cafe Organic",
+            "KitTea Cat Lounge",
+        ],
         "Berlin": ["Brammibal's Donuts", "No Milk Today", "Goodies Berlin"],
         "New York": ["By the Way Bakery", "The Little Beet", "Hu Kitchen"],
     }
-    
+
     if city not in sample_data:
         raise ValueError(f"City not supported: {city}")
 
@@ -2489,11 +2792,12 @@ def gluten_free_cafes(city: str) -> Dict[str, List[str]]:
         "cafes": sample_data.get(city, []),
     }
 
+
 from typing import Dict, List
 
 
 def map_dietary_restrictions_to_unsafe_ingredients(
-    dietary_restriction: str
+    dietary_restriction: str,
 ) -> Dict[str, Union[str, List[str]]]:
     """Find which ingredients are unsafe for a given dietary restriction.
 
@@ -2505,7 +2809,7 @@ def map_dietary_restrictions_to_unsafe_ingredients(
             - dietary_restriction: The dietary restriction queried
             - unsafe_ingredients: List of ingredients that are unsafe for the given restriction
     """
-    
+
     restriction_to_ingredients = {
         "vegan": ["meat", "dairy", "eggs", "honey"],
         "vegetarian": ["meat", "fish", "poultry"],
@@ -2513,7 +2817,7 @@ def map_dietary_restrictions_to_unsafe_ingredients(
         "nut-free": ["almonds", "walnuts", "peanuts"],
         "dairy-free": ["milk", "cheese", "butter"],
     }
-    
+
     if dietary_restriction not in restriction_to_ingredients:
         raise ValueError(f"Dietary restriction not supported: {dietary_restriction}")
 
@@ -2522,10 +2826,13 @@ def map_dietary_restrictions_to_unsafe_ingredients(
         "unsafe_ingredients": restriction_to_ingredients[dietary_restriction],
     }
 
+
 from typing import Dict, List, Union
 
 
-def near_restaurants(city: str, is_open: Union[str, None] = None) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+def near_restaurants(
+    city: str, is_open: Union[str, None] = None
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
     """Find nearby places to eat in a specified city.
 
     Args:
@@ -2541,17 +2848,47 @@ def near_restaurants(city: str, is_open: Union[str, None] = None) -> Dict[str, U
                 - open_hour: Opening hour in 'HH:MM' format
                 - close_hour: Closing hour in 'HH:MM' format
     """
-    
+
     sample_data = {
         "New York": [
-            {"name": "Joe's Pizza", "cuisine": "Italian", "open_hour": "11:00", "close_hour": "23:00"},
-            {"name": "Shake Shack", "cuisine": "American", "open_hour": "10:00", "close_hour": "22:00"},
-            {"name": "Sushi Nakazawa", "cuisine": "Japanese", "open_hour": "12:00", "close_hour": "22:00"},
+            {
+                "name": "Joe's Pizza",
+                "cuisine": "Italian",
+                "open_hour": "11:00",
+                "close_hour": "23:00",
+            },
+            {
+                "name": "Shake Shack",
+                "cuisine": "American",
+                "open_hour": "10:00",
+                "close_hour": "22:00",
+            },
+            {
+                "name": "Sushi Nakazawa",
+                "cuisine": "Japanese",
+                "open_hour": "12:00",
+                "close_hour": "22:00",
+            },
         ],
         "Los Angeles": [
-            {"name": "In-N-Out Burger", "cuisine": "American", "open_hour": "10:30", "close_hour": "01:00"},
-            {"name": "Guelaguetza", "cuisine": "Mexican", "open_hour": "11:00", "close_hour": "22:00"},
-            {"name": "Bestia", "cuisine": "Italian", "open_hour": "17:00", "close_hour": "23:00"},
+            {
+                "name": "In-N-Out Burger",
+                "cuisine": "American",
+                "open_hour": "10:30",
+                "close_hour": "01:00",
+            },
+            {
+                "name": "Guelaguetza",
+                "cuisine": "Mexican",
+                "open_hour": "11:00",
+                "close_hour": "22:00",
+            },
+            {
+                "name": "Bestia",
+                "cuisine": "Italian",
+                "open_hour": "17:00",
+                "close_hour": "23:00",
+            },
         ],
     }
 
@@ -2561,25 +2898,26 @@ def near_restaurants(city: str, is_open: Union[str, None] = None) -> Dict[str, U
     restaurants = sample_data[city]
 
     if is_open:
-        hour, minute = map(int, is_open.split(':'))
+        hour, minute = map(int, is_open.split(":"))
         is_open_minutes = hour * 60 + minute
         restaurants = [
-            r for r in restaurants
-            if int(r["open_hour"].split(':')[0]) * 60 + int(r["open_hour"].split(':')[1]) <= is_open_minutes <= int(r["close_hour"].split(':')[0]) * 60 + int(r["close_hour"].split(':')[1])
+            r
+            for r in restaurants
+            if int(r["open_hour"].split(":")[0]) * 60
+            + int(r["open_hour"].split(":")[1])
+            <= is_open_minutes
+            <= int(r["close_hour"].split(":")[0]) * 60
+            + int(r["close_hour"].split(":")[1])
         ]
 
-    return {
-        "city": city,
-        "restaurants": restaurants
-    }
+    return {"city": city, "restaurants": restaurants}
+
 
 from typing import Dict, Literal
 
 
 def order_burger(
-    size: Literal["S", "M", "L"] = "M",
-    fries: bool = False,
-    drink: bool = False
+    size: Literal["S", "M", "L"] = "M", fries: bool = False, drink: bool = False
 ) -> Dict[str, Union[str, bool, float]]:
     """Place an order for a burger meal.
 
@@ -2595,7 +2933,7 @@ def order_burger(
             - drink: Whether a drink is included
             - total_price: Total price of the meal
     """
-    
+
     # Mock pricing data
     size_prices = {"S": 5.0, "M": 7.0, "L": 9.0}
     fries_price = 2.0
@@ -2610,12 +2948,8 @@ def order_burger(
     if drink:
         total_price += drink_price
 
-    return {
-        "size": size,
-        "fries": fries,
-        "drink": drink,
-        "total_price": total_price
-    }
+    return {"size": size, "fries": fries, "drink": drink, "total_price": total_price}
+
 
 from typing import Dict
 
@@ -2632,32 +2966,33 @@ def order_chinese(order: str) -> Dict[str, str]:
             - status: The status of the order
             - estimated_time: Estimated time for delivery
     """
-    
+
     menu = {
         "Kung Pao Chicken": "available",
         "Sweet and Sour Pork": "available",
         "Spring Rolls": "unavailable",
         "Fried Rice": "available",
     }
-    
+
     if order not in menu:
         raise ValueError(f"Order item not on menu: {order}")
-    
+
     if menu[order] == "unavailable":
         return {
             "order": order,
             "status": "unavailable",
             "estimated_time": "N/A",
         }
-    
+
     # Simulate estimated delivery time based on a hash of the order
     estimated_time = f"{(hash(order) % 30) + 10} minutes"
-    
+
     return {
         "order": order,
         "status": "confirmed",
         "estimated_time": estimated_time,
     }
+
 
 from typing import Dict, List, Union
 
@@ -2669,7 +3004,7 @@ def order_food(
     mains: List[Dict[str, Union[str, int]]] = [],
     desserts: List[Dict[str, Union[str, int]]] = [],
     drinks: List[Dict[str, Union[str, int]]] = [],
-    order_complete: bool = False
+    order_complete: bool = False,
 ) -> Dict[str, Union[str, int, bool, List[Dict[str, Union[str, int]]]]]:
     """Allows a waiter to input the food order for a table.
 
@@ -2707,6 +3042,7 @@ def order_food(
 
     return sample_data
 
+
 from typing import Dict
 
 
@@ -2722,14 +3058,14 @@ def order_indian(order: str) -> Dict[str, str]:
             - status: The status of the order
             - estimated_time: Estimated time for delivery
     """
-    
+
     sample_menu = {
         "Chicken Tikka Masala": "Order confirmed",
         "Paneer Butter Masala": "Order confirmed",
         "Lamb Vindaloo": "Order confirmed",
         "Vegetable Biryani": "Order confirmed",
     }
-    
+
     if order not in sample_menu:
         raise ValueError(f"Dish not available: {order}")
 
@@ -2746,10 +3082,13 @@ def order_indian(order: str) -> Dict[str, str]:
         "estimated_time": estimated_times[order],
     }
 
+
 from typing import Dict, Literal
 
 
-def order_pizza(size: Literal["M", "L", "XL", "XXL"], quantity: int = 1) -> Dict[str, Union[str, int, float]]:
+def order_pizza(
+    size: Literal["M", "L", "XL", "XXL"], quantity: int = 1
+) -> Dict[str, Union[str, int, float]]:
     """Place an order for a pizza.
 
     Args:
@@ -2768,7 +3107,7 @@ def order_pizza(size: Literal["M", "L", "XL", "XXL"], quantity: int = 1) -> Dict
         "XL": 15.99,
         "XXL": 18.99,
     }
-    
+
     if size not in price_chart:
         raise ValueError(f"Unsupported pizza size: {size}")
 
@@ -2780,14 +3119,13 @@ def order_pizza(size: Literal["M", "L", "XL", "XXL"], quantity: int = 1) -> Dict
         "total_price": round(total_price, 2),
     }
 
-from typing import Dict, Union
+
 from datetime import datetime
+from typing import Dict, Union
 
 
 def release_table(
-    table_id: str,
-    time: Dict[str, Union[int, str]],
-    is_clean: bool = False
+    table_id: str, time: Dict[str, Union[int, str]], is_clean: bool = False
 ) -> Dict[str, Union[str, bool]]:
     """Mark a table as free in the booking system.
 
@@ -2805,28 +3143,31 @@ def release_table(
     """
     if not isinstance(table_id, str) or not table_id:
         raise ValueError("Invalid table_id provided.")
-    
+
     try:
         release_time = datetime.strptime(f"{time['hour']}:{time['minute']}", "%H:%M")
     except (KeyError, ValueError):
-        raise ValueError("Invalid time format provided. Expected keys: 'hour', 'minute'.")
+        raise ValueError(
+            "Invalid time format provided. Expected keys: 'hour', 'minute'."
+        )
 
     return {
         "table_id": table_id,
         "status": "free",
         "released_at": release_time.strftime("%H:%M"),
-        "is_clean": is_clean
+        "is_clean": is_clean,
     }
 
-from typing import Dict, Union
+
 from datetime import datetime
+from typing import Dict, Union
 
 
 def request_booking(
     customer_id: str,
     booking_size: int = 1,
     time: Dict[str, Union[int, str]] = None,
-    dietary_needs: bool = False
+    dietary_needs: bool = False,
 ) -> Dict[str, Union[str, int, bool]]:
     """Matches a suitable table to the booking customer, if one is available.
 
@@ -2868,15 +3209,12 @@ def request_booking(
         "status": status,
     }
 
+
 from typing import Dict
 
 
 def reserve_restaurant(
-    restaurant_name: str,
-    city: str,
-    date: str,
-    time: str,
-    people: int
+    restaurant_name: str, city: str, date: str, time: str, people: int
 ) -> Dict[str, str]:
     """Reserve a table at a restaurant.
 
@@ -2896,12 +3234,12 @@ def reserve_restaurant(
         raise ValueError("Number of people must be greater than zero")
 
     # Simulate a confirmation number generation
-    confirmation_number = f"{hash((restaurant_name, city, date, time, people)) % 1000000:06}"
+    confirmation_number = (
+        f"{hash((restaurant_name, city, date, time, people)) % 1000000:06}"
+    )
 
-    return {
-        "confirmation_number": confirmation_number,
-        "status": "confirmed"
-    }
+    return {"confirmation_number": confirmation_number, "status": "confirmed"}
+
 
 from typing import Dict, Union
 
@@ -2925,14 +3263,16 @@ def reserve_seat(
             - sets_res: The number of seats reserved
             - confirmation_code: A unique confirmation code for the reservation
     """
-    
+
     if sets_res <= 0:
         raise ValueError("Number of seats reserved must be greater than zero.")
     if not (0 <= arrive_time <= 24):
         raise ValueError("Arrive time must be between 0 and 24.")
 
     # Simulate a confirmation code generation
-    confirmation_code = f"{hash((restaurant_id, tab_num, arrive_time, sets_res)) % 1000000:06}"
+    confirmation_code = (
+        f"{hash((restaurant_id, tab_num, arrive_time, sets_res)) % 1000000:06}"
+    )
 
     return {
         "restaurant_id": restaurant_id,
@@ -2942,8 +3282,9 @@ def reserve_seat(
         "confirmation_code": confirmation_code,
     }
 
-from typing import Dict, List, Literal, Union
+
 import hashlib
+from typing import Dict, List, Literal, Union
 
 
 def reserve_table(
@@ -3000,6 +3341,7 @@ def reserve_table(
         "phone": phone or "N/A",
     }
 
+
 from typing import Dict
 
 
@@ -3014,7 +3356,7 @@ def restaurant_rating(restaurant_name: str) -> Dict[str, Union[str, float]]:
             - restaurant_name: The name of the restaurant
             - star_rating: The star rating of the restaurant
     """
-    
+
     sample_ratings = {
         "The Gourmet Kitchen": 4.5,
         "Pizza Palace": 3.8,
@@ -3022,7 +3364,7 @@ def restaurant_rating(restaurant_name: str) -> Dict[str, Union[str, float]]:
         "Burger Haven": 4.0,
         "Pasta Paradise": 3.9,
     }
-    
+
     if restaurant_name not in sample_ratings:
         raise ValueError(f"Restaurant not found: {restaurant_name}")
 
@@ -3030,6 +3372,7 @@ def restaurant_rating(restaurant_name: str) -> Dict[str, Union[str, float]]:
         "restaurant_name": restaurant_name,
         "star_rating": sample_ratings[restaurant_name],
     }
+
 
 from typing import Dict
 
@@ -3047,7 +3390,7 @@ def schedule_holiday(date: str) -> Dict[str, str]:
     """
     # Validate the date format
     try:
-        day, month, year = map(int, date.split('/'))
+        day, month, year = map(int, date.split("/"))
     except ValueError:
         raise ValueError("Date must be in dd/mm/yyyy format")
 
@@ -3055,10 +3398,8 @@ def schedule_holiday(date: str) -> Dict[str, str]:
         raise ValueError("Invalid date provided")
 
     # Simulate scheduling the holiday
-    return {
-        "date": date,
-        "status": f"Restaurant will be closed on {date}"
-    }
+    return {"date": date, "status": f"Restaurant will be closed on {date}"}
+
 
 from typing import Dict, List, Union
 
@@ -3083,7 +3424,7 @@ def search_restaurants(
             - country: Country name
             - restaurants: List of restaurants with details such as name, cuisine, and average price
     """
-    
+
     # Sample data for demonstration purposes
     sample_data = {
         ("USA", "New York"): [
@@ -3107,7 +3448,7 @@ def search_restaurants(
     # Filter by price range if provided
     if price_range:
         min_price = price_range.get("min", 0)
-        max_price = price_range.get("max", float('inf'))
+        max_price = price_range.get("max", float("inf"))
         restaurants = [
             r for r in restaurants if min_price <= r["average_price"] <= max_price
         ]
@@ -3116,7 +3457,9 @@ def search_restaurants(
     if key_terms:
         key_terms_lower = [term.lower() for term in key_terms]
         restaurants = [
-            r for r in restaurants if any(term in r["cuisine"].lower() for term in key_terms_lower)
+            r
+            for r in restaurants
+            if any(term in r["cuisine"].lower() for term in key_terms_lower)
         ]
 
     return {
@@ -3125,13 +3468,12 @@ def search_restaurants(
         "restaurants": restaurants,
     }
 
+
 from typing import Dict, List
 
 
 def track_discounts(
-    items: List[str],
-    cafes: List[str],
-    alert: bool = True
+    items: List[str], cafes: List[str], alert: bool = True
 ) -> Dict[str, Union[List[Dict[str, Union[str, float]]], str]]:
     """Track prices of nearby coffee shops to alert user when discounts become available.
 
@@ -3160,11 +3502,13 @@ def track_discounts(
         if cafe in sample_discounts:
             for item in items:
                 if item in sample_discounts[cafe]:
-                    discounts.append({
-                        "cafe": cafe,
-                        "item": item,
-                        "discounted_price": sample_discounts[cafe][item]
-                    })
+                    discounts.append(
+                        {
+                            "cafe": cafe,
+                            "item": item,
+                            "discounted_price": sample_discounts[cafe][item],
+                        }
+                    )
 
     if not discounts:
         return {"discounts": [], "message": "No discounts available at the moment."}
@@ -3172,3 +3516,277 @@ def track_discounts(
     message = "Discounts available!" if alert else "Discount tracking complete."
     return {"discounts": discounts, "message": message}
 
+
+def get_flavours(preferences: Optional[str] = None) -> Dict[str, Union[str, List[str]]]:
+    """Gets an array of available flavours.
+
+    Args:
+        preferences: Optional keywords used to sort preferred flavours to top of results
+
+    Returns:
+        Dict containing:
+            - preferences: The preferences filter used (if any)
+            - available_flavours: List of available ice cream flavours
+    """
+
+    # Base flavours available at the ice cream shop
+    base_flavours = [
+        "vanilla",
+        "chocolate",
+        "strawberry",
+        "mint chip",
+        "cookies and cream",
+        "rocky road",
+        "pistachio",
+        "neapolitan",
+        "butter pecan",
+        "coffee",
+        "cherry vanilla",
+        "chocolate chip",
+        "caramel swirl",
+        "rainbow sherbet",
+    ]
+
+    # If preferences provided, sort matching flavours to the top
+    if preferences:
+        preference_keywords = preferences.lower().split()
+        preferred_flavours = []
+        other_flavours = []
+
+        for flavour in base_flavours:
+            if any(keyword in flavour.lower() for keyword in preference_keywords):
+                preferred_flavours.append(flavour)
+            else:
+                other_flavours.append(flavour)
+
+        available_flavours = preferred_flavours + other_flavours
+    else:
+        available_flavours = base_flavours
+
+    return {"preferences": preferences, "available_flavours": available_flavours}
+
+
+def create_desert(
+    type: int,
+    ingredient: str,
+    scoops: str,
+    sprinkles: bool = False,
+    cream_topper: bool = False,
+    nuts: bool = False,
+    sauce_flavour: Optional[str] = None,
+    chocolate_flake: int = 0,
+) -> Dict[str, Union[str, int, bool]]:
+    """Create your ice cream desert.
+
+    Args:
+        type: Container type (1 - cone, 2 - tub, 3 - Sunday)
+        ingredient: Base ingredient (D - dairy, O - oat milk, S - soya)
+        scoops: Comma separated list of flavours. One entry = 1 scoop. Max 3 scoops.
+        sprinkles: Add sprinkles
+        cream_topper: Top with whipped cream
+        nuts: Top with nuts
+        sauce_flavour: Add sauce (C - Chocolate, S - Strawberry, R - Raspberry)
+        chocolate_flake: Number of flake sticks to add (0-2)
+
+    Returns:
+        Dict containing:
+            - desert_id: Unique identifier for the created desert
+            - type: Container type description
+            - ingredient: Base ingredient description
+            - scoops: List of scoops added
+            - toppings: List of toppings added
+            - estimated_prep_time: Estimated preparation time in minutes
+    """
+
+    # Validate inputs
+    if type not in [1, 2, 3]:
+        raise ValueError("Type must be 1 (cone), 2 (tub), or 3 (Sunday)")
+
+    if ingredient not in ["D", "O", "S"]:
+        raise ValueError("Ingredient must be D (dairy), O (oat milk), or S (soya)")
+
+    if sauce_flavour and sauce_flavour not in ["C", "S", "R"]:
+        raise ValueError(
+            "Sauce flavour must be C (Chocolate), S (Strawberry), or R (Raspberry)"
+        )
+
+    if chocolate_flake not in [0, 1, 2]:
+        raise ValueError("Chocolate flake must be 0, 1, or 2")
+
+    # Parse scoops (max 3)
+    scoop_list = [s.strip() for s in scoops.split(",") if s.strip()]
+    if len(scoop_list) > 3:
+        raise ValueError("Maximum 3 scoops allowed")
+
+    # Generate unique desert ID
+    import hashlib
+
+    desert_data = f"{type}{ingredient}{scoops}{sprinkles}{cream_topper}{nuts}{sauce_flavour}{chocolate_flake}"
+    desert_id = hashlib.md5(desert_data.encode()).hexdigest()[:8].upper()
+
+    # Map type to description
+    type_descriptions = {1: "cone", 2: "tub", 3: "sundae"}
+
+    # Map ingredient to description
+    ingredient_descriptions = {"D": "dairy", "O": "oat milk", "S": "soya"}
+
+    # Build toppings list
+    toppings = []
+    if sprinkles:
+        toppings.append("sprinkles")
+    if cream_topper:
+        toppings.append("whipped cream")
+    if nuts:
+        toppings.append("nuts")
+    if sauce_flavour:
+        sauce_map = {
+            "C": "chocolate sauce",
+            "S": "strawberry sauce",
+            "R": "raspberry sauce",
+        }
+        toppings.append(sauce_map[sauce_flavour])
+    if chocolate_flake > 0:
+        toppings.append(
+            f"{chocolate_flake} chocolate flake{'s' if chocolate_flake > 1 else ''}"
+        )
+
+    # Estimate prep time (base 2 min + 30 sec per scoop + 30 sec per topping)
+    estimated_prep_time = 2 + (len(scoop_list) * 0.5) + (len(toppings) * 0.5)
+
+    return {
+        "desert_id": desert_id,
+        "type": type_descriptions[type],
+        "ingredient": ingredient_descriptions[ingredient],
+        "scoops": scoop_list,
+        "toppings": toppings,
+        "estimated_prep_time": round(estimated_prep_time, 1),
+    }
+
+
+def order(desert_ids: str, table_number: int) -> Dict[str, Union[str, int, List[str]]]:
+    """Order your dessert.
+
+    Args:
+        desert_ids: Comma separated list of desert ids
+        table_number: Number of the table you are seated at
+
+    Returns:
+        Dict containing:
+            - order_id: Unique order identifier
+            - table_number: Table number for the order
+            - desert_ids: List of desert IDs in the order
+            - status: Order status
+            - estimated_total_time: Total estimated preparation time
+    """
+
+    if not desert_ids or not table_number:
+        raise ValueError("Both desert_ids and table_number are required")
+
+    # Parse desert IDs
+    desert_id_list = [id.strip() for id in desert_ids.split(",") if id.strip()]
+
+    if not desert_id_list:
+        raise ValueError("At least one desert ID must be provided")
+
+    # Generate unique order ID
+    import hashlib
+
+    order_data = f"{desert_ids}{table_number}"
+    order_id = f"ORD-{hashlib.md5(order_data.encode()).hexdigest()[:6].upper()}"
+
+    # Estimate total prep time (assume 3-5 minutes per desert)
+    estimated_total_time = len(desert_id_list) * 4
+
+    return {
+        "order_id": order_id,
+        "table_number": table_number,
+        "desert_ids": desert_id_list,
+        "status": "confirmed",
+        "estimated_total_time": estimated_total_time,
+    }
+
+
+def progress_update(table_number: int) -> Dict[str, Union[str, int]]:
+    """Find out what's happening with your order inc. estimated delivery time.
+
+    Args:
+        table_number: Number of the table you are seated at
+
+    Returns:
+        Dict containing:
+            - table_number: Table number checked
+            - order_status: Current status of the order
+            - estimated_delivery_time: Estimated time until delivery (minutes)
+            - message: Status message
+    """
+
+    if not table_number:
+        raise ValueError("Table number is required")
+
+    # Simulate order status based on table number
+    status_options = ["preparing", "almost ready", "ready for pickup", "delivered"]
+    status_index = (table_number - 1) % len(status_options)
+    order_status = status_options[status_index]
+
+    # Simulate estimated delivery time
+    delivery_times = {
+        "preparing": 8,
+        "almost ready": 2,
+        "ready for pickup": 0,
+        "delivered": 0,
+    }
+
+    messages = {
+        "preparing": "Your order is currently being prepared in the kitchen.",
+        "almost ready": "Your order is almost ready! Just putting the finishing touches on it.",
+        "ready for pickup": "Your order is ready! Please come to the counter to collect it.",
+        "delivered": "Your order has been delivered to your table. Enjoy!",
+    }
+
+    return {
+        "table_number": table_number,
+        "order_status": order_status,
+        "estimated_delivery_time": delivery_times[order_status],
+        "message": messages[order_status],
+    }
+
+
+def cancel_order(
+    table_number: int, desert_ids: Optional[str] = None
+) -> Dict[str, Union[str, int, List[str]]]:
+    """Cancel your order if you change your mind.
+
+    Args:
+        table_number: Number of the table you are seated at
+        desert_ids: Optional comma separated list of desert ids, only include if you are cancelling part of an order
+
+    Returns:
+        Dict containing:
+            - table_number: Table number for the cancellation
+            - cancellation_type: Whether full order or partial cancellation
+            - cancelled_items: List of cancelled desert IDs (if partial)
+            - status: Cancellation status
+            - refund_amount: Estimated refund amount
+    """
+
+    if not table_number:
+        raise ValueError("Table number is required")
+
+    if desert_ids:
+        # Partial cancellation
+        cancelled_items = [id.strip() for id in desert_ids.split(",") if id.strip()]
+        cancellation_type = "partial"
+        refund_amount = len(cancelled_items) * 5.99  # Assume $5.99 per desert
+    else:
+        # Full order cancellation
+        cancelled_items = []
+        cancellation_type = "full"
+        refund_amount = 12.99  # Assume average order total
+
+    return {
+        "table_number": table_number,
+        "cancellation_type": cancellation_type,
+        "cancelled_items": cancelled_items,
+        "status": "cancelled",
+        "refund_amount": round(refund_amount, 2),
+    }
