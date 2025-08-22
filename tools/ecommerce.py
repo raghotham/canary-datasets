@@ -619,23 +619,65 @@ def search_products(
             - category: The category of the found product
     """
 
-    # Sample product database
+    # Sample product database with books by Brandon Sanderson and other items
     products = [
-        {"id": 101, "name": "Wireless Mouse", "category": "Electronics"},
-        {"id": 102, "name": "Bluetooth Speaker", "category": "Electronics"},
-        {"id": 103, "name": "Running Shoes", "category": "Footwear"},
-        {"id": 104, "name": "Coffee Maker", "category": "Appliances"},
-        {"id": 105, "name": "Water Bottle", "category": "Outdoors"},
-        {"id": 106, "name": "Brandon Sanderson", "category": "Books"},
-        {"id": 107, "name": "Nike Shoes", "category": "Footwear"},
+        {"id": "P001", "name": "Wireless Mouse", "category": "Electronics"},
+        {"id": "P002", "name": "Mechanical Keyboard", "category": "Electronics"},
+        {"id": "P003", "name": "USB-C Hub", "category": "Electronics"},
+        {
+            "id": "P004",
+            "name": "Mistborn: The Final Empire",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+        },
+        {
+            "id": "P005",
+            "name": "The Way of Kings",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+        },
+        {
+            "id": "P006",
+            "name": "Warbreaker",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+        },
+        {
+            "id": "P007",
+            "name": "Elantris",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+        },
+        {
+            "id": "P008",
+            "name": "The Alloy of Law",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+        },
+        {"id": "P009", "name": "Coffee Maker", "category": "Appliances"},
+        {"id": "P010", "name": "Water Bottle", "category": "Outdoors"},
     ]
+
+    def matches_search(product, search_query, search_category):
+        """Check if product matches search criteria, including author search for books."""
+        name_match = search_query.lower() in product["name"].lower()
+
+        # For books, also search by author
+        author_match = False
+        if product["category"] == "Books" and "author" in product:
+            author_match = search_query.lower() in product["author"].lower()
+
+        query_match = name_match or author_match
+        category_match = (
+            search_category is None
+            or search_category.lower() == product["category"].lower()
+        )
+
+        return query_match and category_match
 
     # Filter products based on query and category
     filtered_products = [
-        product
-        for product in products
-        if query.lower() in product["name"].lower()
-        and (category is None or category.lower() == product["category"].lower())
+        product for product in products if matches_search(product, query, category)
     ]
 
     if not filtered_products:
@@ -1940,12 +1982,16 @@ def get_history(
                 - date: Date of purchase
     """
 
-    # Deterministic items with specific IDs
+    # Deterministic items with specific IDs - P004 is the most recent (Mistborn book)
     available_items = [
-        {"item": "P004", "price": 29.99, "date": "2025-01-04"},
-        {"item": "P003", "price": 49.99, "date": "2025-01-03"},
-        {"item": "P002", "price": 89.99, "date": "2025-01-02"},
-        {"item": "P001", "price": 29.99, "date": "2025-01-01"},
+        {
+            "item": "P004",
+            "price": 9.99,
+            "date": "2025-01-04",
+        },  # Most recent: Mistborn book
+        {"item": "P002", "price": 89.99, "date": "2025-01-03"},  # Mechanical Keyboard
+        {"item": "P001", "price": 29.99, "date": "2025-01-02"},  # Wireless Mouse
+        {"item": "P003", "price": 49.99, "date": "2025-01-01"},  # USB-C Hub
     ]
 
     if start_date:
@@ -2143,9 +2189,11 @@ def get_product_details(product_id: str) -> Dict[str, Union[str, float, int]]:
             - price: The price of the product in USD
             - stock: The number of items available in stock
             - description: A brief description of the product
+            - author: Author name (for books)
+            - format: Format type like 'paperback', 'hardcover' (for books)
     """
 
-    # Simulated product database
+    # Simulated product database with expanded book collection
     product_database = {
         "P001": {
             "name": "Wireless Mouse",
@@ -2166,10 +2214,69 @@ def get_product_details(product_id: str) -> Dict[str, Union[str, float, int]]:
             "description": "A versatile USB-C hub with multiple ports for connectivity.",
         },
         "P004": {
-            "name": "Mistborn",
+            "name": "Mistborn: The Final Empire",
             "price": 9.99,
             "stock": 100,
-            "description": "A fantasy novel by Brandon Sanderson.",
+            "description": "A fantasy novel by Brandon Sanderson. The first book in the Mistborn trilogy.",
+            "author": "Brandon Sanderson",
+            "format": "paperback",
+        },
+        "P005": {
+            "name": "The Way of Kings",
+            "price": 12.99,
+            "stock": 75,
+            "description": "The epic fantasy novel by Brandon Sanderson, first book in The Stormlight Archive series.",
+            "author": "Brandon Sanderson",
+            "format": "paperback",
+        },
+        "P006": {
+            "name": "Warbreaker",
+            "price": 11.99,
+            "stock": 60,
+            "description": "A standalone fantasy novel by Brandon Sanderson.",
+            "author": "Brandon Sanderson",
+            "format": "paperback",
+        },
+        "P007": {
+            "name": "Elantris",
+            "price": 10.99,
+            "stock": 45,
+            "description": "Brandon Sanderson's debut novel, a standalone fantasy epic.",
+            "author": "Brandon Sanderson",
+            "format": "paperback",
+        },
+        "P008": {
+            "name": "The Alloy of Law",
+            "price": 10.99,
+            "stock": 65,
+            "description": "A Mistborn novel by Brandon Sanderson set in the Wax and Wayne era.",
+            "author": "Brandon Sanderson",
+            "format": "paperback",
+        },
+        # Hardcover versions
+        "P009": {
+            "name": "The Way of Kings",
+            "price": 24.99,
+            "stock": 30,
+            "description": "The epic fantasy novel by Brandon Sanderson, first book in The Stormlight Archive series. Hardcover edition.",
+            "author": "Brandon Sanderson",
+            "format": "hardcover",
+        },
+        "P010": {
+            "name": "Warbreaker",
+            "price": 22.99,
+            "stock": 25,
+            "description": "A standalone fantasy novel by Brandon Sanderson. Hardcover edition.",
+            "author": "Brandon Sanderson",
+            "format": "hardcover",
+        },
+        "P011": {
+            "name": "Elantris",
+            "price": 21.99,
+            "stock": 20,
+            "description": "Brandon Sanderson's debut novel, a standalone fantasy epic. Hardcover edition.",
+            "author": "Brandon Sanderson",
+            "format": "hardcover",
         },
     }
 
@@ -2177,13 +2284,21 @@ def get_product_details(product_id: str) -> Dict[str, Union[str, float, int]]:
         raise ValueError(f"Product ID not found: {product_id}")
 
     product_info = product_database[product_id]
-    return {
+    result = {
         "product_id": product_id,
         "name": product_info["name"],
         "price": product_info["price"],
         "stock": product_info["stock"],
         "description": product_info["description"],
     }
+
+    # Add author and format for books
+    if "author" in product_info:
+        result["author"] = product_info["author"]
+    if "format" in product_info:
+        result["format"] = product_info["format"]
+
+    return result
 
 
 from typing import Dict, List, Optional

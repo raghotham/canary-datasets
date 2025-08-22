@@ -5,13 +5,15 @@ from typing import Any, Dict, List, Optional, Union
 
 
 def create_server(
-    name: str, packages: Optional[List[str]] = None, server_model: Optional[int] = None
+    name: str,
+    packages: Union[List[str], str, None] = None,
+    server_model: Optional[int] = None,
 ) -> Dict[str, Union[str, int, List[str]]]:
     """Make a new messaging server with optional packages and server model configuration.
 
     Args:
         name: Name of the new messaging server
-        packages: List of packages to install on the server (e.g., ["mongodb", "nginx"])
+        packages: List of packages to install on the server (e.g., ["mongodb", "nginx"]) or string representation
         server_model: Server model/type identifier (e.g., 1, 2, 3 for different server configurations)
 
     Returns:
@@ -25,9 +27,47 @@ def create_server(
     if not name:
         raise ValueError("Server name must be provided")
 
-    # Default values
-    if packages is None:
-        packages = []
+    def parse_packages(pkg_input) -> List[str]:
+        """Parse packages from various input formats into a list of strings."""
+        if pkg_input is None:
+            return []
+
+        # If it's already a list, return as-is
+        if isinstance(pkg_input, list):
+            return pkg_input
+
+        # If it's a string, try to parse it
+        if isinstance(pkg_input, str):
+            # Handle empty string
+            if not pkg_input.strip():
+                return []
+
+            # Try to parse as a string representation of a list
+            if pkg_input.strip().startswith("[") and pkg_input.strip().endswith("]"):
+                try:
+                    import ast
+
+                    parsed_list = ast.literal_eval(pkg_input)
+                    if isinstance(parsed_list, list):
+                        return [str(item) for item in parsed_list]
+                except (ValueError, SyntaxError):
+                    # If parsing fails, fall through to comma-separated parsing
+                    pass
+
+            # Handle comma-separated string
+            if "," in pkg_input:
+                return [item.strip() for item in pkg_input.split(",")]
+
+            # Handle single package as string
+            return [pkg_input.strip()]
+
+        # For any other type, convert to string and return as single-item list
+        return [str(pkg_input)]
+
+    # Parse packages using the flexible parser
+    parsed_packages = parse_packages(packages)
+
+    # Default server model
     if server_model is None:
         server_model = 1  # Default server model
 
@@ -36,12 +76,12 @@ def create_server(
         raise ValueError("Server model must be a positive integer")
 
     # Simulate server ID generation using a hash that includes all parameters
-    hash_input = f"{name}_{str(packages)}_{server_model}"
+    hash_input = f"{name}_{str(parsed_packages)}_{server_model}"
     server_id = f"server_{hash(hash_input) % 10000:04d}"
 
     # Simulate package installation status
     installed_packages = []
-    for package in packages:
+    for package in parsed_packages:
         if isinstance(package, str) and package.strip():
             installed_packages.append(package.strip())
 

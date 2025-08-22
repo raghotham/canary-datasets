@@ -1167,6 +1167,40 @@ def find_nearest_hospital(
 from typing import Dict, Union
 
 
+def get_autoclave_config() -> Dict[str, Union[float, int, bool, str]]:
+    """Retrieve current autoclave configuration settings.
+
+    Returns:
+        Dict containing:
+            - goalTemperature: Target temperature setting in Celsius
+            - timerMinutes: Configured cycle duration in minutes
+            - useVacuum: Whether vacuum is enabled for the cycle
+            - cycle_complete: Boolean indicating if the current cycle is finished
+            - time_remaining: Minutes remaining in current cycle (0 if complete)
+    """
+    import hashlib
+
+    # Simulate configuration data with some variability
+    config_hash = hashlib.md5("autoclave_config".encode()).hexdigest()
+
+    goal_temperature = int(config_hash[:2], 16) % 50 + 121  # 121 to 170 Celsius
+    timer_minutes = int(config_hash[2:4], 16) % 60 + 15  # 15 to 74 minutes
+    use_vacuum = int(config_hash[4], 16) % 2 == 0  # Boolean
+
+    # Simulate cycle completion status - key for the use case
+    cycle_progress = int(config_hash[5:7], 16) % 100
+    cycle_complete = cycle_progress > 85  # 85% chance cycle is complete
+    time_remaining = 0 if cycle_complete else (cycle_progress % 30)
+
+    return {
+        "goalTemperature": float(goal_temperature),
+        "timerMinutes": float(timer_minutes),
+        "useVacuum": use_vacuum,
+        "cycle_complete": cycle_complete,
+        "time_remaining": float(time_remaining),
+    }
+
+
 def get_autoclave_status() -> Dict[str, Union[float, int, bool, str]]:
     """Retrieve current status of the autoclave including internal temperature, runtime, vacuum status, and whether it's running.
 
