@@ -93,6 +93,11 @@ def get_preacher_sermons(preacher_id: str) -> Dict[str, Union[str, List[str]]]:
             "Grace and Mercy",
             "Living with Purpose",
         ],
+        "preacher_101": [
+            "The Power of Positive Thinking",
+            "The Law of Attraction",
+            "The Secret",
+        ],
     }
 
     if preacher_id not in sample_sermons:
@@ -2755,7 +2760,7 @@ def search_events(
         Literal["music", "food", "sports", "arts", "technology", "theatre", "family"],
         str,
     ],
-    date_range: Dict[str, str] = None,
+    date_range: Union[Dict[str, str], str] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
     """Search for events by city.
 
@@ -2770,6 +2775,17 @@ def search_events(
             - city: City name
             - events: List of events with details such as name, category, and date
     """
+    # Convert date_range parameter if provided as string
+    if isinstance(date_range, str):
+        if " to " in date_range:
+            start_date_str, end_date_str = date_range.split(" to ", 1)
+            date_range = {
+                "start_date": start_date_str.strip(),
+                "end_date": end_date_str.strip()
+            }
+        else:
+            raise ValueError("Invalid date_range format. Expected format: 'YYYY-MM-DD to YYYY-MM-DD'")
+            
     # Convert type parameter to handle alternative forms
     type_mappings = {
         "sport": "sports",

@@ -2378,9 +2378,9 @@ from typing import Dict, List, Literal, Union
 def stops_along_route_find(
     start_location: str,
     end_location: str,
-    categories: List[
+    categories: Union[List[
         Literal["gas", "food", "electric_charger", "coffee", "bathroom"]
-    ] = ["gas"],
+    ], Literal["gas", "food", "electric_charger", "coffee", "bathroom"], str] = ["gas"],
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Suggest places to take a break from driving along a route.
 
@@ -2413,6 +2413,23 @@ def stops_along_route_find(
 
     if not start_location or not end_location:
         raise ValueError("Both start_location and end_location are required.")
+    
+    # Convert categories to list if it's a string
+    if isinstance(categories, str):
+        # Check if it's a comma-separated list
+        if ',' in categories:
+            categories_list = [cat.strip() for cat in categories.split(',')]
+        else:
+            # Single category as string
+            categories_list = [categories.strip()]
+        
+        # Validate each category
+        valid_categories = ["gas", "food", "electric_charger", "coffee", "bathroom"]
+        for cat in categories_list:
+            if cat not in valid_categories:
+                raise ValueError(f"Invalid category: {cat}. Must be one of: {', '.join(valid_categories)}")
+        
+        categories = categories_list
 
     stops = []
     for category in categories:

@@ -557,13 +557,16 @@ def calculate_sum_of_list(
     if isinstance(numbers_list, str):
         try:
             import ast
+
             parsed_list = ast.literal_eval(numbers_list)
             if isinstance(parsed_list, list):
                 numbers_list = parsed_list
             else:
                 raise ValueError("Invalid numbers_list format. Expected a list.")
         except (ValueError, SyntaxError):
-            raise ValueError("Invalid numbers_list format. Expected a valid list representation.")
+            raise ValueError(
+                "Invalid numbers_list format. Expected a valid list representation."
+            )
 
     if not numbers_list:
         raise ValueError("The numbers_list cannot be empty.")
@@ -1634,7 +1637,7 @@ def get_regional_holidays(
 
     # Sample holiday data
     holidays_data = {
-        "US-NY": {
+        "US": {
             "2023-12-25": ["Christmas Day"],
             "2023-07-04": ["Independence Day"],
         },
@@ -1646,7 +1649,7 @@ def get_regional_holidays(
             "2023-02-06": ["Waitangi Day"],
             "2023-12-25": ["Christmas Day"],
         },
-        "JP-26": {
+        "JP": {
             "2023-12-25": ["Christmas Day"],
             "2023-05-03": ["Constitution Memorial Day"],
             "2023-11-03": ["Culture Day"],
@@ -1892,7 +1895,7 @@ def query_data(
         else:
             # Handle comma-separated string like "id, name, age"
             columns = [col.strip() for col in columns.split(",")]
-    
+
     # Convert where parameter if provided as string
     if isinstance(where, str):
         # For SQL-like WHERE clauses, we'll simply accept them as valid

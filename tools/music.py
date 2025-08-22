@@ -439,6 +439,7 @@ def shuffle_play_playlist(playlist_name: str) -> Dict[str, Union[str, List[str]]
         "Chill Vibes": ["Track A", "Track B", "Track C", "Track D"],
         "Workout Mix": ["Track E", "Track F", "Track G", "Track H"],
         "Party Hits": ["Track I", "Track J", "Track K", "Track L"],
+        "21 Swifts": ["Track M", "Track N", "Track O", "Track P"],
     }
 
     if playlist_name not in sample_playlists:

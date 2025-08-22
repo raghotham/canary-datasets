@@ -1,8 +1,7 @@
-from typing import Dict, List, Union, Any
 # Gardening Tools
 # Auto-generated implementations from cached categorization
 
-from typing import Dict, Union
+from typing import Any, Dict, List, Union
 
 
 def get_coverage(brand: str) -> Dict[str, Union[str, float]]:
@@ -15,27 +14,28 @@ def get_coverage(brand: str) -> Dict[str, Union[str, float]]:
         Dict containing:
             - brand: Paint brand name
             - coverage: Coverage in square meters per liter (m^2/L)
-    
+
     Raises:
         ValueError: If the brand is not supported
     """
-    
+
     sample_coverage = {
         "BrandA": 12.0,
         "BrandB": 10.5,
         "BrandC": 15.0,
     }
-    
+
     if brand not in sample_coverage:
         raise ValueError(f"Brand not supported: {brand}")
-    
+
     return {
         "brand": brand,
         "coverage": sample_coverage[brand],
     }
 
-from typing import Dict, Union
+
 import hashlib
+from typing import Dict, Union
 
 
 def check_soil_moisture(sensor_id: str, date: str) -> Dict[str, Union[str, float]]:
@@ -65,13 +65,14 @@ def check_soil_moisture(sensor_id: str, date: str) -> Dict[str, Union[str, float
         "moisture_level": moisture_level,
     }
 
+
 from typing import Dict, Literal, Union
 
 
 def control_sprinklers(
     zone: Literal["front_lawn", "back_lawn", "garden", "all"],
     action: Literal["start", "stop"],
-    duration: int = 15
+    duration: int = 15,
 ) -> Dict[str, Union[str, int]]:
     """Manage outdoor sprinkler system for lawn and garden watering.
 
@@ -95,22 +96,28 @@ def control_sprinklers(
     if action not in {"start", "stop"}:
         raise ValueError(f"Unsupported action: {action}")
 
-    return {
-        "zone": zone,
-        "action": action,
-        "duration": duration
-    }
+    return {"zone": zone, "action": action, "duration": duration}
+
 
 from typing import Dict, List, Literal, Optional, Union
 
 
 def filter_species_by_region(
     region: Literal[
-        "Pacific Northwest", "Iberia", "Japan", "Great Plains", "Southeast US", "Mediterranean"
+        "Pacific Northwest",
+        "Iberia",
+        "Japan",
+        "Great Plains",
+        "Southeast US",
+        "Mediterranean",
     ],
     hardiness_zone: Optional[str] = None,
     is_native: Optional[bool] = None,
-    habitat: Optional[Union[Literal["coastal", "wetland", "woodland", "urban", "alpine", "desert"], str]] = None,
+    habitat: Optional[
+        Union[
+            Literal["coastal", "wetland", "woodland", "urban", "alpine", "desert"], str
+        ]
+    ] = None,
 ) -> List[Dict[str, Union[str, bool]]]:
     """Filter plant species by geographic macro-region and habitat traits.
 
@@ -144,25 +151,52 @@ def filter_species_by_region(
             "desert area": "desert",
             "arid": "desert",
         }
-        
+
         # Check if it's an alternative form and convert
         habitat_lower = habitat.lower()
         for key, value in habitat_mappings.items():
             if habitat_lower == key or habitat_lower in key or key in habitat_lower:
                 habitat = value
                 break
-        
+
         # Check if it's a valid literal after conversion
         valid_habitats = {"coastal", "wetland", "woodland", "urban", "alpine", "desert"}
         if habitat not in valid_habitats:
-            raise ValueError(f"Invalid habitat: {habitat}. Must be one of {valid_habitats}")
+            raise ValueError(
+                f"Invalid habitat: {habitat}. Must be one of {valid_habitats}"
+            )
     # Sample data for demonstration purposes
     species_data = [
-        {"species_name": "Douglas Fir", "is_native": True, "habitat": "woodland", "hardiness_zone": "6a"},
-        {"species_name": "Mediterranean Cypress", "is_native": True, "habitat": "coastal", "hardiness_zone": "9b"},
-        {"species_name": "Japanese Maple", "is_native": False, "habitat": "urban", "hardiness_zone": "5b"},
-        {"species_name": "Prairie Dropseed", "is_native": True, "habitat": "grassland", "hardiness_zone": "4a"},
-        {"species_name": "Saw Palmetto", "is_native": True, "habitat": "wetland", "hardiness_zone": "8b"},
+        {
+            "species_name": "Douglas Fir",
+            "is_native": True,
+            "habitat": "woodland",
+            "hardiness_zone": "6a",
+        },
+        {
+            "species_name": "Mediterranean Cypress",
+            "is_native": True,
+            "habitat": "coastal",
+            "hardiness_zone": "9b",
+        },
+        {
+            "species_name": "Japanese Maple",
+            "is_native": False,
+            "habitat": "urban",
+            "hardiness_zone": "5b",
+        },
+        {
+            "species_name": "Prairie Dropseed",
+            "is_native": True,
+            "habitat": "grassland",
+            "hardiness_zone": "4a",
+        },
+        {
+            "species_name": "Saw Palmetto",
+            "is_native": True,
+            "habitat": "wetland",
+            "hardiness_zone": "8b",
+        },
     ]
 
     # Filter the species based on the provided criteria
@@ -170,7 +204,10 @@ def filter_species_by_region(
     for species in species_data:
         if region == "Pacific Northwest" and species["species_name"] == "Douglas Fir":
             matches = True
-        elif region == "Mediterranean" and species["species_name"] == "Mediterranean Cypress":
+        elif (
+            region == "Mediterranean"
+            and species["species_name"] == "Mediterranean Cypress"
+        ):
             matches = True
         elif region == "Japan" and species["species_name"] == "Japanese Maple":
             matches = True
@@ -193,13 +230,14 @@ def filter_species_by_region(
 
     return filtered_species
 
+
 from typing import Dict, List, Optional
 
 
 def order_gardening_supplies(
     items: List[str],
     order_date: Optional[str] = None,
-    delivery_date: Optional[str] = None
+    delivery_date: Optional[str] = None,
 ) -> Dict[str, Union[str, List[str]]]:
     """Orders gardening supplies from a store.
 
@@ -218,13 +256,13 @@ def order_gardening_supplies(
     if not items:
         raise ValueError("At least one item must be ordered.")
 
-    import hashlib
     import datetime
+    import hashlib
 
     # Generate a unique order ID using a hash of the items and order date
-    order_id = hashlib.sha256(
-        (str(items) + (order_date or "")).encode()
-    ).hexdigest()[:10]
+    order_id = hashlib.sha256((str(items) + (order_date or "")).encode()).hexdigest()[
+        :10
+    ]
 
     # Use current date if order_date is not provided
     order_date = order_date or datetime.date.today().isoformat()
@@ -232,8 +270,13 @@ def order_gardening_supplies(
     # Simulate a delivery date if not provided
     if not delivery_date:
         delivery_date = (
-            datetime.datetime.strptime(order_date, "%Y-%m-%d") + datetime.timedelta(days=7)
-        ).date().isoformat()
+            (
+                datetime.datetime.strptime(order_date, "%Y-%m-%d")
+                + datetime.timedelta(days=7)
+            )
+            .date()
+            .isoformat()
+        )
 
     return {
         "order_id": order_id,
@@ -242,8 +285,9 @@ def order_gardening_supplies(
         "delivery_date": delivery_date,
     }
 
-from typing import Dict, Union
+
 from datetime import datetime, timedelta
+from typing import Dict, Union
 
 
 def schedule_garden_watering(
@@ -275,14 +319,26 @@ def schedule_garden_watering(
         "duration": duration_minutes,
     }
 
-from typing import Dict, Union, Literal, Optional
+
+from typing import Dict, Literal, Optional, Union
 
 
 def search_plant_species_by_flower(
-    color: Literal["white", "yellow", "orange", "red", "pink", "purple", "violet", "blue", "green", "brown"],
+    color: Literal[
+        "white",
+        "yellow",
+        "orange",
+        "red",
+        "pink",
+        "purple",
+        "violet",
+        "blue",
+        "green",
+        "brown",
+    ],
     shape: Literal["tubular", "bell", "composite", "star", "irregular"],
     petal_count: Optional[int] = None,
-    fragrant: Optional[bool] = None
+    fragrant: Optional[bool] = None,
 ) -> Dict[str, Union[str, int, bool]]:
     """Retrieves plant species matching given flower characteristics.
 
@@ -302,11 +358,36 @@ def search_plant_species_by_flower(
     """
     # Sample data based on hash of input parameters for consistent results
     sample_data = {
-        ("white", "tubular"): {"species_name": "White Trumpet", "petal_count": 5, "fragrant": True},
-        ("yellow", "bell"): {"species_name": "Golden Bells", "petal_count": 6, "fragrant": False},
-        ("red", "composite"): {"species_name": "Scarlet Composite", "petal_count": 8, "fragrant": True},
-        ("pink", "star"): {"species_name": "Pink Starflower", "petal_count": 5, "fragrant": False},
-        ("purple", "irregular"): {"species_name": "Purple Orchid", "petal_count": 3, "fragrant": True},
+        ("white", "tubular"): {
+            "species_name": "White Trumpet",
+            "petal_count": 5,
+            "fragrant": True,
+        },
+        ("yellow", "bell"): {
+            "species_name": "Golden Bells",
+            "petal_count": 6,
+            "fragrant": False,
+        },
+        ("red", "composite"): {
+            "species_name": "Scarlet Composite",
+            "petal_count": 8,
+            "fragrant": True,
+        },
+        ("pink", "star"): {
+            "species_name": "Pink Starflower",
+            "petal_count": 5,
+            "fragrant": False,
+        },
+        ("purple", "irregular"): {
+            "species_name": "Purple Orchid",
+            "petal_count": 3,
+            "fragrant": True,
+        },
+        ("violet", "tubular"): {
+            "species_name": "Purple Orchid",
+            "petal_count": 3,
+            "fragrant": True,
+        },
     }
 
     key = (color, shape)
@@ -315,9 +396,13 @@ def search_plant_species_by_flower(
 
     result = sample_data[key]
     if petal_count is not None and result["petal_count"] != petal_count:
-        raise ValueError(f"No species found with {petal_count} petals for color '{color}' and shape '{shape}'")
+        raise ValueError(
+            f"No species found with {petal_count} petals for color '{color}' and shape '{shape}'"
+        )
     if fragrant is not None and result["fragrant"] != fragrant:
-        raise ValueError(f"No species found with fragrance '{fragrant}' for color '{color}' and shape '{shape}'")
+        raise ValueError(
+            f"No species found with fragrance '{fragrant}' for color '{color}' and shape '{shape}'"
+        )
 
     return {
         "species_name": result["species_name"],
@@ -327,12 +412,15 @@ def search_plant_species_by_flower(
         "fragrant": result["fragrant"],
     }
 
+
 from typing import Dict, List, Literal, Optional
 
 
 def search_plant_species_by_leaf(
     color: Literal["green", "blue-gray", "gray", "purple", "variegated"],
-    shape: Optional[Literal["ovate", "lanceolate", "linear", "cordate", "palmate", "needle"]] = None,
+    shape: Optional[
+        Literal["ovate", "lanceolate", "linear", "cordate", "palmate", "needle"]
+    ] = None,
     is_succulent: Optional[bool] = None,
     texture: Optional[Literal["waxy", "hairy", "glabrous", "leathery"]] = None,
 ) -> Dict[str, List[str]]:
@@ -348,7 +436,7 @@ def search_plant_species_by_leaf(
         Dict containing:
             - species: List of plant species matching the criteria.
     """
-    
+
     # Sample data representing a mock database of plant species
     plant_database = {
         "green": {
@@ -380,13 +468,18 @@ def search_plant_species_by_leaf(
 
     # Filter results based on the provided characteristics
     species_list = plant_database.get(color, {}).get(shape, [])
-    
+
     # Simulate additional filtering based on is_succulent and texture
     if is_succulent is not None:
-        species_list = [species for species in species_list if hash(species) % 2 == int(is_succulent)]
-    
+        species_list = [
+            species
+            for species in species_list
+            if hash(species) % 2 == int(is_succulent)
+        ]
+
     if texture:
-        species_list = [species for species in species_list if hash(species) % 4 == len(texture) % 4]
+        species_list = [
+            species for species in species_list if hash(species) % 4 == len(texture) % 4
+        ]
 
     return {"species": species_list}
-

@@ -625,6 +625,7 @@ def search_products(
         {"id": 104, "name": "Coffee Maker", "category": "Appliances"},
         {"id": 105, "name": "Water Bottle", "category": "Outdoors"},
         {"id": 106, "name": "Brandon Sanderson", "category": "Books"},
+        {"id": 107, "name": "Nike Shoes", "category": "Footwear"},
     ]
 
     # Filter products based on query and category
