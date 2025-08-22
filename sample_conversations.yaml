@@ -43,14 +43,20 @@ conversations:
   - get_weather
   - convert_currency
   messages:
-  - What's the weather in London? # XFAIL -- not in the function
+  - What's the weather in London?
   - Convert 1000 JPY to CAD
+  metadata:
+  - notes:
+    - The first message is not in the function, so it should fail. The second message is a valid currency conversion
 - name: Unsupported unit
   tools:
   - get_weather
   - convert_units
   messages:
-  - What's the temperature in Boston in Kelvin? # XFAIL -- not in the function
+  - What's the temperature in Boston in Kelvin?
+  metadata:
+  - notes:
+    - The first message is not in the function, so it should fail.
 - name: Multiple tools in one turn
   tools:
   - get_weather
@@ -89,8 +95,11 @@ conversations:
   tools:
   - get_fruit_info
   messages:
-  - What is the color and weight of a dragonfruit? # XFAIL -- not in the function
+  - What is the color and weight of a dragonfruit?
   - Can you tell me about a mango instead?
+  metadata:
+  - notes:
+  - The first message is not in the function, so it should fail. The second message is a valid fruit info
 - name: Fruits and weather
   tools:
   - get_weather
@@ -3281,11 +3290,11 @@ conversations:
       \ arrival and departure times."
 - name: Entry 150
   tools:
-  - TurnOnDevice
-  - SetThermostat
-  - LockDoor
-  - ChangeLightColor
-  - PlayMusic
+  - turn_on_device
+  - set_thermostat
+  - lock_door
+  - change_light_color
+  - play_music
   messages:
   - I just saw that commercial that says "Alexa, play Lilo and Stitch music" and my own home alexa played the song and i had
     to turn it off lol
@@ -3373,9 +3382,9 @@ conversations:
       tub\" since that is the parameter wording for 2 in the schema."
 - name: Entry 155
   tools:
-  - Add_to_CostCo_shopping_list
-  - Submit_CostCo_order
-  - Clear_CostCo_order
+  - add_to_costco_shopping_list
+  - submit_costco_order
+  - clear_costco_order
   messages:
   - How come the CostCo hotdog price is kept at $1.50 in the United States for so long? I've been thinking about CostCo's
     hotdog the other day. They're so yummy. I'm thinking of buying one.
@@ -3529,7 +3538,7 @@ conversations:
 - name: Entry 164
   tools:
   - send_text
-  - create_calender_event
+  - create_calendar_event
   messages:
   - set a calendar event for the next daylight savings with a text at 3453452736
   metadata:
@@ -3647,8 +3656,8 @@ conversations:
       \ operator is typical."
 - name: Entry 171
   tools:
-  - lights
-  - drapes
+  - control_lights
+  - drapes_status
   - heat
   - space
   messages:
@@ -3689,11 +3698,11 @@ conversations:
       \ well when given lots of tools."
 - name: Entry 173
   tools:
-  - SearchProduct
-  - AddToCart
-  - Checkout
-  - TrackOrder
-  - SearchWebsites
+  - search_product
+  - add_to_cart
+  - checkout
+  - track_order
+  - search_websites
   messages:
   - Can you add a phone charging case for the iphone 12 to my shopping cart?
   metadata:
@@ -3900,10 +3909,10 @@ conversations:
       appear to be tool parameters and trying to use them regardless of what the prompt is asking.'
 - name: Entry 183
   tools:
-  - Card Search
-  - Deck_search
-  - Collection_add
-  - Collection_rem
+  - card_search
+  - deck_search
+  - collection_add
+  - collection_rem
   messages:
   - Beasty Bob is still not winning any games. I traded my friend Jay a Terror Tower for a set of 3 recover beast cards. Can
     you tell me if there are any known rules issues with the two cards?
@@ -5066,11 +5075,11 @@ conversations:
       \ and 'departure_time_before'. That way, it's easier to get all flights before noon."
 - name: Entry 246
   tools:
-  - SearchProduct
-  - AddToCart
-  - Checkout
-  - TrackOrder
-  - SearchWebsites
+  - search_product
+  - add_to_cart
+  - checkout
+  - track_order
+  - search_websites
   messages:
   - Can you search the target website and see what nintendo switch 2 cases they have?
   metadata:
