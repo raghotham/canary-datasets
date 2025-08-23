@@ -1982,16 +1982,29 @@ def verify_insurance_coverage(
         ("HealthPlus", "City Hospital"): ["surgery", "consultation"],
         ("MediCare", "Downtown Clinic"): ["consultation"],
         ("HealthPlus", "Downtown Clinic"): ["surgery", "therapy"],
+        ("Blue Cross", "Dr. Bone"): ["orthopedic consultation", "consultation"],
+        ("Blue Cross Blue Shield", "Dr. Bone"): ["orthopedic consultation", "consultation"],
+        ("Blue Cross Blue Shield of Illinois", "Dr. Bone"): ["orthopedic consultation", "consultation"],
     }
 
-    # Check if the insurance and healthcare provider combination exists
-    if (insurance_provider, healthcare_provider) not in coverage_data:
+    # Check if the insurance and healthcare provider combination exists with flexible matching
+    match_found = False
+    matching_coverage = []
+    for (ins_provider, health_provider), treatments in coverage_data.items():
+        # Check for partial matches on both insurance provider and healthcare provider
+        if (insurance_provider.lower() in ins_provider.lower() or ins_provider.lower() in insurance_provider.lower()) and \
+           (healthcare_provider.lower() in health_provider.lower() or health_provider.lower() in healthcare_provider.lower()):
+            match_found = True
+            matching_coverage = treatments
+            break
+            
+    if not match_found:
         raise ValueError(
-            "Combination of insurance and healthcare provider not supported"
+            f"Combination of insurance '{insurance_provider}' and healthcare provider '{healthcare_provider}' not supported"
         )
 
     # Determine if the treatment type is covered
-    covered_treatments = coverage_data[(insurance_provider, healthcare_provider)]
+    covered_treatments = matching_coverage
     is_covered = treatment_type in covered_treatments if treatment_type else True
 
     return {

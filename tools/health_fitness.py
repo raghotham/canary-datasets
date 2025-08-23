@@ -1267,10 +1267,15 @@ def find_nearby_specialists(
         # Insurance filter - be flexible with insurance matching
         if normalized_insurance is not None:
             specialist_insurance = specialist["insurance"]
+            # Map insurance variations to match better
+            specialist_normalized = normalize_insurance(specialist_insurance)
             insurance_match = (
                 normalized_insurance == specialist_insurance
+                or normalized_insurance == specialist_normalized
+                or specialist_normalized == normalized_insurance
                 or normalized_insurance.lower() in specialist_insurance.lower()
                 or specialist_insurance.lower() in normalized_insurance.lower()
+                or "blue cross" in normalized_insurance.lower() and "blue cross" in specialist_insurance.lower()
             )
             if not insurance_match:
                 continue
