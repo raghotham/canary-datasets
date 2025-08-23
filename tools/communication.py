@@ -405,6 +405,11 @@ def retrieve_text_message(
             "Can we discuss the keyword requirements?",
             "Let me know when you're free tomorrow.",
         ],
+        "Jake": [
+            "I finished the project proposal.",
+            "Can we discuss the keyword requirements?",
+            "Let me know when you're free tomorrow.",
+        ],
     }
 
     if contact_name not in messages:

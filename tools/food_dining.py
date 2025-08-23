@@ -3755,8 +3755,8 @@ def near_restaurants(
             {
                 "name": "McDonald'1s",
                 "cuisine": "American",
-                "open_hour": "10:00",
-                "close_hour": "22:00",
+                "open_hour": "01:00",
+                "close_hour": "00:59",
             },
         ],
     }
@@ -3772,16 +3772,18 @@ def near_restaurants(
             time_parts = is_open.split(":")
             if len(time_parts) != 2:
                 raise ValueError("Time must be in HH:MM format")
-            
+
             hour, minute = map(int, time_parts)
             if not (0 <= hour <= 23) or not (0 <= minute <= 59):
                 raise ValueError("Invalid time values")
-                
+
         except (ValueError, AttributeError) as e:
-            raise ValueError(f"Invalid time format '{is_open}'. Expected HH:MM format (24-hour)")
-        
+            raise ValueError(
+                f"Invalid time format '{is_open}'. Expected HH:MM format (24-hour)"
+            )
+
         is_open_minutes = hour * 60 + minute
-        
+
         # Filter restaurants that are open at the specified time
         filtered_restaurants = []
         for r in restaurants:
@@ -3790,26 +3792,29 @@ def near_restaurants(
                 open_parts = r["open_hour"].split(":")
                 open_hour, open_min = int(open_parts[0]), int(open_parts[1])
                 open_minutes = open_hour * 60 + open_min
-                
+
                 # Parse closing time
                 close_parts = r["close_hour"].split(":")
                 close_hour, close_min = int(close_parts[0]), int(close_parts[1])
                 close_minutes = close_hour * 60 + close_min
-                
+
                 # Handle overnight hours (closing after midnight)
                 if close_minutes < open_minutes:
                     # Restaurant is open past midnight
-                    if is_open_minutes >= open_minutes or is_open_minutes <= close_minutes:
+                    if (
+                        is_open_minutes >= open_minutes
+                        or is_open_minutes <= close_minutes
+                    ):
                         filtered_restaurants.append(r)
                 else:
                     # Normal hours
                     if open_minutes <= is_open_minutes <= close_minutes:
                         filtered_restaurants.append(r)
-                        
+
             except (ValueError, IndexError, KeyError):
                 # If we can't parse restaurant hours, skip this restaurant
                 continue
-                
+
         restaurants = filtered_restaurants
 
     return {"city": city, "restaurants": restaurants}
@@ -4344,10 +4349,22 @@ def search_restaurants(
             {"name": "The Rocks Brewery", "cuisine": "Australian", "average_price": 35},
             {"name": "Opera Bar", "cuisine": "Modern Australian", "average_price": 45},
             {"name": "Quay", "cuisine": "Fine Dining", "average_price": 200},
-            {"name": "The Lord Nelson Brewery", "cuisine": "Pub Food", "average_price": 25},
-            {"name": "Sydney Cove Oyster Bar", "cuisine": "Seafood", "average_price": 60},
+            {
+                "name": "The Lord Nelson Brewery",
+                "cuisine": "Pub Food",
+                "average_price": 25,
+            },
+            {
+                "name": "Sydney Cove Oyster Bar",
+                "cuisine": "Seafood",
+                "average_price": 60,
+            },
             {"name": "Craft Beer House", "cuisine": "Pub Food", "average_price": 30},
-            {"name": "Hunter Valley Wine Bar", "cuisine": "Wine Bar", "average_price": 40},
+            {
+                "name": "Hunter Valley Wine Bar",
+                "cuisine": "Wine Bar",
+                "average_price": 40,
+            },
         ],
     }
 
@@ -4372,8 +4389,10 @@ def search_restaurants(
                 "budget": {"min": 0, "max": 30},
                 "expensive": {"min": 100, "max": float("inf")},
             }
-            price_range = price_ranges.get(price_range.lower(), {"min": 0, "max": float("inf")})
-        
+            price_range = price_ranges.get(
+                price_range.lower(), {"min": 0, "max": float("inf")}
+            )
+
         min_price = price_range.get("min", 0)
         max_price = price_range.get("max", float("inf"))
         restaurants = [
@@ -4390,7 +4409,10 @@ def search_restaurants(
         restaurants = [
             r
             for r in restaurants
-            if any(term in r["cuisine"].lower() or term in r["name"].lower() for term in key_terms_lower)
+            if any(
+                term in r["cuisine"].lower() or term in r["name"].lower()
+                for term in key_terms_lower
+            )
         ]
 
     return {

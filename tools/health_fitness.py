@@ -1592,6 +1592,42 @@ def get_activity(
             "start_date_time": "2025-08-20T17:30:00+01:00",
             "end_date_time": "2025-08-20T18:30:00+01:00",
         },
+        {
+            "id": 10,
+            "activity_type": "RUNNING",
+            "start_date_time": "2025-08-21T06:00:00+01:00",
+            "end_date_time": "2025-08-21T07:00:00+01:00",
+        },
+        {
+            "id": 11,
+            "activity_type": "CYCLING",
+            "start_date_time": "2025-08-22T10:00:00+01:00",
+            "end_date_time": "2025-08-22T11:30:00+01:00",
+        },
+        {
+            "id": 12,
+            "activity_type": "SWIMMING",
+            "start_date_time": "2025-08-23T15:00:00+01:00",
+            "end_date_time": "2025-08-23T16:00:00+01:00",
+        },
+        {
+            "id": 13,
+            "activity_type": "WORKOUT",
+            "start_date_time": "2025-08-24T19:00:00+01:00",
+            "end_date_time": "2025-08-24T20:00:00+01:00",
+        },
+        {
+            "id": 14,
+            "activity_type": "CARDIO",
+            "start_date_time": "2025-08-25T08:00:00+01:00",
+            "end_date_time": "2025-08-25T09:00:00+01:00",
+        },
+        {
+            "id": 15,
+            "activity_type": "FITNESS",
+            "start_date_time": "2025-08-26T17:00:00+01:00",
+            "end_date_time": "2025-08-26T18:00:00+01:00",
+        },
     ]
 
     # Filter activities based on provided parameters

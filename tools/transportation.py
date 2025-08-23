@@ -270,7 +270,7 @@ def check_car_price(
     }
 
     # Calculate depreciation based on the year
-    current_year = 2023
+    current_year = 2025
     depreciation_rate = 0.05  # 5% depreciation per year
 
     if (make, model) not in base_prices:
