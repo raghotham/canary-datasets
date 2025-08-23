@@ -2914,6 +2914,46 @@ def search_listings(
             - category: The category of the product
             - results: List of dictionaries with product details
     """
+
+    def fuzzy_match_product(search_query: str, product_keys: List[str]) -> str:
+        """Find the best matching product using fuzzy matching"""
+        search_lower = search_query.lower().strip()
+
+        # Direct exact match
+        for key in product_keys:
+            if key.lower() == search_lower:
+                return key
+
+        # Normalize common GPU naming variations
+        normalized_search = search_lower.replace(" ", "").replace("-", "")
+
+        for key in product_keys:
+            normalized_key = key.lower().replace(" ", "").replace("-", "")
+            if normalized_search == normalized_key:
+                return key
+
+        # Partial match - search query contains product key or vice versa
+        for key in product_keys:
+            key_lower = key.lower()
+            if search_lower in key_lower or key_lower in search_lower:
+                return key
+
+        # Word-based matching for compound product names
+        search_words = set(search_lower.split())
+        best_match = None
+        best_score = 0
+
+        for key in product_keys:
+            key_words = set(key.lower().split())
+            if search_words and key_words:
+                overlap = search_words.intersection(key_words)
+                score = len(overlap) / max(len(search_words), len(key_words))
+                if score > best_score and score > 0.4:  # At least 40% match
+                    best_score = score
+                    best_match = key
+
+        return best_match
+
     # Convert marketplaces parameter if provided as comma-separated string
     if isinstance(marketplaces, str):
         if marketplaces.startswith("[") and marketplaces.endswith("]"):
@@ -2935,30 +2975,320 @@ def search_listings(
             marketplaces = [market.strip() for market in marketplaces.split(",")]
 
     if marketplaces is None:
-        marketplaces = ["Amazon", "Newegg", "eBay", "Facebook Marketplace"]
+        marketplaces = [
+            "Amazon",
+            "Newegg",
+            "eBay",
+            "Facebook Marketplace",
+            "BestBuy",
+            "Microcenter",
+            "B&H",
+        ]
 
+    # Expanded sample data with more GPU options
     sample_data = {
         "RTX 5070": [
-            {"marketplace": "Amazon", "price": 499.99, "condition": "new"},
-            {"marketplace": "eBay", "price": 450.00, "condition": "used"},
-            {"marketplace": "Newegg", "price": 475.00, "condition": "refurbished"},
+            {
+                "marketplace": "Amazon",
+                "price": 499.99,
+                "condition": "new",
+                "title": "NVIDIA GeForce RTX 5070",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 450.00,
+                "condition": "used",
+                "title": "RTX 5070 Graphics Card",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 475.00,
+                "condition": "refurbished",
+                "title": "RTX 5070 GPU",
+            },
+        ],
+        "RTX 4070 Ti": [
+            {
+                "marketplace": "Amazon",
+                "price": 799.99,
+                "condition": "new",
+                "title": "NVIDIA GeForce RTX 4070 Ti 12GB",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 789.99,
+                "condition": "new",
+                "title": "RTX 4070 Ti Gaming GPU",
+            },
+            {
+                "marketplace": "BestBuy",
+                "price": 799.99,
+                "condition": "new",
+                "title": "NVIDIA RTX 4070 Ti Graphics Card",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 650.00,
+                "condition": "used",
+                "title": "RTX 4070 Ti Used",
+            },
+            {
+                "marketplace": "Facebook Marketplace",
+                "price": 600.00,
+                "condition": "used",
+                "title": "RTX 4070Ti GPU",
+            },
+            {
+                "marketplace": "Microcenter",
+                "price": 779.99,
+                "condition": "new",
+                "title": "RTX 4070 Ti In Stock",
+            },
+            {
+                "marketplace": "B&H",
+                "price": 799.99,
+                "condition": "new",
+                "title": "NVIDIA RTX 4070 Ti 12GB GDDR6X",
+            },
+        ],
+        "RTX 4070": [
+            {
+                "marketplace": "Amazon",
+                "price": 599.99,
+                "condition": "new",
+                "title": "NVIDIA GeForce RTX 4070",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 579.99,
+                "condition": "new",
+                "title": "RTX 4070 Graphics Card",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 500.00,
+                "condition": "used",
+                "title": "RTX 4070 Used GPU",
+            },
+            {
+                "marketplace": "BestBuy",
+                "price": 599.99,
+                "condition": "new",
+                "title": "RTX 4070 Gaming GPU",
+            },
+        ],
+        "RTX 4080": [
+            {
+                "marketplace": "Amazon",
+                "price": 1199.99,
+                "condition": "new",
+                "title": "NVIDIA GeForce RTX 4080",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 1189.99,
+                "condition": "new",
+                "title": "RTX 4080 16GB",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 1000.00,
+                "condition": "used",
+                "title": "RTX 4080 Graphics Card",
+            },
+        ],
+        "RTX 4090": [
+            {
+                "marketplace": "Amazon",
+                "price": 1599.99,
+                "condition": "new",
+                "title": "NVIDIA GeForce RTX 4090",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 1579.99,
+                "condition": "new",
+                "title": "RTX 4090 24GB",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 1400.00,
+                "condition": "used",
+                "title": "RTX 4090 Flagship GPU",
+            },
+        ],
+        "RTX 3070": [
+            {
+                "marketplace": "Amazon",
+                "price": 499.99,
+                "condition": "new",
+                "title": "NVIDIA GeForce RTX 3070",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 350.00,
+                "condition": "used",
+                "title": "RTX 3070 Graphics Card",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 450.00,
+                "condition": "refurbished",
+                "title": "RTX 3070 Refurb",
+            },
         ],
         "Ryzen 9": [
-            {"marketplace": "Amazon", "price": 399.99, "condition": "new"},
-            {"marketplace": "eBay", "price": 350.00, "condition": "used"},
+            {
+                "marketplace": "Amazon",
+                "price": 399.99,
+                "condition": "new",
+                "title": "AMD Ryzen 9 7900X",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 350.00,
+                "condition": "used",
+                "title": "Ryzen 9 Processor",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 389.99,
+                "condition": "new",
+                "title": "AMD Ryzen 9 CPU",
+            },
+        ],
+        "Ryzen 7": [
+            {
+                "marketplace": "Amazon",
+                "price": 299.99,
+                "condition": "new",
+                "title": "AMD Ryzen 7 7700X",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 250.00,
+                "condition": "used",
+                "title": "Ryzen 7 CPU",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 289.99,
+                "condition": "new",
+                "title": "AMD Ryzen 7 Processor",
+            },
+        ],
+        "Intel i9": [
+            {
+                "marketplace": "Amazon",
+                "price": 589.99,
+                "condition": "new",
+                "title": "Intel Core i9-13900K",
+            },
+            {
+                "marketplace": "eBay",
+                "price": 500.00,
+                "condition": "used",
+                "title": "Intel i9 CPU",
+            },
+            {
+                "marketplace": "Newegg",
+                "price": 569.99,
+                "condition": "new",
+                "title": "Intel Core i9 Processor",
+            },
         ],
     }
 
-    if query not in sample_data:
-        raise ValueError(f"No listings found for query: {query}")
+    # Try fuzzy matching to find the best product match
+    product_keys = list(sample_data.keys())
+    matched_key = fuzzy_match_product(query, product_keys)
 
-    results = [
-        item
-        for item in sample_data[query]
-        if item["marketplace"] in marketplaces
-        and item["condition"] == condition
-        and (max_price is None or item["price"] <= max_price)
-    ]
+    if not matched_key:
+        # Generate listings based on the query and category if no match found
+        if category == "gpu" and any(
+            term in query.lower() for term in ["rtx", "gtx", "rx", "gpu", "graphics"]
+        ):
+            # Generate GPU listings
+            base_price = 500 + (hash(query) % 300)  # Price between 500-800
+            generated_listings = [
+                {
+                    "marketplace": "Amazon",
+                    "price": base_price,
+                    "condition": condition,
+                    "title": f"{query} Graphics Card",
+                },
+                {
+                    "marketplace": "eBay",
+                    "price": base_price * 0.8,
+                    "condition": "used",
+                    "title": f"Used {query} GPU",
+                },
+                {
+                    "marketplace": "Newegg",
+                    "price": base_price * 0.95,
+                    "condition": condition,
+                    "title": f"{query} Gaming GPU",
+                },
+            ]
+            results = [
+                item for item in generated_listings if item["condition"] == condition
+            ]
+        elif category == "cpu" and any(
+            term in query.lower()
+            for term in ["ryzen", "intel", "i3", "i5", "i7", "i9", "cpu", "processor"]
+        ):
+            # Generate CPU listings
+            base_price = 200 + (hash(query) % 400)  # Price between 200-600
+            generated_listings = [
+                {
+                    "marketplace": "Amazon",
+                    "price": base_price,
+                    "condition": condition,
+                    "title": f"{query} Processor",
+                },
+                {
+                    "marketplace": "eBay",
+                    "price": base_price * 0.85,
+                    "condition": "used",
+                    "title": f"Used {query} CPU",
+                },
+                {
+                    "marketplace": "Newegg",
+                    "price": base_price * 0.92,
+                    "condition": condition,
+                    "title": f"{query} Desktop CPU",
+                },
+            ]
+            results = [
+                item for item in generated_listings if item["condition"] == condition
+            ]
+        else:
+            raise ValueError(f"No listings found for query: {query}")
+    else:
+        # Use the matched product data
+        results = [
+            item
+            for item in sample_data[matched_key]
+            if item["marketplace"] in marketplaces
+            and item["condition"] == condition
+            and (max_price is None or item["price"] <= max_price)
+        ]
+
+    # Filter results by max_price if no condition-specific results found
+    if not results and matched_key:
+        # Try with any condition if no exact condition match
+        all_items = sample_data[matched_key]
+        results = [
+            item
+            for item in all_items
+            if item["marketplace"] in marketplaces
+            and (max_price is None or item["price"] <= max_price)
+        ]
+
+    if not results:
+        raise ValueError(
+            f"No listings found for query: {query} with the specified criteria"
+        )
 
     return {
         "query": query,

@@ -854,31 +854,210 @@ def find_airports(
     if not city or not country:
         raise ValueError("Both 'city' and 'country' parameters are required.")
 
-    # Sample data for demonstration purposes
+    def fuzzy_match_location(
+        search_city: str,
+        search_state: str,
+        search_country: str,
+        data_city: str,
+        data_country: str,
+    ) -> bool:
+        """Fuzzy match city, state, and country to handle variations"""
+
+        # Normalize inputs
+        search_city_lower = search_city.lower().strip()
+        search_country_lower = search_country.lower().strip()
+        data_city_lower = data_city.lower().strip()
+        data_country_lower = data_country.lower().strip()
+
+        # Country variations mapping
+        country_variants = {
+            "usa": [
+                "usa",
+                "us",
+                "united states",
+                "america",
+                "united states of america",
+            ],
+            "uk": ["uk", "united kingdom", "britain", "great britain", "england"],
+            "canada": ["canada", "ca"],
+            "australia": ["australia", "aus", "au"],
+            "france": ["france", "fr"],
+            "germany": ["germany", "de", "deutschland"],
+            "japan": ["japan", "jp"],
+            "china": ["china", "cn"],
+            "india": ["india", "in"],
+        }
+
+        # City variations mapping
+        city_variants = {
+            "new york": ["new york", "nyc", "new york city", "manhattan"],
+            "los angeles": ["los angeles", "la", "los angeles city"],
+            "london": ["london"],
+            "houston": ["houston"],
+            "chicago": ["chicago"],
+            "miami": ["miami"],
+            "dallas": ["dallas"],
+            "atlanta": ["atlanta"],
+            "boston": ["boston"],
+            "seattle": ["seattle"],
+            "denver": ["denver"],
+            "las vegas": ["las vegas", "vegas"],
+            "san francisco": ["san francisco", "sf"],
+            "washington": ["washington", "washington dc", "dc"],
+            "philadelphia": ["philadelphia", "philly"],
+            "phoenix": ["phoenix"],
+            "detroit": ["detroit"],
+        }
+
+        # Check country match
+        country_match = False
+        for base_country, variants in country_variants.items():
+            if search_country_lower in variants and (
+                data_country_lower in variants or base_country == data_country_lower
+            ):
+                country_match = True
+                break
+
+        # Direct country match fallback
+        if not country_match:
+            country_match = (
+                search_country_lower == data_country_lower
+                or search_country_lower in data_country_lower
+                or data_country_lower in search_country_lower
+            )
+
+        # Check city match
+        city_match = False
+        for base_city, variants in city_variants.items():
+            if search_city_lower in variants and (
+                data_city_lower in variants or base_city == data_city_lower
+            ):
+                city_match = True
+                break
+
+        # Direct city match fallback
+        if not city_match:
+            city_match = (
+                search_city_lower == data_city_lower
+                or search_city_lower in data_city_lower
+                or data_city_lower in search_city_lower
+            )
+
+        return country_match and city_match
+
+    # Expanded sample data with more cities and countries
     sample_data = {
         ("New York", "USA"): [
-            "John F. Kennedy International Airport",
-            "LaGuardia Airport",
-            "Newark Liberty International Airport",
+            "John F. Kennedy International Airport (JFK)",
+            "LaGuardia Airport (LGA)",
+            "Newark Liberty International Airport (EWR)",
         ],
         ("Los Angeles", "USA"): [
-            "Los Angeles International Airport",
-            "Hollywood Burbank Airport",
+            "Los Angeles International Airport (LAX)",
+            "Hollywood Burbank Airport (BUR)",
+            "Long Beach Airport (LGB)",
         ],
         ("London", "UK"): [
-            "Heathrow Airport",
-            "Gatwick Airport",
-            "London City Airport",
+            "Heathrow Airport (LHR)",
+            "Gatwick Airport (LGW)",
+            "London City Airport (LCY)",
+            "Stansted Airport (STN)",
+            "Luton Airport (LTN)",
+        ],
+        ("Houston", "USA"): [
+            "George Bush Intercontinental Airport (IAH)",
+            "William P. Hobby Airport (HOU)",
+        ],
+        ("Chicago", "USA"): [
+            "O'Hare International Airport (ORD)",
+            "Midway International Airport (MDW)",
+        ],
+        ("Miami", "USA"): [
+            "Miami International Airport (MIA)",
+            "Fort Lauderdale Airport (FLL)",
+        ],
+        ("Dallas", "USA"): [
+            "Dallas/Fort Worth International Airport (DFW)",
+            "Dallas Love Field (DAL)",
+        ],
+        ("Atlanta", "USA"): [
+            "Hartsfield-Jackson Atlanta International Airport (ATL)",
+        ],
+        ("Boston", "USA"): [
+            "Logan International Airport (BOS)",
+        ],
+        ("Seattle", "USA"): [
+            "Seattle-Tacoma International Airport (SEA)",
+        ],
+        ("Denver", "USA"): [
+            "Denver International Airport (DEN)",
+        ],
+        ("Las Vegas", "USA"): [
+            "McCarran International Airport (LAS)",
+        ],
+        ("San Francisco", "USA"): [
+            "San Francisco International Airport (SFO)",
+            "Oakland International Airport (OAK)",
+            "San Jose Airport (SJC)",
+        ],
+        ("Washington", "USA"): [
+            "Ronald Reagan Washington National Airport (DCA)",
+            "Washington Dulles International Airport (IAD)",
+            "Baltimore/Washington International Airport (BWI)",
+        ],
+        ("Philadelphia", "USA"): [
+            "Philadelphia International Airport (PHL)",
+        ],
+        ("Phoenix", "USA"): [
+            "Phoenix Sky Harbor International Airport (PHX)",
+        ],
+        ("Detroit", "USA"): [
+            "Detroit Metropolitan Wayne County Airport (DTW)",
+        ],
+        ("Toronto", "Canada"): [
+            "Toronto Pearson International Airport (YYZ)",
+            "Billy Bishop Toronto City Airport (YTZ)",
+        ],
+        ("Vancouver", "Canada"): [
+            "Vancouver International Airport (YVR)",
+        ],
+        ("Paris", "France"): [
+            "Charles de Gaulle Airport (CDG)",
+            "Orly Airport (ORY)",
+        ],
+        ("Berlin", "Germany"): [
+            "Berlin Brandenburg Airport (BER)",
+        ],
+        ("Tokyo", "Japan"): [
+            "Narita International Airport (NRT)",
+            "Haneda Airport (HND)",
+        ],
+        ("Sydney", "Australia"): [
+            "Kingsford Smith Airport (SYD)",
         ],
     }
 
-    key = (city, country)
-    if key not in sample_data:
-        raise ValueError(f"No airports found for city: {city}, country: {country}")
+    # Try fuzzy matching to find airports
+    for (data_city, data_country), airports in sample_data.items():
+        if fuzzy_match_location(city, state, country, data_city, data_country):
+            return {
+                "city": data_city,  # Return the matched city name
+                "airports": airports,
+            }
+
+    # If no match found, generate airports based on the city
+    generated_airports = [
+        f"{city} International Airport",
+        f"{city} Municipal Airport",
+    ]
+
+    # Add regional airport if state is provided
+    if state:
+        generated_airports.append(f"{city} Regional Airport")
 
     return {
         "city": city,
-        "airports": sample_data[key],
+        "airports": generated_airports,
     }
 
 
