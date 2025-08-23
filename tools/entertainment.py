@@ -994,6 +994,10 @@ def find_tickets(
             {"section": "Front", "price": 80.0},
             {"section": "Back", "price": 50.0},
         ],
+        "Tempelhof Sounds": [
+            {"section": "VIP", "price": 250.0},
+            {"section": "General", "price": 150.0},
+        ],
     }
 
     if festival_name not in sample_tickets:

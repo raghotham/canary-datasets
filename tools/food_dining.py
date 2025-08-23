@@ -1671,6 +1671,38 @@ def find_recipe(
             - instructions: Step-by-step cooking instructions
     """
 
+    def fuzzy_match_recipe(search_dish: str, recipe_names: List[str]) -> str:
+        """Find the best matching recipe name using fuzzy matching"""
+        search_lower = search_dish.lower().strip()
+
+        # Direct exact match
+        for recipe in recipe_names:
+            if recipe.lower() == search_lower:
+                return recipe
+
+        # Partial match - search dish contains recipe name or vice versa
+        for recipe in recipe_names:
+            recipe_lower = recipe.lower()
+            if search_lower in recipe_lower or recipe_lower in search_lower:
+                return recipe
+
+        # Word-based matching for compound dishes
+        search_words = set(search_lower.split())
+        best_match = None
+        best_score = 0
+
+        for recipe in recipe_names:
+            recipe_words = set(recipe.lower().split())
+            if search_words and recipe_words:
+                overlap = search_words.intersection(recipe_words)
+                score = len(overlap) / max(len(search_words), len(recipe_words))
+                if score > best_score and score > 0.3:  # At least 30% match
+                    best_score = score
+                    best_match = recipe
+
+        return best_match
+
+    # Expanded recipe database with more chicken and Halal options
     recipes = {
         "spaghetti": {
             "ingredients": ["pasta", "tomato sauce", "ground beef", "parmesan"],
@@ -1705,7 +1737,7 @@ def find_recipe(
                 "Add dressing and toss before serving.",
             ],
         },
-        "chicken:": {
+        "chicken": {
             "ingredients": ["chicken breast", "seasoning", "vegetable oil"],
             "instructions": [
                 "Cut chicken breast into strips.",
@@ -1713,28 +1745,202 @@ def find_recipe(
                 "Heat oil in a pan and fry chicken strips until golden brown.",
             ],
         },
+        "chicken biryani": {
+            "ingredients": [
+                "basmati rice",
+                "chicken pieces",
+                "onions",
+                "yogurt",
+                "biryani spices",
+                "saffron",
+                "mint leaves",
+                "cilantro",
+                "ghee",
+                "salt",
+            ],
+            "instructions": [
+                "Soak basmati rice for 30 minutes.",
+                "Marinate chicken with yogurt and spices for 1 hour.",
+                "Cook rice until 70% done, drain and set aside.",
+                "Cook marinated chicken until tender.",
+                "Layer rice and chicken in a pot.",
+                "Garnish with fried onions, mint, and saffron milk.",
+                "Cook on dum (slow cooking) for 45 minutes.",
+            ],
+        },
+        "halal chicken curry": {
+            "ingredients": [
+                "halal chicken pieces",
+                "onions",
+                "tomatoes",
+                "ginger-garlic paste",
+                "curry spices",
+                "coconut milk",
+                "cilantro",
+                "oil",
+            ],
+            "instructions": [
+                "Heat oil and sauté onions until golden.",
+                "Add ginger-garlic paste and cook for 2 minutes.",
+                "Add chicken pieces and cook until browned.",
+                "Add tomatoes and curry spices, cook until soft.",
+                "Pour coconut milk and simmer for 20 minutes.",
+                "Garnish with cilantro and serve hot.",
+            ],
+        },
+        "chicken tikka": {
+            "ingredients": [
+                "chicken cubes",
+                "yogurt",
+                "tikka spices",
+                "lemon juice",
+                "red chili powder",
+                "garam masala",
+                "oil",
+            ],
+            "instructions": [
+                "Marinate chicken in yogurt and spices for 2 hours.",
+                "Thread chicken onto skewers.",
+                "Grill or bake at high heat for 15-20 minutes.",
+                "Baste with oil during cooking.",
+                "Serve with mint chutney and onion rings.",
+            ],
+        },
+        "butter chicken": {
+            "ingredients": [
+                "chicken pieces",
+                "butter",
+                "tomato puree",
+                "cream",
+                "onions",
+                "garam masala",
+                "fenugreek leaves",
+            ],
+            "instructions": [
+                "Cook chicken pieces until tender.",
+                "In another pan, melt butter and sauté onions.",
+                "Add tomato puree and simmer for 10 minutes.",
+                "Add cooked chicken and cream.",
+                "Simmer for 15 minutes, garnish with fenugreek leaves.",
+            ],
+        },
+        "grilled chicken": {
+            "ingredients": [
+                "chicken breasts",
+                "olive oil",
+                "herbs",
+                "garlic",
+                "lemon juice",
+                "salt",
+                "black pepper",
+            ],
+            "instructions": [
+                "Marinate chicken with oil, herbs, and garlic for 1 hour.",
+                "Preheat grill to medium-high heat.",
+                "Grill chicken for 6-8 minutes per side.",
+                "Check internal temperature reaches 165°F.",
+                "Let rest for 5 minutes before serving.",
+            ],
+        },
+        "chicken stir fry": {
+            "ingredients": [
+                "chicken strips",
+                "mixed vegetables",
+                "soy sauce",
+                "ginger",
+                "garlic",
+                "vegetable oil",
+                "sesame oil",
+            ],
+            "instructions": [
+                "Heat oil in a wok or large pan.",
+                "Add chicken and cook until browned.",
+                "Add vegetables and stir-fry for 3-4 minutes.",
+                "Add soy sauce, ginger, and garlic.",
+                "Drizzle with sesame oil before serving.",
+            ],
+        },
+        "chicken soup": {
+            "ingredients": [
+                "chicken pieces",
+                "vegetables",
+                "chicken broth",
+                "noodles",
+                "herbs",
+                "salt",
+                "pepper",
+            ],
+            "instructions": [
+                "Simmer chicken pieces in broth for 30 minutes.",
+                "Remove chicken, shred, and return to pot.",
+                "Add vegetables and cook until tender.",
+                "Add noodles and cook until done.",
+                "Season with herbs, salt, and pepper.",
+            ],
+        },
     }
 
     # Filter recipes based on dietary preference
-    if dietary_preference == "vegetarian":
+    if dietary_preference.lower() == "vegetarian":
         recipes = {
             k: v
             for k, v in recipes.items()
             if "ground beef" not in v["ingredients"]
-            and "chicken breast" not in v["ingredients"]
+            and "chicken" not in k.lower()
+            and not any("chicken" in ing.lower() for ing in v["ingredients"])
         }
-    elif dietary_preference == "Halal":
-        # Assuming all recipes are Halal for simplicity
-        pass
+    elif dietary_preference.lower() == "halal":
+        # For Halal, ensure no pork products and prefer explicitly Halal ingredients
+        halal_recipes = {}
+        for k, v in recipes.items():
+            # Filter out recipes with pork (none in our current list)
+            # All chicken recipes are considered Halal-friendly
+            if any(word in k.lower() for word in ["chicken", "vegetable", "halal"]):
+                halal_recipes[k] = v
+            # Also include other recipes that don't contain non-Halal ingredients
+            elif not any(
+                ing.lower() in ["pork", "bacon", "ham", "alcohol"]
+                for ing in v["ingredients"]
+            ):
+                halal_recipes[k] = v
+        recipes = halal_recipes
 
-    if dish not in recipes:
-        raise ValueError(f"Recipe not found for dish: {dish}")
+    # Try fuzzy matching to find the best recipe
+    recipe_names = list(recipes.keys())
+    matched_recipe = fuzzy_match_recipe(dish, recipe_names)
 
-    return {
-        "dish": dish,
-        "ingredients": recipes[dish]["ingredients"],
-        "instructions": recipes[dish]["instructions"],
-    }
+    if matched_recipe:
+        return {
+            "dish": matched_recipe,
+            "ingredients": recipes[matched_recipe]["ingredients"],
+            "instructions": recipes[matched_recipe]["instructions"],
+        }
+
+    # If no match found, generate a basic recipe based on the dish name
+    if "chicken" in dish.lower():
+        # Generate a basic chicken recipe
+        return {
+            "dish": dish,
+            "ingredients": [
+                "chicken pieces",
+                "onions",
+                "garlic",
+                "olive oil",
+                "salt",
+                "pepper",
+                "herbs",
+                "spices",
+            ],
+            "instructions": [
+                "Season chicken pieces with salt, pepper, and spices.",
+                "Heat olive oil in a pan over medium heat.",
+                "Add onions and garlic, cook until fragrant.",
+                "Add chicken and cook until golden brown and cooked through.",
+                "Serve hot with your choice of sides.",
+            ],
+        }
+
+    raise ValueError(f"Recipe not found for dish: {dish}")
 
 
 from typing import Dict, List, Optional
@@ -2046,8 +2252,10 @@ def get_carbs(meal_name: str, servings: float = 1) -> Dict[str, Union[str, float
         "big mac": 46,
         "fries": 45,
         "Fries": 45,
+        "french fries": 45,
         "butter": 100,
         "sourdough bread": 45,
+        "bread": 45,
         "egg": 1,
         "eggs": 2,
         "porridge": 35,
@@ -2621,6 +2829,7 @@ def get_protein(meal_name: str, servings: float = 1) -> Dict[str, Union[str, flo
         "big mac": 25,
         "Fries": 4,
         "fries": 4,
+        "french fries": 4,
         "egg": 6,
         "sourdough bread": 9,
         "butter": 7,
