@@ -477,23 +477,90 @@ def ski_resort_current_condition(resort: str) -> Dict[str, Union[str, int, float
             - conditions: Current snow conditions (e.g., 'powder', 'packed')
     """
 
+    def normalize_resort_name(search_resort: str) -> str:
+        """Normalize resort names for flexible matching."""
+        # Remove common suffixes and normalize
+        normalized = search_resort.lower().strip()
+
+        # Remove location suffixes
+        suffixes_to_remove = [
+            ", nz",
+            ", new zealand",
+            ", usa",
+            ", us",
+            ", canada",
+            ", ca",
+            ", colorado",
+            ", co",
+            ", utah",
+            ", ut",
+            ", bc",
+            ", alberta",
+        ]
+        for suffix in suffixes_to_remove:
+            if normalized.endswith(suffix):
+                normalized = normalized[: -len(suffix)].strip()
+                break
+
+        return normalized
+
+    def find_matching_resort(search_resort: str) -> str:
+        """Find matching resort with fuzzy logic."""
+        search_normalized = normalize_resort_name(search_resort)
+
+        # Try exact normalized match first
+        for resort_key in sample_conditions.keys():
+            if search_normalized == normalize_resort_name(resort_key):
+                return resort_key
+
+        # Try partial matching - check if search terms are contained in resort names
+        search_words = set(search_normalized.split())
+        best_match = None
+        best_score = 0
+
+        for resort_key in sample_conditions.keys():
+            resort_normalized = normalize_resort_name(resort_key)
+            resort_words = set(resort_normalized.split())
+
+            # Calculate match score based on common words
+            common_words = search_words.intersection(resort_words)
+            if common_words:
+                score = len(common_words) / len(search_words)
+                if score > best_score:
+                    best_score = score
+                    best_match = resort_key
+
+        # Accept matches with at least 60% word overlap
+        if best_score >= 0.6:
+            return best_match
+
+        return None
+
     sample_conditions = {
         "Aspen": {"snow_depth": 24, "temperature": 30, "conditions": "powder"},
         "Whistler": {"snow_depth": 36, "temperature": 28, "conditions": "packed"},
         "Vail": {"snow_depth": 20, "temperature": 32, "conditions": "icy"},
-        "treble cone": {"snow_depth": 12, "temperature": 34, "conditions": "wet"},
+        "Treble Cone": {"snow_depth": 12, "temperature": 34, "conditions": "wet"},
+        "Jackson Hole": {"snow_depth": 18, "temperature": 25, "conditions": "powder"},
+        "Park City": {"snow_depth": 22, "temperature": 29, "conditions": "packed"},
+        "Big Sky": {"snow_depth": 28, "temperature": 22, "conditions": "powder"},
+        "Chamonix": {"snow_depth": 31, "temperature": 26, "conditions": "powder"},
+        "St. Moritz": {"snow_depth": 16, "temperature": 28, "conditions": "icy"},
+        "Zermatt": {"snow_depth": 25, "temperature": 24, "conditions": "packed"},
     }
 
-    if resort not in sample_conditions:
+    # Find matching resort using fuzzy logic
+    matching_resort = find_matching_resort(resort)
+
+    if not matching_resort:
         raise ValueError(f"Resort not supported: {resort}")
 
-    resort_conditions = sample_conditions[resort]
-
+    conditions = sample_conditions[matching_resort]
     return {
-        "resort": resort,
-        "snow_depth": resort_conditions["snow_depth"],
-        "temperature": resort_conditions["temperature"],
-        "conditions": resort_conditions["conditions"],
+        "resort": resort,  # Return original search term
+        "snow_depth": conditions["snow_depth"],
+        "temperature": conditions["temperature"],
+        "conditions": conditions["conditions"],
     }
 
 

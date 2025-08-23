@@ -529,11 +529,22 @@ def get_patient_details(
         },
         "Jane Smith": {"medical_number": "654321", "age": 37, "conditions": ["asthma"]},
         "Henry Martin": {
-            "medical_number": "111222",
+            "medical_number": "GGTH472",
             "age": 25,
             "conditions": ["allergies"],
         },
         "Mark Martin": {
+            "medical_number": "GGTH552",
+            "age": 52,
+            "conditions": ["allergies"],
+        },
+        # Legacy entries for backward compatibility
+        "Henry Martin (Legacy)": {
+            "medical_number": "111222",
+            "age": 25,
+            "conditions": ["allergies"],
+        },
+        "Mark Martin (Legacy)": {
             "medical_number": "111223",
             "age": 52,
             "conditions": ["allergies"],
@@ -1046,38 +1057,225 @@ def find_nearby_specialists(
             - specialists: List of specialists with details such as name, distance, and insurance accepted
     """
 
-    # Sample data for demonstration purposes
+    def normalize_specialty(search_specialty: str) -> str:
+        """Map specialty variations to standard specialty names."""
+        specialty_mappings = {
+            # Orthopedic variations
+            "orthopedic": "orthopedic",
+            "orthopedist": "orthopedic",
+            "orthopedic surgeon": "orthopedic",
+            "orthopedic surgery": "orthopedic",
+            "ortho": "orthopedic",
+            "bone doctor": "orthopedic",
+            "joint doctor": "orthopedic",
+            # Cardiology variations
+            "cardiologist": "cardiologist",
+            "cardiology": "cardiologist",
+            "heart doctor": "cardiologist",
+            # Dermatology variations
+            "dermatologist": "dermatologist",
+            "dermatology": "dermatologist",
+            "skin doctor": "dermatologist",
+            # Additional specialties
+            "neurologist": "neurologist",
+            "neurology": "neurologist",
+            "brain doctor": "neurologist",
+            "psychiatrist": "psychiatrist",
+            "psychiatry": "psychiatrist",
+            "mental health": "psychiatrist",
+        }
+
+        search_lower = search_specialty.lower().strip()
+
+        # Direct match first
+        if search_lower in specialty_mappings:
+            return specialty_mappings[search_lower]
+
+        # Partial matching for compound terms
+        for variation, standard in specialty_mappings.items():
+            if variation in search_lower or search_lower in variation:
+                return standard
+
+        # If no match found, return the original (will be handled by extended data)
+        return search_lower
+
+    def normalize_insurance(insurance_plan: str) -> str:
+        """Map insurance variations to standard insurance names."""
+        if not insurance_plan:
+            return None
+
+        insurance_mappings = {
+            "blue cross": "Blue Cross",
+            "bluecross": "Blue Cross",
+            "blue cross blue shield": "Blue Cross",
+            "bcbs": "Blue Cross",
+            "healthplus": "HealthPlus",
+            "health plus": "HealthPlus",
+            "medicare": "MediCare",
+            "medi care": "MediCare",
+            "aetna": "Aetna",
+            "cigna": "Cigna",
+            "humana": "Humana",
+            "united healthcare": "United Healthcare",
+            "unitedhealth": "United Healthcare",
+        }
+
+        insurance_lower = insurance_plan.lower().strip()
+
+        # Direct match first
+        if insurance_lower in insurance_mappings:
+            return insurance_mappings[insurance_lower]
+
+        # Partial matching
+        for variation, standard in insurance_mappings.items():
+            if variation in insurance_lower or insurance_lower in variation:
+                return standard
+
+        # Return original if no match found
+        return insurance_plan
+
+    # Expanded sample data with more specialists and locations
     sample_specialists = {
         "cardiologist": [
-            {"name": "Dr. Heart", "distance": 10, "insurance": "HealthPlus"},
-            {"name": "Dr. Cardio", "distance": 15, "insurance": "MediCare"},
+            {
+                "name": "Dr. Heart",
+                "distance": 10,
+                "insurance": "HealthPlus",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Cardio",
+                "distance": 15,
+                "insurance": "MediCare",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Rhythm",
+                "distance": 12,
+                "insurance": "Blue Cross",
+                "location": "Chicago",
+            },
         ],
         "dermatologist": [
-            {"name": "Dr. Skin", "distance": 5, "insurance": "HealthPlus"},
-            {"name": "Dr. Derm", "distance": 20, "insurance": "MediCare"},
+            {
+                "name": "Dr. Skin",
+                "distance": 5,
+                "insurance": "HealthPlus",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Derm",
+                "distance": 20,
+                "insurance": "MediCare",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Complexion",
+                "distance": 8,
+                "insurance": "Blue Cross",
+                "location": "Chicago",
+            },
         ],
         "orthopedic": [
-            {"name": "Dr. Bone", "distance": 8, "insurance": "HealthPlus"},
-            {"name": "Dr. Joint", "distance": 18, "insurance": "MediCare"},
+            {
+                "name": "Dr. Bone",
+                "distance": 8,
+                "insurance": "HealthPlus",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Joint",
+                "distance": 18,
+                "insurance": "MediCare",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Spine",
+                "distance": 6,
+                "insurance": "Blue Cross",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Ortho",
+                "distance": 12,
+                "insurance": "Blue Cross",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Fracture",
+                "distance": 22,
+                "insurance": "Aetna",
+                "location": "Chicago",
+            },
         ],
-        "orthopedist": [
-            {"name": "Dr. Bone", "distance": 8, "insurance": "HealthPlus"},
-            {"name": "Dr. Joint", "distance": 18, "insurance": "MediCare"},
+        "neurologist": [
+            {
+                "name": "Dr. Brain",
+                "distance": 14,
+                "insurance": "Blue Cross",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Neural",
+                "distance": 19,
+                "insurance": "HealthPlus",
+                "location": "Chicago",
+            },
+        ],
+        "psychiatrist": [
+            {
+                "name": "Dr. Mind",
+                "distance": 7,
+                "insurance": "Blue Cross",
+                "location": "Chicago",
+            },
+            {
+                "name": "Dr. Mental",
+                "distance": 16,
+                "insurance": "MediCare",
+                "location": "Chicago",
+            },
         ],
     }
 
-    if specialty not in sample_specialists:
+    # Normalize the search parameters
+    normalized_specialty = normalize_specialty(specialty)
+    normalized_insurance = (
+        normalize_insurance(insurance_accepted) if insurance_accepted else None
+    )
+
+    # Find specialists for the normalized specialty
+    specialists_data = sample_specialists.get(normalized_specialty, [])
+
+    # If no exact match, try fuzzy matching across all specialties
+    if not specialists_data:
+        for spec_key, spec_list in sample_specialists.items():
+            if normalized_specialty in spec_key or spec_key in normalized_specialty:
+                specialists_data = spec_list
+                break
+
+    if not specialists_data:
         raise ValueError(f"Specialty not supported: {specialty}")
 
     # Filter specialists based on max_distance and insurance_accepted
-    specialists = [
-        specialist
-        for specialist in sample_specialists[specialty]
-        if specialist["distance"] <= max_distance
-        and (
-            insurance_accepted is None or specialist["insurance"] == insurance_accepted
-        )
-    ]
+    specialists = []
+    for specialist in specialists_data:
+        # Distance filter
+        if specialist["distance"] > max_distance:
+            continue
+
+        # Insurance filter - be flexible with insurance matching
+        if normalized_insurance is not None:
+            specialist_insurance = specialist["insurance"]
+            insurance_match = (
+                normalized_insurance == specialist_insurance
+                or normalized_insurance.lower() in specialist_insurance.lower()
+                or specialist_insurance.lower() in normalized_insurance.lower()
+            )
+            if not insurance_match:
+                continue
+
+        specialists.append(specialist)
 
     return {"location": location, "specialists": specialists}
 

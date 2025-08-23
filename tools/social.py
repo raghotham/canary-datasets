@@ -368,7 +368,7 @@ from typing import Dict, List, Union
 
 
 def nearby_friends(
-    location: str, n_closest: Union[int, None] = None, radius: float = 1
+    location: str, n_closest: Union[int, str, None] = None, radius: float = 1
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Get a list of friends nearby a certain location.
 
@@ -384,37 +384,122 @@ def nearby_friends(
             - friends: List of nearby friends with their names and distances
     """
 
-    # Sample data representing friends and their distances from various locations
+    def normalize_location(search_location: str) -> str:
+        """Normalize location names for flexible matching."""
+        location_mappings = {
+            # NYC area variations
+            "midtown": "New York",
+            "midtown manhattan": "New York",
+            "midtown manhattan, ny": "New York",
+            "manhattan": "New York",
+            "nyc": "New York",
+            "new york city": "New York",
+            "new york": "New York",
+            "downtown manhattan": "New York",
+            "upper east side": "New York",
+            "upper west side": "New York",
+            "times square": "New York",
+            "financial district": "New York",
+            # SF area variations
+            "san francisco": "San Francisco",
+            "sf": "San Francisco",
+            "san fran": "San Francisco",
+            "downtown sf": "San Francisco",
+            "soma": "San Francisco",
+            "mission": "San Francisco",
+            # London area variations
+            "london": "London",
+            "central london": "London",
+            "london city": "London",
+            "city of london": "London",
+            "west end": "London",
+            # Additional cities
+            "chicago": "Chicago",
+            "downtown chicago": "Chicago",
+            "loop": "Chicago",
+            "los angeles": "Los Angeles",
+            "la": "Los Angeles",
+            "downtown la": "Los Angeles",
+        }
+
+        search_lower = search_location.lower().strip()
+        return location_mappings.get(search_lower, search_location)
+
+    def find_matching_location(search_location: str) -> str:
+        """Find matching location with fuzzy logic."""
+        normalized = normalize_location(search_location)
+
+        # If we got a mapped location, check if it exists in our data
+        if normalized in sample_data:
+            return normalized
+
+        # Try partial matching on original search
+        search_lower = search_location.lower().strip()
+        for location_key in sample_data.keys():
+            location_lower = location_key.lower()
+            if search_lower in location_lower or location_lower in search_lower:
+                return location_key
+
+        return None
+
+    # Expanded sample data with more locations and friends
     sample_data = {
         "New York": [
             {"name": "Alice", "distance": 0.5},
             {"name": "Bob", "distance": 1.2},
             {"name": "Charlie", "distance": 0.8},
+            {"name": "Diana", "distance": 0.3},
+            {"name": "Eric", "distance": 0.9},
         ],
         "San Francisco": [
             {"name": "David", "distance": 0.3},
             {"name": "Eve", "distance": 1.5},
             {"name": "Frank", "distance": 0.9},
+            {"name": "Grace", "distance": 0.7},
         ],
         "London": [
             {"name": "Grace", "distance": 0.4},
             {"name": "Heidi", "distance": 1.1},
             {"name": "Ivan", "distance": 0.7},
+            {"name": "Jack", "distance": 0.6},
+        ],
+        "Chicago": [
+            {"name": "Kate", "distance": 0.4},
+            {"name": "Leo", "distance": 0.8},
+            {"name": "Maya", "distance": 1.0},
+            {"name": "Noah", "distance": 0.6},
+        ],
+        "Los Angeles": [
+            {"name": "Olivia", "distance": 0.5},
+            {"name": "Paul", "distance": 1.3},
+            {"name": "Quinn", "distance": 0.7},
         ],
     }
 
-    if location not in sample_data:
+    # Find matching location
+    matching_location = find_matching_location(location)
+
+    if not matching_location:
         raise ValueError(f"Location not supported: {location}")
 
-    friends = sample_data[location]
-    nearby_friends = [friend for friend in friends if friend["distance"] <= radius]
+    friends = sample_data[matching_location]
+    nearby_friends_list = [friend for friend in friends if friend["distance"] <= radius]
 
+    # Handle n_closest parameter - convert string to int if necessary
     if n_closest is not None:
-        nearby_friends = sorted(nearby_friends, key=lambda x: x["distance"])[:n_closest]
+        if isinstance(n_closest, str):
+            try:
+                n_closest = int(n_closest)
+            except ValueError:
+                raise ValueError(f"n_closest must be an integer, got: {n_closest}")
+
+        nearby_friends_list = sorted(nearby_friends_list, key=lambda x: x["distance"])[
+            :n_closest
+        ]
 
     return {
-        "location": location,
-        "friends": nearby_friends,
+        "location": location,  # Return original search location
+        "friends": nearby_friends_list,
     }
 
 

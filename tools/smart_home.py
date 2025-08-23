@@ -868,30 +868,121 @@ def diagnose_issue(
 from typing import Dict, List, Literal
 
 
-def drapes_status(room: List[str]) -> Dict[str, Literal["open", "closed"]]:
+def drapes_status(
+    room: Union[List[str], str, Dict[str, Union[str, List[str]]]]
+) -> Dict[str, Literal["open", "closed"]]:
     """Returns the closed or open status of drapes in a given room or set of rooms.
 
     Args:
-        room: List of rooms to check the drapes status for.
+        room: Room(s) to check the drapes status for. Can be:
+            - List of room names
+            - Single room name as string
+            - Dict with 'room' or 'rooms' key containing room name(s)
+            - String representation of a list
 
     Returns:
         Dict where keys are room names and values are 'open' or 'closed' indicating the drapes status.
     """
 
+    def parse_room_input(room_input) -> List[str]:
+        """Parse room input from various formats into a list of room names."""
+        # Handle dict input (e.g., {"room": "bedroom"} or {"rooms": ["bedroom"]})
+        if isinstance(room_input, dict):
+            # Try 'room' key first, then 'rooms'
+            if "room" in room_input:
+                room_value = room_input["room"]
+            elif "rooms" in room_input:
+                room_value = room_input["rooms"]
+            else:
+                raise ValueError("Dict input must contain 'room' or 'rooms' key")
+
+            # Process the room value
+            return parse_room_input(room_value)
+
+        # Handle list input
+        if isinstance(room_input, list):
+            return room_input
+
+        # Handle string input
+        if isinstance(room_input, str):
+            # Handle empty string
+            if not room_input.strip():
+                raise ValueError("Room name cannot be empty")
+
+            # Try to parse as string representation of a list
+            if room_input.strip().startswith("[") and room_input.strip().endswith("]"):
+                try:
+                    import ast
+
+                    parsed_list = ast.literal_eval(room_input)
+                    if isinstance(parsed_list, list):
+                        return [str(item) for item in parsed_list]
+                except (ValueError, SyntaxError):
+                    # If parsing fails, treat as single room name
+                    pass
+
+            # Handle comma-separated rooms
+            if "," in room_input:
+                return [room.strip() for room in room_input.split(",") if room.strip()]
+
+            # Single room name
+            return [room_input.strip()]
+
+        # For any other type, try to convert to string and treat as single room
+        return [str(room_input)]
+
+    # Parse the room input using the flexible parser
+    parsed_rooms = parse_room_input(room)
+
+    if not parsed_rooms:
+        raise ValueError("At least one room must be specified")
+
+    # Expanded sample status with more rooms and flexible matching
     sample_status = {
         "Living Room": "open",
+        "living room": "open",
         "Bedroom": "closed",
         "bedroom": "closed",
         "Kitchen": "open",
+        "kitchen": "open",
         "Bathroom": "closed",
+        "bathroom": "closed",
         "Office": "open",
+        "office": "open",
+        "Dining Room": "closed",
+        "dining room": "closed",
+        "Family Room": "open",
+        "family room": "open",
+        "Master Bedroom": "closed",
+        "master bedroom": "closed",
     }
 
+    def find_matching_room(search_room: str) -> str:
+        """Find matching room with flexible case-insensitive matching."""
+        # Direct match
+        if search_room in sample_status:
+            return search_room
+
+        # Case-insensitive match
+        for room_key in sample_status.keys():
+            if search_room.lower() == room_key.lower():
+                return room_key
+
+        # Partial matching
+        search_lower = search_room.lower()
+        for room_key in sample_status.keys():
+            room_lower = room_key.lower()
+            if search_lower in room_lower or room_lower in search_lower:
+                return room_key
+
+        return None
+
     result = {}
-    for r in room:
-        if r not in sample_status:
+    for r in parsed_rooms:
+        matching_room = find_matching_room(r)
+        if not matching_room:
             raise ValueError(f"Room not supported: {r}")
-        result[r] = sample_status[r]
+        result[r] = sample_status[matching_room]
 
     return result
 

@@ -591,7 +591,9 @@ from typing import Dict, Literal
 
 
 def dances(
-    name: Optional[str] = None, style: Optional[Literal[1, 2, 3, 4]] = None, participants: Optional[Literal[1, 2]] = None
+    name: Optional[str] = None,
+    style: Optional[Literal[1, 2, 3, 4]] = None,
+    participants: Optional[Literal[1, 2]] = None,
 ) -> Union[Dict[str, str], List[Dict[str, str]]]:
     """Set or get a list of ballroom and latin dance styles.
 
@@ -607,7 +609,7 @@ def dances(
             - participants: Number of participants as a string
     """
     style_map = {1: "ballroom", 2: "latin", 3: "argentine tango", 4: "flamenco"}
-    
+
     # If no parameters provided, return a list of all dance styles
     if name is None and style is None and participants is None:
         # Return a predefined list of common dance styles
@@ -615,29 +617,49 @@ def dances(
             {"name": "Waltz", "style": "ballroom", "participants": "2 participants"},
             {"name": "Tango", "style": "ballroom", "participants": "2 participants"},
             {"name": "Foxtrot", "style": "ballroom", "participants": "2 participants"},
-            {"name": "Quickstep", "style": "ballroom", "participants": "2 participants"},
-            {"name": "Viennese Waltz", "style": "ballroom", "participants": "2 participants"},
+            {
+                "name": "Quickstep",
+                "style": "ballroom",
+                "participants": "2 participants",
+            },
+            {
+                "name": "Viennese Waltz",
+                "style": "ballroom",
+                "participants": "2 participants",
+            },
             {"name": "Samba", "style": "latin", "participants": "2 participants"},
             {"name": "Cha-Cha", "style": "latin", "participants": "2 participants"},
             {"name": "Rumba", "style": "latin", "participants": "2 participants"},
             {"name": "Paso Doble", "style": "latin", "participants": "2 participants"},
             {"name": "Jive", "style": "latin", "participants": "2 participants"},
-            {"name": "Argentine Tango", "style": "argentine tango", "participants": "2 participants"},
-            {"name": "Sevillanas", "style": "flamenco", "participants": "1 participant"}
+            {
+                "name": "Argentine Tango",
+                "style": "argentine tango",
+                "participants": "2 participants",
+            },
+            {
+                "name": "Sevillanas",
+                "style": "flamenco",
+                "participants": "1 participant",
+            },
         ]
-    
+
     # Validate parameters when they are provided
     if style is not None and style not in style_map:
         raise ValueError(f"Unsupported style: {style}")
 
     if participants is not None and participants not in [1, 2]:
         raise ValueError(f"Invalid number of participants: {participants}")
-    
+
     # When parameters are provided, return a single dance
     return {
         "name": name or "Unnamed dance",
         "style": style_map[style] if style is not None else "unspecified",
-        "participants": f"{participants} participant{'s' if participants and participants > 1 else ''}" if participants is not None else "unspecified",
+        "participants": (
+            f"{participants} participant{'s' if participants and participants > 1 else ''}"
+            if participants is not None
+            else "unspecified"
+        ),
     }
 
 
@@ -662,7 +684,65 @@ def find_festival(
             - start_date: Start date of the festival
     """
 
-    # Sample data for demonstration purposes
+    def normalize_city_name(search_city: str) -> str:
+        """Normalize city names for flexible matching."""
+        city_mappings = {
+            # German cities
+            "berlin": "Berlin",
+            "hamburg": "Hamburg",
+            "munich": "Munich",
+            "cologne": "Cologne",
+            "frankfurt": "Frankfurt",
+            # US cities
+            "new york": "New York",
+            "nyc": "New York",
+            "new york city": "New York",
+            "los angeles": "Los Angeles",
+            "la": "Los Angeles",
+            "chicago": "Chicago",
+            "san francisco": "San Francisco",
+            "sf": "San Francisco",
+            # UK cities
+            "london": "London",
+            "manchester": "Manchester",
+            "birmingham": "Birmingham",
+            # Other European cities
+            "paris": "Paris",
+            "amsterdam": "Amsterdam",
+            "madrid": "Madrid",
+            "rome": "Rome",
+            "barcelona": "Barcelona",
+        }
+
+        search_lower = search_city.lower().strip()
+        return city_mappings.get(search_lower, search_city)
+
+    def fuzzy_artist_match(search_artist: str, festival_artist: str) -> bool:
+        """Check if artist names match with fuzzy logic."""
+        search_lower = search_artist.lower().strip()
+        festival_lower = festival_artist.lower().strip()
+
+        # Exact match
+        if search_lower == festival_lower:
+            return True
+
+        # Check if one contains the other
+        if search_lower in festival_lower or festival_lower in search_lower:
+            return True
+
+        # Check individual words for partial matches
+        search_words = set(search_lower.split())
+        festival_words = set(festival_lower.split())
+
+        # If any significant word matches (length > 2)
+        common_words = search_words.intersection(festival_words)
+        significant_matches = [word for word in common_words if len(word) > 2]
+        if significant_matches:
+            return True
+
+        return False
+
+    # Expanded sample data with more cities and popular artists
     sample_festivals = {
         "New York": [
             {
@@ -675,6 +755,11 @@ def find_festival(
                 "artist_name": "Imagine Dragons",
                 "start_date": "2023-07-20",
             },
+            {
+                "festival_name": "Pop Paradise",
+                "artist_name": "Sabrina Carpenter",
+                "start_date": "2023-08-12",
+            },
         ],
         "Los Angeles": [
             {
@@ -686,6 +771,11 @@ def find_festival(
                 "festival_name": "Jazz Fest",
                 "artist_name": "Norah Jones",
                 "start_date": "2023-05-05",
+            },
+            {
+                "festival_name": "Teen Choice Festival",
+                "artist_name": "Sabrina Carpenter",
+                "start_date": "2023-07-22",
             },
         ],
         "Chicago": [
@@ -702,30 +792,120 @@ def find_festival(
         ],
         "Berlin": [
             {
-                "festival_name": "Lovebox",
+                "festival_name": "Berlin Music Week",
                 "artist_name": "The Killers",
                 "start_date": "2023-07-15",
-            }
+            },
+            {
+                "festival_name": "Tempelhof Sounds",
+                "artist_name": "Sabrina Carpenter",
+                "start_date": "2023-06-25",
+            },
+            {
+                "festival_name": "Lollapalooza Berlin",
+                "artist_name": "Arctic Monkeys",
+                "start_date": "2023-09-09",
+            },
+        ],
+        "Hamburg": [
+            {
+                "festival_name": "Reeperbahn Festival",
+                "artist_name": "Billie Eilish",
+                "start_date": "2023-09-20",
+            },
+            {
+                "festival_name": "Hamburg Music Festival",
+                "artist_name": "Sabrina Carpenter",
+                "start_date": "2023-08-05",
+            },
+        ],
+        "London": [
+            {
+                "festival_name": "Wireless Festival",
+                "artist_name": "Drake",
+                "start_date": "2023-07-07",
+            },
+            {
+                "festival_name": "British Summer Time",
+                "artist_name": "Taylor Swift",
+                "start_date": "2023-06-30",
+            },
+            {
+                "festival_name": "Reading Festival",
+                "artist_name": "Sabrina Carpenter",
+                "start_date": "2023-08-25",
+            },
+        ],
+        "Paris": [
+            {
+                "festival_name": "Lollapalooza Paris",
+                "artist_name": "Dua Lipa",
+                "start_date": "2023-07-22",
+            },
+            {
+                "festival_name": "We Love Green",
+                "artist_name": "Sabrina Carpenter",
+                "start_date": "2023-06-02",
+            },
+        ],
+        "Amsterdam": [
+            {
+                "festival_name": "Amsterdam Open Air",
+                "artist_name": "Martin Garrix",
+                "start_date": "2023-06-10",
+            },
+            {
+                "festival_name": "Milkshake Festival",
+                "artist_name": "Sabrina Carpenter",
+                "start_date": "2023-07-29",
+            },
         ],
     }
 
-    if city not in sample_festivals:
+    # Normalize the search city
+    normalized_city = normalize_city_name(city)
+
+    # Try to find the city in our data
+    matching_city = None
+    for festival_city in sample_festivals.keys():
+        if normalized_city.lower() == festival_city.lower():
+            matching_city = festival_city
+            break
+
+    # If exact city not found, try fuzzy matching on city names
+    if not matching_city:
+        for festival_city in sample_festivals.keys():
+            if (
+                city.lower() in festival_city.lower()
+                or festival_city.lower() in city.lower()
+            ):
+                matching_city = festival_city
+                break
+
+    if not matching_city:
         raise ValueError(f"City not supported: {city}")
 
-    for festival in sample_festivals[city]:
-        if festival["artist_name"].lower() == artist_name.lower():
+    # Look for matching festivals
+    matching_festivals = []
+    for festival in sample_festivals[matching_city]:
+        if fuzzy_artist_match(artist_name, festival["artist_name"]):
             if start_date and festival["start_date"] != start_date:
                 continue
-            return {
-                "festival_name": festival["festival_name"],
-                "city": city,
-                "artist_name": festival["artist_name"],
-                "start_date": festival["start_date"],
-            }
+            matching_festivals.append(festival)
 
-    raise ValueError(
-        f"No festival found for artist '{artist_name}' in {city} on {start_date or 'any date'}"
-    )
+    if not matching_festivals:
+        raise ValueError(
+            f"No festival found for artist '{artist_name}' in {city} on {start_date or 'any date'}"
+        )
+
+    # Return the first matching festival
+    festival = matching_festivals[0]
+    return {
+        "festival_name": festival["festival_name"],
+        "city": matching_city,
+        "artist_name": festival["artist_name"],
+        "start_date": festival["start_date"],
+    }
 
 
 from typing import Dict, List, Union
@@ -2645,17 +2825,25 @@ def schedule(
         )
 
     # If no specific parameters provided, return a list of schedule entries
-    if location is None and floor is None and time is None and dance is None and dancer is None and lead is None and follow is None:
+    if (
+        location is None
+        and floor is None
+        and time is None
+        and dance is None
+        and dancer is None
+        and lead is None
+        and follow is None
+    ):
         return {
             "schedules": [
                 {
                     "location": "Grand Hall",
                     "floor": "main ballroom",
-                    "time": "2023-10-15T18:00:00", 
+                    "time": "2023-10-15T18:00:00",
                     "dance": "waltz",
                     "dancer": 101,
                     "lead": True,
-                    "follow": False
+                    "follow": False,
                 },
                 {
                     "location": "Grand Hall",
@@ -2664,7 +2852,7 @@ def schedule(
                     "dance": "tango",
                     "dancer": 102,
                     "lead": False,
-                    "follow": True
+                    "follow": True,
                 },
                 {
                     "location": "Community Center",
@@ -2673,11 +2861,11 @@ def schedule(
                     "dance": "foxtrot",
                     "dancer": 103,
                     "lead": True,
-                    "follow": False
-                }
+                    "follow": False,
+                },
             ]
         }
-    
+
     # Process the time parameter to ensure it's serializable
     schedule_time = None
     if time is not None:
@@ -2687,7 +2875,7 @@ def schedule(
             schedule_time = time
     else:
         schedule_time = "2023-10-15T18:00:00"
-        
+
     # Mock data generation for a single schedule entry
     sample_data = {
         "location": location or "Grand Hall",
@@ -2845,11 +3033,13 @@ def search_events(
             start_date_str, end_date_str = date_range.split(" to ", 1)
             date_range = {
                 "start_date": start_date_str.strip(),
-                "end_date": end_date_str.strip()
+                "end_date": end_date_str.strip(),
             }
         else:
-            raise ValueError("Invalid date_range format. Expected format: 'YYYY-MM-DD to YYYY-MM-DD'")
-            
+            raise ValueError(
+                "Invalid date_range format. Expected format: 'YYYY-MM-DD to YYYY-MM-DD'"
+            )
+
     # Convert type parameter to handle alternative forms
     type_mappings = {
         "sport": "sports",
