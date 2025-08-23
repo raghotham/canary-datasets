@@ -993,6 +993,14 @@ def verify_insurance_coverage(
             "covered": True,
             "copay": 30.0,
         },
+        ("Dr. Spine", "Blue Cross"): {
+            "covered": True,
+            "copay": 25.0,
+        },
+        ("Dr. Ortho", "Blue Cross"): {
+            "covered": True,
+            "copay": 25.0,
+        },
     }
 
     # Get all available providers and insurance plans

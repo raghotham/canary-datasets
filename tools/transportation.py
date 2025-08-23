@@ -266,6 +266,7 @@ def check_car_price(
         ("Toyota", "Camry"): 24000,
         ("Ford", "Mustang"): 26000,
         ("Honda", "Civic"): 22000,
+        ("Volvo", "S90"): 48000,
     }
 
     # Calculate depreciation based on the year

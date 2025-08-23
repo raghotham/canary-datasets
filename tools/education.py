@@ -380,6 +380,7 @@ def attitudinal_psyche_description(attitudinal_psyche_combo: str) -> Dict[str, s
         "EFGH": "EFGH indicates a strong-willed and determined personality, with a focus on achieving goals.",
         "IJKL": "IJKL is characterized by creativity and intuition, often thriving in artistic environments.",
         "MNOP": "MNOP signifies a logical and analytical mindset, excelling in problem-solving and strategy.",
+        "LEVF": "LEVF embodies an independent and visionary approach, combining logical thinking with flexible execution.",
     }
 
     if attitudinal_psyche_combo not in descriptions:

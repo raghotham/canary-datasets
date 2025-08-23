@@ -3767,17 +3767,50 @@ def near_restaurants(
     restaurants = sample_data[city]
 
     if is_open:
-        hour, minute = map(int, is_open.split(":"))
+        # Parse and validate the time format
+        try:
+            time_parts = is_open.split(":")
+            if len(time_parts) != 2:
+                raise ValueError("Time must be in HH:MM format")
+            
+            hour, minute = map(int, time_parts)
+            if not (0 <= hour <= 23) or not (0 <= minute <= 59):
+                raise ValueError("Invalid time values")
+                
+        except (ValueError, AttributeError) as e:
+            raise ValueError(f"Invalid time format '{is_open}'. Expected HH:MM format (24-hour)")
+        
         is_open_minutes = hour * 60 + minute
-        restaurants = [
-            r
-            for r in restaurants
-            if int(r["open_hour"].split(":")[0]) * 60
-            + int(r["open_hour"].split(":")[1])
-            <= is_open_minutes
-            <= int(r["close_hour"].split(":")[0]) * 60
-            + int(r["close_hour"].split(":")[1])
-        ]
+        
+        # Filter restaurants that are open at the specified time
+        filtered_restaurants = []
+        for r in restaurants:
+            try:
+                # Parse opening time
+                open_parts = r["open_hour"].split(":")
+                open_hour, open_min = int(open_parts[0]), int(open_parts[1])
+                open_minutes = open_hour * 60 + open_min
+                
+                # Parse closing time
+                close_parts = r["close_hour"].split(":")
+                close_hour, close_min = int(close_parts[0]), int(close_parts[1])
+                close_minutes = close_hour * 60 + close_min
+                
+                # Handle overnight hours (closing after midnight)
+                if close_minutes < open_minutes:
+                    # Restaurant is open past midnight
+                    if is_open_minutes >= open_minutes or is_open_minutes <= close_minutes:
+                        filtered_restaurants.append(r)
+                else:
+                    # Normal hours
+                    if open_minutes <= is_open_minutes <= close_minutes:
+                        filtered_restaurants.append(r)
+                        
+            except (ValueError, IndexError, KeyError):
+                # If we can't parse restaurant hours, skip this restaurant
+                continue
+                
+        restaurants = filtered_restaurants
 
     return {"city": city, "restaurants": restaurants}
 

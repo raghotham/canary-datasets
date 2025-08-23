@@ -192,6 +192,7 @@ def send_text_message(contact_name: str, message: str) -> Dict[str, str]:
         "Alice": "+1234567890",
         "Bob": "+0987654321",
         "Charlie": "+1122334455",
+        "Kyle": "+2233445566",
     }
 
     if contact_name not in contacts:
@@ -398,6 +399,11 @@ def retrieve_text_message(
             "Did you see the game last night?",
             "I'll be late to the meeting.",
             "Keyword found here!",
+        ],
+        "Jake Senn": [
+            "I finished the project proposal.",
+            "Can we discuss the keyword requirements?",
+            "Let me know when you're free tomorrow.",
         ],
     }
 

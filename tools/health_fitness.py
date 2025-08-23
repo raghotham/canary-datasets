@@ -1556,6 +1556,42 @@ def get_activity(
             "start_date_time": "2025-08-14T14:00:00+01:00",
             "end_date_time": "2025-08-14T15:00:00+01:00",
         },
+        {
+            "id": 4,
+            "activity_type": "TRAIL_RUN",
+            "start_date_time": "2025-08-15T08:30:00+01:00",
+            "end_date_time": "2025-08-15T10:00:00+01:00",
+        },
+        {
+            "id": 5,
+            "activity_type": "VIRTUAL_RUN",
+            "start_date_time": "2025-08-16T16:00:00+01:00",
+            "end_date_time": "2025-08-16T16:45:00+01:00",
+        },
+        {
+            "id": 6,
+            "activity_type": "WALK",
+            "start_date_time": "2025-08-17T12:00:00+01:00",
+            "end_date_time": "2025-08-17T13:30:00+01:00",
+        },
+        {
+            "id": 7,
+            "activity_type": "HIKE",
+            "start_date_time": "2025-08-18T07:00:00+01:00",
+            "end_date_time": "2025-08-18T12:00:00+01:00",
+        },
+        {
+            "id": 8,
+            "activity_type": "YOGA",
+            "start_date_time": "2025-08-19T18:00:00+01:00",
+            "end_date_time": "2025-08-19T19:00:00+01:00",
+        },
+        {
+            "id": 9,
+            "activity_type": "WEIGHT_TRAINING",
+            "start_date_time": "2025-08-20T17:30:00+01:00",
+            "end_date_time": "2025-08-20T18:30:00+01:00",
+        },
     ]
 
     # Filter activities based on provided parameters

@@ -1420,6 +1420,7 @@ def convert_currency(
         "CAD": 1.37,
         "AUD": 1.52,
         "THB": 36.25,
+        "RON": 4.7,
     }
     # Normalize currency codes to uppercase
     from_currency = from_currency.upper()
