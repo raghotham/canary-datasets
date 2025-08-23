@@ -1,0 +1,975 @@
+# Weather Tools
+# Auto-generated implementations from cached categorization
+
+from typing import Any, Dict, List, Union
+
+
+def get_weather(
+    location: str, forecast_days: int = 1
+) -> Dict[str, Union[str, float, List[Dict[str, Union[str, float]]]]]:
+    """Provides current and forecasted weather for a location.
+
+    Args:
+        location: The location for weather information (e.g. 'London', 'New York')
+        forecast_days: Number of days to forecast the weather
+
+    Returns:
+        Dict containing:
+            - location: Location name
+            - current_temperature: Current temperature in Fahrenheit
+            - forecast: List of dictionaries with forecasted weather conditions for each day
+    """
+
+    def fuzzy_match_location(
+        search_location: str, available_locations: List[str]
+    ) -> str:
+        """Find the best matching location using fuzzy matching"""
+        search_lower = search_location.lower().strip()
+
+        # Direct exact match
+        for loc in available_locations:
+            if loc.lower() == search_lower:
+                return loc
+
+        # City with district/area matching (e.g., "Tempelhof Berlin" -> "Berlin")
+        location_mappings = {
+            # Berlin districts and variations
+            "berlin": [
+                "berlin",
+                "tempelhof berlin",
+                "kreuzberg berlin",
+                "mitte berlin",
+                "charlottenburg berlin",
+                "friedrichshain berlin",
+                "neukölln berlin",
+                "prenzlauer berg berlin",
+                "schöneberg berlin",
+            ],
+            # New York areas
+            "new york": [
+                "new york",
+                "manhattan",
+                "brooklyn",
+                "queens",
+                "bronx",
+                "staten island",
+                "nyc",
+                "new york city",
+                "manhattan ny",
+                "brooklyn ny",
+            ],
+            # London areas
+            "london": [
+                "london",
+                "central london",
+                "east london",
+                "north london",
+                "south london",
+                "west london",
+                "westminster london",
+                "camden london",
+                "kensington london",
+                "chelsea london",
+            ],
+            # Paris areas
+            "paris": [
+                "paris",
+                "1st arrondissement paris",
+                "2nd arrondissement paris",
+                "montmartre paris",
+                "champs elysees paris",
+                "louvre paris",
+                "marais paris",
+            ],
+            # Tokyo areas
+            "tokyo": [
+                "tokyo",
+                "shibuya tokyo",
+                "shinjuku tokyo",
+                "harajuku tokyo",
+                "ginza tokyo",
+                "akihabara tokyo",
+                "roppongi tokyo",
+                "asakusa tokyo",
+            ],
+            # San Francisco areas
+            "san francisco": [
+                "san francisco",
+                "downtown san francisco",
+                "soma san francisco",
+                "mission san francisco",
+                "castro san francisco",
+                "pacific heights san francisco",
+                "sf",
+            ],
+        }
+
+        # Check location mappings
+        for base_location, variants in location_mappings.items():
+            if search_lower in variants:
+                # Find the actual city name in available_locations
+                for loc in available_locations:
+                    if base_location == loc.lower():
+                        return loc
+
+        # Partial match - search location contains available location or vice versa
+        for loc in available_locations:
+            loc_lower = loc.lower()
+            if search_lower in loc_lower or loc_lower in search_lower:
+                return loc
+
+        # Word-based matching for compound location names
+        search_words = set(search_lower.split())
+        best_match = None
+        best_score = 0
+
+        for loc in available_locations:
+            loc_words = set(loc.lower().split())
+            if search_words and loc_words:
+                overlap = search_words.intersection(loc_words)
+                score = len(overlap) / max(len(search_words), len(loc_words))
+                if score > best_score and score > 0.5:  # At least 50% match
+                    best_score = score
+                    best_match = loc
+
+        return best_match
+
+    # Expanded sample data for current temperature with more cities
+    current_weather_sample = {
+        "New York": 68.0,
+        "Sydney": 75.0,
+        "Mumbai": 85.0,
+        "Tokyo": 70.0,
+        "Boston": 65.0,
+        "Paris": 62.0,
+        "Las Vegas": 88.0,
+        "San Francisco": 66.0,
+        "Berlin": 70.0,
+        "Los Angeles": 73.0,
+        "Chicago": 61.0,
+        "Miami": 82.0,
+        "Seattle": 58.0,
+        "Denver": 65.0,
+        "Rome": 68.0,
+        "Amsterdam": 55.0,
+        "Barcelona": 71.0,
+        "Vienna": 63.0,
+        "Prague": 60.0,
+    }
+
+    # Expanded sample data for forecasted weather
+    forecast_sample = {
+        "New York": [
+            {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 72.0, "condition": "cloudy"},
+        ],
+        "Sydney": [
+            {"day": "Monday", "temperature": 77.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 78.0, "condition": "windy"},
+        ],
+        "Mumbai": [
+            {"day": "Monday", "temperature": 87.0, "condition": "humid"},
+            {"day": "Tuesday", "temperature": 88.0, "condition": "sunny"},
+        ],
+        "Tokyo": [
+            {"day": "Monday", "temperature": 72.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 74.0, "condition": "rainy"},
+        ],
+        "Boston": [
+            {"day": "Monday", "temperature": 67.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 69.0, "condition": "sunny"},
+        ],
+        "Paris": [
+            {"day": "Monday", "temperature": 64.0, "condition": "overcast"},
+            {"day": "Tuesday", "temperature": 66.0, "condition": "rainy"},
+        ],
+        "Las Vegas": [
+            {"day": "Monday", "temperature": 90.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 92.0, "condition": "clear"},
+        ],
+        "San Francisco": [
+            {"day": "Monday", "temperature": 68.0, "condition": "foggy"},
+            {"day": "Tuesday", "temperature": 70.0, "condition": "partly cloudy"},
+        ],
+        "Venice": [
+            {"day": "Monday", "temperature": 68.0, "condition": "foggy"},
+            {"day": "Tuesday", "temperature": 70.0, "condition": "partly cloudy"},
+        ],
+        "Milan": [
+            {"day": "Monday", "temperature": 67.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 69.0, "condition": "sunny"},
+        ],
+        "Berlin": [
+            {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 72.0, "condition": "cloudy"},
+        ],
+        "Los Angeles": [
+            {"day": "Monday", "temperature": 75.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 76.0, "condition": "clear"},
+        ],
+        "Chicago": [
+            {"day": "Monday", "temperature": 63.0, "condition": "windy"},
+            {"day": "Tuesday", "temperature": 65.0, "condition": "cloudy"},
+        ],
+        "Miami": [
+            {"day": "Monday", "temperature": 84.0, "condition": "humid"},
+            {"day": "Tuesday", "temperature": 85.0, "condition": "sunny"},
+        ],
+        "Seattle": [
+            {"day": "Monday", "temperature": 60.0, "condition": "drizzle"},
+            {"day": "Tuesday", "temperature": 62.0, "condition": "overcast"},
+        ],
+        "Denver": [
+            {"day": "Monday", "temperature": 67.0, "condition": "clear"},
+            {"day": "Tuesday", "temperature": 69.0, "condition": "sunny"},
+        ],
+        "Rome": [
+            {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 72.0, "condition": "partly cloudy"},
+        ],
+        "Amsterdam": [
+            {"day": "Monday", "temperature": 57.0, "condition": "rainy"},
+            {"day": "Tuesday", "temperature": 59.0, "condition": "cloudy"},
+        ],
+        "Barcelona": [
+            {"day": "Monday", "temperature": 73.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 74.0, "condition": "clear"},
+        ],
+        "Vienna": [
+            {"day": "Monday", "temperature": 65.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 67.0, "condition": "overcast"},
+        ],
+        "Prague": [
+            {"day": "Monday", "temperature": 62.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 64.0, "condition": "sunny"},
+        ],
+    }
+
+    # Try fuzzy matching to find the location
+    available_locations = list(current_weather_sample.keys())
+    matched_location = fuzzy_match_location(location, available_locations)
+
+    if not matched_location:
+        # Generate weather data based on the search location if no match found
+        import hashlib
+
+        hash_value = int(hashlib.md5(location.encode()).hexdigest(), 16)
+
+        # Generate temperature between 50-90F based on location hash
+        temp = 50 + (hash_value % 40)
+
+        # Generate conditions based on hash
+        conditions = ["sunny", "cloudy", "rainy", "overcast", "partly cloudy", "clear"]
+        condition = conditions[hash_value % len(conditions)]
+
+        # Generate forecast
+        generated_forecast = []
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
+        for i in range(min(forecast_days, 5)):
+            day_hash = (hash_value + i * 100) % 1000
+            day_temp = temp + (day_hash % 10) - 5  # Vary by ±5 degrees
+            day_condition = conditions[day_hash % len(conditions)]
+
+            generated_forecast.append(
+                {
+                    "day": days[i] if i < len(days) else f"Day {i+1}",
+                    "temperature": float(day_temp),
+                    "condition": day_condition,
+                }
+            )
+
+        return {
+            "location": location,  # Return the original search location
+            "current_temperature": float(temp),
+            "forecast": generated_forecast,
+        }
+
+    # Limit the number of forecast days to the available sample data
+    forecast_days = min(forecast_days, len(forecast_sample[matched_location]))
+
+    return {
+        "location": matched_location,  # Return the matched location name
+        "current_temperature": current_weather_sample[matched_location],
+        "forecast": forecast_sample[matched_location][:forecast_days],
+    }
+
+
+import hashlib
+from typing import Dict, Union
+
+
+def get_local_weather(location: str) -> Dict[str, Union[str, float, list]]:
+    """Get the local weather report for a given location.
+
+    Args:
+        location: City or address to search near
+
+    Returns:
+        Dict containing:
+            - location: City name
+            - temperature: Current temperature in Fahrenheit
+            - conditions: List of current weather conditions
+    """
+
+    # Simulate weather data generation using a hash of the location
+    hash_value = int(hashlib.md5(location.encode()).hexdigest(), 16)
+    temperature = (hash_value % 55) + 30  # Generate a temperature between 30 and 85
+    conditions_options = ["sunny", "cloudy", "rainy", "snowy", "windy"]
+    conditions = [conditions_options[hash_value % len(conditions_options)]]
+
+    if not location:
+        raise ValueError("Location must be provided")
+
+    return {
+        "location": location,
+        "temperature": temperature,
+        "conditions": conditions,
+    }
+
+
+from typing import Dict, List, Union
+
+
+def get_alerts(
+    parkCode: str = "", stateCode: str = "", limit: int = 50
+) -> Dict[str, Union[str, List[Dict[str, Union[str, int]]]]]:
+    """Retrieve alerts for national parks based on park code or state code.
+
+    Args:
+        parkCode: A comma delimited list of park codes (each 4-10 characters in length).
+        stateCode: A comma delimited list of 2 character state codes.
+        limit: Number of results to return per request.
+
+    Returns:
+        Dict containing:
+            - query: The query parameters used
+            - alerts: List of alerts with details such as title, description, and severity
+    """
+    # Sample data for demonstration purposes
+    sample_alerts = {
+        "YELL": [
+            {
+                "title": "Bear Activity",
+                "description": "Increased bear activity in the area.",
+                "severity": "High",
+            },
+            {
+                "title": "Trail Closure",
+                "description": "Trail closed due to maintenance.",
+                "severity": "Medium",
+            },
+        ],
+        "YOSE": [
+            {
+                "title": "Fire Alert",
+                "description": "Wildfire in the northern region.",
+                "severity": "Critical",
+            },
+        ],
+        "CA": [
+            {
+                "title": "Flood Warning",
+                "description": "Heavy rains expected, risk of flooding.",
+                "severity": "High",
+            },
+        ],
+    }
+
+    # Generate alerts based on parkCode or stateCode
+    alerts = []
+    if parkCode:
+        for code in parkCode.split(","):
+            code = code.strip().upper()
+            if code in sample_alerts:
+                alerts.extend(sample_alerts[code])
+    elif stateCode:
+        for code in stateCode.split(","):
+            code = code.strip().upper()
+            if code in sample_alerts:
+                alerts.extend(sample_alerts[code])
+
+    # Limit the number of alerts returned
+    alerts = alerts[:limit]
+
+    return {
+        "query": {
+            "parkCode": parkCode,
+            "stateCode": stateCode,
+            "limit": limit,
+        },
+        "alerts": alerts,
+    }
+
+
+import hashlib
+from typing import Dict, Union
+
+
+def get_cloud_cover(city: str, date: str) -> Dict[str, Union[str, int]]:
+    """Retrieve the expected cloud cover percentage for a city on a given date.
+
+    Args:
+        city: City to check cloud cover for (e.g. 'London', 'New York')
+        date: Date to check cloud cover (format 'YYYY-MM-DD')
+
+    Returns:
+        Dict containing:
+            - city: City name
+            - date: Date for the cloud cover forecast
+            - cloud_cover: Expected cloud cover percentage
+
+    Raises:
+        ValueError: If the city or date format is invalid
+    """
+    if not city or not isinstance(city, str):
+        raise ValueError("Invalid city provided")
+    if not date or not isinstance(date, str):
+        raise ValueError("Invalid date format provided")
+
+    # Generate a pseudo-random cloud cover percentage based on city and date
+    hash_input = f"{city.lower()}_{date}"
+    hash_value = hashlib.md5(hash_input.encode()).hexdigest()
+    cloud_cover_percentage = int(hash_value[:2], 16) % 101  # 0 to 100
+
+    return {
+        "city": city,
+        "date": date,
+        "cloud_cover": cloud_cover_percentage,
+    }
+
+
+from typing import Dict, Union
+
+
+def get_hiking_trail_weather(hiking_trail: str) -> Dict[str, Union[str, float, list]]:
+    """Returns the weather based on a given hiking trail.
+
+    Args:
+        hiking_trail: The name of the hiking trail.
+
+    Returns:
+        Dict containing:
+            - trail: Name of the hiking trail
+            - temperature: Current temperature in Fahrenheit
+            - conditions: List of current weather conditions
+    """
+
+    trail_weather_data = {
+        "Appalachian Trail": {
+            "temperature": 68,
+            "conditions": ["partly cloudy", "breezy"],
+        },
+        "Pacific Crest Trail": {"temperature": 75, "conditions": ["sunny", "dry"]},
+        "John Muir Trail": {"temperature": 62, "conditions": ["overcast", "cool"]},
+        "Grunewald Forest": {
+            "temperature": 65,
+            "conditions": ["partly cloudy", "mild"],
+        },
+        "Pfaueninsel": {"temperature": 70, "conditions": ["sunny", "pleasant"]},
+        "Müggelsee": {"temperature": 72, "conditions": ["partly cloudy", "windy"]},
+        "Teufelsberg": {"temperature": 67, "conditions": ["overcast", "cool"]},
+        "Potsdam's Sanssouci Park": {
+            "temperature": 73,
+            "conditions": ["sunny", "warm"],
+        },
+        "Hohenzollern Chain": {
+            "temperature": 70,
+            "conditions": ["partly cloudy", "mild"],
+        },
+    }
+
+    if hiking_trail not in trail_weather_data:
+        raise ValueError(f"Hiking trail not supported: {hiking_trail}")
+
+    weather_info = trail_weather_data[hiking_trail]
+    return {
+        "trail": hiking_trail,
+        "temperature": weather_info["temperature"],
+        "conditions": weather_info["conditions"],
+    }
+
+
+from datetime import datetime, timedelta
+from typing import Dict, Union
+
+
+def get_sunrise_sunset(city: str, date: str) -> Dict[str, Union[str, Dict[str, str]]]:
+    """Get sunrise and sunset times for a city on a specific date.
+
+    Args:
+        city: City to get times for (e.g., 'New York', 'Los Angeles')
+        date: Date to retrieve sunrise and sunset (format 'YYYY-MM-DD')
+
+    Returns:
+        Dict containing:
+            - city: City name
+            - date: Date for which the times are provided
+            - times: Dict with 'sunrise' and 'sunset' times in 'HH:MM' format
+    """
+    # Sample data based on city hash
+    city_hash = hash(city) % 24
+    date_obj = datetime.strptime(date, "%Y-%m-%d")
+    sunrise_time = (
+        datetime(date_obj.year, date_obj.month, date_obj.day, 6)
+        + timedelta(hours=city_hash % 3)
+    ).strftime("%H:%M")
+    sunset_time = (
+        datetime(date_obj.year, date_obj.month, date_obj.day, 18)
+        + timedelta(hours=city_hash % 3)
+    ).strftime("%H:%M")
+
+    if city not in ["New York", "Los Angeles", "Chicago"]:
+        raise ValueError(f"City not supported: {city}")
+
+    return {
+        "city": city,
+        "date": date,
+        "times": {
+            "sunrise": sunrise_time,
+            "sunset": sunset_time,
+        },
+    }
+
+
+import hashlib
+from typing import Dict, Union
+
+
+def get_uv_index(city: str, date: str) -> Dict[str, Union[str, int]]:
+    """Retrieve the UV index forecast for a particular date and city.
+
+    Args:
+        city: City to check UV index of
+        date: Date of the UV index forecast
+
+    Returns:
+        Dict containing:
+            - city: City name
+            - date: Date of the forecast
+            - uv_index: UV index value for the given date and city
+    """
+
+    supported_cities = ["Los Angeles", "New York", "Miami", "London", "Sydney"]
+    if city not in supported_cities:
+        raise ValueError(f"City not supported: {city}")
+
+    # Generate a consistent but varied UV index based on city and date
+    hash_input = f"{city}-{date}".encode()
+    hash_value = hashlib.sha256(hash_input).hexdigest()
+    uv_index = int(hash_value, 16) % 11  # UV index ranges from 0 to 10
+
+    return {
+        "city": city,
+        "date": date,
+        "uv_index": uv_index,
+    }
+
+
+import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, List, Union
+
+
+def get_weather_at_lat_long(
+    latitude: float,
+    longitude: float,
+    start_date: Union[str, None] = None,
+    end_date: Union[str, None] = None,
+) -> List[Dict[str, Union[str, float, List[str]]]]:
+    """Returns the weather on the specified dates, at the given latitude and longitude.
+
+    Args:
+        latitude: The latitude of the location to be looked up.
+        longitude: The longitude of the location to be looked up.
+        start_date: Forecast start date (YYYY-MM-DD). Defaults to current date if not provided.
+        end_date: Forecast end date (YYYY-MM-DD). Defaults to start_date if not provided.
+
+    Returns:
+        List of dictionaries, each containing:
+            - date: The date of the forecast
+            - temperature: Forecasted temperature in Fahrenheit
+            - conditions: List of forecasted weather conditions
+    """
+
+    def generate_weather_data(date: str) -> Dict[str, Union[str, float, List[str]]]:
+        # Create a hash-based pseudo-random temperature and conditions
+        hash_input = f"{latitude},{longitude},{date}".encode()
+        hash_digest = hashlib.sha256(hash_input).hexdigest()
+        temperature = (
+            60 + int(hash_digest[:2], 16) % 40
+        )  # Temperature between 60 and 100
+        conditions_options = ["sunny", "rainy", "cloudy", "windy", "stormy"]
+        conditions = [
+            conditions_options[
+                int(hash_digest[i : i + 2], 16) % len(conditions_options)
+            ]
+            for i in range(2, 10, 2)
+        ]
+        return {"date": date, "temperature": temperature, "conditions": conditions}
+
+    # Determine the date range
+    if start_date is None:
+        start_date = datetime.now().strftime("%Y-%m-%d")
+    if end_date is None:
+        end_date = start_date
+
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+
+    if start > end:
+        raise ValueError("start_date cannot be after end_date")
+
+    # Generate weather data for each day in the range
+    weather_data = []
+    current_date = start
+    while current_date <= end:
+        date_str = current_date.strftime("%Y-%m-%d")
+        weather_data.append(generate_weather_data(date_str))
+        current_date += timedelta(days=1)
+
+    return weather_data
+
+
+import hashlib
+from typing import Dict, List, Union
+
+
+def get_weather_forecast(location: str) -> Dict[str, Union[str, List[str]]]:
+    """Gets the weather forecast for a given location.
+
+    Args:
+        location: The location to get the forecast for.
+
+    Returns:
+        Dict containing:
+            - location: The location name
+            - forecast: List of weather conditions for the next 3 days
+    """
+    if not location:
+        raise ValueError("Location must be provided")
+
+    # Generate a hash-based pseudo-random forecast
+    hash_value = int(hashlib.sha256(location.encode()).hexdigest(), 16)
+    conditions = ["sunny", "cloudy", "rainy", "stormy", "snowy", "windy"]
+
+    forecast = [conditions[(hash_value >> (i * 8)) % len(conditions)] for i in range(3)]
+
+    return {
+        "location": location,
+        "forecast": forecast,
+    }
+
+
+from typing import Dict, Union
+
+
+def ski_resort_current_condition(resort: str) -> Dict[str, Union[str, int, float]]:
+    """Retrieve the current snow conditions for a ski resort.
+
+    Args:
+        resort: Resort to get conditions for
+
+    Returns:
+        Dict containing:
+            - resort: Resort name
+            - snow_depth: Current snow depth in inches
+            - temperature: Current temperature in Fahrenheit
+            - conditions: Current snow conditions (e.g., 'powder', 'packed')
+    """
+
+    def normalize_resort_name(search_resort: str) -> str:
+        """Normalize resort names for flexible matching."""
+        # Remove common suffixes and normalize
+        normalized = search_resort.lower().strip()
+
+        # Remove location suffixes
+        suffixes_to_remove = [
+            ", nz",
+            ", new zealand",
+            ", usa",
+            ", us",
+            ", canada",
+            ", ca",
+            ", colorado",
+            ", co",
+            ", utah",
+            ", ut",
+            ", bc",
+            ", alberta",
+        ]
+        for suffix in suffixes_to_remove:
+            if normalized.endswith(suffix):
+                normalized = normalized[: -len(suffix)].strip()
+                break
+
+        return normalized
+
+    def find_matching_resort(search_resort: str) -> str:
+        """Find matching resort with fuzzy logic."""
+        search_normalized = normalize_resort_name(search_resort)
+
+        # Try exact normalized match first
+        for resort_key in sample_conditions.keys():
+            if search_normalized == normalize_resort_name(resort_key):
+                return resort_key
+
+        # Try partial matching - check if search terms are contained in resort names
+        search_words = set(search_normalized.split())
+        best_match = None
+        best_score = 0
+
+        for resort_key in sample_conditions.keys():
+            resort_normalized = normalize_resort_name(resort_key)
+            resort_words = set(resort_normalized.split())
+
+            # Calculate match score based on common words
+            common_words = search_words.intersection(resort_words)
+            if common_words:
+                score = len(common_words) / len(search_words)
+                if score > best_score:
+                    best_score = score
+                    best_match = resort_key
+
+        # Accept matches with at least 60% word overlap
+        if best_score >= 0.6:
+            return best_match
+
+        return None
+
+    sample_conditions = {
+        "Aspen": {"snow_depth": 24, "temperature": 30, "conditions": "powder"},
+        "Whistler": {"snow_depth": 36, "temperature": 28, "conditions": "packed"},
+        "Vail": {"snow_depth": 20, "temperature": 32, "conditions": "icy"},
+        "Treble Cone": {"snow_depth": 12, "temperature": 34, "conditions": "wet"},
+        "Jackson Hole": {"snow_depth": 18, "temperature": 25, "conditions": "powder"},
+        "Park City": {"snow_depth": 22, "temperature": 29, "conditions": "packed"},
+        "Big Sky": {"snow_depth": 28, "temperature": 22, "conditions": "powder"},
+        "Chamonix": {"snow_depth": 31, "temperature": 26, "conditions": "powder"},
+        "St. Moritz": {"snow_depth": 16, "temperature": 28, "conditions": "icy"},
+        "Zermatt": {"snow_depth": 25, "temperature": 24, "conditions": "packed"},
+    }
+
+    # Find matching resort using fuzzy logic
+    matching_resort = find_matching_resort(resort)
+
+    if not matching_resort:
+        raise ValueError(f"Resort not supported: {resort}")
+
+    conditions = sample_conditions[matching_resort]
+    return {
+        "resort": resort,  # Return original search term
+        "snow_depth": conditions["snow_depth"],
+        "temperature": conditions["temperature"],
+        "conditions": conditions["conditions"],
+    }
+
+
+from typing import Dict, List
+
+
+def ski_resort_forecast(
+    resort: str,
+) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
+    """Retrieve the snowfall forecast for a ski resort.
+
+    Args:
+        resort: Resort to get snow forecast for
+
+    Returns:
+        Dict containing:
+            - resort: Name of the ski resort
+            - forecast: List of dictionaries with daily snowfall forecast
+                - day: Day of the forecast
+                - snowfall: Expected snowfall in inches
+    """
+
+    sample_forecasts = {
+        "Aspen": [
+            {"day": "Monday", "snowfall": 5.0},
+            {"day": "Tuesday", "snowfall": 2.5},
+            {"day": "Wednesday", "snowfall": 0.0},
+        ],
+        "Whistler": [
+            {"day": "Monday", "snowfall": 8.0},
+            {"day": "Tuesday", "snowfall": 4.0},
+            {"day": "Wednesday", "snowfall": 1.0},
+        ],
+        "Chamonix": [
+            {"day": "Monday", "snowfall": 3.0},
+            {"day": "Tuesday", "snowfall": 6.0},
+            {"day": "Wednesday", "snowfall": 2.0},
+        ],
+        "treble cone": [
+            {"day": "Monday", "snowfall": 1.0},
+            {"day": "Tuesday", "snowfall": 2.0},
+            {"day": "Wednesday", "snowfall": 3.0},
+        ],
+        "Treble Cone": [
+            {"day": "Monday", "snowfall": 1.0},
+            {"day": "Tuesday", "snowfall": 2.0},
+            {"day": "Wednesday", "snowfall": 3.0},
+        ],
+    }
+
+    if resort not in sample_forecasts:
+        raise ValueError(f"Resort not supported: {resort}")
+
+    return {
+        "resort": resort,
+        "forecast": sample_forecasts[resort],
+    }
+
+
+from typing import Dict, List, Union
+
+
+def suggest_clothes_for_weather(
+    location: str, date: str
+) -> Dict[str, Union[str, List[str]]]:
+    """Suggest appropriate clothes based on the weather for a specific date and location.
+
+    Args:
+        location: City or address to get weather for (e.g. 'London', 'New York')
+        date: Forecast date in the format YYYY-MM-DD
+
+    Returns:
+        Dict containing:
+            - location: City name
+            - date: Forecast date
+            - suggested_clothes: List of suggested clothing items
+    """
+
+    # Mock weather data based on location hash
+    weather_conditions = {
+        "sunny": ["t-shirt", "shorts", "sunglasses"],
+        "rainy": ["raincoat", "umbrella", "waterproof boots"],
+        "snowy": ["winter coat", "gloves", "scarf"],
+        "windy": ["windbreaker", "jeans", "hat"],
+        "cloudy": ["light jacket", "jeans", "sneakers"],
+    }
+
+    # Generate a pseudo-random weather condition based on the location and date
+    hash_value = hash(location + date) % len(weather_conditions)
+    condition = list(weather_conditions.keys())[hash_value]
+
+    return {
+        "location": location,
+        "date": date,
+        "suggested_clothes": weather_conditions[condition],
+    }
+
+
+from typing import Dict, List, Optional, Union
+
+
+def tornado_lookup(
+    location: Optional[Union[Dict[str, Union[str, Dict[str, float]]], str]] = None,
+    tornado_name: Optional[str] = None,
+    EF_rating: Optional[int] = None,
+    tornado_category: Optional[str] = None,
+    tornado_damage: Optional[str] = None,
+    damage_indicators: Optional[List[str]] = None,
+) -> Dict[str, Union[str, int, List[str], Dict[str, Union[str, float]]]]:
+    """Find tornado reports that match given parameters.
+
+    Args:
+        location: Location information as a string (like 'Denver, CO') or dictionary containing country, state, city, and coordinates.
+        tornado_name: Name of the tornado event.
+        EF_rating: Enhanced Fujita scale rating from 0-5.
+        tornado_category: F category of the tornado.
+        tornado_damage: Amount of damage from the tornado (e.g., 'light', 'moderate').
+        damage_indicators: List of damage indicators involved in the tornado.
+
+    Returns:
+        Dict containing:
+            - tornado_name: Name of the tornado event.
+            - EF_rating: Enhanced Fujita scale rating.
+            - location: Dictionary with country, state, city, and coordinates.
+            - tornado_category: F category of the tornado.
+            - tornado_damage: Amount of damage from the tornado.
+            - damage_indicators: List of damage indicators.
+    """
+
+    # Convert location parameter if it's a string
+    if location is not None and isinstance(location, str):
+        # Handle string representation of dictionary
+        if location.startswith("{") and location.endswith("}"):
+            try:
+                import ast
+
+                parsed_location = ast.literal_eval(location)
+                if isinstance(parsed_location, dict):
+                    # Ensure expected fields are present
+                    if "country" not in parsed_location:
+                        parsed_location["country"] = "USA"
+                    if "state" not in parsed_location:
+                        parsed_location["state"] = "Unknown"
+                    if "city" not in parsed_location:
+                        parsed_location["city"] = parsed_location.get("city", "Unknown")
+                    if "coordinates" not in parsed_location:
+                        parsed_location["coordinates"] = {
+                            "latitude": 0.0,
+                            "longitude": 0.0,
+                        }
+                    location = parsed_location
+            except (ValueError, SyntaxError):
+                pass
+
+        # If still a string (couldn't parse as dict or wasn't dict format)
+        if isinstance(location, str):
+            # Handle plain string like "Denver, CO" or "Denver"
+            city_string = location.strip()
+            city = (
+                city_string.split(",")[0].strip() if "," in city_string else city_string
+            )
+            state = (
+                city_string.split(",")[1].strip()
+                if "," in city_string and len(city_string.split(",")) > 1
+                else "Unknown"
+            )
+
+            location = {
+                "country": "USA",
+                "state": state,
+                "city": city,
+                "coordinates": {"latitude": 0.0, "longitude": 0.0},
+            }
+
+    sample_data = {
+        "tornado_name": "Twister 2023",
+        "EF_rating": 3,
+        "location": {
+            "country": "USA",
+            "state": "Oklahoma",
+            "city": "Norman",
+            "coordinates": {"latitude": 35.2226, "longitude": -97.4395},
+        },
+        "tornado_category": "F3",
+        "tornado_damage": "considerable",
+        "damage_indicators": [
+            "trees uprooted",
+            "roofs torn off",
+            "vehicles overturned",
+        ],
+    }
+
+    # Simulate a simple matching mechanism
+    if location and location.get("city") != sample_data["location"]["city"]:
+        raise ValueError("No tornado reports found for the specified location.")
+    if tornado_name and tornado_name != sample_data["tornado_name"]:
+        raise ValueError("No tornado reports found with the specified name.")
+    if EF_rating is not None and EF_rating != sample_data["EF_rating"]:
+        raise ValueError("No tornado reports found with the specified EF rating.")
+    if tornado_category and tornado_category != sample_data["tornado_category"]:
+        raise ValueError("No tornado reports found with the specified category.")
+    if tornado_damage and tornado_damage != sample_data["tornado_damage"]:
+        raise ValueError("No tornado reports found with the specified damage level.")
+    if damage_indicators and not set(damage_indicators).issubset(
+        set(sample_data["damage_indicators"])
+    ):
+        raise ValueError(
+            "No tornado reports found with the specified damage indicators."
+        )
+
+    return sample_data
