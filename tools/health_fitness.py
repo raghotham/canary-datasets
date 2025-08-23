@@ -1538,6 +1538,37 @@ def get_activity(
 
     # Sample data for demonstration purposes
     sample_activities = [
+        # Earlier activities to cover more date ranges
+        {
+            "id": 16,
+            "activity_type": "RUN",
+            "start_date_time": "2025-08-08T07:00:00+01:00",
+            "end_date_time": "2025-08-08T08:00:00+01:00",
+        },
+        {
+            "id": 17,
+            "activity_type": "CYCLE",
+            "start_date_time": "2025-08-09T10:30:00+01:00",
+            "end_date_time": "2025-08-09T11:30:00+01:00",
+        },
+        {
+            "id": 18,
+            "activity_type": "RUN",
+            "start_date_time": "2025-08-10T06:30:00+01:00",
+            "end_date_time": "2025-08-10T07:30:00+01:00",
+        },
+        {
+            "id": 19,
+            "activity_type": "RUNNING",
+            "start_date_time": "2025-08-10T18:00:00+01:00",
+            "end_date_time": "2025-08-10T19:00:00+01:00",
+        },
+        {
+            "id": 20,
+            "activity_type": "SWIM",
+            "start_date_time": "2025-08-11T12:00:00+01:00",
+            "end_date_time": "2025-08-11T13:00:00+01:00",
+        },
         {
             "id": 1,
             "activity_type": "RUN",

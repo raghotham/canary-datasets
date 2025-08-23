@@ -2231,6 +2231,12 @@ def verify_insurance_coverage(
         ("Blue Cross", "Dr. Bone"): ["orthopedic consultation", "consultation"],
         ("Blue Cross Blue Shield", "Dr. Bone"): ["orthopedic consultation", "consultation"],
         ("Blue Cross Blue Shield of Illinois", "Dr. Bone"): ["orthopedic consultation", "consultation"],
+        
+        # Additional generic providers that models might use
+        ("Blue Cross", "Dr. Spine"): ["orthopedic consultation", "spine", "back pain", "consultation"],
+        ("Blue Cross Blue Shield", "Dr. Spine"): ["orthopedic consultation", "spine", "back pain", "consultation"],
+        ("Blue Cross", "Dr. Ortho"): ["orthopedic consultation", "back pain", "consultation"],
+        ("Blue Cross Blue Shield", "Dr. Ortho"): ["orthopedic consultation", "back pain", "consultation"],
     }
 
     # Check if the insurance and healthcare provider combination exists with flexible matching
