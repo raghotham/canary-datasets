@@ -1276,38 +1276,217 @@ def check_price(item: str, store: str) -> Dict[str, Union[str, float]]:
             - price: Price of the item at the store
     """
 
-    # Sample data for demonstration purposes
+    def fuzzy_match_store(search_store: str, available_stores: List[str]) -> str:
+        """Find the best matching store using fuzzy matching"""
+        search_lower = search_store.lower().strip()
+
+        # Direct exact match
+        for store_name in available_stores:
+            if store_name.lower() == search_lower:
+                return store_name
+
+        # Store name variations and mappings
+        store_mappings = {
+            "walmart": ["walmart", "wal-mart"],
+            "whole foods": ["whole foods", "wholefoods", "whole foods market"],
+            "publix": ["publix", "publix super markets"],
+            "costco": ["costco", "costco wholesale"],
+            "target": ["target"],
+            "kroger": ["kroger", "krogers"],
+            "safeway": ["safeway"],
+            "harris teeter": ["harris teeter", "harristeeter"],
+            "food lion": ["food lion", "foodlion"],
+        }
+
+        # Find matching store category
+        for base_store, variants in store_mappings.items():
+            if search_lower in variants:
+                # Find the actual store name from available_stores
+                for store_name in available_stores:
+                    if base_store in store_name.lower():
+                        return store_name
+
+        # Partial match - search store contains available store or vice versa
+        for store_name in available_stores:
+            store_lower = store_name.lower()
+            if search_lower in store_lower or store_lower in search_lower:
+                return store_name
+
+        return search_store  # Return original if no match
+
+    def fuzzy_match_item(search_item: str, available_items: List[str]) -> str:
+        """Find the best matching item using fuzzy matching"""
+        search_lower = search_item.lower().strip()
+
+        # Direct exact match
+        for item_name in available_items:
+            if item_name.lower() == search_lower:
+                return item_name
+
+        # Item variations and mappings
+        item_mappings = {
+            "banana": ["banana", "bananas"],
+            "apple": ["apple", "apples"],
+            "milk": ["milk", "whole milk", "2% milk", "skim milk"],
+            "bread": ["bread", "white bread", "wheat bread"],
+            "egg": ["egg", "eggs"],
+            "cheese": ["cheese", "cheddar cheese"],
+            "butter": ["butter"],
+            "orange": ["orange", "oranges"],
+        }
+
+        # Find matching item category
+        for base_item, variants in item_mappings.items():
+            if search_lower in variants:
+                # Find the actual item name from available_items
+                for item_name in available_items:
+                    if base_item in item_name.lower():
+                        return item_name
+
+        # Partial match - search item contains available item or vice versa
+        for item_name in available_items:
+            item_lower = item_name.lower()
+            if search_lower in item_lower or item_lower in search_lower:
+                return item_name
+
+        return search_item  # Return original if no match
+
+    # Expanded sample data with more stores and items
     sample_prices = {
         "Walmart": {
             "apple": 0.5,
             "milk": 3.0,
             "bread": 2.0,
             "banana": 0.4,
+            "egg": 2.5,
+            "cheese": 4.0,
+            "butter": 3.2,
+            "orange": 0.6,
         },
         "Whole Foods": {
             "apple": 0.7,
             "milk": 3.5,
             "bread": 2.5,
+            "banana": 0.6,
+            "egg": 4.0,
+            "cheese": 6.0,
+            "butter": 4.5,
+            "orange": 0.8,
+        },
+        "Publix": {
+            "apple": 0.6,
+            "milk": 3.2,
+            "bread": 2.3,
+            "banana": 0.5,
+            "egg": 3.0,
+            "cheese": 5.0,
+            "butter": 3.8,
+            "orange": 0.7,
         },
         "Costco": {
             "apple": 0.4,
             "milk": 2.8,
             "bread": 1.8,
+            "banana": 0.3,
+            "egg": 2.2,
+            "cheese": 3.5,
+            "butter": 2.9,
+            "orange": 0.5,
+        },
+        "Target": {
+            "apple": 0.55,
+            "milk": 3.1,
+            "bread": 2.1,
+            "banana": 0.45,
+            "egg": 2.8,
+            "cheese": 4.2,
+            "butter": 3.4,
+            "orange": 0.65,
+        },
+        "Kroger": {
+            "apple": 0.52,
+            "milk": 2.9,
+            "bread": 1.9,
+            "banana": 0.42,
+            "egg": 2.6,
+            "cheese": 4.5,
+            "butter": 3.3,
+            "orange": 0.62,
         },
     }
 
-    if store not in sample_prices:
-        raise ValueError(f"Store not supported: {store}")
+    # Find matching store using fuzzy matching
+    available_stores = list(sample_prices.keys())
+    matched_store = fuzzy_match_store(store, available_stores)
 
-    store_prices = sample_prices[store]
+    if matched_store not in sample_prices:
+        # Generate price data for unknown store
+        # Base prices that we can adjust by store "type"
+        base_prices = {
+            "apple": 0.55,
+            "milk": 3.1,
+            "bread": 2.1,
+            "banana": 0.45,
+            "egg": 2.7,
+            "cheese": 4.3,
+            "butter": 3.4,
+            "orange": 0.65,
+        }
 
-    if item not in store_prices:
-        raise ValueError(f"Item not available at {store}: {item}")
+        # Adjust prices based on store name patterns
+        store_lower = matched_store.lower()
+        price_multiplier = 1.0
+
+        if any(term in store_lower for term in ["whole foods", "organic", "premium"]):
+            price_multiplier = 1.3  # Premium stores 30% higher
+        elif any(term in store_lower for term in ["walmart", "costco", "discount"]):
+            price_multiplier = 0.85  # Discount stores 15% lower
+        elif any(term in store_lower for term in ["publix", "kroger", "safeway"]):
+            price_multiplier = 1.05  # Regular stores 5% higher
+
+        sample_prices[matched_store] = {
+            item: round(price * price_multiplier, 2)
+            for item, price in base_prices.items()
+        }
+
+    store_prices = sample_prices[matched_store]
+
+    # Find matching item using fuzzy matching
+    available_items = list(store_prices.keys())
+    matched_item = fuzzy_match_item(item, available_items)
+
+    if matched_item not in store_prices:
+        # Generate a price for unknown item based on similar items
+        base_price = 2.0  # Default base price
+
+        # Adjust based on item type
+        item_lower = matched_item.lower()
+        if any(term in item_lower for term in ["fruit", "apple", "banana", "orange"]):
+            base_price = 0.55
+        elif any(term in item_lower for term in ["dairy", "milk", "cheese", "butter"]):
+            base_price = 3.2
+        elif any(term in item_lower for term in ["bread", "bakery"]):
+            base_price = 2.1
+        elif any(term in item_lower for term in ["meat", "chicken", "beef"]):
+            base_price = 5.5
+
+        # Adjust by store type (same multiplier as above)
+        store_lower = matched_store.lower()
+        if any(term in store_lower for term in ["whole foods", "organic", "premium"]):
+            base_price *= 1.3
+        elif any(term in store_lower for term in ["walmart", "costco", "discount"]):
+            base_price *= 0.85
+        elif any(term in store_lower for term in ["publix", "kroger", "safeway"]):
+            base_price *= 1.05
+
+        price = round(base_price, 2)
+    else:
+        price = store_prices[matched_item]
 
     return {
-        "item": item,
-        "store": store,
-        "price": store_prices[item],
+        "item": matched_item,
+        "store": matched_store,
+        "price": price,
     }
 
 
@@ -2415,22 +2594,127 @@ def get_stores(county_name: str, state_name: str) -> Dict[str, List[str]]:
             - stores: List of store names in the county
     """
 
+    def fuzzy_match_location(
+        search_county: str, search_state: str, data_locations: List[tuple]
+    ) -> tuple:
+        """Find the best matching county/state using fuzzy matching"""
+        search_county_lower = search_county.lower().strip()
+        search_state_lower = search_state.lower().strip()
+
+        # Direct exact match
+        for county, state in data_locations:
+            if (
+                county.lower() == search_county_lower
+                and state.lower() == search_state_lower
+            ):
+                return (county, state)
+
+        # State variations mapping
+        state_mappings = {
+            "florida": ["florida", "fl"],
+            "california": ["california", "ca", "calif"],
+            "texas": ["texas", "tx"],
+            "illinois": ["illinois", "il"],
+            "new york": ["new york", "ny"],
+            "georgia": ["georgia", "ga"],
+        }
+
+        # Find matching state
+        normalized_search_state = None
+        for base_state, variants in state_mappings.items():
+            if search_state_lower in variants:
+                normalized_search_state = base_state
+                break
+
+        # If no state mapping found, try partial match
+        if not normalized_search_state:
+            for county, state in data_locations:
+                if (
+                    search_state_lower in state.lower()
+                    or state.lower() in search_state_lower
+                ):
+                    normalized_search_state = state.lower()
+                    break
+
+        # Now find matching county within the state
+        for county, state in data_locations:
+            state_match = normalized_search_state and (
+                normalized_search_state == state.lower()
+                or search_state_lower in state.lower()
+                or state.lower() in search_state_lower
+            )
+
+            county_match = (
+                search_county_lower in county.lower()
+                or county.lower() in search_county_lower
+            )
+
+            if state_match and county_match:
+                return (county, state)
+
+        return None
+
+    # Expanded sample data with more locations
     sample_data = {
-        ("Los Angeles", "California"): ["Store A", "Store B", "Store C"],
-        ("Cook", "Illinois"): ["Store D", "Store E"],
-        ("Harris", "Texas"): ["Store F", "Store G", "Store H", "Store I"],
+        ("Los Angeles", "California"): [
+            "Walmart",
+            "Target",
+            "Costco",
+            "Whole Foods",
+            "Kroger",
+        ],
+        ("Cook", "Illinois"): ["Jewel-Osco", "Walmart", "Target", "Whole Foods"],
+        ("Harris", "Texas"): ["H-E-B", "Walmart", "Target", "Kroger", "Whole Foods"],
+        ("Leon", "Florida"): [
+            "Publix",
+            "Walmart",
+            "Target",
+            "Winn-Dixie",
+            "Whole Foods",
+        ],
+        ("Miami-Dade", "Florida"): [
+            "Publix",
+            "Walmart",
+            "Target",
+            "Whole Foods",
+            "Sedano's",
+        ],
+        ("Orange", "Florida"): [
+            "Publix",
+            "Walmart",
+            "Target",
+            "Whole Foods",
+            "Winn-Dixie",
+        ],
+        ("Kings", "New York"): [
+            "Key Food",
+            "Walmart",
+            "Target",
+            "Whole Foods",
+            "Stop & Shop",
+        ],
+        ("Fulton", "Georgia"): ["Kroger", "Walmart", "Target", "Whole Foods", "Publix"],
     }
 
-    key = (county_name, state_name)
-    if key not in sample_data:
-        raise ValueError(
-            f"No store data available for {county_name} County, {state_name}"
-        )
+    # Try fuzzy matching to find the location
+    data_locations = list(sample_data.keys())
+    matched_location = fuzzy_match_location(county_name, state_name, data_locations)
+
+    if matched_location:
+        matched_county, matched_state = matched_location
+        return {
+            "county": matched_county,
+            "state": matched_state,
+            "stores": sample_data[matched_location],
+        }
+
+    # Generate stores based on the search if no match found
+    generic_stores = ["Walmart", "Target", "Kroger", "Safeway", "Local Market"]
 
     return {
         "county": county_name,
         "state": state_name,
-        "stores": sample_data[key],
+        "stores": generic_stores,
     }
 
 

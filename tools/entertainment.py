@@ -497,6 +497,10 @@ def check_average_movie_rating(
         "Inception": {"audience": 4.7, "critic": 4.5},
         "The Matrix": {"audience": 4.6, "critic": 4.4},
         "Titanic": {"audience": 4.3, "critic": 4.2},
+        # Comedy movies
+        "Superbad": {"audience": 4.5, "critic": 4.0},
+        "Step Brothers": {"audience": 4.4, "critic": 3.8},
+        "The Hangover": {"audience": 4.6, "critic": 4.2},
     }
 
     # Normalize movie name for lookup
@@ -1194,6 +1198,36 @@ def get_channel_video_urls(search_query: str) -> Dict[str, Union[str, List[str]]
             "https://video.example.com/travel-vlogs-1",
             "https://video.example.com/travel-vlogs-2",
             "https://video.example.com/travel-vlogs-3",
+        ],
+        "Rotary Generators": [
+            "https://video.example.com/rotary-generators-1",
+            "https://video.example.com/rotary-generators-2",
+            "https://video.example.com/rotary-generators-3",
+        ],
+        "Mechanical Marvels": [
+            "https://video.example.com/mechanical-marvels-1",
+            "https://video.example.com/mechanical-marvels-2",
+            "https://video.example.com/mechanical-marvels-3",
+        ],
+        "Gears and Motors": [
+            "https://video.example.com/gears-motors-1",
+            "https://video.example.com/gears-motors-2",
+            "https://video.example.com/gears-motors-3",
+        ],
+        "Kids Engineering": [
+            "https://video.example.com/kids-engineering-1",
+            "https://video.example.com/kids-engineering-2",
+            "https://video.example.com/kids-engineering-3",
+        ],
+        "How Machines Work": [
+            "https://video.example.com/how-machines-work-1",
+            "https://video.example.com/how-machines-work-2",
+            "https://video.example.com/how-machines-work-3",
+        ],
+        "Car Mechanics for Kids": [
+            "https://video.example.com/car-mechanics-kids-1",
+            "https://video.example.com/car-mechanics-kids-2",
+            "https://video.example.com/car-mechanics-kids-3",
         ],
     }
 
@@ -3135,7 +3169,7 @@ def search_events(
         str,
     ],
     date_range: Union[Dict[str, str], str] = None,
-) -> Dict[str, Union[str, List[Dict[str, Union[str, datetime]]]]]:
+) -> Dict[str, Union[str, List[Dict[str, Union[str, str]]]]]:
     """Search for events by city.
 
     Args:
@@ -3463,9 +3497,17 @@ def search_events(
         }
         filtered_events = [default_event]
 
+    # Convert datetime objects to strings for JSON serialization
+    serializable_events = []
+    for event in filtered_events:
+        serializable_event = event.copy()
+        if isinstance(event["date"], datetime):
+            serializable_event["date"] = event["date"].strftime("%Y-%m-%d")
+        serializable_events.append(serializable_event)
+
     return {
         "city": city,
-        "events": filtered_events,
+        "events": serializable_events,
     }
 
 

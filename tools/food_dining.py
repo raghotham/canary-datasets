@@ -1041,12 +1041,94 @@ def suggest_energy_drink(
             - flavor: Flavor of the suggested drink
             - caffeine_mg: Caffeine content of the suggested drink
     """
+
+    def fuzzy_match_flavors(search_flavors: List[str], drink_flavor: str) -> bool:
+        """Check if any search flavors match the drink flavor using fuzzy matching"""
+        if not search_flavors:
+            return True
+
+        drink_flavor_lower = drink_flavor.lower().strip()
+
+        for search_flavor in search_flavors:
+            search_lower = search_flavor.lower().strip()
+
+            # Direct match
+            if search_lower == drink_flavor_lower:
+                return True
+
+            # Partial match
+            if search_lower in drink_flavor_lower or drink_flavor_lower in search_lower:
+                return True
+
+            # Category-based matching
+            fruity_flavors = [
+                "berry",
+                "mango",
+                "tropical",
+                "citrus",
+                "apple",
+                "grape",
+                "cherry",
+                "peach",
+                "strawberry",
+            ]
+            sweet_flavors = ["vanilla", "caramel", "chocolate", "honey", "coconut"]
+            earthy_flavors = ["coffee", "cola", "root beer", "ginger", "tea", "herbal"]
+
+            # Map common flavor categories
+            if (
+                search_lower in ["fruity", "fruit", "sweet fruit"]
+                and drink_flavor_lower in fruity_flavors
+            ):
+                return True
+            if (
+                search_lower in ["sweet", "dessert"]
+                and drink_flavor_lower in sweet_flavors
+            ):
+                return True
+            if (
+                search_lower in ["oaky", "earthy", "rich", "bold", "coffee-like"]
+                and drink_flavor_lower in earthy_flavors
+            ):
+                return True
+
+            # Handle specific flavor mappings
+            flavor_mappings = {
+                "orange": "citrus",
+                "lemon": "citrus",
+                "lime": "citrus",
+                "chocolate": "cocoa",
+                "mint": "peppermint",
+            }
+
+            mapped_search = flavor_mappings.get(search_lower, search_lower)
+            if mapped_search == drink_flavor_lower:
+                return True
+
+        return False
+
+    # Expanded sample drinks with more variety and higher caffeine options
     sample_drinks = [
         {"name": "BuzzBerry", "flavor": "berry", "caffeine_mg": 150},
         {"name": "CitrusCharge", "flavor": "citrus", "caffeine_mg": 180},
         {"name": "MangoMight", "flavor": "mango", "caffeine_mg": 120},
         {"name": "TropicalThunder", "flavor": "tropical", "caffeine_mg": 200},
         {"name": "VanillaVibe", "flavor": "vanilla", "caffeine_mg": 100},
+        {"name": "EspressoExtreme", "flavor": "coffee", "caffeine_mg": 300},
+        {"name": "ColaKick", "flavor": "cola", "caffeine_mg": 160},
+        {"name": "GingerGusto", "flavor": "ginger", "caffeine_mg": 140},
+        {"name": "AppleAttack", "flavor": "apple", "caffeine_mg": 130},
+        {"name": "GrapeGrind", "flavor": "grape", "caffeine_mg": 170},
+        {"name": "CherryCharge", "flavor": "cherry", "caffeine_mg": 155},
+        {"name": "PeachPower", "flavor": "peach", "caffeine_mg": 125},
+        {"name": "CoconutCrush", "flavor": "coconut", "caffeine_mg": 110},
+        {"name": "ChocolateChampion", "flavor": "chocolate", "caffeine_mg": 190},
+        {"name": "CaramelCraze", "flavor": "caramel", "caffeine_mg": 165},
+        {"name": "HerbalHurricane", "flavor": "herbal", "caffeine_mg": 135},
+        {"name": "RootBeerRush", "flavor": "root beer", "caffeine_mg": 145},
+        {"name": "TeaTornado", "flavor": "tea", "caffeine_mg": 175},
+        {"name": "StrawberryStorm", "flavor": "strawberry", "caffeine_mg": 140},
+        {"name": "HoneyHammer", "flavor": "honey", "caffeine_mg": 115},
     ]
 
     # Convert string of preferred flavors to list if necessary
@@ -1061,16 +1143,46 @@ def suggest_energy_drink(
     if not suitable_drinks:
         raise ValueError("No drinks available with the specified caffeine limit.")
 
-    # Further filter by preferred flavors if provided
+    # Further filter by preferred flavors if provided using fuzzy matching
     if preferred_flavors:
-        suitable_drinks = [
-            drink for drink in suitable_drinks if drink["flavor"] in preferred_flavors
+        flavor_matched_drinks = [
+            drink
+            for drink in suitable_drinks
+            if fuzzy_match_flavors(preferred_flavors, drink["flavor"])
         ]
 
-    if not suitable_drinks:
-        raise ValueError("No drinks match the preferred flavors and caffeine limit.")
+        # If we found flavor matches, use them; otherwise fall back to all suitable drinks
+        if flavor_matched_drinks:
+            suitable_drinks = flavor_matched_drinks
 
-    # Select the first suitable drink as a suggestion
+    if not suitable_drinks:
+        # If still no matches, generate a drink based on preferences
+        if preferred_flavors:
+            primary_flavor = preferred_flavors[0].lower()
+            if "fruity" in primary_flavor or "fruit" in primary_flavor:
+                primary_flavor = "tropical fruit"
+            elif "oaky" in primary_flavor or "earthy" in primary_flavor:
+                primary_flavor = "coffee oak"
+
+            # Generate caffeine content based on max limit
+            caffeine_amount = min(
+                max_caffeine_mg - 20, 180
+            )  # Stay under limit but not too low
+
+            return {
+                "name": f"Custom {primary_flavor.title()} Blast",
+                "flavor": primary_flavor,
+                "caffeine_mg": caffeine_amount,
+            }
+        else:
+            raise ValueError(
+                "No drinks match the preferred flavors and caffeine limit."
+            )
+
+    # Sort by caffeine content (highest first) to suggest the most energizing option
+    suitable_drinks.sort(key=lambda x: x["caffeine_mg"], reverse=True)
+
+    # Select the first (highest caffeine) suitable drink as a suggestion
     suggested_drink = suitable_drinks[0]
 
     return {
@@ -4165,7 +4277,7 @@ from typing import Dict, List, Union
 def search_restaurants(
     country: str,
     city: str,
-    price_range: Dict[str, float] = None,
+    price_range: Union[Dict[str, float], str] = None,
     key_terms: Union[List[str], str] = None,
 ) -> Dict[str, Union[str, List[Dict[str, Union[str, float]]]]]:
     """Search for restaurants by city.
@@ -4195,6 +4307,15 @@ def search_restaurants(
             {"name": "L'Arpège", "cuisine": "French", "average_price": 300},
             {"name": "Chez Janou", "cuisine": "Provençal", "average_price": 40},
         ],
+        ("Australia", "Sydney"): [
+            {"name": "The Rocks Brewery", "cuisine": "Australian", "average_price": 35},
+            {"name": "Opera Bar", "cuisine": "Modern Australian", "average_price": 45},
+            {"name": "Quay", "cuisine": "Fine Dining", "average_price": 200},
+            {"name": "The Lord Nelson Brewery", "cuisine": "Pub Food", "average_price": 25},
+            {"name": "Sydney Cove Oyster Bar", "cuisine": "Seafood", "average_price": 60},
+            {"name": "Craft Beer House", "cuisine": "Pub Food", "average_price": 30},
+            {"name": "Hunter Valley Wine Bar", "cuisine": "Wine Bar", "average_price": 40},
+        ],
     }
 
     key = (country, city)
@@ -4205,6 +4326,21 @@ def search_restaurants(
 
     # Filter by price range if provided
     if price_range:
+        if isinstance(price_range, str):
+            # Handle string price ranges like "mid", "$", "$$", etc.
+            price_ranges = {
+                "$": {"min": 0, "max": 20},
+                "$$": {"min": 20, "max": 50},
+                "$$$": {"min": 50, "max": 100},
+                "$$$$": {"min": 100, "max": float("inf")},
+                "low": {"min": 0, "max": 25},
+                "mid": {"min": 25, "max": 75},
+                "high": {"min": 75, "max": float("inf")},
+                "budget": {"min": 0, "max": 30},
+                "expensive": {"min": 100, "max": float("inf")},
+            }
+            price_range = price_ranges.get(price_range.lower(), {"min": 0, "max": float("inf")})
+        
         min_price = price_range.get("min", 0)
         max_price = price_range.get("max", float("inf"))
         restaurants = [
@@ -4221,7 +4357,7 @@ def search_restaurants(
         restaurants = [
             r
             for r in restaurants
-            if any(term in r["cuisine"].lower() for term in key_terms_lower)
+            if any(term in r["cuisine"].lower() or term in r["name"].lower() for term in key_terms_lower)
         ]
 
     return {

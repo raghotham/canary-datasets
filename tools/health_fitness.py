@@ -622,12 +622,59 @@ def get_pet_vaccination_schedule(
             - species: The species of the pet
             - upcoming_vaccinations: List of upcoming vaccinations with details
     """
+
+    def fuzzy_match_species(search_species: str, available_species: List[str]) -> str:
+        """Find the best matching species using fuzzy matching"""
+        search_lower = search_species.lower().strip()
+
+        # Direct exact match
+        for spec in available_species:
+            if spec.lower() == search_lower:
+                return spec
+
+        # Species variations and mappings
+        species_mappings = {
+            "dog": ["dog", "puppy", "canine"],
+            "cat": ["cat", "kitten", "feline"],
+            "rabbit": ["rabbit", "bunny"],
+            "reptile": [
+                "reptile",
+                "snake",
+                "python",
+                "ball python",
+                "royal python",
+                "gecko",
+                "lizard",
+                "iguana",
+                "turtle",
+                "tortoise",
+            ],
+            "bird": ["bird", "parrot", "cockatiel", "budgie", "canary", "finch"],
+            "hamster": ["hamster", "gerbil", "guinea pig", "mouse", "rat"],
+            "ferret": ["ferret"],
+            "horse": ["horse", "pony", "equine"],
+        }
+
+        # Find matching category
+        for base_species, variants in species_mappings.items():
+            if search_lower in variants:
+                return base_species
+
+        # Partial match - search species contains available species or vice versa
+        for spec in available_species:
+            spec_lower = spec.lower()
+            if search_lower in spec_lower or spec_lower in search_lower:
+                return spec
+
+        # Return the first available species as fallback
+        return available_species[0] if available_species else "dog"
+
     try:
         birth_date_obj = datetime.strptime(birth_date, "%Y-%m-%d")
     except ValueError:
         raise ValueError("Invalid date format. Please use YYYY-MM-DD.")
 
-    # Sample vaccination schedules based on species
+    # Expanded vaccination schedules based on species categories
     vaccination_schedules = {
         "dog": [
             {"vaccine": "Rabies", "age_weeks": 12},
@@ -643,15 +690,47 @@ def get_pet_vaccination_schedule(
             {"vaccine": "Myxomatosis", "age_weeks": 6},
             {"vaccine": "Rabbit Hemorrhagic Disease", "age_weeks": 10},
         ],
+        "reptile": [
+            {"vaccine": "Reptile Health Check", "age_weeks": 4},
+            {"vaccine": "Parasite Prevention", "age_weeks": 8},
+        ],
+        "bird": [
+            {"vaccine": "Polyomavirus", "age_weeks": 6},
+            {"vaccine": "Newcastle Disease", "age_weeks": 10},
+            {"vaccine": "Avian Health Screening", "age_weeks": 12},
+        ],
+        "hamster": [
+            {"vaccine": "Small Mammal Health Check", "age_weeks": 4},
+            {"vaccine": "Respiratory Health Screen", "age_weeks": 8},
+        ],
+        "ferret": [
+            {"vaccine": "Distemper", "age_weeks": 8},
+            {"vaccine": "Rabies", "age_weeks": 12},
+            {"vaccine": "Adrenal Disease Screen", "age_weeks": 52},
+        ],
+        "horse": [
+            {"vaccine": "Tetanus", "age_weeks": 16},
+            {"vaccine": "Eastern/Western Encephalitis", "age_weeks": 20},
+            {"vaccine": "Rabies", "age_weeks": 24},
+            {"vaccine": "West Nile Virus", "age_weeks": 28},
+        ],
     }
 
-    if species not in vaccination_schedules:
-        raise ValueError(f"Species not supported: {species}")
+    # Find matching species using fuzzy matching
+    available_species = list(vaccination_schedules.keys())
+    matched_species = fuzzy_match_species(species, available_species)
+
+    if matched_species not in vaccination_schedules:
+        # Generate basic vaccination schedule for unknown species
+        vaccination_schedules[matched_species] = [
+            {"vaccine": "General Health Check", "age_weeks": 4},
+            {"vaccine": "Species-Specific Health Screen", "age_weeks": 8},
+        ]
 
     today = datetime.today()
     upcoming_vaccinations = []
 
-    for vaccine_info in vaccination_schedules[species]:
+    for vaccine_info in vaccination_schedules[matched_species]:
         vaccine_date = birth_date_obj + timedelta(weeks=vaccine_info["age_weeks"])
         if vaccine_date > today:
             upcoming_vaccinations.append(
@@ -663,7 +742,7 @@ def get_pet_vaccination_schedule(
 
     return {
         "pet_name": pet_name,
-        "species": species,
+        "species": matched_species,
         "upcoming_vaccinations": upcoming_vaccinations,
     }
 
