@@ -29,14 +29,65 @@ def get_matches(location: str) -> Dict[str, Union[str, List[Dict[str, str]]]]:
             {"name": "Eve", "age": "30", "interests": "photography, cycling"},
             {"name": "Frank", "age": "36", "interests": "sports, movies"},
         ],
+        "Washington, DC": [
+            {"name": "Grace", "age": "31", "interests": "politics, running"},
+            {"name": "Henry", "age": "28", "interests": "museums, coffee"},
+        ],
+        "Los Angeles": [
+            {"name": "Ivy", "age": "26", "interests": "acting, fitness"},
+            {"name": "Jack", "age": "33", "interests": "filmmaking, beach volleyball"},
+        ],
+        "Chicago": [
+            {"name": "Kate", "age": "29", "interests": "jazz music, architecture"},
+            {"name": "Leo", "age": "35", "interests": "deep dish pizza, comedy"},
+        ],
     }
 
-    if location not in sample_data:
+    def find_matching_location(search_location: str) -> str:
+        """Find a matching location using flexible matching logic."""
+        search_lower = search_location.lower().strip()
+
+        # Direct match first
+        for location_key in sample_data.keys():
+            if search_lower == location_key.lower():
+                return location_key
+
+        # Handle common variations and abbreviations
+        location_mappings = {
+            "dc": "Washington, DC",
+            "washington dc": "Washington, DC",
+            "washington d.c.": "Washington, DC",
+            "washington, d.c.": "Washington, DC",
+            "nyc": "New York",
+            "new york city": "New York",
+            "sf": "San Francisco",
+            "san fran": "San Francisco",
+            "la": "Los Angeles",
+            "los angeles, ca": "Los Angeles",
+        }
+
+        if search_lower in location_mappings:
+            return location_mappings[search_lower]
+
+        # Partial matching - check if search term is contained in any location
+        for location_key in sample_data.keys():
+            if (
+                search_lower in location_key.lower()
+                or location_key.lower() in search_lower
+            ):
+                return location_key
+
+        return None
+
+    # Find the matching location
+    matched_location = find_matching_location(location)
+
+    if not matched_location:
         raise ValueError(f"Location not supported: {location}")
 
     return {
-        "location": location,
-        "matches": sample_data[location],
+        "location": location,  # Return the original search location
+        "matches": sample_data[matched_location],
     }
 
 

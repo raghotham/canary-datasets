@@ -2038,12 +2038,12 @@ from typing import Dict, List
 
 
 def schedule_game_now(
-    friends: List[int], game_name: str
+    friends: Union[List[int], str], game_name: str
 ) -> Dict[str, Union[str, List[int]]]:
     """Send out a game invite immediately to a list of friends.
 
     Args:
-        friends: Array of player_ids to send invites to
+        friends: Array of player_ids to send invites to, or string representation of the list
         game_name: Game players are invited to play
 
     Returns:
@@ -2053,14 +2053,66 @@ def schedule_game_now(
             - status: Status of the invite process
     """
 
-    if not friends:
-        raise ValueError("Friends list cannot be empty")
+    def parse_friends_list(friends_input) -> List[int]:
+        """Parse friends from various input formats into a list of integers."""
+        if friends_input is None:
+            return []
+
+        # If it's already a list, convert elements to int
+        if isinstance(friends_input, list):
+            return [int(friend_id) for friend_id in friends_input]
+
+        # If it's a string, try to parse it
+        if isinstance(friends_input, str):
+            # Handle empty string
+            if not friends_input.strip():
+                return []
+
+            # Try to parse as a string representation of a list
+            if friends_input.strip().startswith("[") and friends_input.strip().endswith(
+                "]"
+            ):
+                try:
+                    import ast
+
+                    parsed_list = ast.literal_eval(friends_input)
+                    if isinstance(parsed_list, list):
+                        return [int(item) for item in parsed_list]
+                except (ValueError, SyntaxError):
+                    # If parsing fails, fall through to comma-separated parsing
+                    pass
+
+            # Handle comma-separated string
+            if "," in friends_input:
+                return [
+                    int(item.strip())
+                    for item in friends_input.split(",")
+                    if item.strip().isdigit()
+                ]
+
+            # Handle single friend ID as string
+            if friends_input.strip().isdigit():
+                return [int(friends_input.strip())]
+
+        # For any other type, try to convert to int and return as single-item list
+        try:
+            return [int(friends_input)]
+        except (ValueError, TypeError):
+            return []
+
+    # Parse the friends list using the flexible parser
+    parsed_friends = parse_friends_list(friends)
+
+    if not parsed_friends:
+        raise ValueError("Friends list cannot be empty or invalid")
     if not game_name:
         raise ValueError("Game name cannot be empty")
 
     # Simulate sending invites by hashing player_ids with game_name
     invited_friends = [
-        friend_id for friend_id in friends if hash((friend_id, game_name)) % 2 == 0
+        friend_id
+        for friend_id in parsed_friends
+        if hash((friend_id, game_name)) % 2 == 0
     ]
 
     return {
@@ -2755,7 +2807,7 @@ def card_search(
             - card_rulings: Rulings related to the card
             - card_cost: Cost to play the card
     """
-    # Sample card database
+    # Sample card database with expanded search and resource cards
     sample_cards = {
         "Dragon Slayer": {
             "card_text": "Defeat any dragon instantly.",
@@ -2781,23 +2833,97 @@ def card_search(
             "card_rulings": "Cannot be used if you have more than 5 health.",
             "card_cost": "1 Mana",
         },
+        "Resource Gatherer": {
+            "card_text": "Search your deck for a resource card and add it to your hand.",
+            "card_type": "Spell",
+            "card_rulings": "You must shuffle your deck after searching.",
+            "card_cost": "2 Mana",
+        },
+        "Mineral Scout": {
+            "card_text": "Search your deck for up to 2 resource cards, reveal them, and put them into your hand.",
+            "card_type": "Creature",
+            "card_rulings": "You may search for fewer than 2 cards if desired.",
+            "card_cost": "3 Mana",
+        },
+        "Ancient Divination": {
+            "card_text": "Search your deck for any resource and put it directly into play.",
+            "card_type": "Sorcery",
+            "card_rulings": "The resource enters play tapped.",
+            "card_cost": "4 Mana",
+        },
+        "Treasure Hunter": {
+            "card_text": "When this card enters play, you may search your deck for a basic resource card.",
+            "card_type": "Creature",
+            "card_rulings": "The resource goes directly to your hand.",
+            "card_cost": "2 Mana",
+        },
+        "Forest Guide": {
+            "card_text": "Search your deck for a forest resource and put it onto the battlefield.",
+            "card_type": "Creature",
+            "card_rulings": "Shuffle your deck afterwards.",
+            "card_cost": "1 Mana",
+        },
+        "Mystic Seeker": {
+            "card_text": "Search your deck for up to 3 different resource types and add them to your hand.",
+            "card_type": "Wizard",
+            "card_rulings": "Resources must be of different types.",
+            "card_cost": "5 Mana",
+        },
+        "Supply Raid": {
+            "card_text": "Search target player's deck for a resource and add it to your hand.",
+            "card_type": "Instant",
+            "card_rulings": "That player shuffles their deck afterwards.",
+            "card_cost": "3 Mana",
+        },
     }
 
-    # Search logic
-    for name, details in sample_cards.items():
-        if (
-            (card_name is None or card_name == name)
-            and (card_text is None or card_text in details["card_text"])
-            and (card_type is None or card_type == details["card_type"])
-            and (card_rulings is None or card_rulings in details["card_rulings"])
-            and (card_cost is None or card_cost == details["card_cost"])
-        ):
-            return {
-                "card_name": name,
-                "card_text": details["card_text"],
-                "card_type": details["card_type"],
-                "card_rulings": details["card_rulings"],
-                "card_cost": details["card_cost"],
-            }
+    def flexible_text_match(search_text: str, card_text: str) -> bool:
+        """Check if search text matches card text in a flexible, case-insensitive way."""
+        if not search_text:
+            return True
 
-    raise ValueError("No matching card found in the database.")
+        search_lower = search_text.lower().strip()
+        card_lower = card_text.lower().strip()
+
+        # Direct substring match
+        if search_lower in card_lower:
+            return True
+
+        # Word-based matching - check if all search words are present
+        search_words = [word.strip() for word in search_lower.split() if word.strip()]
+        return all(word in card_lower for word in search_words)
+
+    # Search logic with improved matching
+    matching_cards = []
+
+    for name, details in sample_cards.items():
+        name_match = card_name is None or card_name.lower() == name.lower()
+        text_match = card_text is None or flexible_text_match(
+            card_text, details["card_text"]
+        )
+        type_match = (
+            card_type is None or card_type.lower() == details["card_type"].lower()
+        )
+        rulings_match = card_rulings is None or flexible_text_match(
+            card_rulings, details["card_rulings"]
+        )
+        cost_match = (
+            card_cost is None or card_cost.lower() == details["card_cost"].lower()
+        )
+
+        if name_match and text_match and type_match and rulings_match and cost_match:
+            matching_cards.append(
+                {
+                    "card_name": name,
+                    "card_text": details["card_text"],
+                    "card_type": details["card_type"],
+                    "card_rulings": details["card_rulings"],
+                    "card_cost": details["card_cost"],
+                }
+            )
+
+    if not matching_cards:
+        raise ValueError("No matching card found in the database.")
+
+    # Return the first matching card
+    return matching_cards[0]
