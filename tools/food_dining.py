@@ -1530,6 +1530,7 @@ def find_lunch_spots_at_location(location: str) -> Dict[str, List[str]]:
         "New York": ["Joe's Pizza", "Shake Shack", "Le Bernardin"],
         "San Francisco": ["Tartine Bakery", "The Slanted Door", "Zuni Café"],
         "Chicago": ["Portillo's", "Lou Malnati's", "Alinea"],
+        "Toronto": ["The Keg", "The Social", "The Local"],
     }
 
     if location not in sample_data:
@@ -2463,6 +2464,7 @@ def get_guest_details(guest_name: str) -> Dict[str, Union[str, List[str]]]:
         "Alice Johnson": ["vegetarian", "gluten-free"],
         "Bob Smith": ["vegan"],
         "Charlie Brown": ["nut allergy"],
+        "Mrs. Johnson": ["kosher"],
     }
 
     if guest_name not in guest_data:

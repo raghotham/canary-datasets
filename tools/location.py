@@ -199,8 +199,35 @@ def get_home_team(
             "nba": "Phoenix Suns",
             "mls": "Phoenix Rising",
         },
+        "Anaheim": {
+            "mlb": "Los Angeles Angels",
+            "nfl": "Los Angeles Rams",
+            "nba": "Los Angeles Clippers",
+            "mls": "LA Galaxy",
+        },
     }
-
+    
+    # Normalize location names for better matching
+    location_mapping = {
+        "anaheim": "Anaheim",
+        "anaheim, ca": "Anaheim",
+        "los angeles angels": "Anaheim",
+        "la angels": "Anaheim",
+        "angels": "Anaheim",
+        "angel stadium": "Anaheim",
+        "new york": "New York",
+        "los angeles": "Los Angeles",
+        "la": "Los Angeles",
+        "chicago": "Chicago",
+        "boston": "Boston",
+        "phoenix": "Phoenix",
+    }
+    
+    # Try to normalize the location
+    normalized_location = location_mapping.get(location.lower())
+    if normalized_location:
+        location = normalized_location
+    
     if location not in teams_data:
         raise ValueError(f"Location not supported: {location}")
 

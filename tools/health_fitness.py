@@ -1275,7 +1275,8 @@ def find_nearby_specialists(
                 or specialist_normalized == normalized_insurance
                 or normalized_insurance.lower() in specialist_insurance.lower()
                 or specialist_insurance.lower() in normalized_insurance.lower()
-                or "blue cross" in normalized_insurance.lower() and "blue cross" in specialist_insurance.lower()
+                or "blue cross" in normalized_insurance.lower()
+                and "blue cross" in specialist_insurance.lower()
             )
             if not insurance_match:
                 continue

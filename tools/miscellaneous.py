@@ -901,21 +901,86 @@ def reserve_court(
     if not location:
         raise ValueError("Location must be specified for reservation.")
 
+    def normalize_location(search_location: str) -> str:
+        """Normalize location names for flexible matching."""
+        location_mappings = {
+            # NYC area variations
+            "midtown": "New York",
+            "midtown manhattan": "New York",
+            "midtown manhattan, ny": "New York",
+            "manhattan": "New York",
+            "nyc": "New York",
+            "new york city": "New York",
+            "new york": "New York",
+            "downtown manhattan": "New York",
+            "upper east side": "New York",
+            "upper west side": "New York",
+            "times square": "New York",
+            "financial district": "New York",
+            "chelsea": "New York",
+            "hell's kitchen": "New York",
+            "central park": "New York",
+            "east river park": "New York",
+            "brooklyn": "New York",
+            "queens": "New York",
+            "bronx": "New York",
+            "staten island": "New York",
+            # LA area variations
+            "los angeles": "Los Angeles",
+            "la": "Los Angeles",
+            "downtown la": "Los Angeles",
+            "hollywood": "Los Angeles",
+            "beverly hills": "Los Angeles",
+            "santa monica": "Los Angeles",
+            "west hollywood": "Los Angeles",
+            "venice": "Los Angeles",
+            # Chicago area variations  
+            "chicago": "Chicago",
+            "downtown chicago": "Chicago",
+            "loop": "Chicago",
+            "lincoln park": "Chicago",
+            "wicker park": "Chicago",
+            "river north": "Chicago",
+        }
+
+        search_lower = search_location.lower().strip()
+        return location_mappings.get(search_lower, search_location)
+
+    def find_matching_location(search_location: str) -> str:
+        """Find matching location with fuzzy logic."""
+        normalized = normalize_location(search_location)
+
+        # If we got a mapped location, check if it exists in our data
+        if normalized in sample_courts:
+            return normalized
+
+        # Try partial matching on original search
+        search_lower = search_location.lower().strip()
+        for location_key in sample_courts.keys():
+            location_lower = location_key.lower()
+            if search_lower in location_lower or location_lower in search_lower:
+                return location_key
+
+        return None
+
     sample_courts = {
         "New York": ["Court A", "Court B"],
         "Los Angeles": ["Court C", "Court D"],
         "Chicago": ["Court E", "Court F"],
     }
 
-    if location not in sample_courts:
+    # Find matching location using normalization
+    matching_location = find_matching_location(location)
+
+    if not matching_location:
         raise ValueError(f"No courts available in the specified location: {location}")
 
-    court_id = sample_courts[location][
-        hash(reserve_time) % len(sample_courts[location])
+    court_id = sample_courts[matching_location][
+        hash(reserve_time) % len(sample_courts[matching_location])
     ]
 
     return {
-        "location": location,
+        "location": matching_location,
         "court_id": court_id,
         "start_time": reserve_time,
         "duration": duration,

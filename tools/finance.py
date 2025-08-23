@@ -764,40 +764,174 @@ def compare_stocks(
     }
     top_performer = max(percentage_changes, key=percentage_changes.get)
 
-    return {
-        "percentage_changes": percentage_changes,
-        "top_performer": top_performer,
-    }
 
-
-from typing import Dict
-
-
-def confirm_applicant(name: str, school: str) -> Dict[str, bool]:
-    """Check if the applicant is valid for the given school.
+def verify_insurance_coverage(
+    provider_name: str, insurance_plan: str
+) -> Dict[str, Union[str, bool, float]]:
+    """Verify if a provider accepts a specific insurance plan.
 
     Args:
-        name: The name of the applicant
-        school: School the applicant is applying to
+        provider_name: Name of the healthcare provider
+        insurance_plan: Name of the insurance plan
 
     Returns:
         Dict containing:
-            - valid: Boolean indicating if the applicant is valid
+            - provider_name: Name of the provider
+            - insurance_plan: Name of the insurance plan
+            - coverage_status: Whether the insurance is accepted
+            - copay_amount: Copay amount if covered
     """
-    if not name or not school:
-        raise ValueError("Both name and school must be provided.")
 
-    # Simulated hash-based validation logic
-    valid_schools = {
-        "Harvard": "Alice",
-        "MIT": "Bob",
-        "Stanford": "Charlie",
+    def fuzzy_match_provider(search_name: str, provider_list: List[str]) -> str:
+        """Find the best matching provider using fuzzy matching"""
+        search_lower = search_name.lower().strip()
+
+        # Handle generic doctor names like "Dr. Spine", "Dr. Ortho"
+        if any(
+            generic in search_lower
+            for generic in ["dr. spine", "dr spine", "spine doctor"]
+        ):
+            # Find spine specialists
+            for provider in provider_list:
+                if any(
+                    term in provider.lower()
+                    for term in ["spine", "orthopedic", "ortho"]
+                ):
+                    return provider
+
+        if any(
+            generic in search_lower
+            for generic in ["dr. ortho", "dr ortho", "ortho doctor"]
+        ):
+            # Find orthopedic specialists
+            for provider in provider_list:
+                if any(
+                    term in provider.lower()
+                    for term in ["orthopedic", "ortho", "bone", "joint"]
+                ):
+                    return provider
+
+        # Direct exact match
+        for provider in provider_list:
+            if provider.lower() == search_lower:
+                return provider
+
+        # Partial match - search name contains provider name or vice versa
+        for provider in provider_list:
+            provider_lower = provider.lower()
+            if search_lower in provider_lower or provider_lower in search_lower:
+                return provider
+
+        # Word-based matching for compound names
+        search_words = set(search_lower.split())
+        best_match = None
+        best_score = 0
+
+        for provider in provider_list:
+            provider_words = set(provider.lower().split())
+            if search_words and provider_words:
+                overlap = search_words.intersection(provider_words)
+                score = len(overlap) / max(len(search_words), len(provider_words))
+                if score > best_score and score > 0.3:
+                    best_score = score
+                    best_match = provider
+
+        return best_match or provider_list[0]  # Fallback to first provider
+
+    def fuzzy_match_insurance(search_plan: str, insurance_list: List[str]) -> str:
+        """Find the best matching insurance plan using fuzzy matching"""
+        search_lower = search_plan.lower().strip()
+
+        # Direct exact match
+        for plan in insurance_list:
+            if plan.lower() == search_lower:
+                return plan
+
+        # Partial match
+        for plan in insurance_list:
+            plan_lower = plan.lower()
+            if search_lower in plan_lower or plan_lower in search_lower:
+                return plan
+
+        # Common insurance abbreviations and variations
+        insurance_mappings = {
+            "bcbs": "Blue Cross Blue Shield",
+            "blue cross": "Blue Cross Blue Shield",
+            "aetna": "Aetna",
+            "cigna": "Cigna",
+            "uhc": "UnitedHealthcare",
+            "united": "UnitedHealthcare",
+            "humana": "Humana",
+            "medicare": "Medicare",
+            "medicaid": "Medicaid",
+        }
+
+        for abbrev, full_name in insurance_mappings.items():
+            if abbrev in search_lower:
+                return full_name
+
+        return search_plan  # Return original if no match
+
+    # Expanded sample data with more providers including orthopedic/spine specialists
+    sample_data = {
+        ("Dr. Smith", "Blue Cross"): {"covered": True, "copay": 20.0},
+        ("Dr. Johnson", "Aetna"): {"covered": True, "copay": 25.0},
+        ("Dr. Brown", "Medicare"): {"covered": False, "copay": 0.0},
+        ("Dr. Sarah Johnson - Orthopedic Spine Specialist", "Blue Cross Blue Shield"): {
+            "covered": True,
+            "copay": 30.0,
+        },
+        ("Dr. Michael Chen - Orthopedic Surgeon", "Aetna"): {
+            "covered": True,
+            "copay": 25.0,
+        },
+        ("Dr. Lisa Rodriguez - Sports Medicine", "Cigna"): {
+            "covered": True,
+            "copay": 35.0,
+        },
+        ("Dr. James Smith - Orthopedic Surgery", "Medicare"): {
+            "covered": True,
+            "copay": 15.0,
+        },
+        ("Dr. Emily Davis - Spine and Joint Specialist", "UnitedHealthcare"): {
+            "covered": True,
+            "copay": 40.0,
+        },
+        ("Dr. Robert Wilson - Orthopedic Medicine", "Humana"): {
+            "covered": True,
+            "copay": 20.0,
+        },
+        ("Dr. Jennifer Lee - Musculoskeletal Specialist", "Blue Cross Blue Shield"): {
+            "covered": True,
+            "copay": 30.0,
+        },
     }
 
-    is_valid = valid_schools.get(school) == name
+    # Get all available providers and insurance plans
+    all_providers = list(set(key[0] for key in sample_data.keys()))
+    all_insurance_plans = list(set(key[1] for key in sample_data.keys()))
+
+    # Find matching provider and insurance using fuzzy matching
+    matched_provider = fuzzy_match_provider(provider_name, all_providers)
+    matched_insurance = fuzzy_match_insurance(insurance_plan, all_insurance_plans)
+
+    # Check if the matched combination exists
+    matched_key = (matched_provider, matched_insurance)
+    if matched_key in sample_data:
+        coverage_info = sample_data[matched_key]
+    else:
+        # Generate coverage info based on provider and insurance combination
+        coverage_hash = hash(matched_provider + matched_insurance)
+        coverage_info = {
+            "covered": (coverage_hash % 10) > 2,  # 70% chance of coverage
+            "copay": 20.0 + (coverage_hash % 30),  # $20-$50 copay range
+        }
 
     return {
-        "valid": is_valid,
+        "provider_name": matched_provider,
+        "insurance_plan": matched_insurance,
+        "coverage_status": coverage_info["covered"],
+        "copay_amount": coverage_info["copay"] if coverage_info["covered"] else 0.0,
     }
 
 
@@ -1173,6 +1307,8 @@ def get_currency_exchange_rate(currency_pair: str) -> Dict[str, Union[str, float
         "EUR/USD": 1.18,
         "GBP/JPY": 151.23,
         "JPY/GBP": 0.0066,
+        "JPY/USD": 110.0,
+        "USD/JPY": 0.0091,
     }
 
     if currency_pair not in sample_rates:
@@ -1983,8 +2119,14 @@ def verify_insurance_coverage(
         ("MediCare", "Downtown Clinic"): ["consultation"],
         ("HealthPlus", "Downtown Clinic"): ["surgery", "therapy"],
         ("Blue Cross", "Dr. Bone"): ["orthopedic consultation", "consultation"],
-        ("Blue Cross Blue Shield", "Dr. Bone"): ["orthopedic consultation", "consultation"],
-        ("Blue Cross Blue Shield of Illinois", "Dr. Bone"): ["orthopedic consultation", "consultation"],
+        ("Blue Cross Blue Shield", "Dr. Bone"): [
+            "orthopedic consultation",
+            "consultation",
+        ],
+        ("Blue Cross Blue Shield of Illinois", "Dr. Bone"): [
+            "orthopedic consultation",
+            "consultation",
+        ],
     }
 
     # Check if the insurance and healthcare provider combination exists with flexible matching
@@ -1992,12 +2134,17 @@ def verify_insurance_coverage(
     matching_coverage = []
     for (ins_provider, health_provider), treatments in coverage_data.items():
         # Check for partial matches on both insurance provider and healthcare provider
-        if (insurance_provider.lower() in ins_provider.lower() or ins_provider.lower() in insurance_provider.lower()) and \
-           (healthcare_provider.lower() in health_provider.lower() or health_provider.lower() in healthcare_provider.lower()):
+        if (
+            insurance_provider.lower() in ins_provider.lower()
+            or ins_provider.lower() in insurance_provider.lower()
+        ) and (
+            healthcare_provider.lower() in health_provider.lower()
+            or health_provider.lower() in healthcare_provider.lower()
+        ):
             match_found = True
             matching_coverage = treatments
             break
-            
+
     if not match_found:
         raise ValueError(
             f"Combination of insurance '{insurance_provider}' and healthcare provider '{healthcare_provider}' not supported"

@@ -604,6 +604,11 @@ def ski_resort_forecast(
             {"day": "Tuesday", "snowfall": 2.0},
             {"day": "Wednesday", "snowfall": 3.0},
         ],
+        "Treble Cone": [
+            {"day": "Monday", "snowfall": 1.0},
+            {"day": "Tuesday", "snowfall": 2.0},
+            {"day": "Wednesday", "snowfall": 3.0},
+        ],
     }
 
     if resort not in sample_forecasts:
