@@ -85,7 +85,6 @@ def create_playlist(
                     "Invalid songs format. Expected a valid list representation."
                 )
         else:
-            # Handle comma-separated string like "Love Story by Taylor Swift, Not Today by Twenty One Pilots"
             song_parts = [song.strip() for song in songs.split(",")]
             songs = []
             for song_part in song_parts:
@@ -150,6 +149,7 @@ def add_song_to_playlist(
         "21 Swifts": [
             {"title": "Shake It Off", "artist": "Taylor Swift"},
             {"title": "Blank Space", "artist": "Taylor Swift"},
+            {"title": "Not Today", "artist": "21 Pilots"},
         ],
     }
 

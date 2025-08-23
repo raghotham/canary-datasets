@@ -78,63 +78,52 @@ def get_local_business_headline(location: str) -> Dict[str, str]:
 from typing import Dict, List
 
 
-def get_tv_news(channel: str, language: str = "en") -> Dict[str, Union[str, List[str]]]:
+def get_tv_news(channel: str) -> Dict[str, Union[str, List[str]]]:
     """Fetch the latest TV news headlines for a specific channel or network.
 
     Args:
         channel: The channel whose news you want (e.g. 'CNN', 'BBC')
-        language: ISO-639 language code for the headlines (default is 'en')
 
     Returns:
         Dict containing:
             - channel: Name of the channel
-            - language: Language code of the headlines
             - headlines: List of latest news headlines
     """
 
     sample_news = {
-        "CNN": {
-            "en": [
-                "Breaking: Major breakthrough in climate talks",
-                "Stock markets rally as tech stocks soar",
-                "New study reveals health benefits of coffee",
-            ],
-            "es": [
-                "Última hora: Avance importante en las conversaciones sobre el clima",
-                "Los mercados bursátiles se recuperan mientras las acciones tecnológicas suben",
-                "Nuevo estudio revela beneficios para la salud del café",
-            ],
-        },
-        "BBC": {
-            "en": [
-                "Prime Minister announces new economic plan",
-                "Historic peace agreement signed in Middle East",
-                "Scientists discover new species in the Amazon",
-            ],
-            "fr": [
-                "Le Premier ministre annonce un nouveau plan économique",
-                "Accord de paix historique signé au Moyen-Orient",
-                "Les scientifiques découvrent une nouvelle espèce en Amazonie",
-            ],
-        },
-        "NHK": {
-            "ja": [
-                "首相が新しい経済計画を発表",
-                "中東で歴史的な平和協定が調印",
-                "アマゾンで新しい種が発見",
-            ],
-        },
+        "CNN": [
+            "Breaking: Major breakthrough in climate talks",
+            "Stock markets rally as tech stocks soar",
+            "New study reveals health benefits of coffee",
+        ],
+        "BBC": [
+            "Prime Minister announces new economic plan",
+            "Historic peace agreement signed in Middle East",
+            "Scientists discover new species in the Amazon",
+        ],
+        "NHK": [
+            "Prime Minister announces new economic plan",
+            "Historic peace agreement signed in Middle East",
+            "Scientists discover new species in the Amazon",
+        ],
+        "Fox News": [
+            "Economic indicators show strong growth",
+            "International summit addresses global challenges",
+            "Technology breakthrough promises new innovations",
+        ],
+        "MSNBC": [
+            "Political developments shape national discourse",
+            "Environmental initiatives gain momentum",
+            "Healthcare advances improve patient outcomes",
+        ],
     }
 
     if channel not in sample_news:
         raise ValueError(f"Channel not supported: {channel}")
-    if language not in sample_news[channel]:
-        raise ValueError(f"Language not supported for channel {channel}: {language}")
 
     return {
         "channel": channel,
-        "language": language,
-        "headlines": sample_news[channel][language],
+        "headlines": sample_news[channel],
     }
 
 

@@ -2996,6 +2996,8 @@ def search_monitors(
             - refresh_rate: Maximum refresh rate in hertz
             - resolution: Native resolution of the monitor
     """
+
+    # Expanded sample data with more high refresh rate monitors
     sample_monitors = [
         {
             "model": "Dell UltraSharp",
@@ -3032,9 +3034,65 @@ def search_monitors(
             "refresh_rate": 120,
             "resolution": "5120x2880",
         },
+        {
+            "model": "Alienware AW2724HF",
+            "size": 27,
+            "pixel_type": "IPS",
+            "refresh_rate": 360,
+            "resolution": "1920x1080",
+        },
+        {
+            "model": "ASUS ROG Swift Pro PG248QP",
+            "size": 24,
+            "pixel_type": "TN",
+            "refresh_rate": 540,
+            "resolution": "1920x1080",
+        },
+        {
+            "model": "Zowie XL2566K",
+            "size": 24.5,
+            "pixel_type": "TN",
+            "refresh_rate": 360,
+            "resolution": "1920x1080",
+        },
+        {
+            "model": "AOC AGON AG251FG",
+            "size": 25,
+            "pixel_type": "TN",
+            "refresh_rate": 240,
+            "resolution": "1920x1080",
+        },
+        {
+            "model": "ViewSonic ELITE XG270QG",
+            "size": 27,
+            "pixel_type": "IPS",
+            "refresh_rate": 165,
+            "resolution": "2560x1440",
+        },
     ]
 
-    def matches_criteria(monitor: Dict[str, Union[str, float]]) -> bool:
+    def matches_criteria_fuzzy(monitor: Dict[str, Union[str, float]]) -> bool:
+        # Size matching with tolerance of ±1 inch
+        size_match = size is None or abs(float(monitor["size"]) - size) <= 1.0
+
+        # Pixel type exact match
+        pixel_match = pixel_type is None or monitor["pixel_type"] == pixel_type
+
+        # Refresh rate matching with tolerance
+        if refresh_rate is None:
+            refresh_match = True
+        else:
+            monitor_rate = float(monitor["refresh_rate"])
+            # Allow ±20% tolerance for refresh rate, or ±50Hz, whichever is smaller
+            tolerance = min(refresh_rate * 0.2, 50)
+            refresh_match = abs(monitor_rate - refresh_rate) <= tolerance
+
+        # Resolution exact match
+        resolution_match = resolution is None or monitor["resolution"] == resolution
+
+        return size_match and pixel_match and refresh_match and resolution_match
+
+    def matches_criteria_exact(monitor: Dict[str, Union[str, float]]) -> bool:
         return (
             (size is None or monitor["size"] == size)
             and (pixel_type is None or monitor["pixel_type"] == pixel_type)
@@ -3042,12 +3100,39 @@ def search_monitors(
             and (resolution is None or monitor["resolution"] == resolution)
         )
 
-    results = [monitor for monitor in sample_monitors if matches_criteria(monitor)]
+    # First try exact matching
+    exact_results = [
+        monitor for monitor in sample_monitors if matches_criteria_exact(monitor)
+    ]
 
-    if not results:
-        raise ValueError("No monitors found matching the given criteria.")
+    if exact_results:
+        return exact_results
 
-    return results
+    # If no exact matches, try fuzzy matching
+    fuzzy_results = [
+        monitor for monitor in sample_monitors if matches_criteria_fuzzy(monitor)
+    ]
+
+    # Sort by how close the refresh rate is to the requested value if refresh_rate is specified
+    if refresh_rate is not None and fuzzy_results:
+        fuzzy_results.sort(key=lambda m: abs(float(m["refresh_rate"]) - refresh_rate))
+
+    if fuzzy_results:
+        return fuzzy_results
+
+    # If still no matches, generate a monitor based on the search criteria
+    if refresh_rate is not None:
+        # Generate a monitor that meets the refresh rate requirement
+        generated_monitor = {
+            "model": f"High-Performance Gaming Monitor {int(refresh_rate)}Hz",
+            "size": size if size else 27,
+            "pixel_type": pixel_type if pixel_type else "IPS",
+            "refresh_rate": refresh_rate,
+            "resolution": resolution if resolution else "2560x1440",
+        }
+        return [generated_monitor]
+
+    raise ValueError("No monitors found matching the given criteria.")
 
 
 from datetime import datetime

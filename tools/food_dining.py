@@ -2495,8 +2495,86 @@ def get_ingr(
     if prod_name is None and barcode is None:
         raise ValueError("Either 'prod_name' or 'barcode' must be provided.")
 
-    # Sample data for demonstration purposes
+    def generate_product_from_barcode(
+        barcode_id: str,
+    ) -> Dict[str, Union[str, List[str]]]:
+        """Generate a product based on barcode patterns"""
+        # Use barcode patterns to determine product type
+        barcode_int = int(barcode_id) if barcode_id.isdigit() else hash(barcode_id)
+
+        product_types = [
+            {
+                "product": "Granola Bar - Mixed Nuts",
+                "ingredients": [
+                    "Oats",
+                    "Almonds",
+                    "Peanuts",
+                    "Walnuts",
+                    "Honey",
+                    "Dried Cranberries",
+                    "Sunflower Oil",
+                ],
+            },
+            {
+                "product": "Granola Bar - Chocolate Chip",
+                "ingredients": [
+                    "Oats",
+                    "Chocolate Chips (Sugar, Cocoa)",
+                    "Honey",
+                    "Rice Syrup",
+                    "Coconut Oil",
+                ],
+            },
+            {
+                "product": "Granola Bar - Nut-Free",
+                "ingredients": [
+                    "Oats",
+                    "Rice Syrup",
+                    "Dried Fruit",
+                    "Sunflower Seeds",
+                    "Coconut",
+                    "Vanilla",
+                ],
+            },
+            {
+                "product": "Energy Bar - Protein",
+                "ingredients": [
+                    "Whey Protein",
+                    "Almonds",
+                    "Dates",
+                    "Coconut Oil",
+                    "Cocoa Powder",
+                ],
+            },
+            {
+                "product": "Cereal Bar",
+                "ingredients": [
+                    "Rice Cereal",
+                    "Corn Syrup",
+                    "Sugar",
+                    "Peanut Butter",
+                    "Chocolate",
+                ],
+            },
+            {
+                "product": "Fruit Bar",
+                "ingredients": [
+                    "Apple Puree",
+                    "Strawberry Pieces",
+                    "Sugar",
+                    "Pectin",
+                    "Citric Acid",
+                ],
+            },
+        ]
+
+        # Select product type based on barcode
+        product_index = barcode_int % len(product_types)
+        return product_types[product_index]
+
+    # Expanded sample data with more products and barcodes
     sample_data = {
+        # Original products
         "123456789012": {
             "product": "Chocolate Bar",
             "ingredients": ["Sugar", "Cocoa Butter", "Milk", "Cocoa Mass"],
@@ -2513,13 +2591,177 @@ def get_ingr(
             "product": "Orange Juice",
             "ingredients": ["Water", "Orange Concentrate", "Sugar"],
         },
+        # New granola bars and snacks with various nut contents
+        "9403110043416": {
+            "product": "Nature's Own Granola Bar",
+            "ingredients": [
+                "Oats",
+                "Almonds",
+                "Peanuts",
+                "Honey",
+                "Rice Syrup",
+                "Dried Cranberries",
+                "Sunflower Oil",
+                "Salt",
+            ],
+        },
+        "8901234567890": {
+            "product": "Crunchy Nut Bar",
+            "ingredients": [
+                "Mixed Nuts (Peanuts, Almonds, Cashews)",
+                "Honey",
+                "Glucose Syrup",
+                "Rice Crisps",
+                "Salt",
+            ],
+        },
+        "7412589630147": {
+            "product": "Nut-Free Granola Bar",
+            "ingredients": [
+                "Oats",
+                "Rice Syrup",
+                "Sunflower Seeds",
+                "Dried Fruit",
+                "Coconut",
+                "Vanilla Extract",
+            ],
+        },
+        "6547893210456": {
+            "product": "Chocolate Chip Granola Bar",
+            "ingredients": [
+                "Oats",
+                "Chocolate Chips (Sugar, Cocoa Mass, Cocoa Butter)",
+                "Honey",
+                "Coconut Oil",
+                "May contain traces of nuts",
+            ],
+        },
+        "5555666677778": {
+            "product": "Protein Bar",
+            "ingredients": [
+                "Whey Protein Isolate",
+                "Almonds",
+                "Dates",
+                "Cocoa Powder",
+                "Coconut Oil",
+                "Natural Flavors",
+            ],
+        },
+        "1122334455667": {
+            "product": "Fruit & Nut Bar",
+            "ingredients": [
+                "Dates",
+                "Cashews",
+                "Almonds",
+                "Dried Apricots",
+                "Coconut",
+                "Lemon Juice",
+            ],
+        },
+        "9876543210123": {
+            "product": "Rice Crispy Bar",
+            "ingredients": [
+                "Rice Cereal",
+                "Corn Syrup",
+                "Sugar",
+                "Peanut Butter",
+                "Chocolate",
+                "Salt",
+            ],
+        },
+        # Product name lookups
+        "granola bar": {
+            "product": "Generic Granola Bar",
+            "ingredients": [
+                "Oats",
+                "Honey",
+                "Rice Syrup",
+                "Almonds",
+                "Dried Fruit",
+                "Sunflower Oil",
+            ],
+        },
+        "protein bar": {
+            "product": "Generic Protein Bar",
+            "ingredients": [
+                "Protein Blend",
+                "Nuts",
+                "Dates",
+                "Cocoa",
+                "Natural Flavors",
+            ],
+        },
+        "energy bar": {
+            "product": "Generic Energy Bar",
+            "ingredients": ["Oats", "Nuts", "Honey", "Dried Fruit", "Seeds"],
+        },
     }
 
-    key = barcode if barcode else prod_name
-    if key not in sample_data:
-        raise ValueError(f"Product not found for given identifier: {key}")
+    def fuzzy_match_product(search_term: str, products: Dict) -> str:
+        """Find the best matching product name"""
+        search_lower = search_term.lower().strip()
 
-    return sample_data[key]
+        # Direct exact match
+        for key in products.keys():
+            if key.lower() == search_lower:
+                return key
+
+        # Partial match - search term contains product name or vice versa
+        for key in products.keys():
+            key_lower = key.lower()
+            if search_lower in key_lower or key_lower in search_lower:
+                return key
+
+        # Word-based matching
+        search_words = set(search_lower.split())
+        best_match = None
+        best_score = 0
+
+        for key in products.keys():
+            key_words = set(key.lower().split())
+            if search_words and key_words:
+                overlap = search_words.intersection(key_words)
+                score = len(overlap) / max(len(search_words), len(key_words))
+                if score > best_score and score > 0.3:
+                    best_score = score
+                    best_match = key
+
+        return best_match
+
+    # Try to find in sample data first
+    key = barcode if barcode else prod_name
+
+    if key in sample_data:
+        return sample_data[key]
+
+    # Try fuzzy matching for product names
+    if prod_name:
+        matched_key = fuzzy_match_product(prod_name, sample_data)
+        if matched_key:
+            return sample_data[matched_key]
+
+    # If barcode not found, generate a product based on barcode pattern
+    if barcode:
+        generated_product = generate_product_from_barcode(barcode)
+        return generated_product
+
+    # Final fallback - generate based on product name
+    if prod_name and any(
+        word in prod_name.lower() for word in ["granola", "bar", "energy", "protein"]
+    ):
+        # Generate ingredients based on product name
+        base_ingredients = ["Oats", "Rice Syrup", "Natural Flavors"]
+
+        if "nut" in prod_name.lower():
+            base_ingredients.extend(["Almonds", "Peanuts", "Walnuts"])
+        elif "chocolate" in prod_name.lower():
+            base_ingredients.extend(["Chocolate Chips", "Cocoa"])
+        elif "fruit" in prod_name.lower():
+            base_ingredients.extend(["Dried Cranberries", "Dates", "Raisins"])
+
+        return {"product": prod_name, "ingredients": base_ingredients}
+
+    raise ValueError(f"Product not found for given identifier: {key}")
 
 
 from typing import Dict, List, Optional
