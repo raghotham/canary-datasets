@@ -629,45 +629,104 @@ def search_products(
             "name": "Mistborn: The Final Empire",
             "category": "Books",
             "author": "Brandon Sanderson",
+            "format": "paperback",
         },
         {
             "id": "P005",
             "name": "The Way of Kings",
             "category": "Books",
             "author": "Brandon Sanderson",
+            "format": "paperback",
         },
         {
             "id": "P006",
             "name": "Warbreaker",
             "category": "Books",
             "author": "Brandon Sanderson",
+            "format": "paperback",
         },
         {
             "id": "P007",
             "name": "Elantris",
             "category": "Books",
             "author": "Brandon Sanderson",
+            "format": "paperback",
         },
         {
             "id": "P008",
             "name": "The Alloy of Law",
             "category": "Books",
             "author": "Brandon Sanderson",
+            "format": "paperback",
         },
-        {"id": "P009", "name": "Coffee Maker", "category": "Appliances"},
-        {"id": "P010", "name": "Water Bottle", "category": "Outdoors"},
+        # Hardcover editions
+        {
+            "id": "P009",
+            "name": "The Way of Kings",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+            "format": "hardcover",
+        },
+        {
+            "id": "P010",
+            "name": "Warbreaker",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+            "format": "hardcover",
+        },
+        {
+            "id": "P011",
+            "name": "Elantris",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+            "format": "hardcover",
+        },
+        {
+            "id": "P012",
+            "name": "Mistborn: The Final Empire",
+            "category": "Books",
+            "author": "Brandon Sanderson",
+            "format": "hardcover",
+        },
+        {"id": "P013", "name": "Coffee Maker", "category": "Appliances"},
+        {"id": "P014", "name": "Water Bottle", "category": "Outdoors"},
     ]
 
     def matches_search(product, search_query, search_category):
         """Check if product matches search criteria, including author search for books."""
-        name_match = search_query.lower() in product["name"].lower()
+        search_words = [word.strip().lower() for word in search_query.lower().split()]
 
-        # For books, also search by author
+        # Check name match - either full query or individual words
+        name_match = search_query.lower() in product["name"].lower() or any(
+            word in product["name"].lower() for word in search_words
+        )
+
+        # For books, also search by author and format
         author_match = False
-        if product["category"] == "Books" and "author" in product:
-            author_match = search_query.lower() in product["author"].lower()
+        format_match = False
+        if product["category"] == "Books":
+            if "author" in product:
+                # Check if query contains author name or author name contains query words
+                author_lower = product["author"].lower()
+                author_match = (
+                    search_query.lower() in author_lower
+                    or author_lower in search_query.lower()
+                    or any(
+                        word in author_lower for word in search_words if len(word) > 2
+                    )
+                )
+            if "format" in product:
+                # Check if any search word matches the format
+                format_lower = product["format"].lower()
+                format_match = (
+                    search_query.lower() in format_lower
+                    or format_lower in search_query.lower()
+                    or any(
+                        word in format_lower for word in search_words if len(word) > 2
+                    )
+                )
 
-        query_match = name_match or author_match
+        query_match = name_match or author_match or format_match
         category_match = (
             search_category is None
             or search_category.lower() == product["category"].lower()

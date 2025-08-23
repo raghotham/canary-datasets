@@ -2024,7 +2024,15 @@ def route_plan(
         ],
         ("San Francisco", "Seattle"): ["Sacramento", "Portland"],
         ("Miami", "Chicago"): ["Atlanta", "Nashville", "Indianapolis"],
-        ("California"): ["FLorida", "Texas", "New York", "Washington", "Illinois"],
+        ("California", "Florida"): [
+            "Arizona",
+            "New Mexico",
+            "Texas",
+            "Louisiana",
+            "Alabama",
+        ],
+        ("California", "Colorado"): ["Nevada", "Utah"],
+        ("Chicago", "Houston"): ["St. Louis", "Little Rock", "Dallas"],
     }
 
     # Determine the route based on the start and end locations
