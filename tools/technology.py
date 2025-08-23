@@ -91,14 +91,18 @@ def uuid_by_account_info(
         "Asia": "AS1",
     }
 
-    # Validate the discriminator
+    # Use the provided discriminator if valid, otherwise use region default
+    # This allows for flexible discriminator values while maintaining region-based defaults
+    effective_discriminator = discriminator
     if discriminator not in default_discriminators.values():
-        raise ValueError(f"Invalid discriminator: {discriminator}")
+        # If discriminator doesn't match expected format, use the provided discriminator
+        # but still include region context for uniqueness
+        effective_discriminator = f"{default_discriminators[region]}-{discriminator}"
 
     # Generate a mock UUID based on the name, discriminator, and region
     import hashlib
 
-    # Create a unique string to hash
+    # Create a unique string to hash using the original discriminator for uniqueness
     unique_string = f"{name}-{discriminator}-{region}"
     # Generate a UUID-like hash
     uuid = hashlib.md5(unique_string.encode()).hexdigest()

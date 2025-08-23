@@ -21,7 +21,75 @@ def employer_visa_status_requirements(
             - skilled_worker_visa: Boolean indicating if the employer can sponsor a Skilled Worker visa
     """
 
-    # Simulated data based on employer names and city codes
+    def fuzzy_match_employer(search_employer: str, employer_list: List[str]) -> str:
+        """Find the best matching employer using fuzzy matching"""
+        search_lower = search_employer.lower().strip()
+
+        # Direct exact match
+        for employer in employer_list:
+            if employer.lower() == search_lower:
+                return employer
+
+        # Partial match - search employer contains employer name or vice versa
+        for employer in employer_list:
+            employer_lower = employer.lower()
+            if search_lower in employer_lower or employer_lower in search_lower:
+                return employer
+
+        # Tech company variations
+        tech_variants = [
+            "tech",
+            "technology",
+            "corp",
+            "corporation",
+            "ltd",
+            "limited",
+            "inc",
+        ]
+        if any(variant in search_lower for variant in tech_variants):
+            for employer in employer_list:
+                if any(variant in employer.lower() for variant in tech_variants):
+                    return employer
+
+        return None
+
+    def fuzzy_match_city(search_city: str, city_list: List[str]) -> str:
+        """Find the best matching city using fuzzy matching"""
+        search_lower = search_city.lower().strip()
+
+        # Direct exact match
+        for city_code in city_list:
+            if city_code.lower() == search_lower:
+                return city_code
+
+        # City code mappings
+        city_mappings = {
+            "london": "LDN",
+            "manchester": "MAN",
+            "birmingham": "BIR",
+            "leeds": "LEE",
+            "glasgow": "GLA",
+            "edinburgh": "EDI",
+            "bristol": "BRI",
+            "liverpool": "LIV",
+            "sheffield": "SHE",
+            "cardiff": "CAR",
+        }
+
+        # Check if search term maps to a city code
+        mapped_city = city_mappings.get(search_lower)
+        if mapped_city and mapped_city in city_list:
+            return mapped_city
+
+        # Partial match
+        for city_code in city_list:
+            city_lower = city_code.lower()
+            if search_lower in city_lower or city_lower in search_lower:
+                return city_code
+
+        return None
+
+    # Expanded simulated data with more employers and cities
     sample_data = {
         ("TechCorp", "LDN"): {
             "visa_sponsorship_available": True,
@@ -35,16 +103,75 @@ def employer_visa_status_requirements(
             "visa_sponsorship_available": True,
             "skilled_worker_visa": False,
         },
+        ("SmithTech", "LDN"): {
+            "visa_sponsorship_available": True,
+            "skilled_worker_visa": True,
+        },
+        ("DataCorp", "LDN"): {
+            "visa_sponsorship_available": True,
+            "skilled_worker_visa": False,
+        },
+        ("FinanceGroup", "LDN"): {
+            "visa_sponsorship_available": False,
+            "skilled_worker_visa": False,
+        },
+        ("GlobalTech", "MAN"): {
+            "visa_sponsorship_available": True,
+            "skilled_worker_visa": True,
+        },
+        ("StartupLtd", "BIR"): {
+            "visa_sponsorship_available": False,
+            "skilled_worker_visa": True,
+        },
     }
 
-    key = (employer_name, city)
-    if key not in sample_data:
-        raise ValueError(f"Employer or city not supported: {employer_name}, {city}")
+    # Get all available employers and cities
+    all_employers = list(set(key[0] for key in sample_data.keys()))
+    all_cities = list(set(key[1] for key in sample_data.keys()))
+
+    # Try fuzzy matching
+    matched_employer = fuzzy_match_employer(employer_name, all_employers)
+    matched_city = fuzzy_match_city(city, all_cities)
+
+    # Use original values if no fuzzy match found
+    final_employer = matched_employer or employer_name
+    final_city = matched_city or city
+
+    key = (final_employer, final_city)
+    if key in sample_data:
+        return {
+            "employer_name": final_employer,
+            "city": final_city,
+            **sample_data[key],
+        }
+
+    # Generate visa sponsorship data based on employer and city if no match
+    # Use hash to make it consistent
+    employer_hash = hash(final_employer.lower()) % 100
+    city_hash = hash(final_city.lower()) % 100
+
+    # Tech companies and London are more likely to sponsor visas
+    tech_keywords = ["tech", "software", "data", "digital", "ai", "corp"]
+    is_tech = any(keyword in final_employer.lower() for keyword in tech_keywords)
+    is_london = "ldn" in final_city.lower() or "london" in final_city.lower()
+
+    # Calculate probabilities
+    visa_prob = 0.3  # Base 30% chance
+    if is_tech:
+        visa_prob += 0.4  # Tech companies +40%
+    if is_london:
+        visa_prob += 0.2  # London +20%
+
+    skilled_prob = visa_prob * 0.8  # Skilled worker visa slightly less likely
+
+    visa_sponsorship = (employer_hash + city_hash) % 100 < (visa_prob * 100)
+    skilled_worker = (employer_hash + city_hash + 10) % 100 < (skilled_prob * 100)
 
     return {
-        "employer_name": employer_name,
-        "city": city,
-        **sample_data[key],
+        "employer_name": final_employer,
+        "city": final_city,
+        "visa_sponsorship_available": visa_sponsorship,
+        "skilled_worker_visa": skilled_worker,
     }
 
 
@@ -303,22 +430,109 @@ def search_indeed(
             - jobs: List of job postings with title and company
     """
 
+    def fuzzy_match_location(
+        search_country: str, search_city: str, job_data: Dict
+    ) -> tuple:
+        """Find the best matching country/city combination using fuzzy matching"""
+        search_country_lower = search_country.lower().strip()
+        search_city_lower = search_city.lower().strip()
+
+        # Direct exact match
+        for country, city in job_data.keys():
+            if (
+                country.lower() == search_country_lower
+                and city.lower() == search_city_lower
+            ):
+                return (country, city)
+
+        # Country variations
+        country_mappings = {
+            "usa": "USA",
+            "us": "USA",
+            "united states": "USA",
+            "america": "USA",
+            "uk": "UK",
+            "united kingdom": "UK",
+            "britain": "UK",
+            "england": "UK",
+            "canada": "Canada",
+            "netherlands": "Netherlands",
+            "holland": "Netherlands",
+            "germany": "Germany",
+            "deutschland": "Germany",
+        }
+
+        # City variations
+        city_mappings = {
+            "london": "London",
+            "toronto": "Toronto",
+            "new york": "New York",
+            "nyc": "New York",
+            "manhattan": "New York",
+            "amsterdam": "Amsterdam",
+            "berlin": "Berlin",
+        }
+
+        # Normalize country
+        normalized_country = country_mappings.get(search_country_lower, search_country)
+        normalized_city = city_mappings.get(search_city_lower, search_city)
+
+        # Try with normalized values
+        for country, city in job_data.keys():
+            if country == normalized_country and city == normalized_city:
+                return (country, city)
+
+        # Try partial matching for city within same country
+        for country, city in job_data.keys():
+            if country == normalized_country:
+                city_lower = city.lower()
+                if search_city_lower in city_lower or city_lower in search_city_lower:
+                    return (country, city)
+
+        # Find any match for the country and use default city
+        for country, city in job_data.keys():
+            if country == normalized_country:
+                return (country, city)
+
+        return None
+
     if country not in ["Canada", "USA", "UK", "Netherlands", "Germany"]:
         raise ValueError(f"Country not supported: {country}")
 
-    # Mock job data generation based on hash of input parameters
+    # Expanded mock job data with more locations and job types
     job_data = {
         ("Canada", "Toronto"): [
             {"title": "Software Engineer", "company": "TechCorp"},
             {"title": "Data Analyst", "company": "DataWorks"},
+            {"title": "Marketing Manager", "company": "BrandForce"},
+        ],
+        ("Canada", "Vancouver"): [
+            {"title": "UX Designer", "company": "DesignStudio"},
+            {"title": "Product Manager", "company": "StartupInc"},
         ],
         ("USA", "New York"): [
             {"title": "Project Manager", "company": "Business Inc."},
             {"title": "Graphic Designer", "company": "Creative Studio"},
+            {"title": "Sales Representative", "company": "SalesPro"},
+        ],
+        ("USA", "Detroit"): [
+            {"title": "Automotive Engineer", "company": "AutoTech"},
+            {"title": "Manufacturing Supervisor", "company": "Industrial Corp"},
+            {"title": "Quality Assurance Specialist", "company": "QualityFirst"},
+        ],
+        ("USA", "Los Angeles"): [
+            {"title": "Entertainment Coordinator", "company": "Hollywood Studios"},
+            {"title": "Social Media Manager", "company": "InfluencerHub"},
         ],
         ("UK", "London"): [
             {"title": "Marketing Specialist", "company": "MarketGenius"},
             {"title": "Financial Analyst", "company": "FinancePro"},
+            {"title": "Weekend Driver", "company": "LogisticsSolutions"},
+            {"title": "Delivery Coordinator", "company": "TransportPlus"},
+        ],
+        ("UK", "Manchester"): [
+            {"title": "Software Developer", "company": "CodeWorks"},
+            {"title": "Business Analyst", "company": "ConsultingFirm"},
         ],
         ("Netherlands", "Amsterdam"): [
             {"title": "UX Designer", "company": "DesignHub"},
@@ -330,12 +544,58 @@ def search_indeed(
         ],
     }
 
-    # Default to London if city is not specified
-    jobs = job_data.get((country, city), job_data.get((country, "London"), []))
+    # Try fuzzy matching first
+    matched_location = fuzzy_match_location(country, city, job_data)
+
+    if matched_location:
+        matched_country, matched_city = matched_location
+        jobs = job_data[matched_location]
+    else:
+        # Generate jobs based on the search criteria if no match found
+        hash_seed = hash(f"{country}{city}{start}{end}") % 100
+
+        job_titles = [
+            "Software Engineer",
+            "Data Analyst",
+            "Project Manager",
+            "Marketing Specialist",
+            "Sales Representative",
+            "UX Designer",
+            "Business Analyst",
+            "Financial Analyst",
+            "Product Manager",
+            "Operations Coordinator",
+        ]
+
+        companies = [
+            "TechCorp",
+            "DataWorks",
+            "Business Inc.",
+            "Creative Studio",
+            "MarketGenius",
+            "FinancePro",
+            "StartupInc",
+            "ConsultingFirm",
+            "InnovateTech",
+            "GlobalSolutions",
+        ]
+
+        # Generate 2-3 jobs based on hash
+        num_jobs = (hash_seed % 3) + 2
+        jobs = []
+
+        for i in range(num_jobs):
+            job_hash = (hash_seed + i * 10) % 100
+            title = job_titles[job_hash % len(job_titles)]
+            company = companies[(job_hash + 5) % len(companies)]
+            jobs.append({"title": title, "company": company})
+
+        matched_country = country
+        matched_city = city
 
     return {
-        "country": country,
-        "city": city,
+        "country": matched_country,
+        "city": matched_city,
         "jobs": jobs,
     }
 
@@ -934,7 +1194,7 @@ def reserve_court(
             "santa monica": "Los Angeles",
             "west hollywood": "Los Angeles",
             "venice": "Los Angeles",
-            # Chicago area variations  
+            # Chicago area variations
             "chicago": "Chicago",
             "downtown chicago": "Chicago",
             "loop": "Chicago",
@@ -1422,4 +1682,168 @@ def quadratic_roots(a: int, b: int, c: int) -> Dict[str, Union[float, str]]:
     return {
         "root1": serialize_root(root1),
         "root2": serialize_root(root2),
+    }
+
+
+def check_sharecode(code: str) -> Dict[str, Union[str, bool]]:
+    """Check the validity and details of a share code.
+
+    Args:
+        code: The share code to validate
+
+    Returns:
+        Dict containing:
+            - code: The share code checked
+            - valid: Whether the code is valid
+            - status: Status description of the share code
+    """
+
+    # Basic validation - codes should be alphanumeric and at least 6 characters
+    if not code or len(code) < 6 or not code.isalnum():
+        return {
+            "code": code,
+            "valid": False,
+            "status": "Invalid format - share codes must be at least 6 alphanumeric characters",
+        }
+
+    # Use hash to generate consistent but varied results
+    code_hash = hash(code.upper()) % 100
+
+    # 80% of codes are valid
+    is_valid = code_hash < 80
+
+    if is_valid:
+        # Generate different statuses for valid codes
+        status_hash = (code_hash * 3) % 5
+        statuses = [
+            "Active - Ready for employment verification",
+            "Active - Valid for right to work checks",
+            "Active - Verified and current",
+            "Active - Recently updated",
+            "Active - Standard verification available",
+        ]
+        status = statuses[status_hash]
+    else:
+        # Generate different error statuses
+        error_hash = (code_hash * 7) % 4
+        error_statuses = [
+            "Expired - Please request a new share code",
+            "Invalid - Code not found in system",
+            "Suspended - Contact HMRC for assistance",
+            "Revoked - This share code is no longer valid",
+        ]
+        status = error_statuses[error_hash]
+
+    return {
+        "code": code,
+        "valid": is_valid,
+        "status": status,
+    }
+
+
+def check_right_to_work(
+    first_name: str, last_name: str, date_of_birth: str, share_code: str = None
+) -> Dict[str, Union[str, bool]]:
+    """Check an individual's right to work in the UK.
+
+    Args:
+        first_name: First name of the person
+        last_name: Last name of the person
+        date_of_birth: Date of birth in YYYY-MM-DD format
+        share_code: Optional share code for verification
+
+    Returns:
+        Dict containing:
+            - first_name: Person's first name
+            - last_name: Person's last name
+            - date_of_birth: Person's date of birth
+            - share_code: Share code used (if provided)
+            - right_to_work: Whether the person has right to work
+            - work_restrictions: Any restrictions on employment
+            - expiry_date: When the right to work expires (if applicable)
+    """
+
+    def validate_date_format(date_string: str) -> bool:
+        """Validate YYYY-MM-DD date format"""
+        try:
+            from datetime import datetime
+
+            datetime.strptime(date_string, "%Y-%m-%d")
+            return True
+        except ValueError:
+            return False
+
+    if not first_name or not last_name:
+        return {
+            "first_name": first_name,
+            "last_name": last_name,
+            "date_of_birth": date_of_birth,
+            "share_code": share_code,
+            "right_to_work": False,
+            "work_restrictions": "Invalid - Name fields are required",
+            "expiry_date": None,
+        }
+
+    if not validate_date_format(date_of_birth):
+        return {
+            "first_name": first_name,
+            "last_name": last_name,
+            "date_of_birth": date_of_birth,
+            "share_code": share_code,
+            "right_to_work": False,
+            "work_restrictions": "Invalid - Date of birth must be in YYYY-MM-DD format",
+            "expiry_date": None,
+        }
+
+    # If share code is provided, validate it first
+    if share_code:
+        share_result = check_sharecode(share_code)
+        if not share_result["valid"]:
+            return {
+                "first_name": first_name,
+                "last_name": last_name,
+                "date_of_birth": date_of_birth,
+                "share_code": share_code,
+                "right_to_work": False,
+                "work_restrictions": f"Share code invalid: {share_result['status']}",
+                "expiry_date": None,
+            }
+
+    # Generate consistent results based on person's details
+    person_hash = hash(f"{first_name.lower()}{last_name.lower()}{date_of_birth}") % 100
+
+    # 85% of people have right to work (realistic for UK checks)
+    has_right_to_work = person_hash < 85
+
+    if has_right_to_work:
+        # Determine work restrictions and expiry
+        restriction_hash = (person_hash * 5) % 10
+
+        if restriction_hash < 6:  # 60% have no restrictions
+            restrictions = "No restrictions"
+            expiry = None
+        elif restriction_hash < 8:  # 20% have time-limited right to work
+            restrictions = "Time-limited - Student visa holder"
+            from datetime import datetime, timedelta
+
+            expiry_date = datetime.now() + timedelta(days=365)
+            expiry = expiry_date.strftime("%Y-%m-%d")
+        else:  # 20% have some restrictions
+            restrictions = "Restricted - Maximum 20 hours per week during term time"
+            from datetime import datetime, timedelta
+
+            expiry_date = datetime.now() + timedelta(days=730)
+            expiry = expiry_date.strftime("%Y-%m-%d")
+    else:
+        restrictions = "No right to work - Visa required"
+        expiry = None
+
+    return {
+        "first_name": first_name,
+        "last_name": last_name,
+        "date_of_birth": date_of_birth,
+        "share_code": share_code,
+        "right_to_work": has_right_to_work,
+        "work_restrictions": restrictions,
+        "expiry_date": expiry,
     }

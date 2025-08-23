@@ -20,7 +20,121 @@ def get_weather(
             - forecast: List of dictionaries with forecasted weather conditions for each day
     """
 
-    # Sample data for current temperature
+    def fuzzy_match_location(
+        search_location: str, available_locations: List[str]
+    ) -> str:
+        """Find the best matching location using fuzzy matching"""
+        search_lower = search_location.lower().strip()
+
+        # Direct exact match
+        for loc in available_locations:
+            if loc.lower() == search_lower:
+                return loc
+
+        # City with district/area matching (e.g., "Tempelhof Berlin" -> "Berlin")
+        location_mappings = {
+            # Berlin districts and variations
+            "berlin": [
+                "berlin",
+                "tempelhof berlin",
+                "kreuzberg berlin",
+                "mitte berlin",
+                "charlottenburg berlin",
+                "friedrichshain berlin",
+                "neukölln berlin",
+                "prenzlauer berg berlin",
+                "schöneberg berlin",
+            ],
+            # New York areas
+            "new york": [
+                "new york",
+                "manhattan",
+                "brooklyn",
+                "queens",
+                "bronx",
+                "staten island",
+                "nyc",
+                "new york city",
+                "manhattan ny",
+                "brooklyn ny",
+            ],
+            # London areas
+            "london": [
+                "london",
+                "central london",
+                "east london",
+                "north london",
+                "south london",
+                "west london",
+                "westminster london",
+                "camden london",
+                "kensington london",
+                "chelsea london",
+            ],
+            # Paris areas
+            "paris": [
+                "paris",
+                "1st arrondissement paris",
+                "2nd arrondissement paris",
+                "montmartre paris",
+                "champs elysees paris",
+                "louvre paris",
+                "marais paris",
+            ],
+            # Tokyo areas
+            "tokyo": [
+                "tokyo",
+                "shibuya tokyo",
+                "shinjuku tokyo",
+                "harajuku tokyo",
+                "ginza tokyo",
+                "akihabara tokyo",
+                "roppongi tokyo",
+                "asakusa tokyo",
+            ],
+            # San Francisco areas
+            "san francisco": [
+                "san francisco",
+                "downtown san francisco",
+                "soma san francisco",
+                "mission san francisco",
+                "castro san francisco",
+                "pacific heights san francisco",
+                "sf",
+            ],
+        }
+
+        # Check location mappings
+        for base_location, variants in location_mappings.items():
+            if search_lower in variants:
+                # Find the actual city name in available_locations
+                for loc in available_locations:
+                    if base_location == loc.lower():
+                        return loc
+
+        # Partial match - search location contains available location or vice versa
+        for loc in available_locations:
+            loc_lower = loc.lower()
+            if search_lower in loc_lower or loc_lower in search_lower:
+                return loc
+
+        # Word-based matching for compound location names
+        search_words = set(search_lower.split())
+        best_match = None
+        best_score = 0
+
+        for loc in available_locations:
+            loc_words = set(loc.lower().split())
+            if search_words and loc_words:
+                overlap = search_words.intersection(loc_words)
+                score = len(overlap) / max(len(search_words), len(loc_words))
+                if score > best_score and score > 0.5:  # At least 50% match
+                    best_score = score
+                    best_match = loc
+
+        return best_match
+
+    # Expanded sample data for current temperature with more cities
     current_weather_sample = {
         "New York": 68.0,
         "Sydney": 75.0,
@@ -31,9 +145,19 @@ def get_weather(
         "Las Vegas": 88.0,
         "San Francisco": 66.0,
         "Berlin": 70.0,
+        "Los Angeles": 73.0,
+        "Chicago": 61.0,
+        "Miami": 82.0,
+        "Seattle": 58.0,
+        "Denver": 65.0,
+        "Rome": 68.0,
+        "Amsterdam": 55.0,
+        "Barcelona": 71.0,
+        "Vienna": 63.0,
+        "Prague": 60.0,
     }
 
-    # Sample data for forecasted weather
+    # Expanded sample data for forecasted weather
     forecast_sample = {
         "New York": [
             {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
@@ -79,18 +203,95 @@ def get_weather(
             {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
             {"day": "Tuesday", "temperature": 72.0, "condition": "cloudy"},
         ],
+        "Los Angeles": [
+            {"day": "Monday", "temperature": 75.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 76.0, "condition": "clear"},
+        ],
+        "Chicago": [
+            {"day": "Monday", "temperature": 63.0, "condition": "windy"},
+            {"day": "Tuesday", "temperature": 65.0, "condition": "cloudy"},
+        ],
+        "Miami": [
+            {"day": "Monday", "temperature": 84.0, "condition": "humid"},
+            {"day": "Tuesday", "temperature": 85.0, "condition": "sunny"},
+        ],
+        "Seattle": [
+            {"day": "Monday", "temperature": 60.0, "condition": "drizzle"},
+            {"day": "Tuesday", "temperature": 62.0, "condition": "overcast"},
+        ],
+        "Denver": [
+            {"day": "Monday", "temperature": 67.0, "condition": "clear"},
+            {"day": "Tuesday", "temperature": 69.0, "condition": "sunny"},
+        ],
+        "Rome": [
+            {"day": "Monday", "temperature": 70.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 72.0, "condition": "partly cloudy"},
+        ],
+        "Amsterdam": [
+            {"day": "Monday", "temperature": 57.0, "condition": "rainy"},
+            {"day": "Tuesday", "temperature": 59.0, "condition": "cloudy"},
+        ],
+        "Barcelona": [
+            {"day": "Monday", "temperature": 73.0, "condition": "sunny"},
+            {"day": "Tuesday", "temperature": 74.0, "condition": "clear"},
+        ],
+        "Vienna": [
+            {"day": "Monday", "temperature": 65.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 67.0, "condition": "overcast"},
+        ],
+        "Prague": [
+            {"day": "Monday", "temperature": 62.0, "condition": "cloudy"},
+            {"day": "Tuesday", "temperature": 64.0, "condition": "sunny"},
+        ],
     }
 
-    if location not in current_weather_sample:
-        raise ValueError(f"Location not supported: {location}")
+    # Try fuzzy matching to find the location
+    available_locations = list(current_weather_sample.keys())
+    matched_location = fuzzy_match_location(location, available_locations)
+
+    if not matched_location:
+        # Generate weather data based on the search location if no match found
+        import hashlib
+
+        hash_value = int(hashlib.md5(location.encode()).hexdigest(), 16)
+
+        # Generate temperature between 50-90F based on location hash
+        temp = 50 + (hash_value % 40)
+
+        # Generate conditions based on hash
+        conditions = ["sunny", "cloudy", "rainy", "overcast", "partly cloudy", "clear"]
+        condition = conditions[hash_value % len(conditions)]
+
+        # Generate forecast
+        generated_forecast = []
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
+        for i in range(min(forecast_days, 5)):
+            day_hash = (hash_value + i * 100) % 1000
+            day_temp = temp + (day_hash % 10) - 5  # Vary by ±5 degrees
+            day_condition = conditions[day_hash % len(conditions)]
+
+            generated_forecast.append(
+                {
+                    "day": days[i] if i < len(days) else f"Day {i+1}",
+                    "temperature": float(day_temp),
+                    "condition": day_condition,
+                }
+            )
+
+        return {
+            "location": location,  # Return the original search location
+            "current_temperature": float(temp),
+            "forecast": generated_forecast,
+        }
 
     # Limit the number of forecast days to the available sample data
-    forecast_days = min(forecast_days, len(forecast_sample[location]))
+    forecast_days = min(forecast_days, len(forecast_sample[matched_location]))
 
     return {
-        "location": location,
-        "current_temperature": current_weather_sample[location],
-        "forecast": forecast_sample[location][:forecast_days],
+        "location": matched_location,  # Return the matched location name
+        "current_temperature": current_weather_sample[matched_location],
+        "forecast": forecast_sample[matched_location][:forecast_days],
     }
 
 

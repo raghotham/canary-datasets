@@ -77,16 +77,99 @@ def convert_currency(
             - amount: Converted amount in the target currency
             - currency: Target currency code
     """
-    if from_currency == to_currency:
-        return {"amount": amount, "currency": to_currency}
+
+    def normalize_currency(currency_code: str) -> str:
+        """Normalize currency codes to handle variations and common names"""
+        if not currency_code:
+            return currency_code
+
+        currency_upper = currency_code.upper().strip()
+
+        # Currency code mappings for common variations
+        currency_mappings = {
+            "USD": ["USD", "DOLLAR", "DOLLARS", "US DOLLAR", "US DOLLARS", "USDOLLAR"],
+            "EUR": ["EUR", "EURO", "EUROS", "EUROPEAN", "EUROPEAN UNION"],
+            "GBP": [
+                "GBP",
+                "POUND",
+                "POUNDS",
+                "STERLING",
+                "BRITISH POUND",
+                "BRITISH POUNDS",
+                "GBP STERLING",
+            ],
+            "JPY": ["JPY", "YEN", "JAPANESE YEN", "JAPAN", "JAPANESE"],
+            "AUD": [
+                "AUD",
+                "AUSTRALIAN DOLLAR",
+                "AUSTRALIAN DOLLARS",
+                "AUSSIE DOLLAR",
+                "AUSSIE",
+            ],
+            "CAD": ["CAD", "CANADIAN DOLLAR", "CANADIAN DOLLARS", "CANADIAN"],
+            "CHF": ["CHF", "SWISS FRANC", "SWISS FRANCS", "SWISS"],
+            "CNY": [
+                "CNY",
+                "YUAN",
+                "CHINESE YUAN",
+                "CHINESE",
+                "CHINA",
+                "RMB",
+                "RENMINBI",
+            ],
+            "SEK": ["SEK", "KRONA", "KRONOR", "SWEDISH KRONA", "SWEDISH"],
+            "NOK": ["NOK", "NORWEGIAN KRONE", "NORWEGIAN", "NORWAY"],
+            "DKK": ["DKK", "DANISH KRONE", "DANISH", "DENMARK"],
+            "PLN": ["PLN", "ZLOTY", "POLISH ZLOTY", "POLISH", "POLAND"],
+            "CZK": ["CZK", "KORUNA", "CZECH KORUNA", "CZECH", "CZECHIA"],
+            "HUF": ["HUF", "FORINT", "HUNGARIAN FORINT", "HUNGARIAN", "HUNGARY"],
+            "RON": ["RON", "LEU", "LEI", "ROMANIAN LEU", "ROMANIAN", "ROMANIA"],
+            "BGN": ["BGN", "LEV", "LEVA", "BULGARIAN LEV", "BULGARIAN", "BULGARIA"],
+            "HRK": ["HRK", "KUNA", "CROATIAN KUNA", "CROATIAN", "CROATIA"],
+            "RUB": ["RUB", "RUBLE", "ROUBLE", "RUSSIAN RUBLE", "RUSSIAN", "RUSSIA"],
+            "TRY": ["TRY", "LIRA", "TURKISH LIRA", "TURKISH", "TURKEY"],
+            "INR": ["INR", "RUPEE", "RUPEES", "INDIAN RUPEE", "INDIAN", "INDIA"],
+            "BRL": ["BRL", "REAL", "REAIS", "BRAZILIAN REAL", "BRAZILIAN", "BRAZIL"],
+            "MXN": ["MXN", "PESO", "PESOS", "MEXICAN PESO", "MEXICAN", "MEXICO"],
+            "KRW": ["KRW", "WON", "SOUTH KOREAN WON", "KOREAN", "KOREA"],
+            "SGD": ["SGD", "SINGAPORE DOLLAR", "SINGAPORE", "S$"],
+            "NZD": ["NZD", "NEW ZEALAND DOLLAR", "NEW ZEALAND", "KIWI"],
+            "ZAR": ["ZAR", "RAND", "SOUTH AFRICAN RAND", "SOUTH AFRICA"],
+            "THB": ["THB", "BAHT", "THAI BAHT", "THAI", "THAILAND"],
+            "MYR": ["MYR", "RINGGIT", "MALAYSIAN RINGGIT", "MALAYSIAN", "MALAYSIA"],
+            "IDR": ["IDR", "RUPIAH", "INDONESIAN RUPIAH", "INDONESIAN", "INDONESIA"],
+            "PHP": ["PHP", "PHILIPPINE PESO", "PHILIPPINE", "PHILIPPINES"],
+            "VND": ["VND", "DONG", "VIETNAMESE DONG", "VIETNAMESE", "VIETNAM"],
+        }
+
+        # First try direct mapping
+        for standard_code, variants in currency_mappings.items():
+            if currency_upper in variants:
+                return standard_code
+
+        # Try partial matching for longer names
+        for standard_code, variants in currency_mappings.items():
+            for variant in variants:
+                if variant in currency_upper or currency_upper in variant:
+                    return standard_code
+
+        # If no match found, return the original uppercase code
+        return currency_upper
+
+    # Normalize currency codes
+    normalized_from = normalize_currency(from_currency)
+    normalized_to = normalize_currency(to_currency)
+
+    if normalized_from == normalized_to:
+        return {"amount": amount, "currency": normalized_to}
 
     # Simulate exchange rates using a hash-based approach for consistency
-    hash_input = f"{from_currency}-{to_currency}-{date}".encode()
+    hash_input = f"{normalized_from}-{normalized_to}-{date}".encode()
     hash_value = int(hashlib.sha256(hash_input).hexdigest(), 16)
     exchange_rate = (hash_value % 10000) / 10000 + 0.5  # Rate between 0.5 and 1.5
 
     converted_amount = amount * exchange_rate
-    return {"amount": round(converted_amount, 2), "currency": to_currency}
+    return {"amount": round(converted_amount, 2), "currency": normalized_to}
 
 
 import hashlib
@@ -763,6 +846,11 @@ def compare_stocks(
         ticker: generate_percentage_change(ticker, days) for ticker in ticker_list
     }
     top_performer = max(percentage_changes, key=percentage_changes.get)
+
+    return {
+        "percentage_changes": percentage_changes,
+        "top_performer": top_performer,
+    }
 
 
 def verify_insurance_coverage(
@@ -1441,20 +1529,192 @@ def get_latest_rates(base: str = "USD") -> Dict[str, Union[str, Dict[str, float]
             - rates: A dictionary with currency codes as keys and exchange rates as values
     """
 
+    def normalize_currency_code(currency_code: str) -> str:
+        """Normalize currency codes to handle variations"""
+        if not currency_code:
+            return currency_code
+
+        currency_upper = currency_code.upper().strip()
+
+        # Currency code mappings for common variations
+        currency_mappings = {
+            "USD": ["USD", "DOLLAR", "DOLLARS", "US DOLLAR", "US DOLLARS", "USDOLLAR"],
+            "EUR": ["EUR", "EURO", "EUROS", "EUROPEAN", "EUROPEAN UNION"],
+            "GBP": [
+                "GBP",
+                "POUND",
+                "POUNDS",
+                "STERLING",
+                "BRITISH POUND",
+                "BRITISH POUNDS",
+                "GBP STERLING",
+            ],
+            "JPY": ["JPY", "YEN", "JAPANESE YEN", "JAPAN", "JAPANESE"],
+            "AUD": [
+                "AUD",
+                "AUSTRALIAN DOLLAR",
+                "AUSTRALIAN DOLLARS",
+                "AUSSIE DOLLAR",
+                "AUSSIE",
+            ],
+            "CAD": ["CAD", "CANADIAN DOLLAR", "CANADIAN DOLLARS", "CANADIAN"],
+            "CHF": ["CHF", "SWISS FRANC", "SWISS FRANCS", "SWISS"],
+            "CNY": [
+                "CNY",
+                "YUAN",
+                "CHINESE YUAN",
+                "CHINESE",
+                "CHINA",
+                "RMB",
+                "RENMINBI",
+            ],
+            "RON": ["RON", "LEU", "LEI", "ROMANIAN LEU", "ROMANIAN", "ROMANIA"],
+            "SEK": ["SEK", "KRONA", "KRONOR", "SWEDISH KRONA", "SWEDISH"],
+            "NOK": ["NOK", "NORWEGIAN KRONE", "NORWEGIAN", "NORWAY"],
+            "DKK": ["DKK", "DANISH KRONE", "DANISH", "DENMARK"],
+            "PLN": ["PLN", "ZLOTY", "POLISH ZLOTY", "POLISH", "POLAND"],
+            "CZK": ["CZK", "KORUNA", "CZECH KORUNA", "CZECH", "CZECHIA"],
+            "HUF": ["HUF", "FORINT", "HUNGARIAN FORINT", "HUNGARIAN", "HUNGARY"],
+        }
+
+        # First try direct mapping
+        for standard_code, variants in currency_mappings.items():
+            if currency_upper in variants:
+                return standard_code
+
+        # Try partial matching for longer names
+        for standard_code, variants in currency_mappings.items():
+            for variant in variants:
+                if variant in currency_upper or currency_upper in variant:
+                    return standard_code
+
+        # If no match found, return the original uppercase code
+        return currency_upper
+
+    # Normalize the base currency
+    normalized_base = normalize_currency_code(base)
+
+    # Expanded sample rates with more currencies
     sample_rates = {
-        "USD": {"EUR": 0.85, "JPY": 110.0, "GBP": 0.75},
-        "EUR": {"USD": 1.18, "JPY": 129.53, "GBP": 0.88},
-        "JPY": {"USD": 0.0091, "EUR": 0.0077, "GBP": 0.0068},
-        "GBP": {"USD": 1.33, "EUR": 1.14, "JPY": 147.0},
-        "AUD": {"USD": 0.71, "EUR": 0.61, "JPY": 78.0},
+        "USD": {
+            "EUR": 0.85,
+            "JPY": 110.0,
+            "GBP": 0.75,
+            "AUD": 1.41,
+            "RON": 4.55,
+            "CAD": 1.27,
+            "CHF": 0.92,
+            "CNY": 6.35,
+        },
+        "EUR": {
+            "USD": 1.18,
+            "JPY": 129.53,
+            "GBP": 0.88,
+            "AUD": 1.66,
+            "RON": 5.36,
+            "CAD": 1.49,
+            "CHF": 1.08,
+            "CNY": 7.47,
+        },
+        "JPY": {
+            "USD": 0.0091,
+            "EUR": 0.0077,
+            "GBP": 0.0068,
+            "AUD": 0.0128,
+            "RON": 0.041,
+            "CAD": 0.0115,
+            "CHF": 0.0083,
+            "CNY": 0.058,
+        },
+        "GBP": {
+            "USD": 1.33,
+            "EUR": 1.14,
+            "JPY": 147.0,
+            "AUD": 1.88,
+            "RON": 6.06,
+            "CAD": 1.69,
+            "CHF": 1.22,
+            "CNY": 8.46,
+        },
+        "AUD": {
+            "USD": 0.71,
+            "EUR": 0.61,
+            "JPY": 78.0,
+            "GBP": 0.53,
+            "RON": 3.23,
+            "CAD": 0.90,
+            "CHF": 0.65,
+            "CNY": 4.50,
+        },
+        "RON": {
+            "USD": 0.22,
+            "EUR": 0.19,
+            "JPY": 24.39,
+            "GBP": 0.17,
+            "AUD": 0.31,
+            "CAD": 0.28,
+            "CHF": 0.20,
+            "CNY": 1.40,
+        },
+        "CAD": {
+            "USD": 0.79,
+            "EUR": 0.67,
+            "JPY": 87.0,
+            "GBP": 0.59,
+            "AUD": 1.11,
+            "RON": 3.58,
+            "CHF": 0.73,
+            "CNY": 5.01,
+        },
+        "CHF": {
+            "USD": 1.09,
+            "EUR": 0.93,
+            "JPY": 120.0,
+            "GBP": 0.82,
+            "AUD": 1.54,
+            "RON": 4.95,
+            "CAD": 1.37,
+            "CNY": 6.92,
+        },
+        "CNY": {
+            "USD": 0.16,
+            "EUR": 0.13,
+            "JPY": 17.32,
+            "GBP": 0.12,
+            "AUD": 0.22,
+            "RON": 0.71,
+            "CAD": 0.20,
+            "CHF": 0.14,
+        },
     }
 
-    if base not in sample_rates:
-        raise ValueError(f"Base currency not supported: {base}")
+    # Try to find the currency in our sample rates
+    if normalized_base in sample_rates:
+        return {
+            "base": normalized_base,
+            "rates": sample_rates[normalized_base],
+        }
+
+    # Generate rates for unknown currency using hash-based approach
+    import hashlib
+
+    hash_input = f"{normalized_base}".encode()
+    hash_value = int(hashlib.sha256(hash_input).hexdigest(), 16)
+
+    # Generate basic exchange rates for common currencies
+    common_currencies = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "RON"]
+    generated_rates = {}
+
+    for i, target_currency in enumerate(common_currencies):
+        if target_currency != normalized_base:
+            # Generate a rate based on hash with some variation
+            rate_hash = (hash_value + i * 1000) % 10000
+            rate = (rate_hash / 10000) * 2 + 0.1  # Rate between 0.1 and 2.1
+            generated_rates[target_currency] = round(rate, 4)
 
     return {
-        "base": base,
-        "rates": sample_rates.get(base, {}),
+        "base": normalized_base,
+        "rates": generated_rates,
     }
 
 

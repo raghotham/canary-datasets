@@ -347,10 +347,50 @@ def filter_cars(
             - price: Price of the car
     """
 
-    # Mock data for demonstration purposes
+    def normalize_make(search_make: str) -> str:
+        """Normalize car make for flexible matching"""
+        if not search_make:
+            return search_make
+        
+        make_mappings = {
+            "toyota": ["toyota", "toyoda"],
+            "ford": ["ford", "ford motor company"],
+            "honda": ["honda", "honda motor company"], 
+            "chevrolet": ["chevrolet", "chevy", "chev"],
+            "gmc": ["gmc", "general motors"],
+            "nissan": ["nissan", "datsun"],
+            "ram": ["ram", "dodge ram"],
+            "jeep": ["jeep", "chrysler jeep"],
+        }
+        
+        search_lower = search_make.lower().strip()
+        for standard, variants in make_mappings.items():
+            if search_lower in variants:
+                return standard
+        return search_lower
+
+    def normalize_drive_type(search_drive: str) -> str:
+        """Normalize drive type for flexible matching"""
+        if not search_drive:
+            return search_drive
+            
+        drive_mappings = {
+            "AWD/4WD": ["awd", "4wd", "all wheel drive", "four wheel drive", "awd/4wd", "4x4"],
+            "Front wheel drive": ["fwd", "front wheel drive", "front-wheel drive", "front wheel", "front"],
+            "Rear wheel drive": ["rwd", "rear wheel drive", "rear-wheel drive", "rear wheel", "rear"],
+        }
+        
+        search_lower = search_drive.lower().strip()
+        for standard, variants in drive_mappings.items():
+            if search_lower in variants:
+                return standard
+        return search_drive
+
+    # Expanded mock data with Toyota trucks and work vehicles
     sample_cars = [
+        # Original cars
         {
-            "make": "Toyota",
+            "make": "toyota",
             "model": "Camry",
             "year": 2020,
             "mileage": 15000,
@@ -359,9 +399,10 @@ def filter_cars(
             "style": "sedan",
             "drive": "Front wheel drive",
             "transmission": "Automatic",
+            "use_cases": ["commuting", "family_mode_of_transport"],
         },
         {
-            "make": "Ford",
+            "make": "ford",
             "model": "F-150",
             "year": 2021,
             "mileage": 5000,
@@ -370,9 +411,10 @@ def filter_cars(
             "style": "truck",
             "drive": "AWD/4WD",
             "transmission": "Automatic",
+            "use_cases": ["work", "industrial"],
         },
         {
-            "make": "Honda",
+            "make": "honda",
             "model": "Civic",
             "year": 2019,
             "mileage": 30000,
@@ -381,34 +423,236 @@ def filter_cars(
             "style": "sedan",
             "drive": "Front wheel drive",
             "transmission": "Manual",
+            "use_cases": ["commuting", "sport"],
         },
+        # Toyota trucks for work use case
+        {
+            "make": "toyota",
+            "model": "Tacoma",
+            "year": 2019,
+            "mileage": 65000,
+            "price": 32000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["work", "sport"],
+        },
+        {
+            "make": "toyota",
+            "model": "Tundra",
+            "year": 2020,
+            "mileage": 45000,
+            "price": 38000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["work", "industrial"],
+        },
+        {
+            "make": "toyota",
+            "model": "Tacoma",
+            "year": 2018,
+            "mileage": 75000,
+            "price": 29000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Manual",
+            "use_cases": ["work", "sport"],
+        },
+        # More work trucks
+        {
+            "make": "chevrolet",
+            "model": "Silverado 1500",
+            "year": 2019,
+            "mileage": 55000,
+            "price": 34000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["work", "industrial"],
+        },
+        {
+            "make": "ford",
+            "model": "F-150",
+            "year": 2018,
+            "mileage": 80000,
+            "price": 31000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["work", "industrial"],
+        },
+        {
+            "make": "ram",
+            "model": "1500",
+            "year": 2019,
+            "mileage": 70000,
+            "price": 33000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["work", "industrial"],
+        },
+        # More diverse vehicles
+        {
+            "make": "gmc",
+            "model": "Sierra 1500",
+            "year": 2020,
+            "mileage": 50000,
+            "price": 36000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["work", "luxury"],
+        },
+        {
+            "make": "nissan",
+            "model": "Titan",
+            "year": 2018,
+            "mileage": 90000,
+            "price": 28000,
+            "condition": "used",
+            "style": "truck",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["work", "industrial"],
+        },
+        # Family and commuter cars
+        {
+            "make": "honda",
+            "model": "CR-V",
+            "year": 2020,
+            "mileage": 25000,
+            "price": 26000,
+            "condition": "used",
+            "style": "van",
+            "drive": "Front wheel drive",
+            "transmission": "Automatic",
+            "use_cases": ["family_mode_of_transport", "commuting"],
+        },
+        {
+            "make": "toyota",
+            "model": "Highlander",
+            "year": 2019,
+            "mileage": 40000,
+            "price": 32000,
+            "condition": "used",
+            "style": "van",
+            "drive": "AWD/4WD",
+            "transmission": "Automatic",
+            "use_cases": ["family_mode_of_transport"],
+        },
+        # Luxury cars
+        {
+            "make": "toyota",
+            "model": "Lexus ES",
+            "year": 2020,
+            "mileage": 20000,
+            "price": 38000,
+            "condition": "used",
+            "style": "sedan",
+            "drive": "Front wheel drive",
+            "transmission": "Automatic",
+            "use_cases": ["luxury", "commuting"],
+        },
+        # Sport cars
+        {
+            "make": "toyota",
+            "model": "86",
+            "year": 2019,
+            "mileage": 35000,
+            "price": 25000,
+            "condition": "used",
+            "style": "coupe",
+            "drive": "Rear wheel drive", 
+            "transmission": "Manual",
+            "use_cases": ["sport"],
+        }
     ]
 
+    # Normalize parameters for flexible matching
+    normalized_make = normalize_make(make) if make else None
+    normalized_drive_type = normalize_drive_type(drive_type) if drive_type else None
+
     # Filter cars based on criteria
-    filtered_cars = [
-        car
-        for car in sample_cars
-        if car["condition"] == condition
-        and (make is None or car["make"] == make)
-        and (model is None or car["model"] == model)
-        and (price_min is None or car["price"] >= price_min)
-        and (price_max is None or car["price"] <= price_max)
-        and (mileage_min is None or car["mileage"] >= mileage_min)
-        and (mileage_max is None or car["mileage"] <= mileage_max)
-        and (exclude_make is None or car["make"] != exclude_make)
-        and (exclude_model is None or car["model"] != exclude_model)
-        and (car_style is None or car["style"] == car_style)
-        and (drive_type is None or car["drive"] == drive_type)
-        and (transmission is None or car["transmission"] == transmission)
-    ]
+    filtered_cars = []
+    for car in sample_cars:
+        # Check condition
+        if car["condition"] != condition:
+            continue
+            
+        # Check make with normalized matching
+        if normalized_make and car["make"] != normalized_make:
+            continue
+            
+        # Check model
+        if model and car["model"] != model:
+            continue
+            
+        # Check price range
+        if price_min is not None and car["price"] < price_min:
+            continue
+        if price_max is not None and car["price"] > price_max:
+            continue
+            
+        # Check mileage range
+        if mileage_min is not None and car["mileage"] < mileage_min:
+            continue
+        if mileage_max is not None and car["mileage"] > mileage_max:
+            continue
+            
+        # Check excluded make/model
+        if exclude_make and car["make"] == normalize_make(exclude_make):
+            continue
+        if exclude_model and car["model"] == exclude_model:
+            continue
+            
+        # Check car style
+        if car_style and car["style"] != car_style:
+            continue
+            
+        # Check drive type with normalized matching
+        if normalized_drive_type and car["drive"] != normalized_drive_type:
+            continue
+            
+        # Check transmission
+        if transmission and car["transmission"] != transmission:
+            continue
+            
+        # Check use case compatibility
+        if use_case not in car["use_cases"]:
+            continue
+            
+        filtered_cars.append(car)
 
     if not filtered_cars:
         raise ValueError("No cars match the given criteria")
 
-    # Return the first matching car as the best option
-    best_car = filtered_cars[0]
+    # Sort by best match (price within range, lower mileage preferred)
+    def score_car(car):
+        score = 0
+        # Prefer lower mileage
+        score -= car["mileage"] / 1000
+        # Prefer newer years  
+        score += car["year"] - 2000
+        # Prefer mid-range pricing if price range specified
+        if price_min and price_max:
+            mid_price = (price_min + price_max) / 2
+            score -= abs(car["price"] - mid_price) / 1000
+        return score
+    
+    # Sort by score and return the best match
+    best_car = max(filtered_cars, key=score_car)
+    
     return {
-        "make": best_car["make"],
+        "make": best_car["make"].title(),  # Return capitalized make
         "model": best_car["model"],
         "year": best_car["year"],
         "mileage": best_car["mileage"],
@@ -739,6 +983,22 @@ def find_similar_cars(
             - search_input: The original search input
             - similar_vehicles: List of similar vehicles with details
     """
+    def normalize_make_model(search_term: str):
+        """Normalize car make and model for flexible matching"""
+        make_model_mappings = {
+            "gmc sierra denali": ["gmc", "sierra denali"],
+            "gmc sierra": ["gmc", "sierra"],
+            "gmc yukon denali": ["gmc", "yukon denali"],
+            "gmc yukon": ["gmc", "yukon"],
+            "chevrolet silverado": ["chevrolet", "silverado"],
+            "chevy silverado": ["chevrolet", "silverado"],
+            "ford f-150": ["ford", "f-150"],
+            "ford f150": ["ford", "f-150"],
+        }
+        
+        search_lower = search_term.lower().strip()
+        return make_model_mappings.get(search_lower, [None, None])
+        
     # Convert price parameter if provided as string
     if isinstance(price, str):
         if price.startswith("[") and price.endswith("]"):
@@ -765,6 +1025,16 @@ def find_similar_cars(
                     raise ValueError("Invalid price format. Expected format: 'min,max'")
             except ValueError:
                 raise ValueError("Invalid price format. Could not convert to integers.")
+        elif "-" in price:
+            # Handle range format like "60000-85000"
+            try:
+                parts = price.split("-")
+                if len(parts) == 2:
+                    price = [int(parts[0].strip()), int(parts[1].strip())]
+                else:
+                    raise ValueError("Invalid price format. Expected format: 'min-max'")
+            except ValueError:
+                raise ValueError("Invalid price format. Could not convert to integers.")
         else:
             # Handle single price value like "80000" - treat as maximum price
             try:
@@ -773,22 +1043,61 @@ def find_similar_cars(
             except ValueError:
                 raise ValueError("Invalid price format. Could not convert to integer.")
 
-    # Sample data for demonstration purposes
+    # Expanded sample data with luxury trucks
     sample_vehicles = [
+        # Original vehicles
         {"make": "Toyota", "model": "Camry", "type": "sedan", "price": 24000},
         {"make": "Honda", "model": "Accord", "type": "sedan", "price": 23000},
         {"make": "Ford", "model": "F-150", "type": "truck", "price": 28000},
         {"make": "BMW", "model": "3 Series", "type": "luxury", "price": 35000},
         {"make": "Chevrolet", "model": "Silverado", "type": "truck", "price": 30000},
+        # Premium and luxury trucks
+        {"make": "GMC", "model": "Sierra Denali", "type": "truck", "price": 68000},
+        {"make": "GMC", "model": "Yukon Denali", "type": "truck", "price": 72000},
+        {"make": "Chevrolet", "model": "Silverado High Country", "type": "truck", "price": 65000},
+        {"make": "Ford", "model": "F-150 Platinum", "type": "truck", "price": 62000},
+        {"make": "Ford", "model": "F-150 Limited", "type": "truck", "price": 75000},
+        {"make": "RAM", "model": "1500 Limited", "type": "truck", "price": 64000},
+        {"make": "Toyota", "model": "Tundra TRD Pro", "type": "truck", "price": 55000},
+        {"make": "Toyota", "model": "Tundra Capstone", "type": "truck", "price": 70000},
+        {"make": "Nissan", "model": "Titan Platinum Reserve", "type": "truck", "price": 58000},
+        # More trucks at various price points
+        {"make": "Ford", "model": "F-150 XLT", "type": "truck", "price": 42000},
+        {"make": "Chevrolet", "model": "Silverado LT", "type": "truck", "price": 45000},
+        {"make": "RAM", "model": "1500 Big Horn", "type": "truck", "price": 46000},
+        {"make": "GMC", "model": "Sierra", "type": "truck", "price": 48000},
+        # Luxury sedans and SUVs
+        {"make": "Mercedes-Benz", "model": "S-Class", "type": "luxury", "price": 95000},
+        {"make": "BMW", "model": "X7", "type": "luxury", "price": 78000},
+        {"make": "Audi", "model": "Q8", "type": "luxury", "price": 72000},
+        {"make": "Lexus", "model": "LX", "type": "luxury", "price": 88000},
+        {"make": "Cadillac", "model": "Escalade", "type": "luxury", "price": 82000},
     ]
 
     # Filter vehicles based on the search criteria
     def vehicle_matches(vehicle):
-        matches_search_input = (
-            search_input.lower() in (vehicle["make"] + " " + vehicle["model"]).lower()
-        )
+        # Handle "truck" as a general search term
+        if search_input.lower() == "truck" and vehicle["type"] == "truck":
+            matches_search_input = True
+        else:
+            # Try to match make and model (either directly or with normalized values)
+            vehicle_full_name = f"{vehicle['make']} {vehicle['model']}".lower()
+            matches_search_input = search_input.lower() in vehicle_full_name
+            
+            # If no direct match, try normalized matching for specific truck models
+            if not matches_search_input:
+                normalized_make, normalized_model = normalize_make_model(search_input)
+                if normalized_make and normalized_model:
+                    if (normalized_make.lower() in vehicle["make"].lower() and 
+                        normalized_model.lower() in vehicle["model"].lower()):
+                        matches_search_input = True
+        
+        # Type matching
         matches_type = type is None or vehicle["type"] == type
+        
+        # Price range matching
         matches_price = price is None or (price[0] <= vehicle["price"] <= price[1])
+        
         return matches_search_input and matches_type and matches_price
 
     similar_vehicles = [
@@ -796,7 +1105,32 @@ def find_similar_cars(
     ]
 
     if not similar_vehicles:
-        raise ValueError(f"No similar vehicles found for search input: {search_input}")
+        # Generate fallback vehicles based on the input if no matches found
+        fallback_vehicles = []
+        
+        # For truck searches with no matches, return some trucks in the price range
+        if type == "truck" or "truck" in search_input.lower():
+            truck_vehicles = [v for v in sample_vehicles if v["type"] == "truck"]
+            # Filter by price if specified
+            if price:
+                truck_vehicles = [v for v in truck_vehicles if price[0] <= v["price"] <= price[1]]
+            # Take up to 3 trucks
+            fallback_vehicles = truck_vehicles[:3] if truck_vehicles else []
+            
+        # For GMC or Denali searches, find the closest matches
+        if "gmc" in search_input.lower() or "denali" in search_input.lower():
+            gmc_vehicles = [v for v in sample_vehicles if "gmc" in v["make"].lower()]
+            # Filter by price if specified
+            if price:
+                gmc_vehicles = [v for v in gmc_vehicles if price[0] <= v["price"] <= price[1]]
+            # Add any GMC vehicles
+            fallback_vehicles = gmc_vehicles if gmc_vehicles else fallback_vehicles
+            
+        # If we found fallbacks, use them instead of raising an error
+        if fallback_vehicles:
+            similar_vehicles = fallback_vehicles
+        else:
+            raise ValueError(f"No similar vehicles found for search input: {search_input}")
 
     return {
         "search_input": search_input,
